@@ -4,14 +4,13 @@ import it.polimi.ingsw.Model.Card.CharacterCard;
 import it.polimi.ingsw.Model.Card.CharacterType;
 import it.polimi.ingsw.Model.Card.Era;
 
-import java.util.UUID;
 
 public class ShamanCharacterCard extends CharacterCard {
     private final int shamanStars;
 
 
-    public ShamanCharacterCard(UUID cardId, String name, Era era, int minNumPlayers, int  shamanStars) {
-        super(cardId, name, era, minNumPlayers,  CharacterType.SHAMAN);
+    public ShamanCharacterCard(String name, Era era, int minNumPlayers, int  shamanStars) {
+        super(name, era, minNumPlayers,  CharacterType.SHAMAN);
         this.shamanStars = shamanStars;
     }
 

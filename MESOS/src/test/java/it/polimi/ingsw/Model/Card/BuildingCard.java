@@ -1,14 +1,15 @@
 package it.polimi.ingsw.Model.Card;
 
-import java.util.UUID;
+import it.polimi.ingsw.Model.Effects.BuildingEffect.IBuildingEffect;
+
 
 public class BuildingCard extends Card {
     private final int foodCost;
     private final int endGamePP;
-    private final BuildingEffect effect;
+    private final IBuildingEffect effect;
 
-    public BuildingCard(UUID cardId, String name, Era era, int minNumPlayers, int foodCost, int endGamePP, BuildingEffect effect) {
-        super(cardId, name, era, minNumPlayers);
+    public BuildingCard(String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) {
+        super(name, era, minNumPlayers);
         this.foodCost = foodCost;
         this.endGamePP = endGamePP;
         this.effect = effect;
@@ -22,7 +23,7 @@ public class BuildingCard extends Card {
         return endGamePP;
     }
 
-    public BuildingEffect getEffect(){
+    public IBuildingEffect getEffect(){
         return effect;
     }
 
