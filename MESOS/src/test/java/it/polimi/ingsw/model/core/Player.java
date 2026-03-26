@@ -106,8 +106,9 @@ public class Player {
      * Checks if the player can buy the specified building card based on their current food and any applicable discounts from their deck.
      *
      * @param buildingCard the building card the player wants to buy
+     * @throws IllegalFoodArgumentException if the player does not have enough food to buy the card after applying discounts.
      */
-    public void canBuyBuildingCard(BuildingCard buildingCard) {
+    public void canBuyBuildingCard(BuildingCard buildingCard) throws IllegalFoodArgumentException {
         int foodDiscount = this.plauerDeck.totalFoodBuildingDiscount; // Calculate the total food discount from the player's deck
 
         if(buildingCard.getFoodCost() - foodDiscount > this.food) { // If the player doesn't have enough food to buy the card
