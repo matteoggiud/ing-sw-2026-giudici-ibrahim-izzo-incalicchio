@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
-/*
-For every Hunter you gain a PP bonus
-*/
+/**
+ * For every Hunter you gain a PP bonus
+ */
 
 public class PP_HunterEffect implements IBuildingEffect {
     private int PPGained;

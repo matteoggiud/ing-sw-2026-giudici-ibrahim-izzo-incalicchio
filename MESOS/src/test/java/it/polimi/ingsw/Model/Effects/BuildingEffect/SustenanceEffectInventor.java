@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
-/*
-For every Inventor you have a FoodDiscount
-*/
+/**
+ * For every Inventor you have a FoodDiscount
+ */
 
 public class SustenanceEffectInventor implements IBuildingEffect {
     private int FoodDiscount;

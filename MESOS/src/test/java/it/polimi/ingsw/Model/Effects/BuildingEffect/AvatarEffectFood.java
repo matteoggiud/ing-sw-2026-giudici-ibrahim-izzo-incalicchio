@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
-/*
-For every character set you get a Food bonus
-*/
+/**
+ * For every character set you get a Food bonus
+ */
 
 public class AvatarEffectFood implements IBuildingEffect {
     private int FoodGained;

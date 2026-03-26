@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
-/*
-For every character set you get a PP bonus
-*/
+/**
+ * For every character set you get a PP bonus
+ */
 
 public class AvatarEffectPP implements IBuildingEffect {
     private int PPGained;

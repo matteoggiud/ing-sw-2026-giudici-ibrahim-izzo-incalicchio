@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
-/*
-Pick an additional card from the UpperRow after the end of the turn
-*/
+/**
+ * Pick an additional card from the UpperRow after the end of the turn
+ */
 
 public class AdditionalCard implements IBuildingEffect {
     @Override
