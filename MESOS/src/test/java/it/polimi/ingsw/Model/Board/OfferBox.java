@@ -1,5 +1,5 @@
-package it.polimi.ingsw.Model.Board;
-import it.polimi.ingsw.Model.Player;
+package it.polimi.ingsw.model.board;
+import it.polimi.ingsw.model.core.Player;
 
 /**
  * Represents the offer box on the board. Each offer box has a unique ID, a food reward,

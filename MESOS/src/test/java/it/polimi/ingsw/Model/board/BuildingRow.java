@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.board;
+package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.Model.Card.BuildingCard;
 
 import java.util.List;

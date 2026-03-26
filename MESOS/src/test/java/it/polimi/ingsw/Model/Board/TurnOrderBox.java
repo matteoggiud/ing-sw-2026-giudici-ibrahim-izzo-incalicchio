@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Board;
+package it.polimi.ingsw.model.board;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,9 +1,9 @@
-package it.polimi.ingsw.Model.board;
+package it.polimi.ingsw.model.board;
 import java.util.List;
 import java.util.ArrayList;
 
 
-import it.polimi.ingsw.Model.Card.TribeCard;
+import it.polimi.ingsw.model.card.TribeCard;
 
 /**
  * This class represents the tribe row of the board, which is composed by a list of tribe cards.

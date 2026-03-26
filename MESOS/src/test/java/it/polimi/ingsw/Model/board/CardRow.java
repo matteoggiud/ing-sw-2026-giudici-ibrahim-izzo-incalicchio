@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.board;
+package it.polimi.ingsw.model.board;
 
 /**
  * This class represents the card row of the board, which is composed by a tribe row and a building row.

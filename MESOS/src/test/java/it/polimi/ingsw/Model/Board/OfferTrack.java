@@ -1,6 +1,6 @@
-package it.polimi.ingsw.Model.Board;
+package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.Model.Player;
+import it.polimi.ingsw.model.core.Player;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
