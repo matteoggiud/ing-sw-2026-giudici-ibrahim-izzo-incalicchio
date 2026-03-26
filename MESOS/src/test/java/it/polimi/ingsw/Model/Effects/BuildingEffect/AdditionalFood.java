@@ -1,11 +1,11 @@
-package it.polimi.ingsw.Model.Card.Effects.BuildingEffect;
+package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
 /*
 At the end of the turn if your totem goes on a spot with a Food Bonus,
 you get an additional Food otherwise the effect doesn't apply
 */
 
-public class AdditionalFood implements iBuildingEffect {
+public class AdditionalFood implements IBuildingEffect {
     int PPGained;
     @Override
     public int ApplyEffect(int N_Subject) {

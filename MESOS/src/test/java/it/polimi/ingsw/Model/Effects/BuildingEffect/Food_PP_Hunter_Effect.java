@@ -1,10 +1,10 @@
-package it.polimi.ingsw.Model.Card.Effects.BuildingEffect;
+package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
 /*
 You get a PP and Food bonus for every Hunter
 */
 
-public class Food_PP_Hunter_Effect implements iBuildingEffect{
+public class Food_PP_Hunter_Effect implements IBuildingEffect {
     int PPGained;
     int FoodGained;
     @Override

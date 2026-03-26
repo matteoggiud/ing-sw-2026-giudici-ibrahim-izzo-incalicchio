@@ -1,10 +1,10 @@
-package it.polimi.ingsw.Model.Card.Effects.BuildingEffect;
+package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
 /*
 For every character set you get a PP bonus
 */
 
-public class AvatarEffectPP implements iBuildingEffect{
+public class AvatarEffectPP implements IBuildingEffect {
     int PPGained;
     @Override
     public int ApplyEffect(int N_Subject) {

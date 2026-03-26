@@ -1,10 +1,10 @@
-package it.polimi.ingsw.Model.Card.Effects.BuildingEffect;
+package it.polimi.ingsw.Model.Effects.BuildingEffect;
 
 /*
 For every character set you get a Food bonus
 */
 
-public class AvatarEffectFood implements iBuildingEffect {
+public class AvatarEffectFood implements IBuildingEffect {
     int FoodGained;
     @Override
     public int ApplyEffect(int N_Subject) {
