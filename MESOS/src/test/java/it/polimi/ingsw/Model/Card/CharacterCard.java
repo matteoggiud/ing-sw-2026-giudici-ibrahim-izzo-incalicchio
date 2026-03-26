@@ -1,7 +1,4 @@
-package it.polimi.ingsw.Model.Card.CharacterCards;
-
-import it.polimi.ingsw.Model.Card.Card;
-import it.polimi.ingsw.Model.Card.Era;
+package it.polimi.ingsw.Model.Card;
 
 import java.util.UUID;
 

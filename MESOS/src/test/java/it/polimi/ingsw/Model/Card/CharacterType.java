@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Card.CharacterCards;
+package it.polimi.ingsw.Model.Card;
 
 public enum CharacterType {
     HUNTER,
