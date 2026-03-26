@@ -5,8 +5,8 @@ You get a PP and Food bonus for every Hunter
 */
 
 public class Food_PP_Hunter_Effect implements IBuildingEffect {
-    int PPGained;
-    int FoodGained;
+    private int PPGained;
+    private int FoodGained;
     @Override
     public int ApplyEffect(int N_Subject) {
         return (PPGained + FoodGained) * N_Subject;

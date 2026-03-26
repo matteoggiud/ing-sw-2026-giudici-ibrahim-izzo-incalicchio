@@ -6,7 +6,7 @@ In N_Subject goes all the PP given by the Builders
 */
 
 public class BuildersEffect implements IBuildingEffect {
-    int PPGained;
+    private int PPGained;
     @Override
     public int ApplyEffect(int N_Subject) {
         return PPGained * N_Subject;

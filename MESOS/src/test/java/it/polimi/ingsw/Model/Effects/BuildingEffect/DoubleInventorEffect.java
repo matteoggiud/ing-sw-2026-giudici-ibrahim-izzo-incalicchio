@@ -6,7 +6,7 @@ In N_Subjects goes (floor)N_Inventors/2
 */
 
 public class DoubleInventorEffect implements IBuildingEffect {
-    int FoodGained;
+    private int FoodGained;
     @Override
     public int ApplyEffect(int N_Subject) {
         return N_Subject*2;

@@ -5,7 +5,7 @@ For every character set you get a Food bonus
 */
 
 public class AvatarEffectFood implements IBuildingEffect {
-    int FoodGained;
+    private int FoodGained;
     @Override
     public int ApplyEffect(int N_Subject) {
         return FoodGained * N_Subject;

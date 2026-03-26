@@ -6,7 +6,7 @@ you get an additional Food otherwise the effect doesn't apply
 */
 
 public class AdditionalFood implements IBuildingEffect {
-    int PPGained;
+    private int PPGained;
     @Override
     public int ApplyEffect(int N_Subject) {
         return 0;
