@@ -1,0 +1,120 @@
+package it.polimi.ingsw.model.core;
+
+import it.polimi.ingsw.model.card.BuildingCard;
+import it.polimi.ingsw.model.exceptions.IllegalFoodArgumentException;
+
+import java.util.UUID;
+
+public class Player {
+    private final UUID playerId;
+    private final String nickname;
+    private Totem totem;
+    private final PlayerDeck plauerDeck;
+    private int PP;
+    private int food;
+
+    /**
+     * Constructs a new Player with the specified nickname and totem.
+     *
+     * @param nickname the player's nickname
+     * @param totem the player's chosen totem
+     */
+    public Player(String nickname, Totem totem) {
+        this.playerId = UUID.randomUUID();
+        this.nickname = nickname;
+        this.totem = totem;
+        this.plauerDeck = new PlayerDeck();
+        this.PP = 0;
+        this.food = 0;
+    }
+
+    /**
+     * Gets the player's UUID.
+     *
+     * @return the player's unique identifier.
+     */
+    public UUID getPlayerId() {
+        return playerId;
+    }
+
+    /**
+     * Gets the player's nickname.
+     *
+     * @return the player's nickname.
+     */
+    public String getNickname() {
+        return nickname;
+    }
+
+    /**
+     * Gets the player's totem.
+     *
+     * @return the player's totem.
+     */
+    public Totem getTotem(){
+        return totem;
+    }
+
+    /**
+     * Gets the player's deck
+     *
+     * @return the player's deck.
+     */
+    public PlayerDeck getPlauerDeck() {
+        return plauerDeck;
+    }
+
+    /**
+     * Gets the player's current amount of prestige points.
+     *
+     * @return the player's prestige points.
+     */
+    public int getPP() {
+        return PP;
+    }
+
+    /**
+     * Gets the player's current amount of food.
+     *
+     * @return the player's food.
+     */
+    public int getFood() {
+        return food;
+    }
+
+    /**
+     * Adds the specified amount of food to the player's total.
+     * Negative values will decrease the player's food.
+     *
+     * @param food the amount of food to add (positive) or to decrease (negative).
+     */
+    public void addFood(int food) {
+        this.food += food;
+    }
+
+    /**
+     * Adds the specified amount of prestige points to the player's total.
+     * Negative values will decrease the player's prestige points.
+     *
+     * @param PP the amount of prestige points to add (positive) or to decrease (negative).
+     */
+    public void addPP(int PP) {
+        this.PP += PP;
+    }
+
+    /**
+     * Checks if the player can buy the specified building card based on their current food and any applicable discounts from their deck.
+     *
+     * @param buildingCard the building card the player wants to buy
+     */
+    public void canBuyBuildingCard(BuildingCard buildingCard) {
+        int foodDiscount = this.plauerDeck.totalFoodBuildingDiscount; // Calculate the total food discount from the player's deck
+
+        if(buildingCard.getFoodCost() - foodDiscount > this.food) { // If the player doesn't have enough food to buy the card
+            throw new IllegalFoodArgumentException("Not enough food to buy this building card.");
+        }
+
+        playerDeck.add(buildingCard); // Add the building card to the player's deck
+        this.food -= (buildingCard.getFoodCost() - foodDiscount) > 0 ? buildingCard.getFoodCost() - foodDiscount : 0; // Deduct the food cost from the player's total, ensuring it doesn't go negative
+    }
+}
