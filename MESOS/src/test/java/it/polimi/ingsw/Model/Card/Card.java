@@ -3,22 +3,30 @@ package it.polimi.ingsw.Model.Card;
 import java.util.UUID;
 
 /**
- * Abstract class that represents a card in the game.
- * It contains common properties and methods that are shared by all types of cards, such as the card's name, era,
- * minimum number of players required to use the card, and a unique identifier for each card instance.
+ * Abstract class representing a generic card in the game.
+ * This class serves as a base for specific types of cards, such as BuildingCard, CharacterCard, etc.
  *
  */
 public abstract class Card {
+
+    /** The unique identifier of the card. */
     private final UUID cardId;
+
+    /** The display name of the card. */
     private final String name;
+
+    /** The era to which the card belongs (Era I, II, III) */
     private final Era era;
+
+    /** The minimum number of players required for this card to be included in the game. */
     private final int minNumPlayers;
 
     /**
-     * Constructor of the abstract class Card
-     * @param name the name of the card for the view
-     * @param era the era of the card. Must be an Era enum type
-     * @param minNumPlayers the minimum number of players required to use the card. Must be a positive integer and
+     * Construct a new Card with specific properties.
+     *
+     * @param name the name of the building card
+     * @param era the era of the building card (Era I, II, III)
+     * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      */
     public Card(String name, Era era, int minNumPlayers) {
         this.cardId = UUID.randomUUID();
@@ -28,43 +36,44 @@ public abstract class Card {
     }
 
     /**
-     * Getter for the id of the card, which is a unique identifier generated using UUID.randomUUID() in the constructor.
-     * This id can be used to distinguish between different instances of cards, even if they have the same name and properties.
-     * @return the unique identifier of the card as a UUID object
+     * Gets the unique identifier of the card.
+     *
+     * @return the card's UUID.
      */
     public UUID getCardId() {
         return this.cardId;
     }
 
     /**
-     * Getter for the name of the card, which is a string that represents the name of the card for the view.
-     * This name can be used to display the card's name in the user interface and to identify the card in a human-readable way.
-     * @return the name of the card as a string
+     * Gets the display name of the card.
+     *
+     * @return the card name.
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Getter for the era of the card, which is an enum type that represents the era to which the card belongs.
-     * @return the era of the card as an Era enum value
+     * Gets the era to which the card belongs.
+     *
+     * @return the era of the card.
      */
     public Era getEra() {
         return era;
     }
 
     /**
-     * Getter for the minimum number of players required to use the card, which is an integer that represents the minimum number of players needed to include this card in the game.
-     * @return the minimum number of players required to use the card as an integer
+     * Gets the minimum number of players required to include this card in game.
+     * @return the minimum player count.
      */
     public int getMinNumPlayers() {
         return minNumPlayers;
     }
 
     /**
-     * Method that checks if the card is available for a given number of players. It returns true if the number of players is greater than or equal to the minimum number of players required by the card, and false otherwise.
-     * This method can be used to determine if a card can be included in the game based on the number of players participating.
-     * @param countPlayers the number of players in the game as an integer
+     * Checks if the card can be included in a game with the specified number of players.
+     *
+     * @param countPlayers the current number of players in the game.
      * @return true if the card is available for the given number of players, false otherwise
      */
     public boolean isAvailableForPlayerCount(int countPlayers){
