@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Model.Card;
+package it.polimi.ingsw.model.Card;
 
 public enum Era {
     ERA_1,

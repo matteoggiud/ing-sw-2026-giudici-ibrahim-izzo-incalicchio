@@ -1,5 +1,5 @@
 package it.polimi.ingsw.model.board;
-import it.polimi.ingsw.Model.Card.BuildingCard;
+import it.polimi.ingsw.model.Card.BuildingCard;
 
 import java.util.List;
 import java.util.ArrayList;
