@@ -6,12 +6,24 @@ import it.polimi.ingsw.model.exceptions.IllegalFoodArgumentException;
 import java.util.UUID;
 
 public class Player {
+    /** The player's id */
     private final UUID playerId;
+
+    /** The player's nickname */
     private final String nickname;
+
+    /** The player's totem */
     private Totem totem;
+
+    /** The player's deck of cards */
     private final PlayerDeck plauerDeck;
+
+    /** The player's current amount of prestige points */
     private int PP;
+
+    /** The player's current amount of food */
     private int food;
+
 
     /**
      * Constructs a new Player with the specified nickname and totem.
