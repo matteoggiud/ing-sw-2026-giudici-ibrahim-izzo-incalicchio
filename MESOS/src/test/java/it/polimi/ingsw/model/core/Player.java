@@ -5,6 +5,9 @@ import it.polimi.ingsw.model.exceptions.IllegalFoodArgumentException;
 
 import java.util.UUID;
 
+/**
+ * This class represents a player in the game.
+ */
 public class Player {
     /** The player's id */
     private final UUID playerId;
@@ -13,10 +16,10 @@ public class Player {
     private final String nickname;
 
     /** The player's totem */
-    private Totem totem;
+    private final Totem totem;
 
     /** The player's deck of cards */
-    private final PlayerDeck plauerDeck;
+    private final PlayerDeck playerDeck;
 
     /** The player's current amount of prestige points */
     private int PP;
