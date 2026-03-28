@@ -27,8 +27,18 @@ public abstract class Card {
      * @param name the name of the building card
      * @param era the era of the building card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
+     * @throws IllegalArgumentException if minNumPlayers is less than 2 or greater than 5 or some values are null
      */
-    public Card(String name, Era era, int minNumPlayers) {
+    public Card(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+        if (name == null) {
+            throw new IllegalArgumentException("Card name cannot be null.");
+        }
+        if (era == null) {
+            throw new IllegalArgumentException("Card era cannot be null.");
+        }
+        if (minNumPlayers < 2 || minNumPlayers > 5) {
+            throw new IllegalArgumentException("Minimum number of players must be between 2 and 5.");
+        }
         this.cardId = UUID.randomUUID();
         this.name = name;
         this.era = era;

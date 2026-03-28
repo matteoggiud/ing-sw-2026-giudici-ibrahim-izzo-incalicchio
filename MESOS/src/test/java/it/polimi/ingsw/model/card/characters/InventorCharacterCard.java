@@ -18,9 +18,13 @@ public class InventorCharacterCard extends CharacterCard {
      * @param era the era of the card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      * @param inventorType the specific type of Inventor this card represents (must not be null)
+     * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
-    public InventorCharacterCard(String name, Era era, int minNumPlayers, InventorType inventorType) {
+    public InventorCharacterCard(String name, Era era, int minNumPlayers, InventorType inventorType) throws IllegalArgumentException {
         super(name, era, minNumPlayers, CharacterType.INVENTOR);
+        if (inventorType == null)
+            throw new IllegalArgumentException("Inventor type must not be null");
+
         this.inventorType = inventorType;
     }
 

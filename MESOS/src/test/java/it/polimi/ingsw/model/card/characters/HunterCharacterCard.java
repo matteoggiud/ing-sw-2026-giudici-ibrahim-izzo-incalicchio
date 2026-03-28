@@ -18,8 +18,9 @@ public class HunterCharacterCard extends CharacterCard {
      * @param era the era of the card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      * @param isFoodIcon indicates whether this Hunter card has a food icon (true if it does, false otherwise)
+     * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
-    public HunterCharacterCard(String name, Era era, int minNumPlayers, boolean isFoodIcon) {
+    public HunterCharacterCard(String name, Era era, int minNumPlayers, boolean isFoodIcon) throws IllegalArgumentException {
         super(name, era, minNumPlayers, CharacterType.HUNTER);
         this.isFoodIcon = isFoodIcon;
     }

@@ -14,8 +14,9 @@ public class CharacterCard extends Card {
      * @param era the era to which the character card belongs
      * @param minNumPlayers the minimum number of players required to use this character card
      * @param type the specific type of the character card
+     * @throws IllegalArgumentException if numeric constraints are violated or something is null.
      */
-    public CharacterCard(String name, Era era, int minNumPlayers, CharacterType type) {
+    public CharacterCard(String name, Era era, int minNumPlayers, CharacterType type) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
         this.type = type;
     }

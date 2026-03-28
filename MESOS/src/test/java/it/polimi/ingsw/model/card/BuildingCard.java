@@ -29,9 +29,18 @@ public class BuildingCard extends Card {
      * @param effect the effect associated with the building (must not be null)
      * @throws IllegalArgumentException if numeric constraints are violated or if effect is null
      */
-    public BuildingCard(String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) {
+    public BuildingCard(String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
 
+        if (foodCost < 3 || foodCost > 9) {
+            throw new IllegalArgumentException("Food cost must be between 3 and 9.");
+        }
+        if (endGamePP < 2) {
+            throw new IllegalArgumentException("End game prestige points must be at least 2.");
+        }
+        if (effect == null) {
+            throw new IllegalArgumentException("Effect cannot be null.");
+        }
 
         this.foodCost = foodCost;
         this.endGamePP = endGamePP;
