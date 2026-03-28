@@ -19,7 +19,7 @@ public class BuildingCard extends Card {
     private final IBuildingEffect effect;
 
     /**
-     * Constructor a new BuildingCard.
+     * Constructs a new BuildingCard.
      *
      * @param name the name of the building card
      * @param era the era of the building card (Era I, II, III)

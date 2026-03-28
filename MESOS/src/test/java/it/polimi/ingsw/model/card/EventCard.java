@@ -49,26 +49,50 @@ public class EventCard extends Card {
         this.threshold = threshold;
     }
 
+    /**
+     * Indicates whether this event card is a special card.
+     * @return true if this event card is a special card, false otherwise.
+     */
     public boolean isSpecialCard() {
         return isSpecialCard;
     }
 
+    /**
+     * Gets the effect associated with this event card.
+     * @return the event effect of this event card.
+     */
     public IEventEffect getEventEffect() {
         return eventEffect;
     }
 
+    /**
+     * Gets the amount of resources gained.
+     * @return the amount of resources gained.
+     */
     public int getGained() {
         return gained;
     }
 
+    /**
+    * Gets the amount of resources lost (malus).
+    * @return the amount of resources lost.
+    */
     public int getMalus() {
         return malus;
     }
 
+    /**
+     * Gets the threshold value that determines who receives bonus or malus.
+     * @return the threshold value.
+     */
     public int getThreshold() {
         return threshold;
     }
 
+    /**
+     * Gets the specific type of the event card.
+     * @return the event card's type.
+     */
     public EventType getEventType() {
         return eventType;
     }
