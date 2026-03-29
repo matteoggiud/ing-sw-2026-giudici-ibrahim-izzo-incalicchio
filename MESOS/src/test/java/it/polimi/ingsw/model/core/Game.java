@@ -13,19 +13,32 @@ import java.util.UUID;
  */
 
 public class Game {
+
+    /** The game id is generated randomly using the UUID class, it is used to identify the game */
     private UUID gameId;
+
+    /** The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface */
     private GameState gameState;
+
+    /** The player count is the number of players in the game */
     private int playerCount;
+
+    /** The players list contains all the players in the game */
     private List<Player> players;
+
+    /** Board referes to the playground */
     private Board board;
+
+    /** TribeDeck are all the TribeCard */
     private TribeDeck tribeDeck;
+
+    /** BuildingDeck is a Map that associate every building with a particular Era */
     private Map<Era, BuildingDeck> buildingDeck;
 
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      * @param playerCount
      */
-
     public Game(int playerCount) {
         this.gameId = UUID.randomUUID();
         this.gameState = new InitState();
@@ -33,14 +46,14 @@ public class Game {
         this.players = new ArrayList<>();
         this.board = new Board();
         this.tribeDeck = new TribeDeck();
-        this.buildingDeck = new HashMap<>();
+        this.buildingDeck = new Map<Era, BuildingDeck>();
+
     }
 
     /**
      * This method is used to start the game, it changes the game state to the first phase of the game,
      * which is the placing totem phase.
      */
-
     public void startGame(){
         gameState = new PlacingTotemState();
     }
@@ -50,7 +63,6 @@ public class Game {
      * the ended state, the lobby state or the aborted state, otherwise it returns false.
      * @return
      */
-
     public boolean isStarted(){
         if((gameState instanceof InitState) || (gameState instanceof EndedStatus) || (gameState instanceof LobbyState) || (gameState instanceof AbortedState)){
             return false;
@@ -65,7 +77,6 @@ public class Game {
      * otherwise it returns false.
      * @return
      */
-
     public boolean isEnded(){
         if(gameState instanceof EndedStatus){
             return true;
@@ -77,7 +88,6 @@ public class Game {
     /**
      * WORK IN PROGRESS DO NOT TOUCH
      */
-
     public void advancePhase(){}
 
     public void advanceRound(){}
