@@ -6,9 +6,9 @@ package it.polimi.ingsw.model.effect.building;
  */
 
 public class AdditionalFood implements IBuildingEffect {
-    private int PPGained;
+    private int FoodGained;
     @Override
     public int ApplyEffect(int N_Subject) {
-        return 0;
+        return this.FoodGained;
     }
 }

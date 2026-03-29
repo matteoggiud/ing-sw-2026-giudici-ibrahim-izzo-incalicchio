@@ -25,7 +25,7 @@ public class ShamanCharacterCard extends CharacterCard {
      */
     public ShamanCharacterCard(String name, Era era, int minNumPlayers, int shamanStars) {
         super(name, era, minNumPlayers, CharacterType.SHAMAN);
-        if (shamanStars < 0)
+        if (shamanStars <= 0)
             throw new IllegalArgumentException("Shaman stars must be non-negative");
         this.shamanStars = shamanStars;
     }

@@ -6,7 +6,6 @@ package it.polimi.ingsw.model.effect.building;
  */
 
 public class DoubleInventorEffect implements IBuildingEffect {
-    private int FoodGained;
     @Override
     public int ApplyEffect(int N_Subject) {
         return N_Subject*2;

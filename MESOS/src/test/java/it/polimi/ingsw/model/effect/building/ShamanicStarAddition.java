@@ -8,6 +8,6 @@ public class ShamanicStarAddition implements IBuildingEffect {
     private int Star;
     @Override
     public int ApplyEffect(int N_Subject) {
-        return Star;
+        return this.Star;
     }
 }
