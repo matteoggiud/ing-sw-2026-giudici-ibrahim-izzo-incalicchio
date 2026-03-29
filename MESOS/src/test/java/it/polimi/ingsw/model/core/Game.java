@@ -39,7 +39,7 @@ public class Game {
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      * @param playerCount
      */
-    public Game(int playerCount) {
+    public Game(int playerCount) throws IllegalArgumentException {
         this.gameId = UUID.randomUUID();
         this.gameState = new InitState();
         this.playerCount = playerCount;
@@ -48,14 +48,23 @@ public class Game {
         this.tribeDeck = new TribeDeck();
         this.buildingDeck = new Map<Era, BuildingDeck>();
 
+        if((playerCount < 2) || (playerCount > 5)) {
+            throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
+        }
+
     }
 
     /**
      * This method is used to start the game, it changes the game state to the first phase of the game,
      * which is the placing totem phase.
      */
-    public void startGame(){
+    public void startGame() throws IllegalArgumentException {
         gameState = new PlacingTotemState();
+
+        if((this.players.size() < 2) || (this.players.size() > 5)){
+            throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
+        }
+
     }
 
     /**
@@ -94,7 +103,11 @@ public class Game {
 
     public void beginNewEra(){}
 
-    public void endGame(){}
+    public void endGame(){
+        if(this.gameState != EndedStatus) {
+            //throw new IllegalStateException("The game cannot be ended");
+        }
+    }
 
     public void getFinalRanking(){}
 
