@@ -38,7 +38,7 @@ public class Player {
         this.playerId = UUID.randomUUID();
         this.nickname = nickname;
         this.totem = totem;
-        this.plauerDeck = new PlayerDeck();
+        this.playerDeck = new PlayerDeck();
         this.PP = 0;
         this.food = 0;
     }
@@ -76,7 +76,7 @@ public class Player {
      * @return the player's deck.
      */
     public PlayerDeck getPlauerDeck() {
-        return plauerDeck;
+        return playerDeck;
     }
 
     /**
@@ -124,7 +124,7 @@ public class Player {
      * @throws IllegalFoodArgumentException if the player does not have enough food to buy the card after applying discounts.
      */
     public void canBuyBuildingCard(BuildingCard buildingCard) throws IllegalFoodArgumentException {
-        int foodDiscount = this.plauerDeck.totalFoodBuildingDiscount; // Calculate the total food discount from the player's deck
+        int foodDiscount = this.playerDeck.totalFoodBuildingDiscount; // Calculate the total food discount from the player's deck
 
         if(buildingCard.getFoodCost() - foodDiscount > this.food) { // If the player doesn't have enough food to buy the card
             throw new IllegalFoodArgumentException("Not enough food to buy this building card.");
