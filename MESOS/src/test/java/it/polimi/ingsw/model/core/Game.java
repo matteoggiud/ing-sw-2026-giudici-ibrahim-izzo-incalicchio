@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.core;
 
+import it.polimi.ingsw.model.card.Era;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

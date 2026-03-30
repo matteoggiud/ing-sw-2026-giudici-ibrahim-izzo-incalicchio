@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model.core;
 
+import it.polimi.ingsw.model.board.CardRow;
+import it.polimi.ingsw.model.board.OfferTrack;
+import it.polimi.ingsw.model.board.TurnOrderBox;
+
 /**
  *
  * Represents the game board, which consists of the offer track, two rows of cards (upper and lower), and the turn order box.
