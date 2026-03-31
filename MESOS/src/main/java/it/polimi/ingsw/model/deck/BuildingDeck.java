@@ -1,9 +1,7 @@
 package it.polimi.ingsw.model.deck;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 import it.polimi.ingsw.model.card.*;
 
@@ -15,7 +13,7 @@ public class BuildingDeck {
     /**
      * The building deck is a map that associates each era with a list of building cards. Each era has its own list of building cards, and players can only draw building cards from the current era.
      */
-    private final EnumMap<Era, LinkedList<BuildingCard>> buildingDeck;
+    private final HashMap<Era, LinkedList<BuildingCard>> buildingDeck;
 
     /**
      * The current era of the game, which determines which building cards are available for players to draw.
@@ -26,7 +24,7 @@ public class BuildingDeck {
      * Constructor for the BuildingDeck class, it initializes the building deck with an empty map of eras and building cards.
      */
     public BuildingDeck() {
-        this.buildingDeck = new EnumMap<>();
+        this.buildingDeck = new HashMap<>();
         for(Era era : Era.values()){
             this.buildingDeck.put(era, new LinkedList<>());
         }
