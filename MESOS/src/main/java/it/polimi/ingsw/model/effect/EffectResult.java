@@ -8,22 +8,22 @@ public class EffectResult {
     /**
      * The changes in the player's resources and points as a result of applying the effect.
      */
-    private int foodDelta;
+    private final int foodDelta;
 
     /**
      * The change in the player's PP score as a result of applying the effect.
      */
-    private int ppDelta;
+    private final int ppDelta;
 
     /**
      * The change in the player's star score as a result of applying the effect.
      */
-    private int starDelta;
+    private final int starDelta;
 
     /**
      * The change in the player's card count as a result of applying the effect.
      */
-    private int cardDelta;
+    private final int cardDelta;
 
     /**
      * Constructor for the EffectResult class.
