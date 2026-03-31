@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.core;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.state.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class Game {
     /**
      * The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface
      */
-    private GameState gameState;
+    private IGameState gameState;
 
     /**
      * The player count is the number of players in the game
@@ -95,7 +96,7 @@ public class Game {
      *
      * @return The GameState
      */
-    public GameState getGameState() {
+    public IGameState getGameState() {
         return gameState;
     }
 
@@ -133,6 +134,19 @@ public class Game {
      */
     public Era getCurrentEra() {
         return this.currentEra;
+    }
+
+    /**
+     * Sets the game state to the specified game state. This method is used to update the game state during the game.
+     *
+     * @param gameState the new game state to set
+     * @throws IllegalArgumentException if the provided game state is null
+     */
+    public void setGameState(IGameState gameState) throws IllegalArgumentException {
+        if (gameState == null) {
+            throw new IllegalArgumentException("The game state cannot be null");
+        }
+        this.gameState = gameState;
     }
 
     /**
