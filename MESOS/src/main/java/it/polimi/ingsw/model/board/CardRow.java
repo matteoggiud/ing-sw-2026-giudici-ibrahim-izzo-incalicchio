@@ -87,4 +87,8 @@ public class CardRow {
     public void addBuildingRowFrom(BuildingDeck buildingDeck) {
         buildingRow.add(buildingDeck);
     }
+
+    public void transferTribeRowFrom(CardRow other) {
+        this.tribeRow.transferTribeCardsFrom(other.getTribeRow());
+    }
 }

@@ -179,29 +179,21 @@ public class Game {
         }
     }
 
-    /**
-     * This method is used to begin a new era, it changes the current era to the next one.
-     *
-     * @throws IllegalStateException if the game is already in the last era (Era III)
-     */
-    public void beginNewEra() throws IllegalStateException {
-        if (this.currentEra == Era.ERA_3) {
-            throw new IllegalStateException("The game is already in the last era");
-        }
-        this.currentEra = Era.values()[this.currentEra.ordinal() + 1];
+    public void transferUpperTribeToLower(){
+        board.transferUpperTribeToLower();
     }
 
     /**
      * This method is used to refill the upper row of the board with new tribe cards.
      * It handles the transition between eras.
      */
-    public void refillUpperRow() {
-        for (int i = 0; i < 9; i++) { // DA SISTEMARE
+    public void refillUpperRow(int upperRowSize) {
+        for (int i = 0; i < upperRowSize; i++) {
             TribeCard tribeCard = tribeDeck.draw();
 
             board.addTribeUpperRow(tribeCard);
             if (tribeCard.getEra() != currentEra) {
-                changeEra(Era.values()[currentEra.ordinal() + 1]);
+                changeEra(tribeCard.getEra());
             }
 
         }

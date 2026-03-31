@@ -68,4 +68,8 @@ public class Board {
     public void placeInUpperBuildingRow(BuildingDeck buildingDeck) {
         upperRow.addBuildingRowFrom(buildingDeck);
     }
+
+    public void transferUpperTribeToLower() {
+        lowerRow.transferTribeRowFrom(upperRow);
+    }
 }

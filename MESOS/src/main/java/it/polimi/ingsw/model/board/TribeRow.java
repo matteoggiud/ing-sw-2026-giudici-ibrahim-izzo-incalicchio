@@ -75,12 +75,12 @@ public class TribeRow {
     }
 
     /**
-     * Transfers the tribe cards from this tribe row to another tribe row.
+     * Transfers the tribe cards from another tribe row to this tribe row.
      *
-     * @param other the other tribe row to which the tribe cards will be transferred
+     * @param other the other tribe row from which the tribe cards will be transferred.
      */
-    public void transferTribeCardsTo(TribeRow other) {
-        other.tribeCards.addAll(this.tribeCards);
+    public void transferTribeCardsFrom(TribeRow other) {
+        this.tribeCards.addAll(other.tribeCards);
         this.clear();
     }
 
