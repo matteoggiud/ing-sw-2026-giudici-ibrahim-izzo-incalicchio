@@ -14,13 +14,26 @@ public class TribeDeck {
      * We used the linked list so that the draw has a
      * complexity of O(1), meanwhile the ArrayList O(n)
      */
-    private LinkedList<TribeCard> TribeDeck;
+    private final LinkedList<TribeCard> tribeDeck;
 
     /**
      * Constructor for the TribeDeck class, it initializes the tribe deck with an empty list of tribe cards.
      */
     public TribeDeck() {
-        this.TribeDeck = new LinkedList<>();
+        this.tribeDeck = new LinkedList<>();
+    }
+
+    /**
+     * Constructs a new TribeDeck with a given list of tribe cards.
+     *
+     * @param tribeDeck the list of tribe cards to initialize the deck with (must not be null)
+     * @throws IllegalArgumentException if the provided list of tribe cards is null
+     */
+    public TribeDeck(LinkedList<TribeCard> tribeDeck) throws IllegalArgumentException {
+        if (tribeDeck == null || tribeDeck.isEmpty()) {
+            throw new IllegalArgumentException("TribeDeck cannot be null.");
+        }
+        this.tribeDeck = tribeDeck;
     }
 
     /**
@@ -29,7 +42,8 @@ public class TribeDeck {
      * @throws IllegalStateException if the tribe deck is empty and there are no cards to draw.
      */
     public TribeCard draw() throws IllegalStateException {
-        if(this.TribeDeck.isEmpty()){ throw new IllegalStateException("TribeDeck is empty"); }
-        return this.TribeDeck.removeFirst();
+        if(this.tribeDeck.isEmpty()){ throw new IllegalStateException("TribeDeck is empty"); }
+        return this.tribeDeck.removeFirst();
     }
+
 }
