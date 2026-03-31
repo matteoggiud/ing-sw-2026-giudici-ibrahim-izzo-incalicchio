@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 
 import it.polimi.ingsw.model.card.TribeCard;
+import it.polimi.ingsw.model.card.*;
 
 /**
  * This class represents the tribe row of the board, which is composed by a list of tribe cards.
@@ -12,7 +13,7 @@ import it.polimi.ingsw.model.card.TribeCard;
  * to get the list of character cards and event cards, and to transfer the tribe cards to another tribe row.
  */
 public class TribeRow{
-    private List<TribeCard> tribeCards = new ArrayList<>();
+    private ArrayList<TribeCard> tribeCards = new ArrayList<>();
 
 
     /**

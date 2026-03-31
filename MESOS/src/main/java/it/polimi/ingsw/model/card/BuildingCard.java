@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.effect.building.IBuildingEffect;
  * Building cards provide end-game prestige points and special effects,
  * and require a specific food cost to be built.
  */
-public class BuildingCard extends Card {
+public class BuildingCard extends TribeCard {
 
     /** The amount of food required to build this card. */
     private final int foodCost;
