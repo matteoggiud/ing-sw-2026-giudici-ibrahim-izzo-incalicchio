@@ -36,5 +36,11 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
+    default void addPlayer(Game game, Player player) {};
 
+    default void removePlayer(Game game, Player player) {};
+
+    default void InitMethods(Game game) {};
+
+    default void resolveAction(){};
 }

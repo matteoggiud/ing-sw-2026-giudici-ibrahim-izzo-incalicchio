@@ -66,7 +66,7 @@ public class Game {
      */
     public Game(int playerCount) throws IllegalArgumentException {
         this.gameId = UUID.randomUUID();
-        this.gameState = new InitState();
+        this.gameState = new LobbyState();
         this.playerCount = playerCount;
         this.players = new ArrayList<>();
         this.board = new Board();
@@ -171,7 +171,7 @@ public class Game {
      * @return True if the game has started, false otherwise
      */
     public boolean isStarted() {
-        if ((gameState instanceof InitState) || (gameState instanceof EndedStatus) || (gameState instanceof LobbyState) || (gameState instanceof AbortedState)) {
+        if ((gameState instanceof LobbyState) || (gameState instanceof EndedState) || (gameState instanceof LobbyState) || (gameState instanceof AbortedState)) {
             return false;
         } else {
             return true;
@@ -186,7 +186,7 @@ public class Game {
      * @return True if the game has ended, false otherwise
      */
     public boolean isEnded() {
-        if (gameState instanceof EndedStatus) {
+        if (gameState instanceof EndedState) {
             return true;
         } else {
             return false;
@@ -235,6 +235,15 @@ public class Game {
     }
 
     /**
+     * This method checks if the current round is the last round of the game by verifying if the tribe deck is empty.
+     *
+     * @return true if the list is empty, false otherwise
+     */
+    public boolean isLastRound(){
+        return tribeDeck.isEmpty();
+    }
+
+    /**
      * WORK IN PROGRESS DO NOT TOUCH
      */
     public void advancePhase() { // da portare nel game state
@@ -249,7 +258,7 @@ public class Game {
      * The rest will be managed by the state pattern.
      */
     public void endGame() {
-        this.gameState = new EndedStatus();
+        this.gameState = new EndedState();
     }
 
     public void getFinalRanking() throws IllegalStateException { // da portare nel game state

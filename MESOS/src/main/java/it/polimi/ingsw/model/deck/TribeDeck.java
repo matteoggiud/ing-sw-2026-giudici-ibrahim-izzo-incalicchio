@@ -32,4 +32,8 @@ public class TribeDeck {
         if(this.TribeDeck.isEmpty()){ throw new IllegalStateException("TribeDeck is empty"); }
         return this.TribeDeck.removeFirst();
     }
+
+    public boolean isEmpty(){
+        return this.TribeDeck.isEmpty();
+    }
 }
