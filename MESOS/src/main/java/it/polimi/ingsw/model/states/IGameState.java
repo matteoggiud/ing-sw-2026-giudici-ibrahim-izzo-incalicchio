@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.state;
+package it.polimi.ingsw.model.states;
 
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.core.Game;
@@ -43,4 +43,5 @@ public interface IGameState {
     default void InitMethods(Game game) {};
 
     default void resolveAction(){};
+
 }

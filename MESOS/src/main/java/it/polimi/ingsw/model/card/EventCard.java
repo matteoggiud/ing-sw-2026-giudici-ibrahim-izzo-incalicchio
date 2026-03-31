@@ -10,7 +10,7 @@ public class EventCard extends TribeCard {
     /**
      * Indicates whether this event card is a special card (only 2 per game), in that case they must be placed at the end of the deck.
      */
-    private final boolean isSpecialCard;
+    private final boolean isFinalEvent;
 
     /**
      * The specific type of the event card (i.e., HUNT, SHAMANIC_RITUAL, etc.).
@@ -44,7 +44,7 @@ public class EventCard extends TribeCard {
      * @param name          the name of the event card
      * @param era           the era to which the event card belongs
      * @param minNumPlayers the minimum number of players required to use this event card
-     * @param isSpecialCard indicates whether this event card is a special card
+     * @param isFinalEvent indicates whether this event card is a special card
      * @param eventType     the specific type of the event card
      * @param eventEffect   the effect associated with this event card
      * @param gained        the amount of resources gained
@@ -52,7 +52,7 @@ public class EventCard extends TribeCard {
      * @param threshold     the threshold value that determines who receives bonus or malus
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
-    public EventCard(String name, Era era, int minNumPlayers, boolean isSpecialCard, EventType eventType, IEventEffect eventEffect, int gained, int malus, int threshold) throws IllegalArgumentException {
+    public EventCard(String name, Era era, int minNumPlayers, boolean isFinalEvent, EventType eventType, IEventEffect eventEffect, int gained, int malus, int threshold) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
 
         if (eventType == null)
@@ -70,7 +70,7 @@ public class EventCard extends TribeCard {
         if (threshold < 0)
             throw new IllegalArgumentException("threshold cannot be negative");
 
-        this.isSpecialCard = isSpecialCard;
+        this.isFinalEvent = isFinalEvent;
         this.eventType = eventType;
         this.eventEffect = eventEffect;
         this.gained = gained;
@@ -83,8 +83,8 @@ public class EventCard extends TribeCard {
      *
      * @return true if this event card is a special card, false otherwise.
      */
-    public boolean isSpecialCard() {
-        return isSpecialCard;
+    public boolean isFinalEvent() {
+        return isFinalEvent;
     }
 
     /**

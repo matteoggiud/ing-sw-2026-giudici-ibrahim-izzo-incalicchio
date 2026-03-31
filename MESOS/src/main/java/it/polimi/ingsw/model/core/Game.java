@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.core;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.*;
-import it.polimi.ingsw.model.state.*;
+import it.polimi.ingsw.model.states.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class Game {
     /**
      * The game id is generated randomly using the UUID class, it is used to identify the game
      */
-    private UUID gameId;
+    private final UUID gameId;
 
     /**
      * The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface
@@ -29,29 +29,29 @@ public class Game {
     private IGameState gameState;
 
     /**
-     * The player count is the number of players in the game
+     * The number of players.
      */
-    private int playerCount;
+    private int numberOfPlayers;
 
     /**
      * The players list contains all the players in the game
      */
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players;
 
     /**
      * Board referes to the playground
      */
-    private Board board;
+    private final Board board;
 
     /**
      * TribeDeck are all the TribeCard
      */
-    private TribeDeck tribeDeck;
+    private final TribeDeck tribeDeck;
 
     /**
      * BuildingDeck is a Map that associate every building with a particular Era
      */
-    private HashMap<Era, BuildingDeck> buildingDeck;
+    private final HashMap<Era, BuildingDeck> buildingDeck;
 
     /**
      * The current era in which the game is
@@ -59,24 +59,32 @@ public class Game {
     private Era currentEra;
 
     /**
+     * This boolean flag indicates whether the last round of the game has been triggered.
+     */
+    private boolean lastRoundTriggered;
+
+    /**
+     * The rule set of the game
+     */
+    private IGameRuleSet ruleSet;
+
+    /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      *
      * @param playerCount
      * @throws IllegalArgumentException if the player count is less than 2 or greater than 5
      */
-    public Game(int playerCount) throws IllegalArgumentException {
+    public Game() throws IllegalArgumentException {
         this.gameId = UUID.randomUUID();
         this.gameState = new LobbyState();
-        this.playerCount = playerCount;
+        this.numberOfPlayers = 0;
         this.players = new ArrayList<>();
         this.board = new Board();
         this.tribeDeck = new TribeDeck();
         this.buildingDeck = new HashMap<Era, BuildingDeck>();
         this.currentEra = Era.ERA_1;
-
-        if ((playerCount < 2) || (playerCount > 5)) {
-            throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
-        }
+        this.lastRoundTriggered = false;
+        this.ruleSet = new StandardRuleSet();
 
     }
 
@@ -100,14 +108,10 @@ public class Game {
         return gameState;
     }
 
-    /**
-     * This method is used to get the player count, it returns the player count of the game.
-     *
-     * @return The PlayerCount
-     */
-    public int getPlayerCount() {
-        return this.playerCount;
+    public int getNumberOfPlayers() {
+        return this.numberOfPlayers;
     }
+
 
     /**
      * This method is used to get the players list, it returns the players list of the game.
@@ -137,6 +141,19 @@ public class Game {
     }
 
     /**
+     * Gets the lastRoundTriggered flag, which indicates whether the last round of the game has been triggered.
+     *
+     * @return true if the last round has been triggered, false otherwise.
+     */
+    public boolean isLastRoundTriggered() {
+        return lastRoundTriggered;
+    }
+
+    public IGameRuleSet getRuleSet() {
+        return ruleSet;
+    }
+
+    /**
      * Sets the game state to the specified game state. This method is used to update the game state during the game.
      *
      * @param gameState the new game state to set
@@ -150,6 +167,15 @@ public class Game {
     }
 
     /**
+     * Sets the lastRoundTriggered flag to the specified value.
+     *
+     * @param lastRoundTriggered the new value for the lastRoundTriggered flag
+     */
+    public void setLastRoundTriggered(boolean lastRoundTriggered) {
+        this.lastRoundTriggered = lastRoundTriggered;
+    }
+
+    /**
      * This method is used to start the game, it changes the game state to the first phase of the game,
      * which is the placing totem phase.
      *
@@ -158,7 +184,7 @@ public class Game {
     public void startGame() throws IllegalArgumentException {
         gameState = new PlacingTotemState();
 
-        if ((this.players.size() < 2) || (this.players.size() > 5)) {
+        if ((this.players.size() < ruleSet.getMinPlayers()) || (this.players.size() > ruleSet.getMaxPlayers())) {
             throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
         }
 
@@ -193,7 +219,7 @@ public class Game {
         }
     }
 
-    public void transferUpperTribeToLower(){ // da portare nel game state
+    public void transferUpperTribeToLower() { // da portare nel game state
         board.transferUpperTribeToLower();
     }
 
@@ -239,7 +265,7 @@ public class Game {
      *
      * @return true if the list is empty, false otherwise
      */
-    public boolean isLastRound(){
+    public boolean isLastRound() {
         return tribeDeck.isEmpty();
     }
 
@@ -263,7 +289,7 @@ public class Game {
 
     public void getFinalRanking() throws IllegalStateException { // da portare nel game state
 
-        if (!(this.gameState instanceof FinalScoreState)) {
+        if (!(this.gameState instanceof ComputeFinalScoreState)) {
             throw new IllegalStateException("The game state is not FinalScoreState");
         }
 

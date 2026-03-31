@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.state;
+package it.polimi.ingsw.model.states;
 
 import it.polimi.ingsw.model.core.Game;
 
