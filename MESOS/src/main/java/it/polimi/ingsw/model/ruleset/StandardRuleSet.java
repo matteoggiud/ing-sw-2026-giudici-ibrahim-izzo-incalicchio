@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.ruleset;
 
+import it.polimi.ingsw.model.board.OFFER_BOX_ID;
+import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 
 import java.util.ArrayList;
@@ -109,7 +111,48 @@ public class StandardRuleSet implements IGameRuleSet {
         return slots;
     }
 
-    //DA FARE: REGOLA PER TESSERE OFFERTE
+    /**
+     * Creates and initializes the list of OfferBoxes for the OfferTrack based on the player count.
+     * The boxes are added in strict alphabetical order (A to G) to represent their position on the track.
+     *
+     * @param numPlayers the current number of players.
+     * @return an ordered list of initialized OfferBox objects.
+     */
+    @Override
+    public ArrayList<OfferBox> createOfferBoxes(int numPlayers) {
+        validatePlayerCount(numPlayers);
+
+        ArrayList<OfferBox> boxes = new ArrayList<>();
+
+        // TESSERA A: Solo per 5 giocatori.
+        if (numPlayers == 5) {
+            boxes.add(new OfferBox(OFFER_BOX_ID.A, 3, 0, 0));
+        }
+
+        // TESSERA B: Sempre presente.
+        boxes.add(new OfferBox(OFFER_BOX_ID.B, 0, 0, 1));
+
+        // TESSERA C: Sempre presente.
+        boxes.add(new OfferBox(OFFER_BOX_ID.C, 0, 1, 0));
+
+        // TESSERA D: Solo per 3+ giocatori.
+        if (numPlayers >= 3) {
+            boxes.add(new OfferBox(OFFER_BOX_ID.D, 0, 0, 2));
+        }
+
+        // TESSERA E: Sempre presente.
+        boxes.add(new OfferBox(OFFER_BOX_ID.E, 0, 1, 1));
+
+        // TESSERA F: Sempre presente.
+        boxes.add(new OfferBox(OFFER_BOX_ID.F, 0, 2, 0));
+
+        // TESSERA G: Solo per 4+ giocatori.
+        if (numPlayers >= 4) {
+            boxes.add(new OfferBox(OFFER_BOX_ID.G, 0, 2, 1));
+        }
+
+        return boxes;
+    }
 
     //DA FARE: REGOLA PER COSTRUZIONE DECK
 

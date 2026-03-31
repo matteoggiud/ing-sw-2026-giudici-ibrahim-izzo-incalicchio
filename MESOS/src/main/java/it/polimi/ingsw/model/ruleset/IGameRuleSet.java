@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.ruleset;
 
+import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 
 import java.util.ArrayList;
@@ -28,6 +29,13 @@ public interface IGameRuleSet {
      * @throws IllegalArgumentException if the player count is invalid.
      */
     ArrayList<TurnOrderSlot> createTurnOrderSlots(int numPlayers);
+
+    /**
+     * Creates and initializes the list of OfferBoxes for the OfferTrack based on the player count.
+     * @param numPlayers the current number of players.
+     * @return an ordered list of initialized OfferBox objects.
+     */
+    ArrayList<OfferBox> createOfferBoxes(int numPlayers);
 
     /**
      * Gets the maximum number of players allowed in a game.
