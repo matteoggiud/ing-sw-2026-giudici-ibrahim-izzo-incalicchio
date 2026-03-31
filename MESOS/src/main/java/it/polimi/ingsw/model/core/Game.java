@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.core;
 
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.deck.*;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -25,7 +26,7 @@ public class Game {
     private int playerCount;
 
     /** The players list contains all the players in the game */
-    private List<Player> players;
+    private ArrayList<Player> players;
 
     /** Board referes to the playground */
     private Board board;
@@ -34,7 +35,7 @@ public class Game {
     private TribeDeck tribeDeck;
 
     /** BuildingDeck is a Map that associate every building with a particular Era */
-    private Map<Era, BuildingDeck> buildingDeck;
+    private HashMap<Era, BuildingDeck> buildingDeck;
 
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
@@ -49,7 +50,7 @@ public class Game {
         this.players = new ArrayList<>();
         this.board = new Board();
         this.tribeDeck = new TribeDeck();
-        this.buildingDeck = new Map<Era, BuildingDeck>();
+        this.buildingDeck = new HashMap<Era, BuildingDeck>();
 
         if((playerCount < 2) || (playerCount > 5)) {
             throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
@@ -85,7 +86,7 @@ public class Game {
      *
      * @return The Players
      */
-    public List<Player> getPlayers() {return this.players;}
+    public ArrayList<Player> getPlayers() {return this.players;}
 
     /**
      * This method is used to get the board, it returns the board of the game.

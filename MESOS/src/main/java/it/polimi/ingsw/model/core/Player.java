@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.core;
 
 import it.polimi.ingsw.model.card.BuildingCard;
 import it.polimi.ingsw.model.exceptions.IllegalFoodArgumentException;
+import it.polimi.ingsw.model.deck.*;
 
 import java.util.UUID;
 
@@ -75,7 +76,7 @@ public class Player {
      *
      * @return the player's deck.
      */
-    public PlayerDeck getPlauerDeck() {
+    public PlayerDeck getPlayerDeck() {
         return playerDeck;
     }
 

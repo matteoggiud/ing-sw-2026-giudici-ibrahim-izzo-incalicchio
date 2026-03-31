@@ -1,5 +1,4 @@
 package it.polimi.ingsw.model.board;
-
 import java.util.List;
 import java.util.ArrayList;
 

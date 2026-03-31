@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.card;
 /**
  * This class represents a character card, which is a type of card in the game.
  */
-public class CharacterCard extends Card {
+public class CharacterCard extends TribeCard {
 
     /** The specific type of the character card (HUNTER, GATHERER, SHAMAN, exc.). */
     private final CharacterType type;
