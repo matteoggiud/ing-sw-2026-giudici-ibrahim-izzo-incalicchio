@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.board.CardRow;
 import it.polimi.ingsw.model.board.OfferTrack;
 import it.polimi.ingsw.model.board.TurnOrderBox;
 
+import java.util.ArrayList;
+
 /**
  *
  * Represents the game board, which consists of the offer track, two rows of cards (upper and lower), and the turn order box.
@@ -26,10 +28,10 @@ public class Board {
      * Constructs a new Board with an offer track, two card rows, and a turn order box.
      */
     public Board() {
-        this.offerTrack = new OfferTrack();
+        this.offerTrack = new OfferTrack(new ArrayList<>());
         this.upperRow = new CardRow();
         this.lowerRow = new CardRow();
-        this.turnOrderBox = new TurnOrderBox();
+        this.turnOrderBox = new TurnOrderBox(new ArrayList<>());
     }
 
 

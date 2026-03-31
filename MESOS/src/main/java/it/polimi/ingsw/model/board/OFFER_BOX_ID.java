@@ -5,6 +5,6 @@ package it.polimi.ingsw.model.board;
  * Each offer box is labeled with a letter from A to G.
  */
 
-public enum OfferBoxId {
+public enum OFFER_BOX_ID {
     A, B, C, D, E, F, G
 }

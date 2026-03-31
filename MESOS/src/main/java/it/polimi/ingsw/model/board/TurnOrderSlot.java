@@ -3,44 +3,51 @@ import it.polimi.ingsw.model.core.Player;
 
 /**
  * Represents a slot in the turn order track.
- * Each slot has an index, a food bonus, and can hold at most one player.
  */
-
 public class TurnOrderSlot {
-    private final int index;
+
+    //private final int index;
+    /** The bonus of food provided by this slot, which can be negative or positive */
     private final int foodBonus;
+
+    /** The player currently placed in this slot, or null if the slot is free */
     private Player placedPlayer;
 
     /**
+     * Constructs a TurnOrderSlot with the specified food bonus.
      *
-     * @param index the position of the slot in the turn order track (must be non-negative)
      * @param foodBonus the amount of food bonus provided by this slot (can be zero or positive)
      */
-
-    public TurnOrderSlot(int index, int foodBonus) {
+    public TurnOrderSlot(int foodBonus) {
+       /*
         if (index < 0) {
             throw new IllegalArgumentException("index cannot be negative");
         }
         this.index = index;
+        */
         this.foodBonus = foodBonus;
         this.placedPlayer = null;
     }
 
     /**
+     * Gets the food bonus provided by this slot.
      *
-     * @return the index of the slot, the food bonus provided by this slot,
-     * and the player currently placed in this slot (or null if the slot is free)
+     * @return the amount of food bonus provided by this slot
      */
-
-    public int getIndex() { return index; }
     public int getFoodBonus() { return foodBonus; }
+
+    /**
+     * Gets the player currently placed in this slot, or null if the slot is free.
+     *
+     * @return the player currently placed in this slot, or null if the slot is free
+     */
     public Player getPlacedPlayer() { return placedPlayer; }
 
     /**
+     * Checks if the slot is free.
      *
      * @return true if the slot is free, false otherwise
      */
-
     public boolean isFree() {
         return placedPlayer == null;
     }
@@ -49,17 +56,18 @@ public class TurnOrderSlot {
      *
      * @param player the player to place in this slot (must not be null)
      */
+    public void placePlayer(Player player) throws IllegalArgumentException, IllegalStateException {
+        if (player == null) throw new IllegalArgumentException("Player cannot be null");
+        if (!isFree()) throw new IllegalStateException("TurnOrderSlot occupied");
 
-    public void placePlayer(Player player) {
-        if (!isFree()) throw new IllegalStateException("TurnOrderSlot occupato");
         this.placedPlayer = player;
     }
 
     /**
+     * Removes the player currently placed in this slot.
      *
      * @return the player removed from this slot (or null if the slot was already free)
      */
-
     public Player removePlayer() {
         Player removed = placedPlayer;
         placedPlayer = null;

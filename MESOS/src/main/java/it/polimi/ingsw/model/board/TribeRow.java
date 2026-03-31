@@ -1,22 +1,26 @@
 package it.polimi.ingsw.model.board;
+
 import java.util.List;
 import java.util.ArrayList;
 
 
+import it.polimi.ingsw.model.card.CharacterCard;
+import it.polimi.ingsw.model.card.EventCard;
 import it.polimi.ingsw.model.card.TribeCard;
 
 /**
- * This class represents the tribe row of the board, which is composed by a list of tribe cards.
- * The tribe row can contain both character cards and event cards,
- * which are both subclasses of tribe card. The tribe row has methods to add and remove tribe cards,
- * to get the list of character cards and event cards, and to transfer the tribe cards to another tribe row.
+ * This class represents the tribe row of the board.
  */
-public class TribeRow{
-    private List<TribeCard> tribeCards = new ArrayList<>();
+public class TribeRow {
+    /**
+     * List of tribe cards in the tribe row.
+     */
+    private final List<TribeCard> tribeCards = new ArrayList<>();
 
 
     /**
      * Adds a tribe card to the tribe row.
+     *
      * @param card the tribe card to be added to the tribe row
      */
     public void add(TribeCard card) {
@@ -25,6 +29,7 @@ public class TribeRow{
 
     /**
      * Removes a tribe card from the tribe row.
+     *
      * @param card the tribe card to be removed from the tribe row
      */
     public void remove(TribeCard card) {
@@ -32,43 +37,59 @@ public class TribeRow{
     }
 
     /**
+     * Clears all tribe cards from the tribe row.
+     */
+    public void clear() {
+        this.tribeCards.clear();
+    }
+
+    /**
      * Gets the list of character cards in the tribe row.
+     *
      * @return the list of character cards in the tribe row
      */
     public List<CharacterCard> getCharacterCards() {
-        List<CharacterCard> characters = new ArrayList<>();
-               for (int i = 0; i < tribeCards.size(); i++) {
-                    TribeCard c = tribeCards.get(i);
-                    if (c instanceof CharacterCard) {
-                        characters.add((CharacterCard) c);
-                    }
-        }
+        ArrayList<CharacterCard> characters = new ArrayList<>();
+
+        for (TribeCard tribeCard : this.tribeCards)
+            if (tribeCard instanceof CharacterCard characterCard) {
+                characters.add(characterCard);
+            }
+
         return characters;
     }
 
     /**
      * Gets the list of event cards in the tribe row.
+     *
      * @return the list of event cards in the tribe row
      */
     public List<EventCard> getEventCards() {
-        List<EventCard> events = new ArrayList<>();
-        for (int i = 0; i < tribeCards.size(); i++) {
-            TribeCard c = tribeCards.get(i);
-            if (c instanceof EventCard) {
-                events.add((EventCard) c);
+        ArrayList<EventCard> events = new ArrayList<>();
+
+        for (TribeCard tribeCard : this.tribeCards) {
+            if (tribeCard instanceof EventCard eventCard) {
+                events.add(eventCard);
             }
         }
         return events;
     }
 
     /**
-     *  Transfers the tribe cards from this tribe row to another tribe row.
+     * Transfers the tribe cards from this tribe row to another tribe row.
+     *
      * @param other the other tribe row to which the tribe cards will be transferred
      */
     public void transferTribeCardsTo(TribeRow other) {
-        for (int i = 0; i < this.tribeCards.size(); i++) {
-            other.add(this.tribeCards.get(i));
-        }
-        this.tribeCards.clear();
+        other.tribeCards.addAll(this.tribeCards);
+        this.clear();
+    }
+
+    /**
+     * Copies the tribe cards from this tribe row to another tribe row.
+     * @param other the other tribe row to which the tribe cards will be copied
+     */
+    public void copyTribeCardsTo(TribeRow other) {
+        other.tribeCards.addAll(this.tribeCards);
     }
 }

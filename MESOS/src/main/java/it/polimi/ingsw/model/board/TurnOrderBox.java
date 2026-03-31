@@ -1,52 +1,43 @@
 package it.polimi.ingsw.model.board;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents the turn order box in the game,
- * which contains slots for players to determine their turn order and food bonus/malus.
+ * Represents the turn order box in the game.
  */
-
 public class TurnOrderBox {
-    private final List<TurnOrderSlot> slots;
-    private final int numPlayers;
+    /** The list of turn order slots in the box. */
+    private final ArrayList<TurnOrderSlot> slots;
 
     /**
+     * Constructs a TurnOrderBox with the specified list of turn order slots.
      *
      * @param slots the list of turn order slots in the box
-     * @param numPlayers the number of players in the game, which determines how many slots are needed
      */
+    public TurnOrderBox(List<TurnOrderSlot> slots) throws IllegalArgumentException {
+        if (slots == null || slots.size() < 2 || slots.size() > 5)
+            throw new IllegalArgumentException("TurnOrderBox must have between 2 and 5 slots and cannot be null");
 
-    public TurnOrderBox(List<TurnOrderSlot> slots, int numPlayers) {
         this.slots = new ArrayList<>(slots);
-        this.numPlayers = numPlayers;
     }
 
     /**
+     * Gets the list of turn order slots in the box.
      *
-     * @return an unmodifiable list of the turn order slots in the box, to prevent external modification
+     * @return the list of the turn order slots in the box
      */
-
-    public List<TurnOrderSlot> getSlots() {
-        return Collections.unmodifiableList(slots);
+    public ArrayList<TurnOrderSlot> getSlots() {
+        return new ArrayList<>(slots);
     }
 
     /**
+     * Gets the first free slot in the box.
      *
-     * @return the number of players of the box
+     * @return the first free slot in the box
+     * @throws IllegalStateException if there are no free slots available
      */
-    public int getNumPlayers() {
-        return numPlayers;
-    }
-
-    /**
-     *
-     * @return the first free slot in the box, or null if all slots are occupied
-     */
-
-    public TurnOrderSlot getFirstFreeSlot() {
-        return slots.stream().filter(TurnOrderSlot::isFree).findFirst().orElse(null);
+    public TurnOrderSlot getFirstFreeSlot() throws IllegalArgumentException {
+        return slots.stream().filter(TurnOrderSlot::isFree).findFirst().orElseThrow(() -> new IllegalStateException("No free slots available in the TurnOrderBox"));
     }
 }
