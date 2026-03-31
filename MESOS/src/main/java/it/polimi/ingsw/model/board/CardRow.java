@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.board;
 
+import it.polimi.ingsw.model.card.TribeCard;
+import it.polimi.ingsw.model.deck.BuildingDeck;
+
 /**
  * This class represents the card row of the board, which is composed by a tribe row and a building row.
  */
@@ -52,4 +55,36 @@ public class CardRow {
     }
 
 
+    /**
+     * Adds a tribe card to the tribe row of this card row.
+     *
+     * @param tribeCard the tribe card to be added to the tribe row
+     * @throws IllegalArgumentException if the tribeCard is null
+     */
+    public void addCard(TribeCard tribeCard) throws IllegalArgumentException {
+        if(tribeCard == null) throw new IllegalArgumentException("Arguments cannot be null");
+
+        tribeRow.add(tribeCard);
+    }
+
+    /**
+     * Clears all the cards from the tribe row of this card row.
+     */
+    public void clearBuildings() {
+        buildingRow.clear();
+    }
+
+    /**
+     * Transfers all the building cards from another card row to this card row.
+     *
+     * @param other the card row from which to transfer the building cards
+     */
+    public void transferBuildingRowFrom(CardRow other) {
+        buildingRow.transferBuildingCardsFrom(other.getBuildingRow());
+    }
+
+
+    public void addBuildingRowFrom(BuildingDeck buildingDeck) {
+        buildingRow.add(buildingDeck);
+    }
 }

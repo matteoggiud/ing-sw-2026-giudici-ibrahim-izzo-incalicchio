@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.model.card.BuildingCard;
+import it.polimi.ingsw.model.deck.BuildingDeck;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -18,6 +19,15 @@ public class BuildingRow {
      */
     public void add(BuildingCard card) {
         this.buildingCards.add(card);
+    }
+
+    /**
+     * Adds all building cards from a building deck to the building row.
+     *
+     * @param buildingDeck the building deck from which the building cards will be added to the building row
+     */
+    public void add(BuildingDeck buildingDeck) {
+        this.buildingCards.addAll(buildingDeck.getBuildingCards());
     }
 
     /**
@@ -46,12 +56,12 @@ public class BuildingRow {
     }
 
     /**
-     * Transfers the building cards from this building row to another building row.
+     * Transfers the building cards from other building row to this building row.
      *
-     * @param other the building row to which the building cards will be transferred
+     * @param other the building row from which the building cards will be transferred to this building row
      */
-    public void transferBuildingCardsTo(BuildingRow other) {
-        other.buildingCards.addAll(this.buildingCards);
+    public void transferBuildingCardsFrom(BuildingRow other) {
+        this.buildingCards.addAll(other.buildingCards);
         this.clear();
     }
 
@@ -63,5 +73,6 @@ public class BuildingRow {
     public void copyBuildingCardsTo(BuildingRow other) {
         other.buildingCards.addAll(this.buildingCards);
     }
+
 
 }

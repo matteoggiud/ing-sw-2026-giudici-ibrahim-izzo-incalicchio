@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.core;
 import it.polimi.ingsw.model.board.CardRow;
 import it.polimi.ingsw.model.board.OfferTrack;
 import it.polimi.ingsw.model.board.TurnOrderBox;
+import it.polimi.ingsw.model.card.TribeCard;
+import it.polimi.ingsw.model.deck.BuildingDeck;
 
 import java.util.ArrayList;
 
@@ -34,5 +36,36 @@ public class Board {
         this.turnOrderBox = new TurnOrderBox(new ArrayList<>());
     }
 
+    /**
+     * Adds a tribe card to the upper row of the board.
+     *
+     * @param tribeCard the tribe card to be added to the upper row
+     * @throws IllegalArgumentException if the card is null
+     */
+    public void addTribeUpperRow(TribeCard tribeCard) throws IllegalArgumentException {
+        upperRow.addCard(tribeCard);
+    }
 
+    /**
+     * Clears all buildings from the lower row of the board, making it empty.
+     */
+    public void clearLowerBuildingRow() {
+        lowerRow.clearBuildings();
+    }
+
+    /**
+     * Transfers all building cards from the upper row to the lower row, effectively moving them down the board.
+     */
+    public void transferUpperBuildingToLower() {
+        lowerRow.transferBuildingRowFrom(upperRow);
+    }
+
+    /**
+     * Adds building cards from the given building deck to the upper row of the board.
+     *
+     * @param buildingDeck the building deck from which to copy building cards to the upper row
+     */
+    public void placeInUpperBuildingRow(BuildingDeck buildingDeck) {
+        upperRow.addBuildingRowFrom(buildingDeck);
+    }
 }
