@@ -37,6 +37,9 @@ public class Game {
     /** BuildingDeck is a Map that associate every building with a particular Era */
     private HashMap<Era, BuildingDeck> buildingDeck;
 
+    /** The current era in which the game is */
+    private Era currentEra;
+
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      *
@@ -51,6 +54,7 @@ public class Game {
         this.board = new Board();
         this.tribeDeck = new TribeDeck();
         this.buildingDeck = new HashMap<Era, BuildingDeck>();
+        this.currentEra = Era.ERA_1;
 
         if((playerCount < 2) || (playerCount > 5)) {
             throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
@@ -94,6 +98,13 @@ public class Game {
      * @return The Board
      */
     public Board getBoard() {return this.board;}
+
+    /**
+     * Gets the current era of the game.
+     *
+     * @return The current era of the game.
+     */
+    public Era getCurrentEra() {return this.currentEra;}
 
     /**
      * This method is used to start the game, it changes the game state to the first phase of the game,
@@ -140,13 +151,22 @@ public class Game {
     }
 
     /**
+     * This method is used to begin a new era, it changes the current era to the next one.
+     *
+     * @throws IllegalStateException if the game is already in the last era (Era III)
+     */
+    public void beginNewEra() throws IllegalStateException {
+        if(this.currentEra == Era.ERA_3){ throw new IllegalStateException("The game is already in the last era"); }
+        this.currentEra = Era.values()[this.currentEra.ordinal() + 1];
+    }
+
+    /**
      * WORK IN PROGRESS DO NOT TOUCH
      */
     public void advancePhase(){}
 
     public void advanceRound(){}
 
-    public void beginNewEra(){}
 
     /**
      * This method is used to end the game, it changes the game state to the ended state.

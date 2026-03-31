@@ -125,13 +125,13 @@ public class Player {
      * @throws IllegalFoodArgumentException if the player does not have enough food to buy the card after applying discounts.
      */
     public void canBuyBuildingCard(BuildingCard buildingCard) throws IllegalFoodArgumentException {
-        int foodDiscount = this.playerDeck.totalFoodBuildingDiscount; // Calculate the total food discount from the player's deck
+        int foodDiscount = this.playerDeck.getTotalBuilderDiscount(); // Calculate the total food discount from the player's deck
 
         if(buildingCard.getFoodCost() - foodDiscount > this.food) { // If the player doesn't have enough food to buy the card
             throw new IllegalFoodArgumentException("Not enough food to buy this building card.");
         }
 
-        playerDeck.add(buildingCard); // Add the building card to the player's deck
-        this.food -= (buildingCard.getFoodCost() - foodDiscount) > 0 ? buildingCard.getFoodCost() - foodDiscount : 0; // Deduct the food cost from the player's total, ensuring it doesn't go negative
+        playerDeck.addCard(buildingCard); // Add the building card to the player's deck
+        this.food -= Math.max((buildingCard.getFoodCost() - foodDiscount), 0); // Deduct the food cost from the player's total, ensuring it doesn't go negative
     }
 }

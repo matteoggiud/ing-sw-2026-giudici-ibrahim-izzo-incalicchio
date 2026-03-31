@@ -67,6 +67,8 @@ public class PlayerDeck {
         this.totalArtist = 0;
     }
 
+
+
     /**
      * This method counts the number of character cards in the player's deck that have a specific character type.
      * @param type The type we want to count
@@ -112,5 +114,59 @@ public class PlayerDeck {
      */
     public ArrayList<BuildingCard> getBuildings() {
         return this.buildings;
+    }
+
+    /**
+     * Gets the total builder discount that the player has accumulated from their character cards.
+     *
+     * @return the total builder discount for the player.
+     */
+    public int getTotalBuilderDiscount() {
+        return totalBuilderDiscount;
+    }
+
+    /**
+     * Gets the total gatherer discount that the player has accumulated from their character cards.
+     *
+     * @return the total gatherer discount for the player.
+     */
+    public int getTotalGathererDiscount() {
+        return totalGathererDiscount;
+    }
+
+    /**
+     * Gets the total number of shaman stars that the player has accumulated from their character cards.
+     *
+     * @return the total number of shaman stars for the player.
+     */
+    public int getTotalShamanStars() {
+        return totalShamanStars;
+    }
+
+    /**
+     * Gets the total number of different inventor items that the player has accumulated from their character cards.
+     *
+     * @return the total number of different inventor items for the player.
+     */
+    public int getDifferentInventorItem() {
+        return differentInventorItem;
+    }
+
+    /**
+     * Gets the total number of card that have the character type HUNTER
+     *
+     * @return the total number of card that have the character type HUNTER
+     */
+    public int getTotalHunter() {
+        return totalHunter;
+    }
+
+    /**
+     * Gets the total number of card that have the character type ARTIST
+     *
+     * @return the total number of card that have the character type ARTIST
+     */
+    public int getTotalArtist() {
+        return totalArtist;
     }
 }

@@ -6,7 +6,7 @@ import it.polimi.ingsw.model.effect.event.IEventEffect;
  * This class represents an event card, which is a type of card in the game.
  * Event cards can have special effects (IEventEffect) and exists in different types (EventType).
  */
-public class EventCard extends Card {
+public class EventCard extends TribeCard {
     /**
      * Indicates whether this event card is a special card (only 2 per game), in that case they must be placed at the end of the deck.
      */
