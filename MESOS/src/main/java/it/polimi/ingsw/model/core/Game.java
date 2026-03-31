@@ -179,7 +179,7 @@ public class Game {
         }
     }
 
-    public void transferUpperTribeToLower(){
+    public void transferUpperTribeToLower(){ // da portare nel game state
         board.transferUpperTribeToLower();
     }
 
@@ -187,7 +187,7 @@ public class Game {
      * This method is used to refill the upper row of the board with new tribe cards.
      * It handles the transition between eras.
      */
-    public void refillUpperRow(int upperRowSize) {
+    public void refillUpperRow(int upperRowSize) { // da portare nel game state
         for (int i = 0; i < upperRowSize; i++) {
             TribeCard tribeCard = tribeDeck.draw();
 
@@ -205,7 +205,7 @@ public class Game {
      * @param newEra the new era to which the game is transitioning
      * @throws IllegalArgumentException if the new era is null or if it is ERA_1.
      */
-    public void changeEra(Era newEra) throws IllegalArgumentException {
+    public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
         if (newEra == null || newEra == Era.ERA_1) {
             throw new IllegalArgumentException("Invalid era transition: new era cannot be null or ERA_1");
         }
@@ -223,10 +223,10 @@ public class Game {
     /**
      * WORK IN PROGRESS DO NOT TOUCH
      */
-    public void advancePhase() {
+    public void advancePhase() { // da portare nel game state
     }
 
-    public void advanceRound() {
+    public void advanceRound() { // da portare nel game state
     }
 
 
@@ -238,7 +238,7 @@ public class Game {
         this.gameState = new EndedStatus();
     }
 
-    public void getFinalRanking() throws IllegalStateException {
+    public void getFinalRanking() throws IllegalStateException { // da portare nel game state
 
         if (!(this.gameState instanceof FinalScoreState)) {
             throw new IllegalStateException("The game state is not FinalScoreState");
