@@ -69,6 +69,11 @@ public class Game {
     private IGameRuleSet ruleSet;
 
     /**
+     * The turn order of the players, it is used to manage the turn order of the players during the game.
+     */
+    private ArrayList<Player> turnOrder;
+
+    /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      *
      * @param playerCount
@@ -149,8 +154,20 @@ public class Game {
         return lastRoundTriggered;
     }
 
+    /**
+     * Gets the rule set of the game
+     * @return The rule set of the game
+     */
     public IGameRuleSet getRuleSet() {
         return ruleSet;
+    }
+
+    /**
+     * Gets the turn order of the players.
+     * @return The turn order of the players
+     */
+    public ArrayList<Player> getTurnOrder() {
+        return new ArrayList<Player>(turnOrder);
     }
 
     /**

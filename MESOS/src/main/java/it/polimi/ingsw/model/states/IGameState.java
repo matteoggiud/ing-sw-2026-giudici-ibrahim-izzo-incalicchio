@@ -40,8 +40,6 @@ public interface IGameState {
 
     default void removePlayer(Game game, Player player) {};
 
-    default void InitMethods(Game game) {};
-
     default void resolveAction(){};
 
 }

@@ -37,6 +37,15 @@ public class Board {
     }
 
     /**
+     * Gets the turn order of the board.
+     *
+     * @return the turn order of the board
+     */
+    public TurnOrderBox getTurnOrderBox() {
+        return turnOrderBox;
+    }
+
+    /**
      * Adds a tribe card to the upper row of the board.
      *
      * @param tribeCard the tribe card to be added to the upper row
@@ -72,4 +81,6 @@ public class Board {
     public void transferUpperTribeToLower() {
         lowerRow.transferTribeRowFrom(upperRow);
     }
+
+
 }
