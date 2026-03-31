@@ -12,7 +12,7 @@ public class TribeDeck {
     /**
      * The tribe deck is a linked list of tribe cards.
      * We used the linked list so that the draw has a
-     * complexity of O(1), meanwhile the ArratList O(n)
+     * complexity of O(1), meanwhile the ArrayList O(n)
      */
     private LinkedList<TribeCard> TribeDeck;
 

@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.deck;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+
 import it.polimi.ingsw.model.card.*;
 
 /**
@@ -94,5 +96,21 @@ public class PlayerDeck {
      */
     public void addCard(BuildingCard card){
         this.buildings.add(card);
+    }
+
+    /**
+     * This method returns the list of character cards in the player's deck.
+     * @return All the character card of the player
+     */
+    public ArrayList<CharacterCard> getCharacters(){
+        return this.characters;
+    }
+
+    /**
+     * This method returns the list of building cards in the player's deck.
+     * @return All the building card of the player
+     */
+    public ArrayList<BuildingCard> getBuildings() {
+        return this.buildings;
     }
 }
