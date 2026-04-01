@@ -75,4 +75,12 @@ public class BuildingRow {
     }
 
 
+    /**
+     * Checks if the building row is empty.
+     *
+     * @return true if the building row is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return this.buildingCards.isEmpty();
+    }
 }

@@ -27,13 +27,40 @@ public class Board {
     private final TurnOrderBox turnOrderBox;
 
     /**
-     * Constructs a new Board with an offer track, two card rows, and a turn order box.
+     * Constructs a new empty Board.
      */
     public Board() {
         this.offerTrack = new OfferTrack();
         this.upperRow = new CardRow();
         this.lowerRow = new CardRow();
         this.turnOrderBox = new TurnOrderBox();
+    }
+
+    /**
+     * Gets the offer track of the board.
+     *
+     * @return the offer track of the board
+     */
+    public OfferTrack getOfferTrack() {
+        return offerTrack;
+    }
+
+    /**
+     * Gets the upper row of cards on the board.
+     *
+     * @return the upper row of cards on the board
+     */
+     public CardRow getUpperRow() {
+        return upperRow;
+    }
+
+    /**
+     * Gets the lower row of cards on the board.
+     *
+     * @return the lower row of cards on the board
+     */
+    public CardRow getLowerRow() {
+        return lowerRow;
     }
 
     /**

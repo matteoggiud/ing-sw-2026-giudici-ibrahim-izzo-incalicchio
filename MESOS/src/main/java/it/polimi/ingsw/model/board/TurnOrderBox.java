@@ -23,15 +23,17 @@ public class TurnOrderBox {
     }
 
     /**
-     * Constructs a TurnOrderBox with the specified list of turn order slots.
+     * Initializes the turn order box with a given list of turn order slots.
      *
      * @param slots the list of turn order slots in the box
      */
-    public TurnOrderBox(List<TurnOrderSlot> slots) throws IllegalArgumentException {
-        if (slots == null || slots.size() < 2 || slots.size() > 5)
+    public void initializeSlots (List<TurnOrderSlot> slots) throws IllegalArgumentException {
+        if (slots == null || slots.contains(null) || slots.size() < 2 || slots.size() > 5)
             throw new IllegalArgumentException("TurnOrderBox must have between 2 and 5 slots and cannot be null");
+        if (!this.slots.isEmpty())
+            throw new IllegalStateException("TurnOrderBox slots have already been initialized");
 
-        this.slots = new ArrayList<>(slots);
+        this.slots.addAll(slots);
     }
 
 

@@ -27,20 +27,6 @@ public class CardRow {
     }
 
     /**
-     * Constructs a new CardRow with the given tribe row and building row.
-     *
-     * @param tribeRow The tribe row to be used in this card row
-     * @param buildingRow The building row to be used in this card row
-     * @throws IllegalArgumentException if either tribeRow or buildingRow is null
-     */
-    public CardRow(TribeRow tribeRow, BuildingRow buildingRow) throws IllegalArgumentException {
-        if (tribeRow == null || buildingRow == null) throw new IllegalArgumentException("Arguments cannot be null");
-
-        this.tribeRow = tribeRow;
-        this.buildingRow = buildingRow;
-    }
-
-    /**
      * Gets the tribe row of this card row.
      */
     public TribeRow getTribeRow() {
