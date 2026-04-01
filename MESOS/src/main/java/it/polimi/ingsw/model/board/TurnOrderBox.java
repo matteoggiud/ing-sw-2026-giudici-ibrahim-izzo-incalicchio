@@ -53,13 +53,12 @@ public class TurnOrderBox {
      * @throws IllegalStateException    if the player is not found in any slot of the box
      * @throws IllegalArgumentException if the player is null
      */
-    public void removePlayer(Player player) throws IllegalStateException, IllegalArgumentException {
+    public Player removePlayer(Player player) throws IllegalStateException, IllegalArgumentException {
         if (player == null)
             throw new IllegalArgumentException("Player cannot be null");
         for (TurnOrderSlot slot : slots)
             if (!slot.isFree() && slot.getPlacedPlayer().equals(player)) {
-                slot.removePlayer();
-                return;
+                return slot.removePlayer();
             }
 
         throw new IllegalStateException("Player not found in any slot of the TurnOrderBox");
