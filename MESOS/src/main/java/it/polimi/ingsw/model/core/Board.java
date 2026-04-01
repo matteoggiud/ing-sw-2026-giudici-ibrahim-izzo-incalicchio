@@ -30,10 +30,10 @@ public class Board {
      * Constructs a new Board with an offer track, two card rows, and a turn order box.
      */
     public Board() {
-        this.offerTrack = new OfferTrack(new ArrayList<>());
+        this.offerTrack = new OfferTrack();
         this.upperRow = new CardRow();
         this.lowerRow = new CardRow();
-        this.turnOrderBox = new TurnOrderBox(new ArrayList<>());
+        this.turnOrderBox = new TurnOrderBox();
     }
 
     /**

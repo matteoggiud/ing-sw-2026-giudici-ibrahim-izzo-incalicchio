@@ -16,6 +16,13 @@ public class TurnOrderBox {
 
 
     /**
+     * Constructs an empty TurnOrderBox.
+     */
+    public TurnOrderBox() {
+        this.slots = new ArrayList<>();
+    }
+
+    /**
      * Constructs a TurnOrderBox with the specified list of turn order slots.
      *
      * @param slots the list of turn order slots in the box
@@ -26,6 +33,7 @@ public class TurnOrderBox {
 
         this.slots = new ArrayList<>(slots);
     }
+
 
     /**
      * Gets the list of turn order slots in the box.

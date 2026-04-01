@@ -13,6 +13,15 @@ public class OfferTrack {
      */
     private final ArrayList<OfferBox> boxes;
 
+
+    /**
+     * Constructs an empty OfferTrack.
+     */
+    public OfferTrack() {
+        this.boxes = new ArrayList<>();
+    }
+
+
     /**
      * Constructs an OfferTrack with a given list of OfferBoxes.
      *

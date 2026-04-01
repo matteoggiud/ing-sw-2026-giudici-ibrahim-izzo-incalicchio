@@ -16,9 +16,9 @@ public class SetupState implements IGameState{
      */
     @Override
     public void executePhase(Game game) {
-        IGameRuleSet ruleSet = game.getRuleSet();
-        int numPlayers = game.getNumberOfPlayers();
+        GameBuilder builder = new GameBuilder(game.getPlayers().size());
 
+        builder.prepareBoard(game);
         //game.getBoard().setTurnOrderBox(ruleSet.createTurnOrderSlots(numPlayers));
     }
 

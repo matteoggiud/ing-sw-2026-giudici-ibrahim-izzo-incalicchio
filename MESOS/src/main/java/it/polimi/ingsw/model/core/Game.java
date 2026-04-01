@@ -5,15 +5,12 @@ import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.*;
 import it.polimi.ingsw.model.states.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.EnumMap;
 import java.util.UUID;
 
 /**
- * This class represents the game, it contains all the information about the game state,
- * the players, the board and the decks.
- * It is used to manage the game and to update the game state.
- * It is also used to save and load the game state.
+ * This class represents the game instance
  */
 
 public class Game {
@@ -24,24 +21,24 @@ public class Game {
     private final UUID gameId;
 
     /**
-     * The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface
+     * The host player is the player who created the game.
      */
-    private IGameState gameState;
-
-    /**
-     * The number of players.
-     */
-    private int numberOfPlayers;
+    private final Player hostPlayer;
 
     /**
      * The players list contains all the players in the game
      */
-    private final ArrayList<Player> players;
+    private final Players players;
 
     /**
-     * Board referes to the playground
+     * Board referees to the playground
      */
     private final Board board;
+
+    /**
+     * The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface
+     */
+    private IGameState gameState;
 
     /**
      * TribeDeck are all the TribeCard
@@ -51,7 +48,7 @@ public class Game {
     /**
      * BuildingDeck is a Map that associate every building with a particular Era
      */
-    private final HashMap<Era, BuildingDeck> buildingDeck;
+    private final EnumMap<Era, BuildingDeck> buildingDecks;
 
     /**
      * The current era in which the game is
@@ -66,35 +63,32 @@ public class Game {
     /**
      * The rule set of the game
      */
-    private IGameRuleSet ruleSet;
+    private IGameRuleSet ruleSet; //TODO: to implement ruleset
 
-    /**
-     * The turn order of the players, it is used to manage the turn order of the players during the game.
-     */
-    private ArrayList<Player> turnOrder;
 
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      *
-     * @param playerCount
      * @throws IllegalArgumentException if the player count is less than 2 or greater than 5
      */
-    public Game() throws IllegalArgumentException {
+    public Game(Player hostPlayer) throws IllegalArgumentException {
+        if (hostPlayer == null) {
+            throw new IllegalArgumentException("Host player cannot be null");
+        }
         this.gameId = UUID.randomUUID();
-        this.gameState = new LobbyState();
-        this.numberOfPlayers = 0;
-        this.players = new ArrayList<>();
+        this.hostPlayer = hostPlayer;
+        this.players = new  Players();
         this.board = new Board();
+        this.gameState = new LobbyState();
         this.tribeDeck = new TribeDeck();
-        this.buildingDeck = new HashMap<Era, BuildingDeck>();
-        this.currentEra = Era.ERA_1;
+        this.buildingDecks = new EnumMap<>(Era.class);
+        this.currentEra = null;
         this.lastRoundTriggered = false;
-        this.ruleSet = new StandardRuleSet();
-
+        this.ruleSet = new StandardGameRuleSet();
     }
 
     /**
-     * This method is used to get the game id, it returns the game id of the game.
+     * Gets the unique identifier of the game.
      *
      * @return The gameId
      */
@@ -103,45 +97,65 @@ public class Game {
     }
 
     /**
-     * This method is used to get the game state, it returns the game state of the game.
-     * Once it's returned you need to use the instanceof to know exactly wich state
-     * you are in
-     *
-     * @return The GameState
+     * Gets the host player of the game.
      */
-    public IGameState getGameState() {
-        return gameState;
+    public Player getHostPlayer() {
+        return this.hostPlayer;
     }
-
-    public int getNumberOfPlayers() {
-        return this.numberOfPlayers;
-    }
-
 
     /**
-     * This method is used to get the players list, it returns the players list of the game.
+     * Gets the list of players in the game.
      *
-     * @return The Players
+     * @return the list of players in the game
      */
-    public ArrayList<Player> getPlayers() {
+    public Players getPlayers() {
         return this.players;
     }
 
     /**
-     * This method is used to get the board, it returns the board of the game.
+     * Gets the game board.
      *
-     * @return The Board
+     * @return the Board
      */
     public Board getBoard() {
         return this.board;
     }
 
     /**
+     * This method is used to get the current game states.
+     *
+     * @return the current game state
+     */
+    public IGameState getGameState() {
+        return gameState;
+    }
+
+    /**
+     * Gets the tribe deck.
+     *
+     * @return the tribe deck of the game
+     */
+    public TribeDeck getTribeDeck() {
+        return tribeDeck;
+    }
+
+    /**
+     * Gets the building decks for each era.
+     *
+     * @return a HashMap associating each Era with its corresponding BuildingDeck
+     */
+    public EnumMap<Era, BuildingDeck> getBuildingDecks() {
+        return buildingDecks;
+    }
+
+    /**
      * Gets the current era of the game.
      *
      * @return The current era of the game.
+     * @throws IllegalStateException if the current era is null, which means the game has not started yet.
      */
-    public Era getCurrentEra() {
+    public Era getCurrentEra() throws IllegalStateException {
+        if (this.currentEra == null) throw new IllegalStateException("The game has not started yet");
         return this.currentEra;
     }
 
@@ -156,6 +170,7 @@ public class Game {
 
     /**
      * Gets the rule set of the game
+     *
      * @return The rule set of the game
      */
     public IGameRuleSet getRuleSet() {
@@ -163,11 +178,12 @@ public class Game {
     }
 
     /**
-     * Gets the turn order of the players.
-     * @return The turn order of the players
+     * Gets the number of the players in the game.
+     *
+     * @return the number of players in the game
      */
-    public ArrayList<Player> getTurnOrder() {
-        return new ArrayList<Player>(turnOrder);
+    public int getNumberOfPlayers() {
+        return this.players.size();
     }
 
     /**
@@ -193,47 +209,12 @@ public class Game {
     }
 
     /**
-     * This method is used to start the game, it changes the game state to the first phase of the game,
-     * which is the placing totem phase.
+     * This method is used to check if the game has ended.
      *
-     * @throws IllegalArgumentException if the number of players is less than 2 or greater than 5
-     */
-    public void startGame() throws IllegalArgumentException {
-        gameState = new PlacingTotemState();
-
-        if ((this.players.size() < ruleSet.getMinPlayers()) || (this.players.size() > ruleSet.getMaxPlayers())) {
-            throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
-        }
-
-    }
-
-    /**
-     * This method is used to check if the game has started, it returns true if the game state is not in the initial state,
-     * the ended state, the lobby state or the aborted state, otherwise it returns false.
-     *
-     * @return True if the game has started, false otherwise
-     */
-    public boolean isStarted() {
-        if ((gameState instanceof LobbyState) || (gameState instanceof EndedState) || (gameState instanceof LobbyState) || (gameState instanceof AbortedState)) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /**
-     * This method is used to check if the game has ended,
-     * it returns true if the game state is in the ended state,
-     * otherwise it returns false.
-     *
-     * @return True if the game has ended, false otherwise
+     * @return true if the game has ended, false otherwise
      */
     public boolean isEnded() {
-        if (gameState instanceof EndedState) {
-            return true;
-        } else {
-            return false;
-        }
+        return gameState instanceof EndedState;
     }
 
     public void transferUpperTribeToLower() { // da portare nel game state
@@ -274,7 +255,7 @@ public class Game {
         }
 
         board.transferUpperBuildingToLower(); // Move the upper building row to the lower building row
-        board.placeInUpperBuildingRow(buildingDeck.get(currentEra)); // Place new building cards in the upper building row based on the new era
+        board.placeInUpperBuildingRow(buildingDecks.get(currentEra)); // Place new building cards in the upper building row based on the new era
     }
 
     /**
