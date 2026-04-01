@@ -1,4 +1,6 @@
 package it.polimi.ingsw.model.deck;
+import java.util.List;
+import java.util.Map;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -28,6 +30,24 @@ public class BuildingDeck {
         for(Era era : Era.values()){
             this.buildingDeck.put(era, new LinkedList<>());
         }
+        this.currentEra = Era.ERA_1;
+    }
+
+    /**
+     * Constructor for the BuildingDeck class,
+     * it initializes the building deck with a map of eras and their corresponding lists of building cards.
+     * @param fullSelection A map that associates each era with a list of building cards.
+     *
+     */
+    public BuildingDeck(Map<Era, List<BuildingCard>> fullSelection) {
+        this.buildingDeck = new HashMap<>();
+
+
+        for (Era era : Era.values()) {
+            List<BuildingCard> cardsForEra = fullSelection.getOrDefault(era, new LinkedList<>());
+            this.buildingDeck.put(era, new LinkedList<>(cardsForEra));
+        }
+
         this.currentEra = Era.ERA_1;
     }
 
