@@ -1,8 +1,11 @@
 package it.polimi.ingsw.model.states;
 
 import it.polimi.ingsw.model.board.OfferBox;
+import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
+
+import java.util.ArrayList;
 
 /**
  * Interface representing the generic state of the game.
@@ -36,10 +39,13 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
-    default void addPlayer(Game game, Player player) {};
+    default void resolveAction(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards) {
+        throw new IllegalStateException("You cannot take card during this phase of the game.");
+    }
 
-    default void removePlayer(Game game, Player player) {};
+    default void addPlayer(Game game, Player player) {}
 
-    default void resolveAction(){};
+    default void removePlayer(Game game, Player player) {}
+
 
 }

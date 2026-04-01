@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model.states;
 
-import it.polimi.ingsw.model.core.*;
+import it.polimi.ingsw.model.core.Game;
 
 public class SetupState implements IGameState{
     @Override

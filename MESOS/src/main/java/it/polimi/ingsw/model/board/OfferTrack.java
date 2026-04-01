@@ -36,6 +36,20 @@ public class OfferTrack {
         this.boxes = new ArrayList<>(boxes);
     }
 
+    /**
+     * Gets the OfferBox where a specific player has placed their totem.
+     *
+     * @param player the player whose OfferBox is to be retrieved.
+     * @return the OfferBox where the specified player has placed their totem.
+     */
+    public OfferBox getBoxByPlayer(Player player) {
+        for (OfferBox box : boxes) {
+            if (!box.isFree() && box.getPlacedPlayer().equals(player)) {
+                return box;
+            }
+        }
+        throw new IllegalArgumentException("Offer not found");
+    }
 
     /**
      * Gets the list of OfferBoxes in the track.

@@ -84,21 +84,23 @@ public class PlayerDeck {
         return count;
     }
 
-    /**
-     * This method adds a character card to the player's deck
-     * @param card to be added
-     */
-    public void addCard(CharacterCard card){
-        this.characters.add(card);
-    }
 
     /**
-     * This method adds a building card to the player's deck
+     * This method adds a card to the player's deck
      * @param card to be added
      */
-    public void addCard(BuildingCard card){
-        this.buildings.add(card);
+    public void addCard(Card card){
+        if(card instanceof BuildingCard){
+            this.buildings.add((BuildingCard) card);
+        }
+        else if(card instanceof CharacterCard){
+            this.characters.add((CharacterCard) card);
+        }
+        else{
+            throw new IllegalArgumentException("Card must be either a BuildingCard or a CharacterCard");
+        }
     }
+
 
     /**
      * This method returns the list of character cards in the player's deck.
