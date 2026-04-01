@@ -21,7 +21,7 @@ public class PlacingTotemState implements IGameState {
     @Override
     public void placeTotem(Game game, Player player, OfferBox offerBox) throws IllegalStateException {
         // Check if it's the player's turn to place a totem
-        if (getCurrentPlayer(game.getBoard()).equals(player)) {
+        if (!getCurrentPlayer(game.getBoard()).equals(player)) {
             throw new IllegalStateException("It's not your turn to place a totem.");
         }
 
