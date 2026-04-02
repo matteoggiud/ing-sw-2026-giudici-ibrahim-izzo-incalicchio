@@ -184,8 +184,6 @@ public class StandardRuleSet implements IGameRuleSet {
         return boxes;
     }
 
-    //DA FARE: REGOLA PER COSTRUZIONE DECK
-
 
     /**
      * Helper method to ensure the player count is within valid bounds.
