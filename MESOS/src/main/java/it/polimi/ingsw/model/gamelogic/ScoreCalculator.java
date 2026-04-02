@@ -13,10 +13,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class is responsible for calculating the final score of each player at the end of the game.
- * It takes into account the player's prestige points,
- * as well as the points earned from their character and building cards.
- * The class provides methods to compute the score for each type of card
- * and to rank the players based on their final scores.
+ *
  */
 
 public class ScoreCalculator {
@@ -25,8 +22,6 @@ public class ScoreCalculator {
     /**
      *
      * Computes the final score for a given player at the end of the game.
-     * The final score is calculated by summing the player's current prestige points (PP)
-     * with the points earned from their character and building cards.
      *
      * @param player
      * @param game
@@ -47,7 +42,7 @@ public class ScoreCalculator {
      * Computes the score from the player's builder character cards.
      *
      * @param player
-     * @return the total score from the player's builder character cards, calculated by summing the end game prestige points of each builder card in the player's deck.
+     * @return the total score from the player's builder character cards.
      */
     public static int computeBuilderScore(Player player) {
 
@@ -62,9 +57,8 @@ public class ScoreCalculator {
      * Computes the score from the player's inventor character cards.
      *
      * @param player
-     * @return the total score from the player's inventor character cards,
-     * calculated by multiplying the number of inventor cards in the player's deck
-     * by the number of different inventor items they have.
+     * @return the total score from the player's inventor character cards.
+     *
      */
     public static int computeInventorScore(Player player) {
         PlayerDeck deck = player.getPlayerDeck();

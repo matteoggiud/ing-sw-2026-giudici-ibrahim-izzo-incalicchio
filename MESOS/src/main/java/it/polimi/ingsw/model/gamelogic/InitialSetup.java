@@ -11,7 +11,7 @@ public class InitialSetup {
 
     /**
      *
-     * Creates a tribe deck for the game by filtering the available tribe cards based on the number of players.
+     * Creates a tribe deck for the game.
      * @param allCards      The complete list of tribe cards available in the game.
      * @param numPlayers   The number of players participating in the game.
      * @return
@@ -58,7 +58,7 @@ public class InitialSetup {
 
     /**
      *
-     * Creates a building deck for the game by filtering the available building cards based on the number of players.
+     * Creates a building deck for the game.
      * @param allBuildings The complete list of building cards available in the game.
      * @param numPlayers   The number of players participating in the game.
      * @return
@@ -107,8 +107,7 @@ public class InitialSetup {
 
     /**
      *
-     * Creates an offer track for the game by filtering the available offer boxes
-     * based on the number of players and sorting them by their box ID.
+     * Creates an offer track for the game.
      * @param allBoxes    The complete list of offer boxes available in the game.
      * @param numPlayers   The number of players participating in the game.
      * @return
@@ -142,13 +141,6 @@ public class InitialSetup {
         };
     }
 
-    public static TurnOrderBox createTurnOrderBox(int numPlayers) throws IllegalArgumentException {
-        List<TurnOrderSlot> slots = new ArrayList<>();
-
-
-        // ASPETTO FOTO;
-
-    }
 
     /**
      *
@@ -187,15 +179,10 @@ public class InitialSetup {
     }
 
     /**
-     * Creates the lower card row for the game by drawing cards from the tribe deck
-     * until the number of cards in the lower row.
+     * Creates the lower card row for the game.
      *
      * @param game The game object containing the tribe deck and the list of players.
-     * @return A list of TribeCard objects representing the lower card row for the game,
-     * which is created by drawing cards from the tribe deck until
-     * the number of cards in the lower row is equal to the number of players plus one.
-     * If an event card is drawn during this process, it is temporarily set aside and added back
-     * to the top of the tribe deck after the lower row has been filled.
+     * @return A list of TribeCard objects representing the lower card row for the game.
      */
     public static List<TribeCard> createLowerCardRow(Game game) {
         TribeDeck deck = game.getBoard().getTribeDeck();
@@ -224,10 +211,10 @@ public class InitialSetup {
 
     /**
      *
-     * Creates the upper card row for the game by drawing a fixed number of cards from the tribe deck.
+     * Creates the upper card row for the game.
      * @param game The game object containing the tribe deck from which to draw the cards for the upper row.
-     * @return A list of TribeCard objects representing the upper card row for the game,
-     * which is created by drawing a fixed number of cards (8) from the tribe deck.
+     * @return A list of TribeCard objects representing the upper card row for the game.
+     *
      */
     public static List<TribeCard> createUpperCardRow(Game game) {
         TribeDeck deck = game.getBoard().getTribeDeck();
