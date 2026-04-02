@@ -184,4 +184,7 @@ public class Game {
 
     }
 
+    public TribeDeck getTribeDeck() {
+        return this.tribeDeck;
+    }
 }

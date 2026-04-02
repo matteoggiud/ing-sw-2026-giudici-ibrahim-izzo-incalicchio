@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.ruleset;
 import it.polimi.ingsw.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
+import it.polimi.ingsw.model.card.Era;
 
 import java.util.ArrayList;
 
@@ -109,6 +110,35 @@ public class StandardRuleSet implements IGameRuleSet {
         }
 
         return slots;
+    }
+
+    /**
+     * Determines the maximum number of buildings a player can have on the board
+     * based on the current era and player count.
+     * @param era the era for which the limit is requested.
+     * @param numPlayers the current number of players.
+     * @return
+     */
+    @Override
+    public int getBuildingLimit(Era era, int numPlayers) {
+        if (era == null) {
+            throw new IllegalArgumentException("Era cannot be null");
+        }
+        validatePlayerCount(numPlayers);
+
+        if (numPlayers <= 3) {
+            if (era == Era.ERA_1) return 2;
+            if (era == Era.ERA_2) return 2;
+            return 4;
+        } else if (numPlayers == 4) {
+            if (era == Era.ERA_1) return 3;
+            if (era == Era.ERA_2) return 2;
+            return 4;
+        } else {
+            if (era == Era.ERA_1) return 3;
+            if (era == Era.ERA_2) return 2;
+            return 5;
+        }
     }
 
     /**
