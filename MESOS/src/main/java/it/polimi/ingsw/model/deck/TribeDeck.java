@@ -1,9 +1,7 @@
-//TODO: See which changes to keep and which to discard
-
 package it.polimi.ingsw.model.deck;
 
 import it.polimi.ingsw.model.card.TribeCard;
-
+import java.util.List;
 import java.util.LinkedList;
 
 /**
@@ -29,7 +27,7 @@ public class TribeDeck {
      * Constructor for the TribeDeck class, it initializes the tribe deck with a list of tribe cards.
      * @param cards The list of tribe cards to initialize the tribe deck with.
      */
-    public TribeDeck(LinkedList<TribeCard> cards) {
+    public TribeDeck(List<TribeCard> cards) {
         this.TribeDeck = new LinkedList<>(cards);
     }
 
