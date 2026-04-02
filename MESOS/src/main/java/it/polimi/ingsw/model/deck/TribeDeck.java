@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model.deck;
 
 import it.polimi.ingsw.model.card.TribeCard;
-
+import java.util.List;
 import java.util.LinkedList;
 
 /**
@@ -24,6 +24,14 @@ public class TribeDeck {
     }
 
     /**
+     * Constructor for the TribeDeck class, it initializes the tribe deck with a list of tribe cards.
+     * @param cards The list of tribe cards to initialize the tribe deck with.
+     */
+    public TribeDeck(List<TribeCard> cards) {
+        this.TribeDeck = new LinkedList<>(cards);
+    }
+
+    /**
      * This method allows a player to draw a tribe card from the tribe deck.
      * @return The Card drawn by the player
      * @throws IllegalStateException if the tribe deck is empty and there are no cards to draw.
@@ -31,5 +39,9 @@ public class TribeDeck {
     public TribeCard draw() throws IllegalStateException {
         if(this.TribeDeck.isEmpty()){ throw new IllegalStateException("TribeDeck is empty"); }
         return this.TribeDeck.removeFirst();
+    }
+
+    public void addCardToTop(TribeCard card) {
+        this.TribeDeck.addFirst(card);
     }
 }
