@@ -50,7 +50,7 @@ public class Game {
     /**
      * BuildingDeck is a Map that associate every building with a particular Era
      */
-    private HashMap<Era, BuildingDeck> buildingDeck;
+    private BuildingDeck buildingDeck;
 
     /**
      * The current era in which the game is
@@ -70,7 +70,7 @@ public class Game {
         this.players = new ArrayList<>();
         this.board = new Board();
         this.tribeDeck = new TribeDeck();
-        this.buildingDeck = new HashMap<Era, BuildingDeck>();
+        this.buildingDeck = new BuildingDeck();
         this.currentEra = Era.ERA_1;
 
         if ((playerCount < 2) || (playerCount > 5)) {
@@ -205,7 +205,7 @@ public class Game {
      * @param newEra the new era to which the game is transitioning
      * @throws IllegalArgumentException if the new era is null or if it is ERA_1.
      */
-    public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
+   /* public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
         if (newEra == null || newEra == Era.ERA_1) {
             throw new IllegalArgumentException("Invalid era transition: new era cannot be null or ERA_1");
         }
@@ -219,6 +219,7 @@ public class Game {
         board.transferUpperBuildingToLower(); // Move the upper building row to the lower building row
         board.placeInUpperBuildingRow(buildingDeck.get(currentEra)); // Place new building cards in the upper building row based on the new era
     }
+    */
 
     /**
      * WORK IN PROGRESS DO NOT TOUCH
@@ -228,7 +229,6 @@ public class Game {
 
     public void advanceRound() { // da portare nel game state
     }
-
 
     /**
      * This method is used to end the game, it changes the game state to the ended state.
