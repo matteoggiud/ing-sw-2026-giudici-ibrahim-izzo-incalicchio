@@ -1,3 +1,5 @@
+//TODO: See which changes to keep and which to discard
+
 package it.polimi.ingsw.model.deck;
 
 import java.util.ArrayList;
