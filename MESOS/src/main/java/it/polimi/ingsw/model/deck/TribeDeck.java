@@ -46,4 +46,7 @@ public class TribeDeck {
         return this.tribeDeck.removeFirst();
     }
 
+    public void addCardToTop(TribeCard card) {
+        this.tribeDeck.addFirst(card);
+    }
 }
