@@ -1,31 +1,45 @@
 package it.polimi.ingsw.model.core;
 
 import it.polimi.ingsw.model.card.BuildingCard;
+import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.exceptions.IllegalFoodArgumentException;
 import it.polimi.ingsw.model.deck.*;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
  * This class represents a player in the game.
  */
 public class Player {
-    /** The player's id */
+    /**
+     * The player's id
+     */
     private final UUID playerId;
 
-    /** The player's nickname */
+    /**
+     * The player's nickname
+     */
     private final String nickname;
 
-    /** The player's totem */
+    /**
+     * The player's totem
+     */
     private final Totem totem;
 
-    /** The player's deck of cards */
+    /**
+     * The player's deck of cards
+     */
     private final PlayerDeck playerDeck;
 
-    /** The player's current amount of prestige points */
+    /**
+     * The player's current amount of prestige points
+     */
     private int PP;
 
-    /** The player's current amount of food */
+    /**
+     * The player's current amount of food
+     */
     private int food;
 
 
@@ -33,7 +47,7 @@ public class Player {
      * Constructs a new Player with the specified nickname and totem.
      *
      * @param nickname the player's nickname
-     * @param totem the player's chosen totem
+     * @param totem    the player's chosen totem
      */
     public Player(String nickname, Totem totem) {
         this.playerId = UUID.randomUUID();
@@ -67,7 +81,7 @@ public class Player {
      *
      * @return the player's totem.
      */
-    public Totem getTotem(){
+    public Totem getTotem() {
         return totem;
     }
 
@@ -127,11 +141,23 @@ public class Player {
     public void canBuyBuildingCard(BuildingCard buildingCard) throws IllegalFoodArgumentException {
         int foodDiscount = this.playerDeck.getTotalBuilderDiscount(); // Calculate the total food discount from the player's deck
 
-        if(buildingCard.getFoodCost() - foodDiscount > this.food) { // If the player doesn't have enough food to buy the card
+        if (buildingCard.getFoodCost() - foodDiscount > this.food) { // If the player doesn't have enough food to buy the card
             throw new IllegalFoodArgumentException("Not enough food to buy this building card.");
         }
 
         playerDeck.addCard(buildingCard); // Add the building card to the player's deck
         this.food -= Math.max((buildingCard.getFoodCost() - foodDiscount), 0); // Deduct the food cost from the player's total, ensuring it doesn't go negative
+    }
+
+    /**
+     * Adds the specified cards to the player's deck.
+     *
+     * @param cards the list of cards to be added to the player's deck
+     */
+    public void addCardsInDeck(ArrayList<Card> cards) {
+        for (Card card : cards) {
+            playerDeck.addCard(card);
+        }
+
     }
 }

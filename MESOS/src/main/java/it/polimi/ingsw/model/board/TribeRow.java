@@ -91,4 +91,13 @@ public class TribeRow {
     public void copyTribeCardsTo(TribeRow other) {
         other.tribeCards.addAll(this.tribeCards);
     }
+
+    /**
+     * Checks if the tribe row is empty.
+     *
+     * @return true if the tribe row is empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return this.tribeCards.isEmpty();
+    }
 }

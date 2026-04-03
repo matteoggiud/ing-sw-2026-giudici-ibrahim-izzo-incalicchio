@@ -3,16 +3,14 @@ package it.polimi.ingsw.model.core;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.states.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
+import java.util.EnumMap;
 import java.util.UUID;
 
 /**
- * This class represents the game, it contains all the information about the game state,
- * the players, the board and the decks.
- * It is used to manage the game and to update the game state.
- * It is also used to save and load the game state.
+ * This class represents the game instance
  */
 
 public class Game {
@@ -20,37 +18,37 @@ public class Game {
     /**
      * The game id is generated randomly using the UUID class, it is used to identify the game
      */
-    private UUID gameId;
+    private final UUID gameId;
 
     /**
-     * The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface
+     * The host player is the player who created the game.
      */
-    private GameState gameState;
-
-    /**
-     * The player count is the number of players in the game
-     */
-    private int playerCount;
+    private final Player hostPlayer;
 
     /**
      * The players list contains all the players in the game
      */
-    private ArrayList<Player> players;
+    private final Players players;
 
     /**
-     * Board referes to the playground
+     * Board referees to the playground
      */
-    private Board board;
+    private final Board board;
+
+    /**
+     * The game state is initialized to the initial state, which is the state before the game starts, then it follow the state interface
+     */
+    private IGameState gameState;
 
     /**
      * TribeDeck are all the TribeCard
      */
-    private TribeDeck tribeDeck;
+    private final TribeDeck tribeDeck;
 
     /**
      * BuildingDeck is a Map that associate every building with a particular Era
      */
-    private HashMap<Era, BuildingDeck> buildingDeck;
+    private final EnumMap<Era, BuildingDeck> buildingDecks;
 
     /**
      * The current era in which the game is
@@ -58,29 +56,39 @@ public class Game {
     private Era currentEra;
 
     /**
+     * This boolean flag indicates whether the last round of the game has been triggered.
+     */
+    private boolean lastRoundTriggered;
+
+    /**
+     * The rule set of the game
+     */
+    private IGameRuleSet ruleSet; //TODO: to implement ruleset
+
+
+    /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      *
-     * @param playerCount
      * @throws IllegalArgumentException if the player count is less than 2 or greater than 5
      */
-    public Game(int playerCount) throws IllegalArgumentException {
-        this.gameId = UUID.randomUUID();
-        this.gameState = new InitState();
-        this.playerCount = playerCount;
-        this.players = new ArrayList<>();
-        this.board = new Board();
-        this.tribeDeck = new TribeDeck();
-        this.buildingDeck = new HashMap<Era, BuildingDeck>();
-        this.currentEra = Era.ERA_1;
-
-        if ((playerCount < 2) || (playerCount > 5)) {
-            throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
+    public Game(Player hostPlayer) throws IllegalArgumentException {
+        if (hostPlayer == null) {
+            throw new IllegalArgumentException("Host player cannot be null");
         }
-
+        this.gameId = UUID.randomUUID();
+        this.hostPlayer = hostPlayer;
+        this.players = new  Players();
+        this.board = new Board();
+        this.gameState = new LobbyState();
+        this.tribeDeck = new TribeDeck();
+        this.buildingDecks = new EnumMap<>(Era.class);
+        this.currentEra = null;
+        this.lastRoundTriggered = false;
+        this.ruleSet = new StandardGameRuleSet();
     }
 
     /**
-     * This method is used to get the game id, it returns the game id of the game.
+     * Gets the unique identifier of the game.
      *
      * @return The gameId
      */
@@ -89,97 +97,127 @@ public class Game {
     }
 
     /**
-     * This method is used to get the game state, it returns the game state of the game.
-     * Once it's returned you need to use the instanceof to know exactly wich state
-     * you are in
-     *
-     * @return The GameState
+     * Gets the host player of the game.
      */
-    public GameState getGameState() {
-        return gameState;
+    public Player getHostPlayer() {
+        return this.hostPlayer;
     }
 
     /**
-     * This method is used to get the player count, it returns the player count of the game.
+     * Gets the list of players in the game.
      *
-     * @return The PlayerCount
+     * @return the list of players in the game
      */
-    public int getPlayerCount() {
-        return this.playerCount;
-    }
-
-    /**
-     * This method is used to get the players list, it returns the players list of the game.
-     *
-     * @return The Players
-     */
-    public ArrayList<Player> getPlayers() {
+    public Players getPlayers() {
         return this.players;
     }
 
     /**
-     * This method is used to get the board, it returns the board of the game.
+     * Gets the game board.
      *
-     * @return The Board
+     * @return the Board
      */
     public Board getBoard() {
         return this.board;
     }
 
     /**
+     * This method is used to get the current game states.
+     *
+     * @return the current game state
+     */
+    public IGameState getGameState() {
+        return gameState;
+    }
+
+    /**
+     * Gets the tribe deck.
+     *
+     * @return the tribe deck of the game
+     */
+    public TribeDeck getTribeDeck() {
+        return tribeDeck;
+    }
+
+    /**
+     * Gets the building decks for each era.
+     *
+     * @return a HashMap associating each Era with its corresponding BuildingDeck
+     */
+    public EnumMap<Era, BuildingDeck> getBuildingDecks() {
+        return buildingDecks;
+    }
+
+    /**
      * Gets the current era of the game.
      *
      * @return The current era of the game.
+     * @throws IllegalStateException if the current era is null, which means the game has not started yet.
      */
-    public Era getCurrentEra() {
+    public Era getCurrentEra() throws IllegalStateException {
+        if (this.currentEra == null) throw new IllegalStateException("The game has not started yet");
         return this.currentEra;
     }
 
     /**
-     * This method is used to start the game, it changes the game state to the first phase of the game,
-     * which is the placing totem phase.
+     * Gets the lastRoundTriggered flag, which indicates whether the last round of the game has been triggered.
      *
-     * @throws IllegalArgumentException if the number of players is less than 2 or greater than 5
+     * @return true if the last round has been triggered, false otherwise.
      */
-    public void startGame() throws IllegalArgumentException {
-        gameState = new PlacingTotemState();
-
-        if ((this.players.size() < 2) || (this.players.size() > 5)) {
-            throw new IllegalArgumentException("The number of players to play needs to be between 2 and 5");
-        }
-
+    public boolean isLastRoundTriggered() {
+        return lastRoundTriggered;
     }
 
     /**
-     * This method is used to check if the game has started, it returns true if the game state is not in the initial state,
-     * the ended state, the lobby state or the aborted state, otherwise it returns false.
+     * Gets the rule set of the game
      *
-     * @return True if the game has started, false otherwise
+     * @return The rule set of the game
      */
-    public boolean isStarted() {
-        if ((gameState instanceof InitState) || (gameState instanceof EndedStatus) || (gameState instanceof LobbyState) || (gameState instanceof AbortedState)) {
-            return false;
-        } else {
-            return true;
-        }
+    public IGameRuleSet getRuleSet() {
+        return ruleSet;
     }
 
     /**
-     * This method is used to check if the game has ended,
-     * it returns true if the game state is in the ended state,
-     * otherwise it returns false.
+     * Gets the number of the players in the game.
      *
-     * @return True if the game has ended, false otherwise
+     * @return the number of players in the game
+     */
+    public int getNumberOfPlayers() {
+        return this.players.size();
+    }
+
+    /**
+     * Sets the game state to the specified game state. This method is used to update the game state during the game.
+     *
+     * @param gameState the new game state to set
+     * @throws IllegalArgumentException if the provided game state is null
+     */
+    public void setGameState(IGameState gameState) throws IllegalArgumentException {
+        if (gameState == null) {
+            throw new IllegalArgumentException("The game state cannot be null");
+        }
+        this.gameState = gameState;
+    }
+
+    /**
+     * Sets the lastRoundTriggered flag to the specified value.
+     *
+     * @param lastRoundTriggered the new value for the lastRoundTriggered flag
+     */
+    public void setLastRoundTriggered(boolean lastRoundTriggered) {
+        this.lastRoundTriggered = lastRoundTriggered;
+    }
+
+    /**
+     * This method is used to check if the game has ended.
+     *
+     * @return true if the game has ended, false otherwise
      */
     public boolean isEnded() {
-        if (gameState instanceof EndedStatus) {
-            return true;
-        } else {
-            return false;
-        }
+        return gameState instanceof EndedState;
     }
 
-    public void transferUpperTribeToLower(){ // da portare nel game state
+    public void transferUpperTribeToLower() { // da portare nel game state
         board.transferUpperTribeToLower();
     }
 
@@ -217,7 +255,16 @@ public class Game {
         }
 
         board.transferUpperBuildingToLower(); // Move the upper building row to the lower building row
-        board.placeInUpperBuildingRow(buildingDeck.get(currentEra)); // Place new building cards in the upper building row based on the new era
+        board.placeInUpperBuildingRow(buildingDecks.get(currentEra)); // Place new building cards in the upper building row based on the new era
+    }
+
+    /**
+     * This method checks if the current round is the last round of the game by verifying if the tribe deck is empty.
+     *
+     * @return true if the list is empty, false otherwise
+     */
+    public boolean isLastRound() {
+        return tribeDeck.isEmpty();
     }
 
     /**
@@ -235,12 +282,12 @@ public class Game {
      * The rest will be managed by the state pattern.
      */
     public void endGame() {
-        this.gameState = new EndedStatus();
+        this.gameState = new EndedState();
     }
 
     public void getFinalRanking() throws IllegalStateException { // da portare nel game state
 
-        if (!(this.gameState instanceof FinalScoreState)) {
+        if (!(this.gameState instanceof ComputeFinalScoreState)) {
             throw new IllegalStateException("The game state is not FinalScoreState");
         }
 

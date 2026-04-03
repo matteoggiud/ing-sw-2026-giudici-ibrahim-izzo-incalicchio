@@ -49,4 +49,8 @@ public class TribeDeck {
     public void addCardToTop(TribeCard card) {
         this.tribeDeck.addFirst(card);
     }
+
+    public boolean isEmpty(){
+        return this.TribeDeck.isEmpty();
+    }
 }
