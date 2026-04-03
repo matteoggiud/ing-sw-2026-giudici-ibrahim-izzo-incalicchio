@@ -1,5 +1,3 @@
-//TODO: fix this class with the game class
-
 package it.polimi.ingsw.model.deck;
 
 import java.util.ArrayList;
