@@ -7,11 +7,13 @@ import java.util.Stack;
 
 public class EventResolver {
     private final Game game;
+
     public EventResolver(Game game) {
-        this.game=game;
+        this.game = game;
     }
+
     public int ResolveEvent(Stack<EventCard> eventCards) {
-        for(EventCard eventCard:eventCards){
+        for (EventCard eventCard : eventCards) {
 
         }
         return 0;

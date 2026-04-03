@@ -27,8 +27,9 @@ public class EffectResult {
 
     /**
      * Constructor for the EffectResult class.
+     *
      * @param foodDelta Food difference
-     * @param ppDelta PP difference
+     * @param ppDelta   PP difference
      * @param starDelta Star difference
      * @param cardDelta Additional card to pick
      */
@@ -41,6 +42,7 @@ public class EffectResult {
 
     /**
      * Gets the FoodDelta
+     *
      * @return FoodDelta
      */
     public int getFoodDelta() {
@@ -49,6 +51,7 @@ public class EffectResult {
 
     /**
      * Gets the PPDelta
+     *
      * @return PPDelta
      */
     public int getPpDelta() {
@@ -57,6 +60,7 @@ public class EffectResult {
 
     /**
      * Gets the StarDelta
+     *
      * @return StarDelta
      */
     public int getStarDelta() {
@@ -65,6 +69,7 @@ public class EffectResult {
 
     /**
      * Gets the CardDelta
+     *
      * @return CardDelta
      */
     public int getCardDelta() {
