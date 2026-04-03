@@ -15,13 +15,6 @@ import java.util.ArrayList;
 public interface IGameRuleSet {
 
     /**
-     * Gets the minimum number of players required to start a game.
-     *
-     * @return the minimum player count.
-     */
-    int getMinPlayers();
-
-    /**
      * Creates and initializes the list of slots for the Turn Order Box
      * based on the player count.
      *
@@ -38,12 +31,6 @@ public interface IGameRuleSet {
      */
     ArrayList<OfferBox> createOfferBoxes(int numPlayers);
 
-    /**
-     * Gets the maximum number of players allowed in a game.
-     *
-     * @return the maximum player count.
-     */
-    int getMaxPlayers();
 
     /**
      * Calculates the number of cards to be placed in the upper offer row.

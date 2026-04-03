@@ -89,7 +89,7 @@ public class ScoreCalculator {
         return player.getPlayerDeck().getBuildings().stream()
                 .mapToInt(b -> {
                     int basePoints = b.getEndGamePP();
-                    int bonusPoints = (b.getEffect() != null) ? b.getEffect().ApplyEffect(work_in_progress) : 0;
+                    int bonusPoints = (b.getEffect() != null) ? b.getEffect().ApplyEffect(/*work_in_progress*/) : 0;
                     return basePoints + bonusPoints;
                 })
                 .sum();
@@ -103,7 +103,7 @@ public class ScoreCalculator {
      * @return a map of players and their corresponding final scores, sorted in descending order of scores.
      */
     public static Map<Player, Integer> rankPlayer(Game game) {
-        return game.getPlayers().stream() // [cite: 431]
+        return game.getPlayers()..stream() // [cite: 431]
                 .collect(Collectors.toMap(
                         p -> p,
                         p -> computeFinalScore(p, game)

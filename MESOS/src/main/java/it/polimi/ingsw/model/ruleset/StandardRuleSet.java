@@ -15,22 +15,15 @@ import java.util.ArrayList;
 public class StandardRuleSet implements IGameRuleSet {
 
     /**
-     * Gets the minimum number of players required to start a game.
-     * @return the minimum player count.
+     * The minimum number of players allowed in a game of Mesos is 2.
      */
-    @Override
-    public int getMinPlayers() {
-        return 2;
-    }
+    public static int MIN_PLAYERS = 2;
 
     /**
-     * Gets the maximum number of players allowed in a game.
-     * @return the maximum player count.
+     * The maximum number of players allowed in a game of Mesos is 5.
      */
-    @Override
-    public int getMaxPlayers() {
-        return 5;
-    }
+    public static int MAX_PLAYERS = 5;
+
 
     /**
      * Calculates the number of cards to be placed in the upper offer row.
@@ -61,7 +54,7 @@ public class StandardRuleSet implements IGameRuleSet {
      */
     @Override
     public int getInitialFood(int turnOrderIndex) {
-        if (turnOrderIndex < 0 || turnOrderIndex >= getMaxPlayers()) {
+        if (turnOrderIndex < 0 || turnOrderIndex >= MAX_PLAYERS) {
             throw new IllegalArgumentException("Invalid turn order index: " + turnOrderIndex);
         }
 
@@ -191,9 +184,9 @@ public class StandardRuleSet implements IGameRuleSet {
      * @throws IllegalArgumentException if the player count is outside the allowed range.
      */
     private void validatePlayerCount(int numPlayers) {
-        if (numPlayers < getMinPlayers() || numPlayers > getMaxPlayers()) {
+        if (numPlayers < MIN_PLAYERS || numPlayers > MAX_PLAYERS) {
             throw new IllegalArgumentException(
-                    "Player count must be between " + getMinPlayers() + " and " + getMaxPlayers() + ". Provided: " + numPlayers
+                    "Player count must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + ". Provided: " + numPlayers
             );
         }
     }

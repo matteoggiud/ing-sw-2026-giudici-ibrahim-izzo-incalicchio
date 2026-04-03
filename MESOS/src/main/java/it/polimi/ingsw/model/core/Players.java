@@ -1,17 +1,35 @@
 package it.polimi.ingsw.model.core;
 
+import it.polimi.ingsw.model.ruleset.StandardRuleSet;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Players {
-    private final ArrayList<Player> players;
+    private final List<Player> players;
 
     public Players() {
         this.players = new ArrayList<>();
     }
 
-    public void addPlayer(Player newPlayer) {
-        // TODO: add checks for null, duplicates, and max number of players
-        players.add(newPlayer);
+    /**
+     * Adds a new player to the lobby.
+     *
+     * @param newPlayer the player to be added to the lobby
+     * @throws IllegalArgumentException if the player is null or already in the lobby
+     * @throws IllegalStateException if the lobby is already full
+     */
+    public void addPlayer(Player newPlayer) throws IllegalArgumentException, IllegalStateException {
+        if (newPlayer == null)
+            throw new IllegalArgumentException("Player cannot be null");
+        if (this.contains(newPlayer))
+            throw new IllegalArgumentException("Player already exists");
+        if (isFull())
+            throw new IllegalStateException("Lobby is full");
+
+
+        this.players.add(newPlayer);
     }
 
     /**
@@ -38,15 +56,48 @@ public class Players {
         players.remove(player);
     }
 
+    /**
+     * Returns the number of players currently in the lobby.
+     *
+     * @return the number of players in the lobby
+     */
     public int size() {
         return players.size();
     }
 
+    /**
+     * Checks if the lobby is empty
+     *
+     * @return true if the lobby is empty
+     */
     public boolean isEmpty() {
         return players.isEmpty();
     }
 
+    /**
+     * Checks if the lobby is full.
+     * @return true if the lobby is full
+     */
+    public boolean isFull() {
+        return this.size() == StandardRuleSet.MAX_PLAYERS;
+    }
+
+    /**
+     * Checks if a player is in the lobby
+     *
+     * @param player the player to check for
+     * @return true if the player is in the lobby
+     */
     public boolean contains(Player player) {
         return players.contains(player);
+    }
+
+    /**
+     * Returns a list of players in the lobby in random order.
+     */
+    public List<Player> getShuffledPlayers() {
+        List<Player> shuffledPlayers = new ArrayList<>(players);
+        Collections.shuffle(shuffledPlayers);
+        return shuffledPlayers;
     }
 }
