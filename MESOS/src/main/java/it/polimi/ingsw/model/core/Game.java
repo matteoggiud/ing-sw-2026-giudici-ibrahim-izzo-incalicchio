@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.core;
 
 import it.polimi.ingsw.model.card.Era;
-import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.ruleset.*;
 import it.polimi.ingsw.model.states.*;
 
 
@@ -48,7 +48,7 @@ public class Game {
     /**
      * BuildingDeck is a Map that associate every building with a particular Era
      */
-    private final EnumMap<Era, BuildingDeck> buildingDecks;
+    private final BuildingDecks buildingDecks;
 
     /**
      * The current era in which the game is
@@ -63,7 +63,7 @@ public class Game {
     /**
      * The rule set of the game
      */
-    private IGameRuleSet ruleSet; //TODO: to implement ruleset
+    private IGameRuleSet ruleSet;
 
 
     /**
@@ -81,10 +81,10 @@ public class Game {
         this.board = new Board();
         this.gameState = new LobbyState();
         this.tribeDeck = new TribeDeck();
-        this.buildingDecks = new EnumMap<>(Era.class);
+        this.buildingDecks = new BuildingDecks();
         this.currentEra = null;
         this.lastRoundTriggered = false;
-        this.ruleSet = new StandardGameRuleSet();
+        this.ruleSet = new StandardRuleSet();
     }
 
     /**
@@ -144,7 +144,7 @@ public class Game {
      *
      * @return a HashMap associating each Era with its corresponding BuildingDeck
      */
-    public EnumMap<Era, BuildingDeck> getBuildingDecks() {
+    public BuildingDecks getBuildingDecks() {
         return buildingDecks;
     }
 
@@ -208,6 +208,13 @@ public class Game {
         this.lastRoundTriggered = lastRoundTriggered;
     }
 
+    public void setCurrentEra(Era currentEra) throws IllegalStateException {
+        if (currentEra == null) {
+            throw new IllegalArgumentException("The current era cannot be null");
+        }
+        this.currentEra = currentEra;
+    }
+
     /**
      * This method is used to check if the game has ended.
      *
@@ -225,7 +232,7 @@ public class Game {
      * This method is used to refill the upper row of the board with new tribe cards.
      * It handles the transition between eras.
      */
-    public void refillUpperRow(int upperRowSize) { // da portare nel game state
+   /* public void refillUpperRow(int upperRowSize) { // da portare nel game state
         for (int i = 0; i < upperRowSize; i++) {
             TribeCard tribeCard = tribeDeck.draw();
 
@@ -235,7 +242,7 @@ public class Game {
             }
 
         }
-    }
+    }*/
 
     /**
      * This method is used when the era changes, it updates the board and the building cards according to the new era.
@@ -243,7 +250,7 @@ public class Game {
      * @param newEra the new era to which the game is transitioning
      * @throws IllegalArgumentException if the new era is null or if it is ERA_1.
      */
-    public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
+    /*public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
         if (newEra == null || newEra == Era.ERA_1) {
             throw new IllegalArgumentException("Invalid era transition: new era cannot be null or ERA_1");
         }
@@ -256,7 +263,7 @@ public class Game {
 
         board.transferUpperBuildingToLower(); // Move the upper building row to the lower building row
         board.placeInUpperBuildingRow(buildingDecks.get(currentEra)); // Place new building cards in the upper building row based on the new era
-    }
+    }*/
 
     /**
      * This method checks if the current round is the last round of the game by verifying if the tribe deck is empty.
@@ -293,7 +300,4 @@ public class Game {
 
     }
 
-    public TribeDeck getTribeDeck() {
-        return this.tribeDeck;
-    }
 }

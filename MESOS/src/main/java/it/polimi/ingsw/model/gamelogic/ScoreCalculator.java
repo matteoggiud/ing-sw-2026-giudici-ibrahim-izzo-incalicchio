@@ -95,6 +95,7 @@ public class ScoreCalculator {
                 .sum();
     }
 
+    // TODO: (Andre/Pula) fix this method with the new Players class
     /**
      *  Ranks the players in the game based on their final scores.
      *

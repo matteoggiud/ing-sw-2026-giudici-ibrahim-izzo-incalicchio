@@ -9,6 +9,8 @@ import it.polimi.ingsw.model.ruleset.IGameRuleSet;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: (Andre/Pula) adapt this class to the new BuildingDecks class, take a look ;)
+
 public class InitialSetup {
 
     /**
