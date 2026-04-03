@@ -69,6 +69,7 @@ public class Game {
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
      *
+     * @param hostPlayer the player who created the game
      * @throws IllegalArgumentException if the player count is less than 2 or greater than 5
      */
     public Game(Player hostPlayer) throws IllegalArgumentException {
