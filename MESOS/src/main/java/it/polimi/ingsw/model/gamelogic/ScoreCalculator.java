@@ -1,4 +1,5 @@
 package it.polimi.ingsw.model.gamelogic;
+import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.card.characters.BuilderCharacterCard;
@@ -85,11 +86,26 @@ public class ScoreCalculator {
         return (artists / 2) * 10; //
     }
 
+    /**
+     *
+     * Computes the score from the player's building cards.
+     * @param player the player for whom the building score is being calculated
+     * @return the total score from the player's building cards.
+     */
     public static int computeBuildingScore(Player player) {
         return player.getPlayerDeck().getBuildings().stream()
                 .mapToInt(b -> {
                     int basePoints = b.getEndGamePP();
-                    int bonusPoints = (b.getEffect() != null) ? b.getEffect().ApplyEffect(/*work_in_progress*/) : 0;
+                    int bonusPoints = 0;
+
+                    if(b.isStandardEffect()){
+                        CharacterType subjectType = b.getEffect().getSubjectType();
+                        int n_subject= (int) player.getPlayerDeck().getCharacters().stream()
+                                .filter(c ->c.getType() == subjectType)
+                                .count();
+
+                        bonusPoints = (b.getEffect() != null) ? b.getEffect().ApplyEffect(n_subject).getPpDelta() : 0;
+                    }
                     return basePoints + bonusPoints;
                 })
                 .sum();
@@ -103,7 +119,7 @@ public class ScoreCalculator {
      * @return a map of players and their corresponding final scores, sorted in descending order of scores.
      */
     public static Map<Player, Integer> rankPlayer(Game game) {
-        return game.getPlayers().stream() // [cite: 431]
+        return game.getPlayers().stream()
                 .collect(Collectors.toMap(
                         p -> p,
                         p -> computeFinalScore(p, game)
