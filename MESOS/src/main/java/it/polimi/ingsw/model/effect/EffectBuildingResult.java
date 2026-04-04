@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.effect;
 /**
  * This class represents the result of applying an effect in the game.
  */
-public class EffectResult {
+public class EffectBuildingResult {
 
     /**
      * The changes in the player's resources and points as a result of applying the effect.
@@ -33,7 +33,7 @@ public class EffectResult {
      * @param starDelta Star difference
      * @param cardDelta Additional card to pick
      */
-    public EffectResult(int foodDelta, int ppDelta, int starDelta, int cardDelta) {
+    public EffectBuildingResult(int foodDelta, int ppDelta, int starDelta, int cardDelta) {
         this.foodDelta = foodDelta;
         this.ppDelta = ppDelta;
         this.starDelta = starDelta;

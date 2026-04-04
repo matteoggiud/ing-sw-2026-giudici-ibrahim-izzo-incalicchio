@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.effect.building;
 
-import it.polimi.ingsw.model.effect.EffectResult;
+import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.effect.EffectBuildingResult;
 
 /**
  * You get a PP and Food bonus for every Hunter
@@ -17,8 +18,23 @@ public class Food_PP_Hunter_Effect implements IBuildingEffect {
      */
     private int FoodGained;
 
+    /**
+     * Apply the effect of gaining PP and food based on the number of hunters (N_Subject) that the player has
+     * @param N_Subject
+     * @return
+     */
     @Override
-    public EffectResult ApplyEffect(int N_Subject) {
-        return new EffectResult(FoodGained * N_Subject, PPGained * N_Subject, 0, 0);
+    public EffectBuildingResult ApplyEffect(int N_Subject) {
+        return new EffectBuildingResult(FoodGained * N_Subject, PPGained * N_Subject, 0, 0);
+    }
+
+    /**
+     * Give the type of character that this effect is related to
+     *
+     * @return type of character
+     */
+    @Override
+    public CharacterType getSubjectType() {
+        return CharacterType.HUNTER;
     }
 }

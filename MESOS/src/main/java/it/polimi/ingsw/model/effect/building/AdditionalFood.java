@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.effect.building;
 
-import it.polimi.ingsw.model.effect.EffectResult;
+import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.effect.EffectBuildingResult;
 
 /**
  * At the end of the turn if your totem goes on a spot with a Food Bonus,
@@ -14,8 +15,23 @@ public class AdditionalFood implements IBuildingEffect {
      */
     private int FoodGained;
 
+    /**
+     * Constructs an AdditionalFood effect with the specified amount of food gained.
+     * @param N_Subject
+     * @return
+     */
     @Override
-    public EffectResult ApplyEffect(int N_Subject) {
-        return new EffectResult(FoodGained,0,0,0);
+    public EffectBuildingResult ApplyEffect(int N_Subject) {
+        return new EffectBuildingResult(FoodGained,0,0,0);
+    }
+
+    /**
+     * Get the type of the building effect
+     *
+     * @return the type
+     */
+    @Override
+    public CharacterType getSubjectType() {
+        return null;
     }
 }

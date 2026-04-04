@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.effect.building;
 
-import it.polimi.ingsw.model.effect.EffectResult;
+import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.effect.EffectBuildingResult;
 
 /**
  * For every character set you get a PP bonus
@@ -12,8 +13,23 @@ public class AvatarEffectPP implements IBuildingEffect {
      */
     private int PPGained;
 
+    /**
+     * Apply the effect of gaining PP based on the number of character sets (N_Subject) that the player has
+     * @param N_Subject
+     * @return
+     */
     @Override
-    public EffectResult ApplyEffect(int N_Subject) {
-        return new EffectResult(0,N_Subject * PPGained,0,0);
+    public EffectBuildingResult ApplyEffect(int N_Subject) {
+        return new EffectBuildingResult(0,N_Subject * PPGained,0,0);
+    }
+
+    /**
+     * Give the type of character that this effect is related to
+     *
+     * @return type of character
+     */
+    @Override
+    public CharacterType getSubjectType() {
+        return null;
     }
 }

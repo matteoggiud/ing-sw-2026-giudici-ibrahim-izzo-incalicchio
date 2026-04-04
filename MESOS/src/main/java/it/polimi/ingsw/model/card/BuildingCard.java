@@ -18,6 +18,19 @@ public class BuildingCard extends TribeCard {
     /** The specific effect triggered by this building. */
     private final IBuildingEffect effect;
 
+    /** It's a flag for the Card Effects */
+    boolean isCardEffect;
+
+    /** It's a flag for the Card Effects */
+    boolean isAvatarEffect;
+
+    /** It's a flag for the Card Effects */
+    boolean isStandardEffect;
+
+    /** It's a flag for the Card Effects */
+    boolean isOnlyFoodEffect;
+
+
     /**
      * Constructs a new BuildingCard.
      *

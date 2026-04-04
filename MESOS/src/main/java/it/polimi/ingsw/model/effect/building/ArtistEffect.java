@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.effect.building;
 
-import it.polimi.ingsw.model.effect.EffectResult;
+import it.polimi.ingsw.model.effect.EffectBuildingResult;
+import it.polimi.ingsw.model.card.CharacterType;
 
 /**
  * For every Artist that you have you gain a Food bonus
@@ -13,7 +14,17 @@ public class ArtistEffect implements IBuildingEffect {
     private int FoodGained;
 
     @Override
-    public EffectResult ApplyEffect(int N_Subject) {
-        return new EffectResult(FoodGained * N_Subject,0,0,0);
+    public EffectBuildingResult ApplyEffect(int N_Subject) {
+        return new EffectBuildingResult(FoodGained * N_Subject,0,0,0);
+    }
+
+    /**
+     * Give the type of character that this effect is related to
+     *
+     * @return type of character
+     */
+    @Override
+    public CharacterType getSubjectType() {
+        return CharacterType.ARTIST;
     }
 }
