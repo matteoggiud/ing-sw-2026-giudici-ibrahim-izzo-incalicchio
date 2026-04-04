@@ -2,17 +2,27 @@ package it.polimi.ingsw.model.effect;
 
 import it.polimi.ingsw.model.core.Player;
 
-import java.util.HashMap;
-
 public class EffectEventResult {
-    private HashMap<Player, Integer> playerFoodResults;
-    private HashMap<Player, Integer> playerPPResults;
+    private final Player targetPlayer;
+    private final int foodChange;
+    private final int ppChange;
 
-    public void putPlayerFoodResults(Player p, int N_Subject) {
-        this.playerFoodResults.put(p, N_Subject);
+    public EffectEventResult(int foodChange, int ppChange,  Player targetPlayer) {
+        this.foodChange = foodChange;
+        this.ppChange = ppChange;
+        this.targetPlayer = targetPlayer;
     }
 
-    public void putPlayerPPResults(Player p, int N_Subject) {
-        this.playerPPResults.put(p, N_Subject);
+    public int getFoodChange() {
+        return foodChange;
     }
+
+    public int getPpChange() {
+        return ppChange;
+    }
+
+    public Player getTargetPlayer() {
+        return targetPlayer;
+    }
+
 }
