@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.effect.EffectEventResult;
 
 import java.util.List;
 
+//TODO: understand how to handle modifiers due to gatherer cards and building cards
 public interface IEventEffect {
     EventType getEventEffectType();
     List<EffectEventResult> ApplyEffect(Game game, EventCard eventCard);
