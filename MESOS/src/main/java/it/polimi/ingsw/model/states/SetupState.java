@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.states;
 
 import it.polimi.ingsw.model.core.Game;
+import it.polimi.ingsw.model.gamelogic.GameBuilder;
 
 public class SetupState implements IGameState{
     @Override
@@ -16,9 +17,9 @@ public class SetupState implements IGameState{
      */
     @Override
     public void executePhase(Game game) {
-        GameBuilder builder = new GameBuilder(game.getPlayers().size());
+        GameBuilder  builder = new GameBuilder();
 
-        builder.prepareBoard(game);
+        //builder.prepareBoard(game);
         //game.getBoard().setTurnOrderBox(ruleSet.createTurnOrderSlots(numPlayers));
     }
 
