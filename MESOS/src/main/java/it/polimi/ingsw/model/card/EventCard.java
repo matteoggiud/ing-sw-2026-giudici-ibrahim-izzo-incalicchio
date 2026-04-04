@@ -23,14 +23,24 @@ public class EventCard extends TribeCard {
     private final IEventEffect eventEffect;
 
     /**
-     * The amount of resources gained when the event is resolved successfully.
+     * The amount of Food gained when the event is resolved successfully.
      */
-    private final int gained;
+    private final int gainedFood;
 
     /**
-     * The amount of resources lost (malus) when the event is resolved unsuccessfully.
+     * The amount of PP gained when the event is resolved successfully.
      */
-    private final int malus;
+    private final int gainedPP;
+
+    /**
+     * The amount of resources lost Food (malus) when the event is resolved unsuccessfully.
+     */
+    private final int malusFood;
+
+    /**
+     * The amount of resources lost PP (malus) when the event is resolved unsuccessfully.
+     */
+    private final int malusPP;
 
     /**
      * The threshold value that determines who receives bonus or malus.
@@ -47,12 +57,14 @@ public class EventCard extends TribeCard {
      * @param isFinalEvent indicates whether this event card is a special card
      * @param eventType     the specific type of the event card
      * @param eventEffect   the effect associated with this event card
-     * @param gained        the amount of resources gained
-     * @param malus         the amount of resources lost (malus)
+     * @param gainedFood        the amount of food gained
+     * @param gainedPP        the amount of PP gained
+     * @param malusFood         the amount of food lost (malus)
+     * @param malusPP         the amount of food lost (malus)
      * @param threshold     the threshold value that determines who receives bonus or malus
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
-    public EventCard(String name, Era era, int minNumPlayers, boolean isFinalEvent, EventType eventType, IEventEffect eventEffect, int gained, int malus, int threshold) throws IllegalArgumentException {
+    public EventCard(String name, Era era, int minNumPlayers, boolean isFinalEvent, EventType eventType, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
 
         if (eventType == null)
@@ -61,10 +73,16 @@ public class EventCard extends TribeCard {
         if (eventEffect == null)
             throw new IllegalArgumentException("eventEffect cannot be null");
 
-        if (gained < 0)
+        if (gainedFood < 0)
             throw new IllegalArgumentException("gained cannot be negative");
 
-        if (malus < 0)
+        if (malusFood < 0)
+            throw new IllegalArgumentException("malus cannot be negative");
+
+        if (gainedPP < 0)
+            throw new IllegalArgumentException("gained cannot be negative");
+
+        if (malusPP < 0)
             throw new IllegalArgumentException("malus cannot be negative");
 
         if (threshold < 0)
@@ -73,8 +91,10 @@ public class EventCard extends TribeCard {
         this.isFinalEvent = isFinalEvent;
         this.eventType = eventType;
         this.eventEffect = eventEffect;
-        this.gained = gained;
-        this.malus = malus;
+        this.gainedFood = gainedFood;
+        this.malusFood = malusFood;
+        this.malusPP = malusPP;
+        this.gainedPP = gainedPP;
         this.threshold = threshold;
     }
 
@@ -97,21 +117,39 @@ public class EventCard extends TribeCard {
     }
 
     /**
-     * Gets the amount of resources gained.
+     * Gets the amount of Food gained.
      *
      * @return the amount of resources gained.
      */
-    public int getGained() {
-        return gained;
+    public int getGainedFood() {
+        return gainedFood;
     }
 
     /**
-     * Gets the amount of resources lost (malus).
+     * Gets the amount of PP gained.
+     *
+     * @return the amount of resources gained.
+     */
+    public int getGainedPP() {
+        return gainedPP;
+    }
+
+    /**
+     * Gets the amount of Food lost (malus).
      *
      * @return the amount of resources lost.
      */
-    public int getMalus() {
-        return malus;
+    public int getMalusFood() {
+        return malusFood;
+    }
+
+    /**
+     * Gets the amount of Food lost (malus).
+     *
+     * @return the amount of resources lost.
+     */
+    public int getMalusPP() {
+        return malusPP;
     }
 
     /**
