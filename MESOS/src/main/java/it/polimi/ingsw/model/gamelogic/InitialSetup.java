@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.deck.*;
 import it.polimi.ingsw.model.board.*;
 import it.polimi.ingsw.model.ruleset.IGameRuleSet;
+import it.polimi.ingsw.model.ruleset.StandardRuleSet;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,10 +30,10 @@ public class InitialSetup {
             throw new IllegalArgumentException("allCards and ruleSet cannot be null");
         }
 
-        if (numPlayers < ruleSet.getMinPlayers() || numPlayers > ruleSet.getMaxPlayers()) {
+        if (numPlayers < StandardRuleSet.MIN_PLAYERS || numPlayers > StandardRuleSet.MAX_PLAYERS) {
             throw new IllegalArgumentException(
                     "Invalid player count: " + numPlayers +
-                            " (expected between " + ruleSet.getMinPlayers() + " and " + ruleSet.getMaxPlayers() + ")"
+                            " (expected between " + StandardRuleSet.MIN_PLAYERS + " and " + StandardRuleSet.MAX_PLAYERS + ")"
             );
         }
 
@@ -46,7 +47,7 @@ public class InitialSetup {
         List<TribeCard> finalEvents = new ArrayList<>();
 
         for (TribeCard card : validCards) {
-            if (card instanceof EventCard event && event.isSpecialCard()) {
+            if (card instanceof EventCard event && event.isFinalEvent()) {
                 finalEvents.add(card);
             } else {
                 switch (card.getEra()) {

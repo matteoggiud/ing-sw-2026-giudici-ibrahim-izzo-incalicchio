@@ -111,7 +111,6 @@ public class ScoreCalculator {
                 .sum();
     }
 
-    // TODO: (Andre/Pula) fix this method with the new Players class
     /**
      *  Ranks the players in the game based on their final scores.
      *
@@ -119,7 +118,7 @@ public class ScoreCalculator {
      * @return a map of players and their corresponding final scores, sorted in descending order of scores.
      */
     public static Map<Player, Integer> rankPlayer(Game game) {
-        return game.getPlayers().stream()
+        return game.getPlayers().getShuffledPlayers().stream()
                 .collect(Collectors.toMap(
                         p -> p,
                         p -> computeFinalScore(p, game)
