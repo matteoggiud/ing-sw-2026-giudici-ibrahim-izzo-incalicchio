@@ -32,8 +32,6 @@ public class EventResolver {
      * @param eventCards a list of EventCard objects representing the event cards to be resolved.
      */
     public void resolveEvent(List<EventCard> eventCards) {
-        List<EffectEventResult> allChangesLog = new ArrayList<>();
-
         // Sort the event cards based on the game rules
         Stack<EventCard> sortedEventCards = game.getRuleSet().sortEventCards(eventCards);
 
@@ -41,11 +39,10 @@ public class EventResolver {
         while (!sortedEventCards.isEmpty()) {
             EventCard eventCard = sortedEventCards.pop();
             List<EffectEventResult> changes = eventCard.getEventEffect().ApplyEffect(game, eventCard);
-            allChangesLog.addAll(changes);
+
+            applyAllChanges(changes);
         }
 
-        // Apply all changes to the players
-        applyAllChanges(allChangesLog);
     }
 
     /**

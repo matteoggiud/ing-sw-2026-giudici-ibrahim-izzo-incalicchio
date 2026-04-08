@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.effect.building;
 
 import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectBuildingResult;
 
 /**
@@ -22,4 +23,11 @@ public interface IBuildingEffect {
      * @return
      */
     CharacterType getSubjectType();
+
+    /**
+     * Gets the event type associated with this building effect, which can be used to determine when the effect should be triggered during the game.
+     *
+     * @return the event type associated with this building effect
+     */
+    EventType getEventEffectType();
 }

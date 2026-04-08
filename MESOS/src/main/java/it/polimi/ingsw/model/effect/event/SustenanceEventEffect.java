@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.card.EventCard;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
+import it.polimi.ingsw.model.deck.EventDiscount;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public class SustenanceEventEffect implements IEventEffect {
         List<EffectEventResult> effectEventResults = new ArrayList<>();
 
         for (Player player : game.getPlayers().getShuffledPlayers()) {
-            int discount = player.getPlayerDeck().calculateTotalDiscount(getEventEffectType()); // Calculate the discount provided by gatherer cards plus building cards
-            int toPay = Math.max(player.getPlayerDeck().getCharacters().size() - discount, 0); // Calculate the total food cost after applying discounts
+            EventDiscount discount = player.getPlayerDeck().calculateTotalDiscount(getEventEffectType()); // Calculate the discount provided by gatherer cards plus building cards
+            int toPay = Math.max(player.getPlayerDeck().getCharacters().size() - discount.getFood(), 0); // Calculate the total food cost after applying discounts
 
             if (player.getFood() < toPay) { // If the player doesn't have enough food to pay for all characters
                 int ppLoss = (toPay - player.getFood()) * eventCard.getMalusPP(); // Calculate the PP loss for unfed characters

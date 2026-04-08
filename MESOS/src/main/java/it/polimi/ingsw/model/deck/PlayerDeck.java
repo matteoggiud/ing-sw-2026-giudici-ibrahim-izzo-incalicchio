@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.deck;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.effect.EffectBuildingResult;
+
 
 /**
  * This class represents the player's deck,
@@ -56,7 +57,7 @@ public class PlayerDeck {
      * it initializes the player's deck with empty lists of character and building cards,
      * and sets all discounts and counts to zero.
      */
-    public PlayerDeck(){
+    public PlayerDeck() {
         this.characters = new ArrayList<>();
         this.buildings = new ArrayList<>();
         this.totalBuilderDiscount = 0;
@@ -68,9 +69,9 @@ public class PlayerDeck {
     }
 
 
-
     /**
      * This method counts the number of character cards in the player's deck that have a specific character type.
+     *
      * @param type The type we want to count
      * @return the number of character cards in the player's deck that have the specified character type.
      */
@@ -87,16 +88,15 @@ public class PlayerDeck {
 
     /**
      * This method adds a card to the player's deck
+     *
      * @param card to be added
      */
-    public void addCard(Card card){
-        if(card instanceof BuildingCard){
+    public void addCard(Card card) {
+        if (card instanceof BuildingCard) {
             this.buildings.add((BuildingCard) card);
-        }
-        else if(card instanceof CharacterCard){
+        } else if (card instanceof CharacterCard) {
             this.characters.add((CharacterCard) card);
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Card must be either a BuildingCard or a CharacterCard");
         }
     }
@@ -104,14 +104,16 @@ public class PlayerDeck {
 
     /**
      * This method returns the list of character cards in the player's deck.
+     *
      * @return All the character card of the player
      */
-    public ArrayList<CharacterCard> getCharacters(){
+    public ArrayList<CharacterCard> getCharacters() {
         return this.characters;
     }
 
     /**
      * This method returns the list of building cards in the player's deck.
+     *
      * @return All the building card of the player
      */
     public ArrayList<BuildingCard> getBuildings() {
@@ -170,5 +172,29 @@ public class PlayerDeck {
      */
     public int getTotalArtist() {
         return totalArtist;
+    }
+
+    /**
+     * This method calculates the total discount that the player has for a specific event type, based on the character and building cards in their deck.
+     *
+     * @param eventEffectType the type of event for which the discount is being calculated
+     * @return an EventDiscount object that contains the total discount for the specified event type, including both food and PP discounts.
+     */
+    public EventDiscount calculateTotalDiscount(EventType eventEffectType) {
+        EventDiscount eventDiscount = new EventDiscount(0, 0);
+        if (eventEffectType == EventType.SUSTENANCE) {
+            eventDiscount.addFood((int) this.characters.stream().filter(c -> c.getType() == CharacterType.GATHERER).count() * 3);
+        }
+
+        for (BuildingCard card : this.buildings) {
+            if (card.getEffect().getEventEffectType() == eventEffectType) {
+                int n_subject = (int) this.characters.stream().filter(c -> c.getType() == card.getEffect().getSubjectType()).count();
+                EffectBuildingResult buildingResult = card.getEffect().ApplyEffect(n_subject);
+                eventDiscount.addFood(buildingResult.getFoodDelta());
+                eventDiscount.addFood(buildingResult.getPpDelta());
+            }
+        }
+
+        return eventDiscount;
     }
 }

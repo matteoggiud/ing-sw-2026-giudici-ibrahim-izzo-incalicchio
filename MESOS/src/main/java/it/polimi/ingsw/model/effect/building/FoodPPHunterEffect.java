@@ -1,12 +1,13 @@
 package it.polimi.ingsw.model.effect.building;
 
 import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectBuildingResult;
 
 /**
  * You get a PP and Food bonus for every Hunter
  */
-public class Food_PP_Hunter_Effect implements IBuildingEffect {
+public class FoodPPHunterEffect implements IBuildingEffect {
 
     /**
      * The amount of PP gained by the player for each hunter that they have
@@ -36,5 +37,15 @@ public class Food_PP_Hunter_Effect implements IBuildingEffect {
     @Override
     public CharacterType getSubjectType() {
         return CharacterType.HUNTER;
+    }
+
+    /**
+     * Gets the event type associated with this building effect, which can be used to determine when the effect should be triggered during the game.
+     *
+     * @return the event type associated with this building effect
+     */
+    @Override
+    public EventType getEventEffectType() {
+        return EventType.HUNT;
     }
 }

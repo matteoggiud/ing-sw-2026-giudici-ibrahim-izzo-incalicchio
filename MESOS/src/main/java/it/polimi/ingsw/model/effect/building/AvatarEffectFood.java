@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.effect.building;
 
 import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectBuildingResult;
 
 /**
@@ -30,6 +31,11 @@ public class AvatarEffectFood implements IBuildingEffect {
      */
     @Override
     public CharacterType getSubjectType() {
+        return null;
+    }
+
+    @Override
+    public EventType getEventEffectType() {
         return null;
     }
 }
