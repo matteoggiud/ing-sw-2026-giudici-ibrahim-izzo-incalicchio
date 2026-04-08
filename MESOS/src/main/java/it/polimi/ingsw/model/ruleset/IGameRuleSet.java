@@ -3,8 +3,11 @@ package it.polimi.ingsw.model.ruleset;
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.card.EventCard;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 
 /**
@@ -69,4 +72,7 @@ public interface IGameRuleSet {
      * @throws IllegalArgumentException if era is null or player count is invalid.
      */
     int getBuildingLimit(Era era, int numPlayers);
+
+    //TODO: (Pula) create this method
+    Stack<EventCard> sortEventCards(List<EventCard> eventCards);
 }
