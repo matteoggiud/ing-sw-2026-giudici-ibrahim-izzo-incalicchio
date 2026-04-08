@@ -29,7 +29,11 @@ public interface IBuildingEffect {
         return 0;
     }
 
-    // default Optional<IEndGameScoring> getEndGameScoring() { return Optional.empty(); }
+    //TODO: add the method to get the end game scoring
+    default Optional<IEndGameScoring> getEndGameScoring() {
+        return Optional.empty();
+    }
 
+    //TODO: add the method to get the trigger effect (observer pattern)
     // default Optional<ITriggerEffect> getTriggerEffect() { return Optional.empty(); }
 }
