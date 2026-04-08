@@ -51,6 +51,6 @@ public class TribeDeck {
     }
 
     public boolean isEmpty(){
-        return this.TribeDeck.isEmpty();
+        return this.tribeDeck.isEmpty();
     }
 }
