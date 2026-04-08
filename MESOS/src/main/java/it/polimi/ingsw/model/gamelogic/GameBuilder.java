@@ -13,65 +13,42 @@ import java.util.*;
 
 public class GameBuilder {
 
-    //TODO: (Andre) Adapt createTribeDeck
     /**
-     * Creates the tribe deck for the game.
-     * Cards are filtered by player count, then grouped by era.
-     * Special event cards are placed at the end of the deck.
      *
-     * @param allCards   the complete list of tribe cards available in the game.
-     * @param numPlayers the number of players participating in the game.
-     * @param ruleSet    the game rule set used to validate the player count.
-     * @return a TribeDeck built according to the setup rules.
-     * @throws IllegalArgumentException if allCards or ruleSet is null, or player count is invalid.
+     *  Initializes Tribe Deck.
+     * @param allCards all Tribe Cards
+     * @param game     The game object containing the ruleset and the list of players.
      */
-    public static TribeDeck createTribeDeck(List<TribeCard> allCards, int numPlayers, IGameRuleSet ruleSet) {
-        if (allCards == null || ruleSet == null) {
-            throw new IllegalArgumentException("allCards and ruleSet cannot be null");
+    public static void initializeTribeDeck (List<TribeCard> allCards, Game game) {
+        if (allCards == null || game == null) {
+            throw new IllegalArgumentException("allCards and game cannot be null");
         }
 
-        if (numPlayers < StandardRuleSet.MIN_PLAYERS || numPlayers > StandardRuleSet.MAX_PLAYERS) {
+        IGameRuleSet ruleSet = game.getRuleSet();
+
+
+        if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS || game.getNumberOfPlayers() > StandardRuleSet.MAX_PLAYERS) {
             throw new IllegalArgumentException(
-                    "Invalid player count: " + numPlayers +
+                    "Invalid player count: " + game.getNumberOfPlayers() +
                             " (expected between " + StandardRuleSet.MIN_PLAYERS + " and " + StandardRuleSet.MAX_PLAYERS + ")"
             );
         }
 
-        List<TribeCard> validCards = allCards.stream()
-                .filter(card -> card.isAvailableForPlayerCount(numPlayers))
-                .toList();
+        List<TribeCard> validCards = new ArrayList<> (allCards.stream()
+                .filter(card -> card.isAvailableForPlayerCount(game.getNumberOfPlayers()))
+                .toList()
+        );
 
-        List<TribeCard> era1 = new ArrayList<>();
-        List<TribeCard> era2 = new ArrayList<>();
-        List<TribeCard> era3 = new ArrayList<>();
-        List<TribeCard> finalEvents = new ArrayList<>();
-
-        for (TribeCard card : validCards) {
-            if (card instanceof EventCard event && event.isFinalEvent()) {
-                finalEvents.add(card);
-            } else {
-                switch (card.getEra()) {
-                    case ERA_1 -> era1.add(card);
-                    case ERA_2 -> era2.add(card);
-                    case ERA_3 -> era3.add(card);
-                }
-            }
-        }
-
-        Collections.shuffle(era1);
-        Collections.shuffle(era2);
-        Collections.shuffle(era3);
-        Collections.shuffle(finalEvents);
+        Collections.shuffle(validCards);
 
         List<TribeCard> deckComposition = new ArrayList<>();
-        deckComposition.addAll(era1);
-        deckComposition.addAll(era2);
-        deckComposition.addAll(era3);
-        deckComposition.addAll(finalEvents);
+        for (Era era : Era.values()) {
+            validCards.stream().filter(b -> b.getEra().equals(era)).forEach(deckComposition::add);
 
-        return new TribeDeck(deckComposition);
+        }
+        game.getTribeDeck().addTribesCards(deckComposition);
+
     }
-
 
     public static void initializeBuildingDecks(List<BuildingCard> allBuildings, Game game) {
         if (allBuildings == null || game == null) {

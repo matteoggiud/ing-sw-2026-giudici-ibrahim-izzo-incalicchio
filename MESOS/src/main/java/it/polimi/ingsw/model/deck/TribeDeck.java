@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.deck;
 import it.polimi.ingsw.model.card.TribeCard;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class represents the tribe deck, which is a collection of tribe cards that players can draw from during the game.
@@ -46,11 +47,17 @@ public class TribeDeck {
         return this.tribeDeck.removeFirst();
     }
 
+    public void addTribesCards(List<TribeCard> cards) {
+        this.tribeDeck.addAll(cards);
+    }
+
+
     public void addCardToTop(TribeCard card) {
         this.tribeDeck.addFirst(card);
     }
 
     public boolean isEmpty(){
-        return this.TribeDeck.isEmpty();
+        return this.tribeDeck.isEmpty();
     }
 }
+
