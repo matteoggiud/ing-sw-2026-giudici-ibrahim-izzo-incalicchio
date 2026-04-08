@@ -23,7 +23,7 @@ public class ShamanicRitualEventEffect implements IEventEffect {
     }
 
     @Override
-    public List<EffectEventResult> ApplyEffect(Game game, EventCard eventCard) {
+    public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
         List<EffectEventResult> effectEventResults = new ArrayList<>();
 
         // Find the list of players with the most and least star icons
@@ -34,6 +34,7 @@ public class ShamanicRitualEventEffect implements IEventEffect {
 
         for (Player player : game.getPlayers().getShuffledPlayers()) {
             int starCount = player.getPlayerDeck().getTotalShamanStars(); // Calculate the total number of star icons for the player
+
             if (starCount > maxStars) {
                 maxStars = starCount;
                 mostStarPlayers.clear();

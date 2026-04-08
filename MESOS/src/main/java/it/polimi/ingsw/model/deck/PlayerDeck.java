@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.deck;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.effect.EffectBuildingResult;
+import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
+import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
 
 
 /**
@@ -75,7 +77,7 @@ public class PlayerDeck {
      * @param type The type we want to count
      * @return the number of character cards in the player's deck that have the specified character type.
      */
-    public int getCountByType(CharacterType type) {
+    public int countCharactersByType(CharacterType type) {
         int count = 0;
         for (CharacterCard card : this.characters) {
             if (card.getType() == type) {
@@ -144,7 +146,20 @@ public class PlayerDeck {
      * @return the total number of shaman stars for the player.
      */
     public int getTotalShamanStars() {
-        return totalShamanStars;
+        int totalStars = 0;
+
+        // Calculate the total number of shaman stars from the character cards in the player's deck
+        for (CharacterCard card : this.characters) {
+            if (card instanceof ShamanCharacterCard shamanCard) {
+                totalStars += shamanCard.getShamanStars();
+            }
+        }
+
+        // Calculate the total number of shaman stars from the building cards in the player's deck
+        for (BuildingCard building : this.buildings)
+            totalStars += building.getEffect().getBonusShamanStars();
+
+        return totalStars;
     }
 
     /**
@@ -175,26 +190,26 @@ public class PlayerDeck {
     }
 
     /**
-     * This method calculates the total discount that the player has for a specific event type, based on the character and building cards in their deck.
+     * This method retrieves a list of active event modifiers from the player's building cards.
      *
-     * @param eventEffectType the type of event for which the discount is being calculated
-     * @return an EventDiscount object that contains the total discount for the specified event type, including both food and PP discounts.
+     * @return a list of IEventModifier objects representing the active event modifiers from the player's building cards.
      */
-    public EventDiscount calculateTotalDiscount(EventType eventEffectType) {
-        EventDiscount eventDiscount = new EventDiscount(0, 0);
-        if (eventEffectType == EventType.SUSTENANCE) {
-            eventDiscount.addFood((int) this.characters.stream().filter(c -> c.getType() == CharacterType.GATHERER).count() * 3);
-        }
+    public List<IEventModifier> getActiveEventModifiers() {
+        List<IEventModifier> activeModifiers = new ArrayList<>();
 
-        for (BuildingCard card : this.buildings) {
-            if (card.getEffect().getEventEffectType() == eventEffectType) {
-                int n_subject = (int) this.characters.stream().filter(c -> c.getType() == card.getEffect().getSubjectType()).count();
-                EffectBuildingResult buildingResult = card.getEffect().ApplyEffect(n_subject);
-                eventDiscount.addFood(buildingResult.getFoodDelta());
-                eventDiscount.addFood(buildingResult.getPpDelta());
+        // Gets the active event modifiers from the character cards in the player's deck and add them to the list of active modifiers
+        for (CharacterCard character : this.characters) {
+            if (character instanceof IEventModifier) {
+                activeModifiers.add((IEventModifier) character);
             }
         }
 
-        return eventDiscount;
+        // Gets the active event modifiers from the building cards in the player's deck and add them to the list of active modifiers
+        for (BuildingCard building : this.buildings) {
+            // Check if the building has an event modifier and add it to the list of active modifiers
+            building.getEffect().getEventModifier().ifPresent(activeModifiers::add);
+        }
+
+        return activeModifiers;
     }
 }

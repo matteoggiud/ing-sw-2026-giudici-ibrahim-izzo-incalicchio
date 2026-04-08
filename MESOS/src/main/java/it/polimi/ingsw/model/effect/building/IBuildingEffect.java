@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model.effect.building;
 
-import it.polimi.ingsw.model.card.CharacterType;
-import it.polimi.ingsw.model.card.EventType;
-import it.polimi.ingsw.model.effect.EffectBuildingResult;
+import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
+
+import java.util.Optional;
 
 /**
  * This interface represents the effect of a building card in the game.
@@ -12,22 +12,24 @@ import it.polimi.ingsw.model.effect.EffectBuildingResult;
 public interface IBuildingEffect {
 
     /**
-     * Apply the effect of the building card based on the number of subjects (N_Subject) that are relevant to the effect.
-     * @param N_Subject
-     * @return
-     */
-    EffectBuildingResult ApplyEffect(int N_Subject);
-
-    /**
-     * Get the type of the building effect, which can be used to determine how the effect should be applied or displayed in the game.
-     * @return
-     */
-    CharacterType getSubjectType();
-
-    /**
-     * Gets the event type associated with this building effect, which can be used to determine when the effect should be triggered during the game.
+     * If the building modifies the event, it returns his modifier, otherwise it returns an empty Optional
      *
-     * @return the event type associated with this building effect
+     * @return an Optional containing the IEventModifier if the building modifies the event, or an empty Optional if it does not
      */
-    EventType getEventEffectType();
+    default Optional<IEventModifier> getEventModifier() {
+        return Optional.empty();
+    }
+
+    /**
+     * If the building modifies the input of shamanic stars calculation, it returns the number of bonus stars, otherwise it returns 0
+     *
+     * @return the number of bonus stars provided by the building.
+     */
+    default int getBonusShamanStars() {
+        return 0;
+    }
+
+    // default Optional<IEndGameScoring> getEndGameScoring() { return Optional.empty(); }
+
+    // default Optional<ITriggerEffect> getTriggerEffect() { return Optional.empty(); }
 }

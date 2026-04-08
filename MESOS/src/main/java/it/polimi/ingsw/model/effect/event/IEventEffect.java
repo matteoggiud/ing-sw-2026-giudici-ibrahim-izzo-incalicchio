@@ -9,6 +9,19 @@ import java.util.List;
 
 //TODO: understand how to handle modifiers due to gatherer cards and building cards
 public interface IEventEffect {
+    /**
+     * Identifies the type of event that triggers this effect.
+     *
+     * @return the EventType that triggers this effect.
+     */
     EventType getEventEffectType();
-    List<EffectEventResult> ApplyEffect(Game game, EventCard eventCard);
+
+    /**
+     * Compute the base effect of the event card, without applying any modifiers.
+     *
+     * @param game the current game state.
+     * @param eventCard the event card for which the effect is being calculated.
+     * @return
+     */
+    List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard);
 }

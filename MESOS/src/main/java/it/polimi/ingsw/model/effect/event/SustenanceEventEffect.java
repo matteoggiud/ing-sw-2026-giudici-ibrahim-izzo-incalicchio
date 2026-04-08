@@ -25,20 +25,15 @@ public class SustenanceEventEffect implements IEventEffect {
     }
 
     @Override
-    public List<EffectEventResult> ApplyEffect(Game game, EventCard eventCard) {
+    public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
         List<EffectEventResult> effectEventResults = new ArrayList<>();
 
         for (Player player : game.getPlayers().getShuffledPlayers()) {
-            EventDiscount discount = player.getPlayerDeck().calculateTotalDiscount(getEventEffectType()); // Calculate the discount provided by gatherer cards plus building cards
-            int toPay = Math.max(player.getPlayerDeck().getCharacters().size() - discount.getFood(), 0); // Calculate the total food cost after applying discounts
+            // Calculate the base cost of the event for the player, which is equal to the number of Characters in their tribe
+            int baseCost = player.getPlayerDeck().getCharacters().size();
 
-            if (player.getFood() < toPay) { // If the player doesn't have enough food to pay for all characters
-                int ppLoss = (toPay - player.getFood()) * eventCard.getMalusPP(); // Calculate the PP loss for unfed characters
-                effectEventResults.add(new EffectEventResult(-player.getFood(), ppLoss, player)); // Player pays all their food and loses PP for unfed characters
-
-            } else {
-                effectEventResults.add(new EffectEventResult(-toPay, 0, player));
-            }
+            // Add the effect result for the player
+            effectEventResults.add(new EffectEventResult(-baseCost, 0, player));
         }
 
         return effectEventResults;

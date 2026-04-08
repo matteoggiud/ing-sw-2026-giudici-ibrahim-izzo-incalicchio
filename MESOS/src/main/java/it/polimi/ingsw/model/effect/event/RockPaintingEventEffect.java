@@ -28,15 +28,17 @@ public class RockPaintingEventEffect implements IEventEffect {
      * @return a list of EffectEventResult objects representing the changes to each player's resources
      */
     @Override
-    public List<EffectEventResult> ApplyEffect(Game game, EventCard eventCard) {
+    public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
         List<EffectEventResult> effectEventResults = new ArrayList<>();
 
         for (Player player : game.getPlayers().getShuffledPlayers()) {
-            int artistCount = player.getPlayerDeck().getCountByType(ARTIST);
+            int artistCount = player.getPlayerDeck().countCharactersByType(ARTIST);
 
-            if (artistCount >= eventCard.getThreshold()) { // Gain PP for each Artist
+            if (artistCount >= eventCard.getThreshold()) {
+                // If the player has enough Artists, they gain an amount of prestige points for each Artist in their tribe
                 effectEventResults.add(new EffectEventResult(0, artistCount * eventCard.getGainedPP(), player));
-            } else { // Lose a flat amount of PP
+            } else {
+                // If the player does not have enough Artists, they lose a flat amount of prestige points as indicated on the Event card
                 effectEventResults.add(new EffectEventResult(0, eventCard.getMalusPP(), player));
             }
         }
