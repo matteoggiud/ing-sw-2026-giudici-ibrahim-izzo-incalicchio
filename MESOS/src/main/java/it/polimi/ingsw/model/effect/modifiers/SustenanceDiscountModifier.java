@@ -42,6 +42,6 @@ public class SustenanceDiscountModifier implements IEventModifier {
         int numbersOfCharacters = p.getPlayerDeck().countCharactersByType(characterType);
 
         // For each character of the specified type, apply a discount of 1 Food
-        result.setFoodChange(result.getFoodChange() - numbersOfCharacters);
+        result.setFoodChange(result.getFoodChange() + numbersOfCharacters);
     }
 }
