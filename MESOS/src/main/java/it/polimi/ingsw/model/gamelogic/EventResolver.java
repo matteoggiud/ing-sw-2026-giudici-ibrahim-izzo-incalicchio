@@ -18,4 +18,5 @@ public class EventResolver {
         }
         return 0;
     }
+
 }
