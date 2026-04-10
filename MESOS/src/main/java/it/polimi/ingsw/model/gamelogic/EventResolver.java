@@ -49,6 +49,7 @@ public class EventResolver {
             for (EffectEventResult change : changes) {
                 Player p = change.getTargetPlayer();
 
+                //Cycle to apply eventual character and building effect given be the event
                 List<IEventModifier> activeModifiers = p.getPlayerDeck().getActiveEventModifiers();
                 for (IEventModifier modifier : activeModifiers) {
                     modifier.applyModifier(eventType, change);
