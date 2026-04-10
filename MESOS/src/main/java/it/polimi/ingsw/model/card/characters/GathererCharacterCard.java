@@ -12,6 +12,17 @@ import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
  */
 public class GathererCharacterCard extends CharacterCard implements IEventModifier {
     /**
+     * Checks if the modifier is applicable to the given event type.
+     *
+     * @param eventType the type of event to check for applicability.
+     * @return true if the modifier is applicable to the given event type, false otherwise.
+     */
+    @Override
+    public boolean isSupported(EventType eventType) {
+        return eventType == EventType.SUSTENANCE;
+    }
+
+    /**
      * Apply the modifier to the given EffectEventResult.
      *
      * @param eventType the type of event that triggered the effect.
