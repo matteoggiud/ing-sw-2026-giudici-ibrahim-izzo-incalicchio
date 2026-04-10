@@ -3,9 +3,6 @@ package it.polimi.ingsw.model.effect.building;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
-import it.polimi.ingsw.model.effect.modifiers.ShamanicDoubleModifier;
-
-import java.util.Optional;
 
 /**
  * You get Doubled PP from the Shamanic Event if you win the Shamanic Ritual.

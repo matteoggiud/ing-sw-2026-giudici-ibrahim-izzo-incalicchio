@@ -1,28 +1,41 @@
 package it.polimi.ingsw.model.effect.building;
 
-import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.EventType;
-import it.polimi.ingsw.model.effect.EffectBuildingResult;
+import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
-import it.polimi.ingsw.model.effect.modifiers.ShamanicImmunityModifier;
-
-import java.util.Optional;
 
 /**
  * During the Shamanic Event you don't lose PP
  */
-public class ShamanicImmunityBuildingEffect implements IBuildingEffect {
-    private final IEventModifier modifier = new ShamanicImmunityModifier();
+public class ShamanicImmunityBuildingEffect implements IBuildingEffect, IEventModifier {
 
 
+    // IEventModifiers methods
     /**
-     * If the building modifies the event, it returns his modifier, otherwise it returns an empty Optional
+     * Checks if the modifier is applicable to the given event type.
      *
-     * @return an Optional containing the IEventModifier if the building modifies the event, or an empty Optional if it does not
+     * @param eventType the type of event to check for applicability.
+     * @return true if the modifier is applicable to the given event type, false otherwise.
      */
     @Override
-    public Optional<IEventModifier> getEventModifier() {
-        return Optional.of(modifier);
+    public boolean isSupported(EventType eventType) {
+        return eventType == EventType.SHAMANIC_RITUAL;
     }
 
+    /**
+     * Apply the modifier to the given EffectEventResult.
+     *
+     * @param eventType the type of event that triggered the effect.
+     * @param result    the EffectEventResult to which the modifier should be applied.
+     */
+    @Override
+    public void applyModifier(EventType eventType, EffectEventResult result) {
+        if (!isSupported(eventType)) {
+            throw new IllegalStateException("ShamanicImmunityModifier can only be applied to Shamanic events");
+        }
+
+        // This modifier makes the player immune to the negative effects of the Shamanic event, so we set any negative changes to 0
+        if (result.getPpChange() < 0)
+            result.setPpChange(0);
+    }
 }
