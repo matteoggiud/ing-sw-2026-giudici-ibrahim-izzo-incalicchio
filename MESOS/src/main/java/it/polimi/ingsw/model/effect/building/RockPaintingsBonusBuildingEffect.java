@@ -1,24 +1,42 @@
 package it.polimi.ingsw.model.effect.building;
 
+import it.polimi.ingsw.model.card.CharacterType;
+import it.polimi.ingsw.model.card.EventType;
+import it.polimi.ingsw.model.core.Player;
+import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
-import it.polimi.ingsw.model.effect.modifiers.RockPaintingsBonusModifier;
 
 import java.util.Optional;
 
 /**
  * During rock paintings event, for each Artist that you have you gain a Food bonus
  */
-public class RockPaintingsBonusBuildingEffect implements IBuildingEffect {
-    private final IEventModifier modifier = new RockPaintingsBonusModifier();
+public class RockPaintingsBonusBuildingEffect implements IBuildingEffect, IEventModifier {
 
-    /**
-     * If the building modifies the event, it returns his modifier, otherwise it returns an empty Optional
-     *
-     * @return an Optional containing the IEventModifier if the building modifies the event, or an empty Optional if it does not
-     */
     @Override
-    public Optional<IEventModifier> getEventModifier() {
-        return Optional.of(modifier);
+    public boolean isSupported(EventType eventType) {
+        return eventType == EventType.ROCK_PAINTINGS;
     }
 
+    /**
+     * Apply the modifier to the given EffectEventResult.
+     *
+     * @param eventType the type of event that triggered the effect.
+     * @param result    the EffectEventResult to which the modifier should be applied.
+     */
+    @Override
+    public void applyModifier(EventType eventType, EffectEventResult result) {
+        if (eventType != EventType.ROCK_PAINTINGS) {
+            throw new IllegalStateException("RockPaintingsBonusModifier can only be applied to Exploration events");
+        }
+
+        Player p = result.getTargetPlayer();
+
+        // Count the number of "Artists" in the player's tribe
+        int numbersOfArtists = p.getPlayerDeck().countCharactersByType(CharacterType.ARTIST);
+
+        // For each Artist, gain 1 Food
+        result.setFoodChange(result.getFoodChange() + numbersOfArtists);
+
+    }
 }
