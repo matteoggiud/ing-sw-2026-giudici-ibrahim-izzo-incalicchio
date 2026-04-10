@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
 
-public class CardsSetBuildingEffect implements IBuildingEffect, IEndGameScoring {
+public class EndPpCardsSetBuildingEffect implements IBuildingEffect, IEndGameScoring {
 
     @Override
     public int calculateEndGameBonus(Player player) {

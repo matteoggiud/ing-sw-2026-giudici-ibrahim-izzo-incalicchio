@@ -6,6 +6,7 @@ import java.util.List;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.triggers.IEventTrigger;
 
 
 /**
@@ -214,5 +215,17 @@ public class PlayerDeck {
         }
 
         return activeModifiers;
+    }
+
+    public List<IEventTrigger> getActiveEventTrigger(List<CharacterCard> addedCards) {
+        List<IEventTrigger> activeTriggers = new ArrayList<>();
+
+        for (BuildingCard building : this.buildings) {
+            if (building.getEffect() instanceof IEventTrigger buildingTrigger && buildingTrigger.isTriggered(addedCards)) {
+                activeTriggers.add(buildingTrigger);
+            }
+        }
+
+        return activeTriggers;
     }
 }
