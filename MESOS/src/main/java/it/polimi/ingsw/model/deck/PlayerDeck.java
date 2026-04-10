@@ -5,7 +5,7 @@ import java.util.List;
 
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
-import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 
 
 /**

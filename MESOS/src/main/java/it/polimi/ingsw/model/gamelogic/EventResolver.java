@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
-import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 
 import java.util.List;
 import java.util.Stack;

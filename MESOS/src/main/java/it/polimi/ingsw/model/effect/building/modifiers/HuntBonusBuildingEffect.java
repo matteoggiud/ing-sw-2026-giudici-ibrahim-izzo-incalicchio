@@ -1,12 +1,10 @@
-package it.polimi.ingsw.model.effect.building;
+package it.polimi.ingsw.model.effect.building.modifiers;
 
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
-import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
-
-import java.util.Optional;
+import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
 /**
  * During the Hunt Event, for each Hunter in your tribe, gain 1 Food and 1 additional Prestige Point.

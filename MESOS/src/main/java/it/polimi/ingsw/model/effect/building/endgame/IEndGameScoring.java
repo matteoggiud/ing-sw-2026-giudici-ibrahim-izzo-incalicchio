@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model.effect.building;
+package it.polimi.ingsw.model.effect.building.endgame;
 
 import it.polimi.ingsw.model.core.Player;
 

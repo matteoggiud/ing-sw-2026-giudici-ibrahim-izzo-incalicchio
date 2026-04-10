@@ -1,8 +1,9 @@
-package it.polimi.ingsw.model.effect.building;
+package it.polimi.ingsw.model.effect.building.endgame;
 
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectBuildingResult;
+import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
 /**
  * For every Hunter you gain a PP bonus

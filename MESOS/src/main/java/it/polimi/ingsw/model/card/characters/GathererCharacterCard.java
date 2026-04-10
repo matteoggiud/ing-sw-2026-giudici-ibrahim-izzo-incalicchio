@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
-import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 
 /**
  * Represents a Gatherer Character Card in the game.

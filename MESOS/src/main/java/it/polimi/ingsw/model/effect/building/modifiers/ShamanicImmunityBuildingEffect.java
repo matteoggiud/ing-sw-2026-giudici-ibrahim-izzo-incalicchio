@@ -1,16 +1,16 @@
-package it.polimi.ingsw.model.effect.building;
+package it.polimi.ingsw.model.effect.building.modifiers;
 
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
-import it.polimi.ingsw.model.effect.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
 /**
- * You get Doubled PP from the Shamanic Event if you win the Shamanic Ritual.
+ * During the Shamanic Event you don't lose PP
  */
-public class ShamanicDoubleBuildingEffect implements IBuildingEffect, IEventModifier {
+public class ShamanicImmunityBuildingEffect implements IBuildingEffect, IEventModifier {
 
-    // IEventModifier methods
 
+    // IEventModifiers methods
     /**
      * Checks if the modifier is applicable to the given event type.
      *
@@ -30,13 +30,12 @@ public class ShamanicDoubleBuildingEffect implements IBuildingEffect, IEventModi
      */
     @Override
     public void applyModifier(EventType eventType, EffectEventResult result) {
-        if (eventType != EventType.SHAMANIC_RITUAL) {
-            throw new IllegalStateException("ShamanicDoubleModifier can only be applied to Shamanic Ritual events");
+        if (!isSupported(eventType)) {
+            throw new IllegalStateException("ShamanicImmunityModifier can only be applied to Shamanic events");
         }
 
-        // If the player has more shamanic stars than the others, gain double the PP you would normally gain.
-        if (result.getPpChange() > 0) {
-            result.setPpChange(result.getPpChange() * 2);
-        }
+        // This modifier makes the player immune to the negative effects of the Shamanic event, so we set any negative changes to 0
+        if (result.getPpChange() < 0)
+            result.setPpChange(0);
     }
 }
