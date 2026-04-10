@@ -36,4 +36,6 @@ public interface IBuildingEffect {
 
     //TODO: add the method to get the trigger effect (observer pattern)
     // default Optional<ITriggerEffect> getTriggerEffect() { return Optional.empty(); }
+
+
 }

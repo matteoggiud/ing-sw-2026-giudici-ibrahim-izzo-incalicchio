@@ -9,6 +9,12 @@ import it.polimi.ingsw.model.effect.EffectEventResult;
  * During the Hunt Event, for each Hunter in your tribe, gain 1 Food and 1 additional Prestige Point.
  */
 public class HuntBonusModifier implements IEventModifier {
+
+    @Override
+    public boolean isSupported(EventType eventType) {
+        return eventType == EventType.HUNT;
+    }
+
     /**
      * Apply the modifier to the given EffectEventResult.
      *
