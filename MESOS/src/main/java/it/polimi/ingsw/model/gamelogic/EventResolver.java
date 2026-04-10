@@ -49,7 +49,7 @@ public class EventResolver {
             for (EffectEventResult change : changes) {
                 Player p = change.getTargetPlayer();
 
-                List<IEventModifier> activeModifiers = p.getPlayerDeck().getActiveEventModifiers();
+                List<IEventModifier> activeModifiers = p.getPlayerDeck().getActiveEventModifiers(eventType);
                 for (IEventModifier modifier : activeModifiers) {
                     modifier.applyModifier(eventType, change);
                 }
