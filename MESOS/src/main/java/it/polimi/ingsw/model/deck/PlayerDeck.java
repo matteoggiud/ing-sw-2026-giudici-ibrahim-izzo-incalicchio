@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.model.effect.building.shamanicstars.IShamanicStarsProvider;
@@ -237,4 +238,15 @@ public class PlayerDeck {
 
         return activeTriggers;
     }
+
+    public List<InventorCharacterCard> getInventors(){
+        ArrayList<InventorCharacterCard> inventors = new ArrayList<>();
+        for(CharacterCard character : this.characters){
+            if(character.getType() == CharacterType.INVENTOR){
+                inventors.add((InventorCharacterCard) character);
+            }
+        }
+        return inventors;
+    }
 }
+
