@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class TriggerInvetorsCoupleBuildingEffect implements IBuildingEffect, IEventTrigger {
+public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IEventTrigger {
     /**
      * The amount of food to pay for each set of characters completed after buying the building.
      */
