@@ -27,7 +27,7 @@ public class TurnOrderBox {
      *
      * @param slots the list of turn order slots in the box
      */
-    public void initializeSlots (ArrayList<TurnOrderSlot> slots) throws IllegalArgumentException {
+    public void initializeSlots(ArrayList<TurnOrderSlot> slots) throws IllegalArgumentException {
         if (slots == null || slots.contains(null) || slots.size() < 2 || slots.size() > 5)
             throw new IllegalArgumentException("TurnOrderBox must have between 2 and 5 slots and cannot be null");
         if (!this.slots.isEmpty())
@@ -52,7 +52,7 @@ public class TurnOrderBox {
      * @return the first free slot in the box
      * @throws IllegalStateException if there are no free slots available
      */
-    public TurnOrderSlot getFirstFreeSlot() throws IllegalStateException{
+    public TurnOrderSlot getFirstFreeSlot() throws IllegalStateException {
         return slots.stream().filter(TurnOrderSlot::isFree).findFirst().orElseThrow(() -> new IllegalStateException("No free slots available in the TurnOrderBox"));
     }
 
@@ -81,5 +81,17 @@ public class TurnOrderBox {
      */
     public boolean isCompletelyEmpty() {
         return slots.stream().allMatch(TurnOrderSlot::isFree);
+    }
+
+
+    public TurnOrderSlot getSlotByPlayer(Player player) {
+        if (player == null) throw new IllegalArgumentException("Player cannot be null");
+
+        for (TurnOrderSlot slot : slots) {
+            if (!slot.isFree() && slot.getPlacedPlayer().equals(player)) {
+                return slot;
+            }
+        }
+        throw new IllegalStateException("Player not found in any slot of the TurnOrderBox");
     }
 }

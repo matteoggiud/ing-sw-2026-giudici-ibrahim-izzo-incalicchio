@@ -49,7 +49,6 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
 
         if (currentSets > setsAlreadyCompletedWhenBought + payedSets) {
             // We have to pay
-
             payedSets++;
             return FOOD_TO_PAY;
         }
