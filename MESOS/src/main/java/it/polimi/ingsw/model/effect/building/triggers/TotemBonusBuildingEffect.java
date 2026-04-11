@@ -26,7 +26,7 @@ public class TotemBonusBuildingEffect implements IBuildingEffect, IEventTrigger 
      */
     @Override
     public Optional<IEventTrigger> getEventTrigger() {
-        return IBuildingEffect.super.getEventTrigger();
+        return Optional.of(this);
     }
 
     /**
@@ -38,7 +38,6 @@ public class TotemBonusBuildingEffect implements IBuildingEffect, IEventTrigger 
      */
     @Override
     public int getTrigger(Player player, Game game) {
-        TurnOrderSlot turnOrderSlot = game.getBoard().getTurnOrderBox().getSlotByPlayer(player);
 
         if (game.getBoard().getTurnOrderBox().getSlotByPlayer(player).getFoodBonus() > 0) {
             // The player is in a position of the turn order that grants a Food Bonus.
