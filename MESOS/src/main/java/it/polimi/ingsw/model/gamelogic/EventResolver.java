@@ -95,4 +95,5 @@ public class EventResolver {
             change.getTargetPlayer().addPP(change.getPpChange());
         }
     }
+
 }
