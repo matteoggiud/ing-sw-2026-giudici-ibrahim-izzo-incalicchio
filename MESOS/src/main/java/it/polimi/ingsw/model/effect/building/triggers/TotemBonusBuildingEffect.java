@@ -16,7 +16,8 @@ public class TotemBonusBuildingEffect implements IBuildingEffect, IEventTrigger 
     /**
      * The amount of food gained by this building effect if the player isn't in the last position of the turn order.
      */
-    private final static int GAINED_FOOD = 1;
+
+    private final static int FOOD_TO_PAY = 1;
 
     /**
      * If the building implements IEventTrigger it returns an Optional containing himself.
@@ -40,7 +41,7 @@ public class TotemBonusBuildingEffect implements IBuildingEffect, IEventTrigger 
         TurnOrderSlot turnOrderSlot = game.getBoard().getTurnOrderBox().getSlotByPlayer(player);
 
         if (!isPlayerInLastPosition(player, game)) {
-            return GAINED_FOOD;
+            return FOOD_TO_PAY;
         }
 
         return 0;
