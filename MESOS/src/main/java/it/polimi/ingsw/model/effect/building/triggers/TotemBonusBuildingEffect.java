@@ -26,7 +26,7 @@ public class TotemBonusBuildingEffect implements IBuildingEffect, IEventTrigger 
      */
     @Override
     public Optional<IEventTrigger> getEventTrigger() {
-        return IBuildingEffect.super.getEventTrigger();
+        return Optional.of(this);
     }
 
     /**
