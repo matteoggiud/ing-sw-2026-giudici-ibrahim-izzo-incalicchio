@@ -18,19 +18,6 @@ public class BuildingCard extends TribeCard {
     /** The specific effect triggered by this building. */
     private final IBuildingEffect effect;
 
-    /** It's a flag for the Card Effects */
-    private boolean isCardEffect;
-
-    /** It's a flag for the Card Effects */
-    private boolean isAvatarEffect;
-
-    /** It's a flag for the Card Effects */
-    private boolean isStandardEffect;
-
-    /** It's a flag for the Card Effects */
-    private boolean isOnlyFoodEffect;
-
-
     /**
      * Constructs a new BuildingCard.
      *
@@ -85,48 +72,5 @@ public class BuildingCard extends TribeCard {
      */
     public IBuildingEffect getEffect(){
         return effect;
-    }
-
-
-    /**
-     *
-     * Get the flag of the Card Effects
-     *
-     * @return
-     */
-    public boolean isCardEffect() {
-        return this.isCardEffect;
-    }
-
-
-    /**
-     *
-     * Get the flag of the Avatar Effects
-     *
-     * @return
-     */
-    public boolean isAvatarEffect() {
-        return this.isAvatarEffect;
-    }
-
-    /**
-     *
-     * Get the flag of the Standard Effects
-     *
-     * @return
-     */
-    public boolean isStandardEffect() {
-        return this.isStandardEffect;
-    }
-
-
-    /**
-     *
-     * Get the flag of the Only Food Effects
-     *
-     * @return
-     */
-    public boolean isOnlyFoodEffect() {
-        return this.isOnlyFoodEffect;
     }
 }
