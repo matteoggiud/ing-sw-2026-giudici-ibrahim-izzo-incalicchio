@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.effect.building.triggers;
 
-import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;

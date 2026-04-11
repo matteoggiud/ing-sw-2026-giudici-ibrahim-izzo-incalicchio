@@ -4,8 +4,6 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.card.characters.BuilderCharacterCard;
 import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
-import it.polimi.ingsw.model.card.characters.ArtistCharacterCard;
-import it.polimi.ingsw.model.card.BuildingCard;
 import it.polimi.ingsw.model.deck.PlayerDeck;
 
 
@@ -24,8 +22,8 @@ public class ScoreCalculator {
      *
      * Computes the final score for a given player at the end of the game.
      *
-     * @param player
-     * @param game
+     * @param player the player for whom the final score is being calculated
+     * @param game the current game state
      * @return the final score of the player
      */
     public static int computeFinalScore(Player player, Game game) {
@@ -42,7 +40,7 @@ public class ScoreCalculator {
     /**
      * Computes the score from the player's builder character cards.
      *
-     * @param player
+     * @param player the player for whom the builder score is being calculated
      * @return the total score from the player's builder character cards.
      */
     public static int computeBuilderScore(Player player) {
@@ -57,7 +55,7 @@ public class ScoreCalculator {
     /**
      * Computes the score from the player's inventor character cards.
      *
-     * @param player
+     * @param player the player for whom the inventor score is being calculated
      * @return the total score from the player's inventor character cards.
      *
      */
@@ -75,7 +73,7 @@ public class ScoreCalculator {
     /**
      * Computes the score from the player's artist character cards.
      *
-     * @param player
+     * @param player the player for whom the artist score is being calculated
      * @return the total score from the player's artist character cards,
      * calculated by dividing the number of artist cards in the player's deck by 2
      * and multiplying the result by 10.
@@ -114,7 +112,7 @@ public class ScoreCalculator {
     /**
      *  Ranks the players in the game based on their final scores.
      *
-     * @param game
+     * @param game the current game state
      * @return a map of players and their corresponding final scores, sorted in descending order of scores.
      */
     public static Map<Player, Integer> rankPlayer(Game game) {

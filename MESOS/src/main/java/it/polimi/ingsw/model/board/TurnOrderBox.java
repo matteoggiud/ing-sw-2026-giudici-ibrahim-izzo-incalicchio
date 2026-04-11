@@ -3,7 +3,6 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.model.core.Player;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents the turn order box in the game.

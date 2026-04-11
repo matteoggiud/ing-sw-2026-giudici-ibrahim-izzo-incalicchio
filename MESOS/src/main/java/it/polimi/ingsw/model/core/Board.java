@@ -6,8 +6,6 @@ import it.polimi.ingsw.model.board.TurnOrderBox;
 import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.BuildingDeck;
 
-import java.util.ArrayList;
-
 /**
  *
  * Represents the game board, which consists of the offer track, two rows of cards (upper and lower), and the turn order box.

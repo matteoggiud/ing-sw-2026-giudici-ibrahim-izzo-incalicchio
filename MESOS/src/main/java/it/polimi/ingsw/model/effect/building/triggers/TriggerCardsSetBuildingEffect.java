@@ -32,7 +32,7 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
     }
 
     /**
-     * @param player
+     * @param player the player who bought the building
      */
     @Override
     public void applyImmediateEffect(Player player) {
@@ -40,8 +40,9 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
     }
 
     /**
-     * @param player
-     * @param game
+     * @param player the player for which to check the trigger condition
+     * @param game the current game state
+     * @return the amount of food gained
      */
     @Override
     public int getTrigger(Player player, Game game) {

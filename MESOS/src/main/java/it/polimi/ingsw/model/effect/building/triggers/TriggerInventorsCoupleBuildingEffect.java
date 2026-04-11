@@ -35,7 +35,7 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
     }
 
     /**
-     * @param player
+     * @param player the player who bought the building
      */
     @Override
     public void applyImmediateEffect(Player player) {
@@ -43,8 +43,8 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
     }
 
     /**
-     * @param player
-     * @param game
+     * @param player the player for which to check the trigger condition
+     * @param game the current game state
      */
     @Override
     public int getTrigger(Player player, Game game) {

@@ -21,7 +21,7 @@ public interface IEventEffect {
      *
      * @param game the current game state.
      * @param eventCard the event card for which the effect is being calculated.
-     * @return
+     * @return a list of EffectEventResult representing the base effect of the event card.
      */
     List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard);
 }

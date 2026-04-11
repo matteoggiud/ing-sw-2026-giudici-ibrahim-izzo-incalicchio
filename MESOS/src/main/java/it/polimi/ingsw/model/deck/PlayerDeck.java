@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
@@ -226,9 +225,7 @@ public class PlayerDeck {
             Optional<IEventTrigger> buildingTriggerOpt = building.getEffect().getEventTrigger();
 
             // Check if the building has an event trigger and add it to the list of active triggers
-            if (buildingTriggerOpt.isPresent()) {
-                activeTriggers.add(buildingTriggerOpt.get());
-            }
+            buildingTriggerOpt.ifPresent(activeTriggers::add);
         }
 
         return activeTriggers;
@@ -241,9 +238,7 @@ public class PlayerDeck {
             Optional<IEndGameScoring> endGameScoringOpt = building.getEffect().getEndGameScoring();
 
             // Check if the building has an end game scoring and add it to the list of active end game scorings
-            if (endGameScoringOpt.isPresent()) {
-                endGameScorings.add(endGameScoringOpt.get());
-            }
+            endGameScoringOpt.ifPresent(endGameScorings::add);
         }
 
         return endGameScorings;

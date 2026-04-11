@@ -4,8 +4,11 @@ import it.polimi.ingsw.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.card.EventCard;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 /**
  * Defines the configuration and dynamic rules for a standard game of Mesos.
@@ -110,7 +113,7 @@ public class StandardRuleSet implements IGameRuleSet {
      * based on the current era and player count.
      * @param era the era for which the limit is requested.
      * @param numPlayers the current number of players.
-     * @return
+     * @return the maximum number of buildings a player can have on the board for the given era and player count.
      */
     @Override
     public int getBuildingLimit(Era era, int numPlayers) {
@@ -132,6 +135,16 @@ public class StandardRuleSet implements IGameRuleSet {
             if (era == Era.ERA_2) return 2;
             return 5;
         }
+    }
+
+    /**
+     * @param eventCards
+     * @return
+     */
+    @Override
+    public Stack<EventCard> sortEventCards(List<EventCard> eventCards) {
+       //TODO: @Pula implement this method to sort event cards in the correct order for the game.
+        return null;
     }
 
     /**

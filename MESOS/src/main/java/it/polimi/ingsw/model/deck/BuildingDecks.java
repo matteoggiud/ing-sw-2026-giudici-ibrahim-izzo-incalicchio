@@ -3,7 +3,6 @@ package it.polimi.ingsw.model.deck;
 import it.polimi.ingsw.model.card.BuildingCard;
 import it.polimi.ingsw.model.card.Era;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 

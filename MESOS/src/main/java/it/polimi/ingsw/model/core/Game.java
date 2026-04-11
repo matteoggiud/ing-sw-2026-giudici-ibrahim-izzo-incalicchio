@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.ruleset.*;
 import it.polimi.ingsw.model.states.*;
 
 
-import java.util.EnumMap;
 import java.util.UUID;
 
 /**

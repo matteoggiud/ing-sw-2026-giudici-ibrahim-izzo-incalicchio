@@ -2,7 +2,6 @@ package it.polimi.ingsw.model.states;
 
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.card.Card;
-import it.polimi.ingsw.model.card.EventCard;
 import it.polimi.ingsw.model.core.*;
 
 import java.util.ArrayList;
