@@ -32,8 +32,11 @@ public class SustenanceEventEffect implements IEventEffect {
             // Calculate the base cost of the event for the player, which is equal to the number of Characters in their tribe
             int baseCost = player.getPlayerDeck().getCharacters().size();
 
+            // Calculate the total gatherer discount for the player
+            int gathererDiscount = player.getPlayerDeck().getTotalGathererDiscount();
+
             // Add the effect result for the player
-            effectEventResults.add(new EffectEventResult(-baseCost, 0, player));
+            effectEventResults.add(new EffectEventResult(Math.abs(-baseCost + gathererDiscount), 0, player));
         }
 
         return effectEventResults;

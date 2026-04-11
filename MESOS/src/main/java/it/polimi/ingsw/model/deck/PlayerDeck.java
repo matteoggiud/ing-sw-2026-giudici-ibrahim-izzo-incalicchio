@@ -201,15 +201,9 @@ public class PlayerDeck {
      *
      * @return a list of IEventModifier objects representing the active event modifiers from the player's building cards.
      */
-    public List<IEventModifier> getActiveEventModifiers(EventType eventType) {
+    public List<IEventModifier> getActiveBuildingEventModifiers(EventType eventType) {
         List<IEventModifier> activeModifiers = new ArrayList<>();
 
-        // Gets the active event modifiers from the character cards in the player's deck and add them to the list of active modifiers
-        for (CharacterCard character : this.characters) {
-            if (character instanceof IEventModifier characterModifier && characterModifier.isSupported(eventType)) {
-                activeModifiers.add(characterModifier);
-            }
-        }
 
         // Gets the active event modifiers from the building cards in the player's deck and add them to the list of active modifiers
         for (BuildingCard building : this.buildings) {

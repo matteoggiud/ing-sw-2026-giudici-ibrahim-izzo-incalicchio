@@ -50,9 +50,9 @@ public class EventResolver {
                 Player p = change.getTargetPlayer();
 
                 //Cycle to apply eventual character and building effect given be the event
-                List<IEventModifier> activeModifiers = p.getPlayerDeck().getActiveEventModifiers(eventType);
-                for (IEventModifier modifier : activeModifiers) {
-                    modifier.applyModifier(eventType, change);
+                List<IEventModifier> activeBuildingModifiers = p.getPlayerDeck().getActiveBuildingEventModifiers(eventType);
+                for (IEventModifier buildingModifier : activeBuildingModifiers) {
+                    buildingModifier.applyModifier(eventType, change);
                 }
 
                 // Refine the change based on specific rules for certain event types, such as the Sustenance event
