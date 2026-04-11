@@ -40,21 +40,11 @@ public class TotemBonusBuildingEffect implements IBuildingEffect, IEventTrigger 
     public int getTrigger(Player player, Game game) {
         TurnOrderSlot turnOrderSlot = game.getBoard().getTurnOrderBox().getSlotByPlayer(player);
 
-        if (!isPlayerInLastPosition(player, game)) {
+        if (game.getBoard().getTurnOrderBox().getSlotByPlayer(player).getFoodBonus() > 0) {
+            // The player is in a position of the turn order that grants a Food Bonus.
             return FOOD_TO_PAY;
         }
 
         return 0;
-    }
-
-    /**
-     * Check if the player is in the last position of the turn order, which means that their totem will move on a spot with a Food Bonus at the end of the turn.
-     *
-     * @param player the player for which we want to check the position in the turn order
-     * @param game   the current game state
-     * @return true if the player is in the last position of the turn order, false otherwise
-     */
-    private boolean isPlayerInLastPosition(Player player, Game game) {
-        return game.getBoard().getTurnOrderBox().getSlots().getLast().equals(game.getBoard().getTurnOrderBox().getSlotByPlayer(player));
     }
 }
