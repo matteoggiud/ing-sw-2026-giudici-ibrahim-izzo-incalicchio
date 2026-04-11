@@ -7,6 +7,7 @@ import java.util.Optional;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
+import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.model.effect.building.shamanicstars.IShamanicStarsProvider;
 import it.polimi.ingsw.model.effect.building.triggers.IEventTrigger;
@@ -201,15 +202,9 @@ public class PlayerDeck {
      *
      * @return a list of IEventModifier objects representing the active event modifiers from the player's building cards.
      */
-    public List<IEventModifier> getActiveEventModifiers(EventType eventType) {
+    public List<IEventModifier> getActiveBuildingEventModifiers(EventType eventType) {
         List<IEventModifier> activeModifiers = new ArrayList<>();
 
-        // Gets the active event modifiers from the character cards in the player's deck and add them to the list of active modifiers
-        for (CharacterCard character : this.characters) {
-            if (character instanceof IEventModifier characterModifier && characterModifier.isSupported(eventType)) {
-                activeModifiers.add(characterModifier);
-            }
-        }
 
         // Gets the active event modifiers from the building cards in the player's deck and add them to the list of active modifiers
         for (BuildingCard building : this.buildings) {
@@ -224,7 +219,7 @@ public class PlayerDeck {
         return activeModifiers;
     }
 
-    public List<IEventTrigger> getActiveEventTrigger(List<CharacterCard> addedCards) {
+    public List<IEventTrigger> getActiveBuildingEventTriggers(List<CharacterCard> addedCards) {
         List<IEventTrigger> activeTriggers = new ArrayList<>();
 
         for (BuildingCard building : this.buildings) {
@@ -239,14 +234,30 @@ public class PlayerDeck {
         return activeTriggers;
     }
 
-    public List<InventorCharacterCard> getInventors(){
-        ArrayList<InventorCharacterCard> inventors = new ArrayList<>();
-        for(CharacterCard character : this.characters){
-            if(character.getType() == CharacterType.INVENTOR){
-                inventors.add((InventorCharacterCard) character);
+    public List<IEndGameScoring> getActiveEndGameBuildingScorings(){
+        List<IEndGameScoring> endGameScorings = new ArrayList<>();
+
+        for (BuildingCard building : this.buildings) {
+            Optional<IEndGameScoring> endGameScoringOpt = building.getEffect().getEndGameScoring();
+
+            // Check if the building has an end game scoring and add it to the list of active end game scorings
+            if (endGameScoringOpt.isPresent()) {
+                endGameScorings.add(endGameScoringOpt.get());
             }
         }
-        return inventors;
+
+        return endGameScorings;
     }
+
+    public List<CharacterCard> getCharactersByType(CharacterType type) {
+        List<CharacterCard> characters = new ArrayList<>();
+        for (CharacterCard card : this.characters) {
+            if (card.getType() == type) {
+                characters.add(card);
+            }
+        }
+        return characters;
+    }
+
 }
 

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.effect.building.triggers;
 
+import it.polimi.ingsw.model.card.CharacterCard;
+import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
 import it.polimi.ingsw.model.card.characters.InventorType;
 import it.polimi.ingsw.model.core.Game;
@@ -7,6 +9,7 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -66,11 +69,15 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
         Map<InventorType, Integer> frequency = new HashMap<>();
         int n_couple = 0;
 
-        for(InventorCharacterCard inventors : player.getPlayerDeck().getInventors()){
-            frequency.put(inventors.getInventorType(), frequency.getOrDefault(inventors.getInventorType(), 0) + 1);
+        List<CharacterCard> inventors = player.getPlayerDeck().getCharactersByType(CharacterType.INVENTOR);
+
+        for (CharacterCard inventor : inventors) {
+            InventorCharacterCard inventorCard = (InventorCharacterCard) inventor;
+
+            frequency.put(inventorCard.getInventorType(), frequency.getOrDefault(inventorCard.getInventorType(), 0) + 1);
         }
 
-        for(Integer count : frequency.values()){
+        for (Integer count : frequency.values()) {
             n_couple += count / 2;
         }
         return n_couple;
