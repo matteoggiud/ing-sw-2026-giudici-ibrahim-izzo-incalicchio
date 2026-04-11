@@ -15,9 +15,7 @@ public interface IBuildingEffect {
      */
     default int getBonusShamanStars() {
         return 0;
-    }
+    } //TODO: Understand whether to implement an IShamanStarsProvider interface for this method, so IBuildingEffect is cleaner
 
-    //TODO: add the method to get the end game scoring
-
-    //TODO: add the method to get the trigger effect (observer pattern)
+    //TODO: Put the methods (Optional<IEventModifier> getEventModifier()) for both modifier, end game scoring and trigger to avoid the use of instanceof
 }
