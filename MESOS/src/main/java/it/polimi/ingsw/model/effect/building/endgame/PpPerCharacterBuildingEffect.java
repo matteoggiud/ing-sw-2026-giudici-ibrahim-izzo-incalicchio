@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.Optional;
+
 /**
  * At the end of the game, earn the Prestige Points indicated for each Character card of the type indicated.
  */
@@ -40,5 +42,10 @@ public class PpPerCharacterBuildingEffect implements IBuildingEffect, IEndGameSc
     @Override
     public int calculateEndGameBonus(Player player) {
         return PPGained * player.getPlayerDeck().countCharactersByType(characterType);
+    }
+
+    @Override
+    public Optional<IEndGameScoring> getEndGameScoring(){
+        return Optional.of(this);
     }
 }

@@ -5,6 +5,8 @@ import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.Optional;
+
 /**
  * For every character set you get a Food bonus
  */
@@ -23,6 +25,11 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
      * The number of sets of characters that have been completed since the building was bought.
      */
     private int payedSets = 0;
+
+    @Override
+    public Optional<IEventTrigger> getEventTrigger() {
+        return Optional.of(this);
+    }
 
     /**
      * @param player

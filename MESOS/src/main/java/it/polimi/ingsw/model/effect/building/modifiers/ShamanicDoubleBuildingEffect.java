@@ -4,10 +4,17 @@ import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.Optional;
+
 /**
  * You get Doubled PP from the Shamanic Event if you win the Shamanic Ritual.
  */
 public class ShamanicDoubleBuildingEffect implements IBuildingEffect, IEventModifier {
+
+    @Override
+    public Optional<IEventModifier> getEventModifier() {
+        return Optional.of(this);
+    }
 
     // IEventModifier methods
 

@@ -4,6 +4,8 @@ package it.polimi.ingsw.model.effect.building.endgame;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.Optional;
+
 public class FlatPrestigePointBuildingCard implements IBuildingEffect, IEndGameScoring {
 
     /**
@@ -15,6 +17,11 @@ public class FlatPrestigePointBuildingCard implements IBuildingEffect, IEndGameS
     @Override
     public int calculateEndGameBonus(Player player) {
         return 25;
+    }
+
+    @Override
+    public Optional<IEndGameScoring> getEndGameScoring(){
+        return Optional.of(this);
     }
 
 }

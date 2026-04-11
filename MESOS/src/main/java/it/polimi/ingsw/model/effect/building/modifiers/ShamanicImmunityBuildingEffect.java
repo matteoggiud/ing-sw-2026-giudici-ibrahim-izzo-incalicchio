@@ -4,11 +4,17 @@ import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.Optional;
+
 /**
  * During the Shamanic Event you don't lose PP
  */
 public class ShamanicImmunityBuildingEffect implements IBuildingEffect, IEventModifier {
 
+    @Override
+    public Optional<IEventModifier> getEventModifier() {
+        return Optional.of(this);
+    }
 
     // IEventModifiers methods
     /**

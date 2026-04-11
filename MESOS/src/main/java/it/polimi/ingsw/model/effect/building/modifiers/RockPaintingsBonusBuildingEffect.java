@@ -6,10 +6,17 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.Optional;
+
 /**
  * During rock paintings event, for each Artist that you have you gain a Food bonus
  */
 public class RockPaintingsBonusBuildingEffect implements IBuildingEffect, IEventModifier {
+
+    @Override
+    public Optional<IEventModifier> getEventModifier() {
+        return Optional.of(this);
+    }
 
     @Override
     public boolean isSupported(EventType eventType) {

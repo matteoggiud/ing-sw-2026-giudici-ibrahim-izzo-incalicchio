@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.deck;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
@@ -200,17 +201,18 @@ public class PlayerDeck {
 
         // Gets the active event modifiers from the character cards in the player's deck and add them to the list of active modifiers
         for (CharacterCard character : this.characters) {
-            if (character instanceof IEventModifier) {
-                activeModifiers.add((IEventModifier) character);
+            if (character instanceof IEventModifier characterModifier && characterModifier.isSupported(eventType)) {
+                activeModifiers.add(characterModifier);
             }
         }
 
         // Gets the active event modifiers from the building cards in the player's deck and add them to the list of active modifiers
         for (BuildingCard building : this.buildings) {
+            Optional<IEventModifier> buildingModifierOpt = building.getEffect().getEventModifier();
+
             // Check if the building has an event modifier and add it to the list of active modifiers
-            // buildingModifier assumes building.getEffect() value
-            if (building.getEffect() instanceof IEventModifier buildingModifier && buildingModifier.isSupported(eventType)) {
-                activeModifiers.add(buildingModifier);
+            if (buildingModifierOpt.isPresent() && buildingModifierOpt.get().isSupported(eventType)) {
+                activeModifiers.add(buildingModifierOpt.get());
             }
         }
 
@@ -221,8 +223,11 @@ public class PlayerDeck {
         List<IEventTrigger> activeTriggers = new ArrayList<>();
 
         for (BuildingCard building : this.buildings) {
-            if (building.getEffect() instanceof IEventTrigger buildingTrigger && buildingTrigger.isTriggered(addedCards)) {
-                activeTriggers.add(buildingTrigger);
+            Optional<IEventTrigger> buildingTriggerOpt = building.getEffect().getEventTrigger();
+
+            // Check if the building has an event trigger and add it to the list of active triggers
+            if (buildingTriggerOpt.isPresent()) {
+                activeTriggers.add(buildingTriggerOpt.get());
             }
         }
 

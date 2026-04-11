@@ -6,6 +6,9 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * During the Sustenance Event, you get a discount of 1 Food on the total
  * for each Character card of the specified type in your tribe (Artists/Inventors/Gatherers).
@@ -13,9 +16,20 @@ import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEventModifier {
 
     /**
+     * The valid character types for this building effect, which are Artists, Inventors, and Gatherers.
+     */
+    private static final List<CharacterType> VALID_CHARACTER_TYPES = List.of(CharacterType.ARTIST, CharacterType.INVENTOR, CharacterType.GATHERER);
+
+
+    /**
      * The type of character associated with this building effect (e.g., Artists, Inventors, Gatherers).
      */
     private final CharacterType characterType;
+
+    @Override
+    public Optional<IEventModifier> getEventModifier() {
+        return Optional.of(this);
+    }
 
     /**
      * Constructs a SustenanceDiscountBuildingEffect with the specified character type.
@@ -23,6 +37,9 @@ public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEvent
      * @param characterType the type of character associated with this building effect.
      */
     public SustenanceDiscountBuildingEffect(CharacterType characterType) {
+        if (!VALID_CHARACTER_TYPES.contains(characterType))
+            throw new IllegalArgumentException("Invalid character type");
+
         this.characterType = characterType;
     }
 
