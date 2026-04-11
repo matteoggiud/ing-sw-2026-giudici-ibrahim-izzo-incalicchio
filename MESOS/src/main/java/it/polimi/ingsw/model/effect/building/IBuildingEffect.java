@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.effect.building;
 
 import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.shamanicstars.IShamanicStarsProvider;
 import it.polimi.ingsw.model.effect.building.triggers.IEventTrigger;
 
 import java.util.Optional;
@@ -14,14 +15,7 @@ import java.util.Optional;
 public interface IBuildingEffect {
 
 
-    /**
-     * If the building modifies the input of shamanic stars calculation, it returns the number of bonus stars, otherwise it returns 0
-     *
-     * @return the number of bonus stars provided by the building.
-     */
-    default int getBonusShamanStars() {
-        return 0;
-    } //TODO: Understand whether to implement an IShamanStarsProvider interface for this method, so IBuildingEffect is cleaner
+
 
     /**
      * If the building implements IEventModifier it returns an Optional containing himself.
@@ -47,6 +41,15 @@ public interface IBuildingEffect {
      * @return an Optional containing the IEventTrigger provided by this building effect.
      */
     default Optional<IEventTrigger> getEventTrigger() {
+        return Optional.empty();
+    }
+
+    /**
+     * If the building implements IShamanicStarsProvider it returns an Optional containing himself.
+     *
+     * @return an Optional containing the IShamanicStarsProvider provided by this building effect.
+     */
+    default Optional<IShamanicStarsProvider>  getShamanicStarsProvider() {
         return Optional.empty();
     }
 }

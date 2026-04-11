@@ -7,6 +7,7 @@ import java.util.Optional;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.shamanicstars.IShamanicStarsProvider;
 import it.polimi.ingsw.model.effect.building.triggers.IEventTrigger;
 
 
@@ -158,9 +159,12 @@ public class PlayerDeck {
         }
 
         // Calculate the total number of shaman stars from the building cards in the player's deck
-        for (BuildingCard building : this.buildings)
-            totalStars += building.getEffect().getBonusShamanStars();
+        for (BuildingCard building : this.buildings) {
+            Optional<IShamanicStarsProvider> buildingShamanicStarsProviderOpt = building.getEffect().getShamanicStarsProvider();
 
+            if (buildingShamanicStarsProviderOpt.isPresent())
+                totalStars += buildingShamanicStarsProviderOpt.get().getBonusShamanStars();
+        }
         return totalStars;
     }
 
