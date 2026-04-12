@@ -1,10 +1,28 @@
-cardId SERIAL PRIMARY KEY,
-  name VARCHAR(16),
-  era VARCHAR(3) CHECK(era IN ('I', 'II', 'III')),
-  minNumPlayers INTEGER CHECK(minNumPlayers BETWEEN 2 AND 5),
-  foodCost INTEGER CHECK(foodCost >= 0),
-  endGamePp INTEGER CHECK(endGamePp >= 0),
-  IBuildingEffect VARCHAR(64) CHECK (IBuildingEffect IN (
+CREATE TABLE CharacterCard
+(
+    cardId        INT AUTO_INCREMENT PRIMARY KEY,
+    name          VARCHAR(16),
+    era           ENUM('I', 'II', 'III'),
+    minnumplayers INTEGER CHECK (minnumplayers BETWEEN 2 AND 5),
+    charactertype ENUM(
+     'HUNTER',
+     'GATHERER',
+     'SHAMAN',
+     'ARTIST',
+     'BUILDER',
+     'INVENTOR'
+     ),
+)
+
+CREATE TABLE BuildingCard
+(
+    cardId          SERIAL PRIMARY KEY,
+    name            VARCHAR(16),
+    era             VARCHAR(3) CHECK (era IN ('I', 'II', 'III')),
+    minNumPlayers   INTEGER CHECK (minNumPlayers BETWEEN 2 AND 5),
+    foodCost        INTEGER CHECK (foodCost >= 0),
+    endGamePp       INTEGER CHECK (endGamePp >= 0),
+    IBuildingEffect VARCHAR(64) CHECK (IBuildingEffect IN (
     'DOUBLEBUILDERBUILDINGEFFECT',
     'ENDPPCARDSSETBUILDINGEFFECT',
     'FLATPRESTIGEPOINTBUILDINGCARD',
@@ -19,6 +37,6 @@ cardId SERIAL PRIMARY KEY,
     'TOTEMBONUSBUILDINGEFFECT',
     'TRIGGERCARDSSETBUILDINGEFFECT',
     'TRIGGERINVENTORSCOUPLEBUILDINGEFFECT'
-))
-  effectParams JSON
+        )),
+    effectParams    JSON
 )
