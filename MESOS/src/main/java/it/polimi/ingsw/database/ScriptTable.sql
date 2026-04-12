@@ -14,7 +14,6 @@ CREATE TABLE CharacterCard
      )),
     effectParams  JSON
 );
--- error: syn
 CREATE TABLE BuildingCard
 (
     cardId          SERIAL PRIMARY KEY,
