@@ -20,11 +20,6 @@ public class Game {
     private final UUID gameId;
 
     /**
-     * The host player is the player who created the game.
-     */
-    private final Player hostPlayer;
-
-    /**
      * The players list contains all the players in the game
      */
     private final Players players;
@@ -76,7 +71,6 @@ public class Game {
             throw new IllegalArgumentException("Host player cannot be null");
         }
         this.gameId = UUID.randomUUID();
-        this.hostPlayer = hostPlayer;
         this.players = new  Players();
         this.board = new Board();
         this.gameState = new LobbyState();
@@ -85,6 +79,8 @@ public class Game {
         this.currentEra = null;
         this.lastRoundTriggered = false;
         this.ruleSet = new StandardRuleSet();
+
+        players.addPlayer(hostPlayer);
     }
 
     /**
@@ -100,7 +96,7 @@ public class Game {
      * Gets the host player of the game.
      */
     public Player getHostPlayer() {
-        return this.hostPlayer;
+        return this.players.getHost();
     }
 
     /**
