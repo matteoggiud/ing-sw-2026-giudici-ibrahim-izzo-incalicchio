@@ -23,13 +23,28 @@ public class GameBuilder {
         this.game = game;
     }
 
+    public void prepareGame()
+    {
+        List<TribeCard> allTribeCards = new ArrayList<>(); //TODO: get all tribe cards from db
+        List<BuildingCard> allBuildingCards = new ArrayList<>();
+
+        // Initialize the tribe deck, building decks, offer track, turn order box, and fill the card rows according to the game rules and the available cards.
+        initializeTribeDeck(allTribeCards);
+        initializeBuildingDecks(allBuildingCards);
+        initializeOfferTrack();
+        initializeTurnOrderBox();
+        initializePlayersTotems();
+        initialFillCardRows();
+
+    }
+
     /**
      * Initializes Tribe Deck.
      *
      * @param allCards all Tribe Cards
      */
     //TODO: implement DataRepository to get all the possible cards from db
-    public void initializeTribeDeck(List<TribeCard> allCards) {
+    private void initializeTribeDeck(List<TribeCard> allCards) {
         if (allCards == null) {
             throw new IllegalArgumentException("allCards and game cannot be null");
         }
@@ -84,7 +99,7 @@ public class GameBuilder {
      *
      * @param allBuildings a list of all available building cards.
      */
-    public void initializeBuildingDecks(List<BuildingCard> allBuildings) {
+    private void initializeBuildingDecks(List<BuildingCard> allBuildings) {
         if (allBuildings == null) {
             throw new IllegalArgumentException("allBuildings and game cannot be null");
         }
@@ -127,7 +142,7 @@ public class GameBuilder {
     /**
      * Initializes the turn order box for the game using the provided rule set.
      */
-    public void initializeTurnOrderBox() {
+    private void initializeTurnOrderBox() {
         IGameRuleSet ruleSet = game.getRuleSet();
 
         // Create the turn order slots for the turn order box based on the number of players in the game using the rule set.
@@ -135,6 +150,31 @@ public class GameBuilder {
 
         // Initialize the turn order box in the game with the created turn order slots.
         game.getBoard().getTurnOrderBox().initializeTurnOrderBox(turnOrderSlots);
+
+        // Place the players in the turn order box according to the game rules and the created turn order slots.
+        initializePlacedPlayers(game.getBoard().getTurnOrderBox());
+    }
+
+    /**
+     * Initializes the players' totems by assigning each player a unique totem from the available totems.
+     */
+    private void initializePlayersTotems() {
+        List<Player> players = game.getPlayers().getShuffledPlayers();
+        Totem[] totems = Totem.values();
+
+        for (int i = 0; i < players.size(); i++) {
+            Player player = players.get(i);
+            player.setTotem(totems[i]);
+        }
+    }
+
+
+    private void initializePlacedPlayers(TurnOrderBox turnOrderBox) {
+        List<Player> players = game.getPlayers().getShuffledPlayers();
+
+        for (Player player : players) {
+            turnOrderBox.getFirstFreeSlot().placePlayer(player);
+        }
     }
 
     /**
@@ -187,7 +227,7 @@ public class GameBuilder {
     /**
      * Fills the lower and upper card row for the game according to the rules defined in the rule set.
      */
-    public void initialFillCardRows() {
+    private void initialFillCardRows() {
         TribeDeck tribeDeck = game.getTribeDeck();
         int numPlayers = game.getNumberOfPlayers();
         int lowerRowTarget = game.getRuleSet().getLowerRowSize(numPlayers);
