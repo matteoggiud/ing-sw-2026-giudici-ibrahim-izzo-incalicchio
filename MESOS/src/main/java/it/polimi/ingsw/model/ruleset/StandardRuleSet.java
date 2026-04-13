@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.EventCard;
+import it.polimi.ingsw.model.card.EventType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class StandardRuleSet implements IGameRuleSet {
 
     /**
      * Calculates the number of cards to be placed in the upper offer row.
+     *
      * @param numPlayers the current number of players in the game.
      * @return the capacity of the upper row.
      */
@@ -41,6 +43,7 @@ public class StandardRuleSet implements IGameRuleSet {
 
     /**
      * Calculates the number of cards to be placed in the lower offer row.
+     *
      * @param numPlayers the current number of players in the game.
      * @return the capacity of the lower row.
      */
@@ -52,6 +55,7 @@ public class StandardRuleSet implements IGameRuleSet {
 
     /**
      * Determines the starting amount of food for a player based on their initial turn order.
+     *
      * @param turnOrderIndex the 0-based index of the player's turn order (e.g., 0 is the first player).
      * @return the initial amount of food for the player based on their turn order.
      */
@@ -71,6 +75,7 @@ public class StandardRuleSet implements IGameRuleSet {
 
     /**
      * Creates and initializes the list of slots for the Turn Order Box based on the player count.
+     *
      * @param numPlayers the current number of players.
      * @return a list of initialized TurnOrderSlot objects for the Turn Order Box.
      */
@@ -111,7 +116,8 @@ public class StandardRuleSet implements IGameRuleSet {
     /**
      * Determines the maximum number of buildings a player can have on the board
      * based on the current era and player count.
-     * @param era the era for which the limit is requested.
+     *
+     * @param era        the era for which the limit is requested.
      * @param numPlayers the current number of players.
      * @return the maximum number of buildings a player can have on the board for the given era and player count.
      */
@@ -138,13 +144,38 @@ public class StandardRuleSet implements IGameRuleSet {
     }
 
     /**
-     * @param eventCards
-     * @return
+     * Sorts the provided ordered list of event cards into a stack, where sustenance are on top of stack
+     *
+     * @param eventCards the list of event cards to be sorted into a stack for the game.
+     * @return an ordered Stack of EventCards
      */
     @Override
     public Stack<EventCard> sortEventCards(List<EventCard> eventCards) {
-       //TODO: @Pula implement this method to sort event cards in the correct order for the game.
-        return null;
+        if (eventCards == null) {
+            throw new IllegalArgumentException("eventCards cannot be null");
+        }
+
+        Stack<EventCard> stack = new Stack<>();
+        ArrayList<EventCard> sustenanceCards = new ArrayList<>();
+        ArrayList<EventCard> otherCards = new ArrayList<>();
+
+        for (EventCard card : eventCards) {
+            if (card.getEventType() == EventType.SUSTENANCE) {
+                sustenanceCards.add(card);
+            } else {
+                otherCards.add(card);
+            }
+        }
+
+        for (int i = sustenanceCards.size() - 1; i >= 0; i--) {
+            stack.push(sustenanceCards.get(i));
+        }
+
+        for (int i = otherCards.size() - 1; i >= 0; i--) {
+            stack.push(otherCards.get(i));
+        }
+
+        return stack;
     }
 
     /**
@@ -193,6 +224,7 @@ public class StandardRuleSet implements IGameRuleSet {
 
     /**
      * Helper method to ensure the player count is within valid bounds.
+     *
      * @param numPlayers the number of players to check.
      * @throws IllegalArgumentException if the player count is outside the allowed range.
      */
