@@ -2,7 +2,7 @@ CREATE TABLE CharacterCard
 (
     cardId        SERIAL PRIMARY KEY,
     name          VARCHAR(16) NOT NULL,
-    era           VARCHAR(4) CHECK( era IN ('ERA_1', 'ERA_2', 'ERA_3')),
+    era           VARCHAR(5) CHECK( era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     minNumPlayers INTEGER CHECK (minNumPlayers BETWEEN 2 AND 5),
     characterType VARCHAR(8) CHECK ( characterType IN (
         'HUNTER',
@@ -18,7 +18,7 @@ CREATE TABLE BuildingCard
 (
     cardId          SERIAL PRIMARY KEY,
     name            VARCHAR(16),
-    era             VARCHAR(3) NOT NULL CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
+    era             VARCHAR(5) NOT NULL CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     minNumPlayers   INTEGER NOT NULL CHECK (minNumPlayers BETWEEN 2 AND 5),
     foodCost        INTEGER NOT NULL CHECK (foodCost >= 0),
     endGamePp       INTEGER NOT NULL CHECK (endGamePp >= 0),
@@ -45,7 +45,7 @@ CREATE TABLE EventCard
 (
     cardId        SERIAL PRIMARY KEY,
     name          VARCHAR(16) NOT NULL,
-    era           VARCHAR(4) CHECK( era IN ('ERA_1', 'ERA_2', 'ERA_3')),
+    era           VARCHAR(5) CHECK( era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     minNumPlayers INTEGER NOT NULL CHECK (minNumPlayers BETWEEN 2 AND 5),
     isFinalEvent  BOOLEAN NOT NULL DEFAULT FALSE,
     eventType     VARCHAR(16) NOT NULL CHECK (eventType IN ('HUNT', 'SHAMANIC_RITUAL', 'ROCK_PAINTINGS', 'SUSTENANCE')),

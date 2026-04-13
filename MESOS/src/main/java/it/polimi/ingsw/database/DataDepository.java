@@ -1,0 +1,197 @@
+package it.polimi.ingsw.database;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.characters.*;
+import it.polimi.ingsw.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.model.effect.building.endgame.*;
+import it.polimi.ingsw.model.effect.building.extraction.ExtraCardBuildingEffect;
+import it.polimi.ingsw.model.effect.building.modifiers.*;
+import it.polimi.ingsw.model.effect.building.shamanicstars.ShamanicStarsBuildingEffect;
+import it.polimi.ingsw.model.effect.building.triggers.TotemBonusBuildingEffect;
+import it.polimi.ingsw.model.effect.building.triggers.TriggerCardsSetBuildingEffect;
+import it.polimi.ingsw.model.effect.building.triggers.TriggerInventorsCoupleBuildingEffect;
+import it.polimi.ingsw.model.effect.event.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DataDepository {
+
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public boolean testConnection() throws SQLException {
+        Connection c = DatabaseManager.getConnection();
+        if(c != null && !c.isClosed() && c.isValid(3)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public List<TribeCard> loadAllTribeCards() throws SQLException {
+        List<TribeCard> allTribeCard = new ArrayList<>();
+        allTribeCard.addAll(loadCharacterCards());
+        allTribeCard.addAll(loadEventCards());
+        return allTribeCard;
+    }
+
+    public List<CharacterCard> loadCharacterCards() throws SQLException {
+        String sql = "SELECT name, era, minNumPlayers, characterType, effectParams FROM CharacterCard";
+
+        List<CharacterCard> allCharacterCard = new ArrayList<>();
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                Era era = Era.valueOf(rs.getString("era"));
+                int minNumPlayers = rs.getInt("minNumPlayers");
+                CharacterType type = CharacterType.valueOf(rs.getString("characterType"));
+                JsonNode params = parseJsonOrEmpty(rs.getString("effectParams"));
+
+                allCharacterCard.add(createCharacterCard(name, era, minNumPlayers, type, params));
+            }
+        }
+
+        return allCharacterCard;
+    }
+
+    public List<EventCard> loadEventCards() throws SQLException {
+        String sql = """
+            SELECT name, era, minNumPlayers, isFinalEvent, eventType,
+                   gainedFood, malusFood, gainedPp, malusPp, threshold
+            FROM EventCard
+        """;
+
+        List<EventCard> out = new ArrayList<>();
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                Era era = Era.valueOf(rs.getString("era"));
+                int minNumPlayers = rs.getInt("minNumPlayers");
+                boolean isFinalEvent = rs.getBoolean("isFinalEvent");
+                EventType eventType = EventType.valueOf(rs.getString("eventType"));
+                IEventEffect eventEffect = createEventEffect(eventType);
+
+                int gainedFood = rs.getInt("gainedFood");
+                int malusFood = rs.getInt("malusFood");
+                int gainedPp = rs.getInt("gainedPp");
+                int malusPp = rs.getInt("malusPp");
+                int threshold = rs.getInt("threshold");
+
+                out.add(new EventCard(
+                        name, era, minNumPlayers, isFinalEvent, eventType, eventEffect,
+                        gainedFood, malusFood, gainedPp, malusPp, threshold
+                ));
+            }
+        }
+
+        return out;
+    }
+
+    public List<BuildingCard> loadBuildingCards() throws SQLException {
+        String sql = """
+            SELECT name, era, minNumPlayers, foodCost, endGamePp, effectId, effectParams
+            FROM BuildingCard
+        """;
+
+        List<BuildingCard> out = new ArrayList<>();
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                Era era = Era.valueOf(rs.getString("era"));
+                int minNumPlayers = rs.getInt("minNumPlayers");
+                int foodCost = rs.getInt("foodCost");
+                int endGamePp = rs.getInt("endGamePp");
+                String effectId = rs.getString("effectId");
+                JsonNode params = parseJsonOrEmpty(rs.getString("effectParams"));
+
+                IBuildingEffect effect = createBuildingEffect(effectId, params);
+                out.add(new BuildingCard(name, era, minNumPlayers, foodCost, endGamePp, effect));
+            }
+        }
+
+        return out;
+    }
+
+    private CharacterCard createCharacterCard(
+            String name, Era era, int minNumPlayers, CharacterType type, JsonNode params
+    ) {
+        return switch (type) {
+            case GATHERER -> new GathererCharacterCard(name, era, minNumPlayers);
+            case ARTIST -> new ArtistCharacterCard(name, era, minNumPlayers);
+            case HUNTER -> new HunterCharacterCard(name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false));
+            case SHAMAN -> new ShamanCharacterCard(name, era, minNumPlayers, params.path("shamanStars").asInt(1));
+            case BUILDER -> new BuilderCharacterCard(
+                    name, era, minNumPlayers,
+                    params.path("endGamePP").asInt(0),
+                    params.path("foodDiscount").asInt(0)
+            );
+            case INVENTOR -> new InventorCharacterCard(
+                    name, era, minNumPlayers,
+                    InventorType.valueOf(params.path("inventorType").asText("BOAT"))
+            );
+        };
+    }
+
+    private IEventEffect createEventEffect(EventType eventType) {
+        return switch (eventType) {
+            case HUNT -> new HuntEventEffect();
+            case SHAMANIC_RITUAL -> new ShamanicRitualEventEffect();
+            case ROCK_PAINTINGS -> new RockPaintingEventEffect();
+            case SUSTENANCE -> new SustenanceEventEffect();
+        };
+    }
+
+    private IBuildingEffect createBuildingEffect(String effectId, JsonNode params) {
+        return switch (effectId) {
+            case "DOUBLEBUILDERBUILDINGEFFECT" -> new DoubleBuilderBuildingEffect();
+            case "ENDPPCARDSSETBUILDINGEFFECT" -> new EndPpCardsSetBuildingEffect();
+            case "FLATPRESTIGEPOINTBUILDINGCARD" -> new FlatPrestigePointBuildingCard();
+            case "PPPERCHARACTERBUILDINGEFFECT" -> new PpPerCharacterBuildingEffect(
+                    params.path("pp").asInt(1),
+                    CharacterType.valueOf(params.path("characterType").asText("HUNTER"))
+            );
+            case "EXTRACARDBUILDINGEFFECT" -> new ExtraCardBuildingEffect();
+            case "HUNTBONUSBUILDINGEFFECT" -> new HuntBonusBuildingEffect();
+            case "ROCKPAINTINGSBONUSBUILDINGEFFECT" -> new RockPaintingsBonusBuildingEffect();
+            case "SHAMANICDOUBLEBUILDINGEFFECT" -> new ShamanicDoubleBuildingEffect();
+            case "SHAMANICIMMUNITYBUILDINGEFFECT" -> new ShamanicImmunityBuildingEffect();
+            case "SUSTENANCEDISCOUNTBUILDINGEFFECT" -> new SustenanceDiscountBuildingEffect(
+                    CharacterType.valueOf(params.path("characterType").asText("GATHERER"))
+            );
+            case "SHAMANICSTARSBUILDINGEFFECT" -> new ShamanicStarsBuildingEffect();
+            case "TOTEMBONUSBUILDINGEFFECT" -> new TotemBonusBuildingEffect();
+            case "TRIGGERCARDSSETBUILDINGEFFECT" -> new TriggerCardsSetBuildingEffect();
+            case "TRIGGERINVENTORSCOUPLEBUILDINGEFFECT" -> new TriggerInventorsCoupleBuildingEffect();
+            default -> throw new IllegalArgumentException("effectId non gestito: " + effectId);
+        };
+    }
+
+    private JsonNode parseJsonOrEmpty(String raw) {
+        try {
+            if (raw == null || raw.isBlank()) {
+                return mapper.createObjectNode();
+            }
+            return mapper.readTree(raw);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("effectParams JSON non valido: " + raw, e);
+        }
+    }
+}
