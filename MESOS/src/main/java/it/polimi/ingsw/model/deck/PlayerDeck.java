@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import it.polimi.ingsw.model.card.*;
+import it.polimi.ingsw.model.card.characters.BuilderCharacterCard;
+import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
 import it.polimi.ingsw.model.effect.building.extraction.IExtraActionEffect;
@@ -97,7 +99,11 @@ public class PlayerDeck {
      * @return the total builder discount for the player.
      */
     public int getTotalBuilderDiscount() {
-        return 0;
+        return this.characters.stream()
+                .filter(BuilderCharacterCard.class::isInstance)
+                .map(BuilderCharacterCard.class::cast)
+                .mapToInt(BuilderCharacterCard::getFoodDiscount)
+                .sum();
     }
 
     /**
@@ -106,9 +112,8 @@ public class PlayerDeck {
      * @return the total gatherer discount for the player.
      */
     public int getTotalGathererDiscount() {
-        return 0;
+        return countCharactersByType(CharacterType.GATHERER) * 3;
     }
-
     /**
      * Gets the total number of shaman stars that the player has accumulated from their character cards.
      *
@@ -140,7 +145,12 @@ public class PlayerDeck {
      * @return the total number of different inventor items for the player.
      */
     public int getDifferentInventorItem() {
-        return 0;
+        return (int) this.characters.stream()
+                .filter(InventorCharacterCard.class::isInstance)
+                .map(InventorCharacterCard.class::cast)
+                .map(InventorCharacterCard::getInventorType)
+                .distinct()
+                .count();
     }
 
 
@@ -212,6 +222,24 @@ public class PlayerDeck {
             }
         }
         return characters;
+    }
+
+    /**
+     * Gets the total number of artist cards currently in the player's deck.
+     *
+     * @return the total number of artist cards
+     */
+    public int getTotalArtist() {
+        return countCharactersByType(CharacterType.ARTIST);
+    }
+
+    /**
+     * Gets the total number of hunter cards currently in the player's deck.
+     *
+     * @return the total number of hunter cards
+     */
+    public int getTotalHunter() {
+        return countCharactersByType(CharacterType.HUNTER);
     }
 
 }
