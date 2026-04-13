@@ -7,6 +7,7 @@ import java.util.Optional;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
+import it.polimi.ingsw.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.model.effect.building.shamanicstars.IShamanicStarsProvider;
 import it.polimi.ingsw.model.effect.building.triggers.IEventTrigger;
@@ -242,6 +243,18 @@ public class PlayerDeck {
         }
 
         return endGameScorings;
+    }
+
+    public List<IExtraActionEffect> getActiveExtractionEffects(){
+        List<IExtraActionEffect> extraActionEffects = new ArrayList<>();
+
+        for(BuildingCard building : this.buildings){
+            Optional<IExtraActionEffect> extraActionEffectOpt = building.getEffect().getExtraActionEffect();
+
+            extraActionEffectOpt.ifPresent(extraActionEffects::add);
+        }
+
+        return extraActionEffects;
     }
 
     public List<CharacterCard> getCharactersByType(CharacterType type) {

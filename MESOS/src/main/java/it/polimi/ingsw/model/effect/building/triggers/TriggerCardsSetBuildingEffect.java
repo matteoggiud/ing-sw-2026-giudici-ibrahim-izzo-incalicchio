@@ -72,4 +72,10 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
         }
         return n_set_min;
     }
+
+
+    @Override
+    public boolean isCardTrigger() {
+        return true;
+    }
 }

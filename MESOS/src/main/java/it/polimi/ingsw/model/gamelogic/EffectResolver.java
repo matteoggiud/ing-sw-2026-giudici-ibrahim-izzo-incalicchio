@@ -73,7 +73,7 @@ public class EffectResolver {
      */
     public void resolveTrigger(Player player) {
                 List<EffectEventResult> changes = new ArrayList<>();
-                //Cycle to apply ventual character and building effect given be the event
+                //Cycle to apply eventual character and building effect given be the event
                 List<IEventTrigger> activeBuildingTriggers = player.getPlayerDeck().getActiveBuildingEventTriggers();
                 for (IEventTrigger buildingModifier : activeBuildingTriggers) {
                     changes.add(new EffectEventResult(buildingModifier.getTrigger(player, game), 0, player));
