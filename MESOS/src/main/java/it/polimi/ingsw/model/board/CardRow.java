@@ -77,4 +77,13 @@ public class CardRow {
     public void transferTribeRowFrom(CardRow other) {
         this.tribeRow.transferTribeCardsFrom(other.getTribeRow());
     }
+
+    public void clearRow() {
+        tribeRow.clear();
+        buildingRow.clear();
+    }
+
+    public int countRow() {
+        return tribeRow.count() + buildingRow.count();
+    }
 }
