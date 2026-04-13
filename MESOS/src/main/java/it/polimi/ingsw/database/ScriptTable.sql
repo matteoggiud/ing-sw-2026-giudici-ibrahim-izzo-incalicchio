@@ -2,7 +2,7 @@ CREATE TABLE CharacterCard
 (
     cardId        SERIAL PRIMARY KEY,
     name          VARCHAR(16) NOT NULL,
-    era           VARCHAR(4) CHECK( era IN ('I', 'II', 'III')),
+    era           VARCHAR(4) CHECK( era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     minNumPlayers INTEGER CHECK (minNumPlayers BETWEEN 2 AND 5),
     characterType VARCHAR(8) CHECK ( characterType IN (
         'HUNTER',
@@ -18,7 +18,7 @@ CREATE TABLE BuildingCard
 (
     cardId          SERIAL PRIMARY KEY,
     name            VARCHAR(16),
-    era             VARCHAR(3) NOT NULL CHECK (era IN ('I', 'II', 'III')),
+    era             VARCHAR(3) NOT NULL CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     minNumPlayers   INTEGER NOT NULL CHECK (minNumPlayers BETWEEN 2 AND 5),
     foodCost        INTEGER NOT NULL CHECK (foodCost >= 0),
     endGamePp       INTEGER NOT NULL CHECK (endGamePp >= 0),
@@ -45,7 +45,7 @@ CREATE TABLE EventCard
 (
     cardId        SERIAL PRIMARY KEY,
     name          VARCHAR(16) NOT NULL,
-    era           VARCHAR(4) CHECK( era IN ('I', 'II', 'III')),
+    era           VARCHAR(4) CHECK( era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     minNumPlayers INTEGER NOT NULL CHECK (minNumPlayers BETWEEN 2 AND 5),
     isFinalEvent  BOOLEAN NOT NULL DEFAULT FALSE,
     eventType     VARCHAR(16) NOT NULL CHECK (eventType IN ('HUNT', 'SHAMANIC_RITUAL', 'ROCK_PAINTINGS', 'SUSTENANCE')),
@@ -78,14 +78,13 @@ CREATE TABLE TurnOrderSlot
     foodCost   INTEGER NOT NULL,
     ppCost     INTEGER NOT NULL ,
     FOREIGN KEY (orderBoxId) REFERENCES TurnOrderBox (orderBoxId) ,
-    UNIQUE (orderBoxId, position) --Per ogni Box non possono esserci due slot con la stessa posizione
+    UNIQUE (orderBoxId, position) --Ensure that each position in a TurnOrderBox is unique
 );
 
 CREATE TABLE Player
 (
     playerId     SERIAL PRIMARY KEY,
     nickname     VARCHAR(255) NOT NULL UNIQUE,
-    email        VARCHAR(255) NOT NULL UNIQUE,
-    passwordHash VARCHAR(64)  NOT NULL,
+    passwordHash CHAR(64)  NOT NULL,
     created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

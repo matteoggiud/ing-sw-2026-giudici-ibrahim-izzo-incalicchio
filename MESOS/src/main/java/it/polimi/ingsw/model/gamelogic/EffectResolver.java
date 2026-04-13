@@ -6,14 +6,16 @@ import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
+import it.polimi.ingsw.model.effect.building.triggers.IEventTrigger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 /**
  * The EventResolver class is responsible for resolving the effects of event cards in the game.
  */
-public class EventResolver {
+public class EffectResolver {
     /**
      * The game instance used for resolving event effects.
      */
@@ -24,7 +26,7 @@ public class EventResolver {
      *
      * @param game the game instance to be used for resolving event effects.
      */
-    public EventResolver(Game game) {
+    public EffectResolver(Game game) {
         this.game = game;
     }
 
@@ -64,6 +66,28 @@ public class EventResolver {
         }
     }
 
+    /**
+     * Resolves the effects of active triggers from the player's deck at the end of the turn.
+     *
+     * @param player
+     */
+    public void resolveTrigger(Player player) {
+                List<EffectEventResult> changes = new ArrayList<>();
+                //Cycle to apply eventual character and building effect given be the event
+                List<IEventTrigger> activeBuildingTriggers = player.getPlayerDeck().getActiveBuildingEventTriggers();
+                for (IEventTrigger buildingModifier : activeBuildingTriggers) {
+                    changes.add(new EffectEventResult(buildingModifier.getTrigger(player, game), 0, player));
+                }
+                // Finally, apply all the changes to the players' resources based on the log of effect results
+                applyAllChanges(changes);
+            }
+
+    /**
+     * Refines the effect change based on specific rules for certain event types, such as the Sustenance event.
+     *
+     * @param change
+     * @param eventCard
+     */
     private void refineChange(EffectEventResult change, EventCard eventCard) {
         EventType eventType = eventCard.getEventType();
         Player player = change.getTargetPlayer();

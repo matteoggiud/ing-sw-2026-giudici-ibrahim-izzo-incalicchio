@@ -7,6 +7,10 @@ import it.polimi.ingsw.model.core.Player;
 
 public interface IEventTrigger {
 
+    default boolean isCardTrigger() {
+        return false;
+    }
+
     /**
      * This method is called when the building with this effect is bought, to apply any immediate effect that it may have.
      *
@@ -23,6 +27,7 @@ public interface IEventTrigger {
      * @param player the player for which the trigger is being evaluated
      * @param game   the current game state
      * @return the amount of food gained by this building effect
+     *
      */
     int getTrigger(Player player, Game game); //TODO: Instead of returning an int we return an EffectEventResult so it is more scalable in the future and more consistent with the rest of the code
 
