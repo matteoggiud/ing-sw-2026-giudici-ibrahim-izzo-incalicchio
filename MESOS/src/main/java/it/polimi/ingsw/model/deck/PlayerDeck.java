@@ -218,7 +218,7 @@ public class PlayerDeck {
         return activeModifiers;
     }
 
-    public List<IEventTrigger> getActiveBuildingEventTriggers(List<CharacterCard> addedCards) {
+    public List<IEventTrigger> getActiveBuildingEventTriggers() {
         List<IEventTrigger> activeTriggers = new ArrayList<>();
 
         for (BuildingCard building : this.buildings) {
