@@ -23,8 +23,7 @@ public class GameBuilder {
         this.game = game;
     }
 
-    public void prepareGame()
-    {
+    public void prepareGame() {
         List<TribeCard> allTribeCards = new ArrayList<>(); //TODO: get all tribe cards from db
         List<BuildingCard> allBuildingCards = new ArrayList<>();
 
@@ -173,9 +172,17 @@ public class GameBuilder {
         List<Player> players = game.getPlayers().getShuffledPlayers();
 
         for (Player player : players) {
-            turnOrderBox.getFirstFreeSlot().placePlayer(player);
+            // Place the player in the first free slot.
+            TurnOrderSlot slot = turnOrderBox.getFirstFreeSlot();
+            slot.placePlayer(player);
+
+            // Give the player the initial amount of food according to the game rules and the player's position in the turn order.
+            int initialPlayerFood = game.getRuleSet().getInitialFood(turnOrderBox.getIndexBySlot(slot));
+            player.addFood(initialPlayerFood);
         }
     }
+
+
 
     /**
      * Creates the list of players for the game based on the provided nicknames and rule set.
