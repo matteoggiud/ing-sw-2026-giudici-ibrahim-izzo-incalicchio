@@ -78,14 +78,13 @@ CREATE TABLE TurnOrderSlot
     foodCost   INTEGER NOT NULL,
     ppCost     INTEGER NOT NULL ,
     FOREIGN KEY (orderBoxId) REFERENCES TurnOrderBox (orderBoxId) ,
-    UNIQUE (orderBoxId, position) --Per ogni Box non possono esserci due slot con la stessa posizione
+    UNIQUE (orderBoxId, position) --Ensure that each position in a TurnOrderBox is unique
 );
 
 CREATE TABLE Player
 (
     playerId     SERIAL PRIMARY KEY,
     nickname     VARCHAR(255) NOT NULL UNIQUE,
-    email        VARCHAR(255) NOT NULL UNIQUE,
-    passwordHash VARCHAR(64)  NOT NULL,
+    passwordHash CHAR(64)  NOT NULL,
     created_at   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
