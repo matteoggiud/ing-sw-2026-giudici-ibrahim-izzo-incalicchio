@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.model.core.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OfferTrack represents the track of OfferBoxes where players can place their totems to choose cards.
@@ -21,19 +22,19 @@ public class OfferTrack {
         this.boxes = new ArrayList<>();
     }
 
-
     /**
-     * Constructs an OfferTrack with a given list of OfferBoxes.
+     * Initializes the OfferTrack with a given list of OfferBoxes.
      *
-     * @param boxes the list of OfferBoxes to initialize the track with.
-     * @throws IllegalArgumentException if the list of boxes is null or contains fewer than 4 boxes.
+     * @param offerBoxes the list of OfferBoxes to initialize the track with.
+      * @throws IllegalArgumentException if the offerBoxes list is null or empty.
      */
-    public OfferTrack(ArrayList<OfferBox> boxes) {
-        if (boxes == null || boxes.size() < 4) {
-            throw new IllegalArgumentException("OfferTrack must have at least 4 OfferBox and cannot be null");
+    public void initializeOfferTrack(List<OfferBox> offerBoxes) {
+        if (offerBoxes == null || offerBoxes.contains(null) || offerBoxes.isEmpty()) {
+            throw new IllegalArgumentException("offerBoxes cannot be null or empty");
         }
 
-        this.boxes = new ArrayList<>(boxes);
+        this.boxes.clear();
+        this.boxes.addAll(offerBoxes);
     }
 
     /**
