@@ -96,13 +96,8 @@ public class ScoreCalculator {
                     int basePoints = b.getEndGamePP();
                     int bonusPoints = 0;
 
-                    if(b.isStandardEffect()){
-                        CharacterType subjectType = b.getEffect().getSubjectType();
-                        int n_subject= (int) player.getPlayerDeck().getCharacters().stream()
-                                .filter(c ->c.getType() == subjectType)
-                                .count();
-
-                        bonusPoints = (b.getEffect() != null) ? b.getEffect().ApplyEffect(n_subject).getPpDelta() : 0;
+                    if(b.getEffect().getEndGameScoring().isPresent()){
+                        bonusPoints = b.getEffect().getEndGameScoring().get().calculateEndGameBonus(player);
                     }
                     return basePoints + bonusPoints;
                 })
