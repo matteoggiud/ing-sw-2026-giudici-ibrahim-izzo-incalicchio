@@ -94,4 +94,7 @@ public class TurnOrderBox {
     }
 
 
+    public int getIndexBySlot(TurnOrderSlot slot) {
+        return slots.indexOf(slot);
+    }
 }
