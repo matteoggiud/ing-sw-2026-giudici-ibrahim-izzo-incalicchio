@@ -1,1 +1,3 @@
-prova commit push
+- Come richiedere al player di prendere la carta
+- Implementare interfaccia per Controller 
+- Creare sequence diagram
