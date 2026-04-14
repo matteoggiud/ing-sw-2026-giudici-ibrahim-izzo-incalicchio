@@ -44,7 +44,6 @@ public class GameBuilder {
      *
      * @param allCards all Tribe Cards
      */
-    //TODO: implement DataRepository to get all the possible cards from db
     private void initializeTribeDeck(List<TribeCard> allCards) {
         if (allCards == null) {
             throw new IllegalArgumentException("allCards and game cannot be null");

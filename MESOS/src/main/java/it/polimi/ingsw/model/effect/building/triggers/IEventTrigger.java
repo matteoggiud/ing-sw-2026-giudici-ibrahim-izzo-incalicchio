@@ -31,5 +31,4 @@ public interface IEventTrigger {
      */
     int getTrigger(Player player, Game game); //TODO: Instead of returning an int we return an EffectEventResult so it is more scalable in the future and more consistent with the rest of the code
 
-    //TODO: Put trigger type or understand if we can properly manage the order to call the triggers so that there is no risk that the triggers will not be called at the correct time. Or we can use the game states to understand if the triggers have an effect in the correct state
 }
