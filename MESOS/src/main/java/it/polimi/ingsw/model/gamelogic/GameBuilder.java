@@ -27,6 +27,8 @@ public class GameBuilder {
         List<TribeCard> allTribeCards = new ArrayList<>(); //TODO: get all tribe cards from db
         List<BuildingCard> allBuildingCards = new ArrayList<>();
 
+        game.setCurrentEra(Era.ERA_1);
+
         // Initialize the tribe deck, building decks, offer track, turn order box, and fill the card rows according to the game rules and the available cards.
         initializeTribeDeck(allTribeCards);
         initializeBuildingDecks(allBuildingCards);

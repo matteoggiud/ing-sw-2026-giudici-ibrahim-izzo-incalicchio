@@ -62,7 +62,7 @@ public class BuildingRow {
      */
     public void transferBuildingCardsFrom(BuildingRow other) {
         this.buildingCards.addAll(other.buildingCards);
-        this.clear();
+        other.clear();
     }
 
     /**

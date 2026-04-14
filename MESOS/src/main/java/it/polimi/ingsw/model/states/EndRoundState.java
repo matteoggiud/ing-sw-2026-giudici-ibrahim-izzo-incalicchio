@@ -10,6 +10,9 @@ import it.polimi.ingsw.model.gamelogic.EffectResolver;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Extra action -> Eventi + Modifiers ->
+ */
 public class EndRoundState implements IGameState {
     @Override
     public void nextState(Game game) {

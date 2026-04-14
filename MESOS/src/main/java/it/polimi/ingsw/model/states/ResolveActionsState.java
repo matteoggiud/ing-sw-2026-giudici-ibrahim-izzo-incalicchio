@@ -84,7 +84,7 @@ public class ResolveActionsState implements IGameState {
         if (board.getOfferTrack().getBoxes().stream().allMatch(OfferBox::isFree)) {
             nextState(game);
         }else{
-            notifyNextPlayer();
+            Player nextPlayer = nextPlayer(board);
         }
     }
 
@@ -226,8 +226,8 @@ public class ResolveActionsState implements IGameState {
     private void resolveCardsFromRow(Player player, it.polimi.ingsw.model.board.CardRow row, List<Card> cards) {
         for (Card card : cards) {
             if (card instanceof BuildingCard buildingCard) {
-                row.getBuildingRow().remove(buildingCard);
                 player.canBuyBuildingCard(buildingCard);
+                row.getBuildingRow().remove(buildingCard);
             } else if (card instanceof CharacterCard characterCard) {
                 row.getTribeRow().remove(characterCard);
                 player.getPlayerDeck().addCard(characterCard);
@@ -284,6 +284,21 @@ public class ResolveActionsState implements IGameState {
             }
         }
     }
-    //TODO: make the method to notify the next player when it's his turn
-    private void notifyNextPlayer(){};
+
+    /**
+     * Determines the next player who will resolve their action
+     * @param board the game board containing the offer track and its boxes
+     * @return the next player who will resolve their action
+     */
+    private Player nextPlayer(Board board){
+        if (board == null) {
+            throw new IllegalArgumentException("Board cannot be null.");
+        }
+
+        return board.getOfferTrack().getBoxes().stream()
+                .filter(box -> !box.isFree())
+                .map(OfferBox::getPlacedPlayer)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No next player, end of round"));
+    }
 }

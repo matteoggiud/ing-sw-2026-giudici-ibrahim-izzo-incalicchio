@@ -81,7 +81,7 @@ public class TribeRow {
      */
     public void transferTribeCardsFrom(TribeRow other) {
         this.tribeCards.addAll(other.tribeCards);
-        this.clear();
+        other.clear();
     }
 
     /**
