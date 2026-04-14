@@ -128,17 +128,21 @@ public class StandardRuleSet implements IGameRuleSet {
         }
         validatePlayerCount(numPlayers);
 
-        if (numPlayers <= 3) {
+        if (numPlayers == 2) {
+            if (era == Era.ERA_1) return 1;
+            if (era == Era.ERA_2) return 2;
+            return 3;
+        } else if (numPlayers == 3) {
             if (era == Era.ERA_1) return 2;
             if (era == Era.ERA_2) return 2;
             return 4;
-        } else if (numPlayers == 4) {
-            if (era == Era.ERA_1) return 3;
-            if (era == Era.ERA_2) return 2;
+        }else if (numPlayers == 4) {
+            if (era == Era.ERA_1) return 2;
+            if (era == Era.ERA_2) return 3;
             return 4;
         } else {
-            if (era == Era.ERA_1) return 3;
-            if (era == Era.ERA_2) return 2;
+            if (era == Era.ERA_1) return 2;
+            if (era == Era.ERA_2) return 3;
             return 5;
         }
     }
@@ -191,29 +195,29 @@ public class StandardRuleSet implements IGameRuleSet {
 
         ArrayList<OfferBox> boxes = new ArrayList<>();
 
-        // TESSERA A: Solo per 5 giocatori.
+        // OfferBox A: only 5 players.
         if (numPlayers == 5) {
             boxes.add(new OfferBox(OFFER_BOX_ID.A, 3, 0, 0));
         }
 
-        // TESSERA B: Sempre presente.
+        // OfferBox B: always present.
         boxes.add(new OfferBox(OFFER_BOX_ID.B, 0, 0, 1));
 
-        // TESSERA C: Sempre presente.
+        // OfferBox C: always present.
         boxes.add(new OfferBox(OFFER_BOX_ID.C, 0, 1, 0));
 
-        // TESSERA D: Solo per 3+ giocatori.
+        // OfferBox D: only 3+ players.
         if (numPlayers >= 3) {
             boxes.add(new OfferBox(OFFER_BOX_ID.D, 0, 0, 2));
         }
 
-        // TESSERA E: Sempre presente.
+        // OfferBox E: always present.
         boxes.add(new OfferBox(OFFER_BOX_ID.E, 0, 1, 1));
 
-        // TESSERA F: Sempre presente.
+        // OfferBox F: always present.
         boxes.add(new OfferBox(OFFER_BOX_ID.F, 0, 2, 0));
 
-        // TESSERA G: Solo per 4+ giocatori.
+        // OfferBox G: only 4+ players.
         if (numPlayers >= 4) {
             boxes.add(new OfferBox(OFFER_BOX_ID.G, 0, 2, 1));
         }
