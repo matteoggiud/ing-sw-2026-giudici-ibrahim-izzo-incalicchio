@@ -73,6 +73,5 @@ public interface IGameRuleSet {
      */
     int getBuildingLimit(Era era, int numPlayers);
 
-    //TODO: (Pula) create this method
     Stack<EventCard> sortEventCards(List<EventCard> eventCards);
 }
