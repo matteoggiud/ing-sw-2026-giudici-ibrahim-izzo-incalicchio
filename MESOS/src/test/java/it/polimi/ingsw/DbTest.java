@@ -1,8 +1,9 @@
-package it.polimi.ingsw.database;
+package it.polimi.ingsw;
 
 import it.polimi.ingsw.model.card.BuildingCard;
 import it.polimi.ingsw.model.card.EventCard;
 import it.polimi.ingsw.model.card.CharacterCard;
+import it.polimi.ingsw.database.DataDepository;
 
 import java.util.List;
 
@@ -34,3 +35,4 @@ public class DbTest {
         }
     }
 }
+

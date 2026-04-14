@@ -72,10 +72,15 @@ public class DataDepository {
                 allCharacterCard.add(createCharacterCard(name, era, minNumPlayers, type, params));
             }
         }
-
         return allCharacterCard;
     }
 
+    /**
+     * Load all the event cards from the database
+     *
+     * @return a list of event cards
+     * @throws SQLException
+     */
     public List<EventCard> getEventCards() throws SQLException {
         String sql = "SELECT name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold FROM event_card";
 
@@ -101,17 +106,19 @@ public class DataDepository {
                 allEventCard.add(new EventCard(name, era, minNumPlayers, isFinalEvent, eventType, eventEffect, gainedFood, malusFood, gainedPp, malusPp, threshold));
             }
         }
-
         return allEventCard;
     }
 
+    /**
+     * Load all the building cards from the database
+     *
+     * @return a list of building cards
+     * @throws SQLException
+     */
     public List<BuildingCard> loadBuildingCards() throws SQLException {
-        String sql = """
-            SELECT name, era, min_num_players, food_cost, end_game_pp, effect_id, effect_params
-            FROM building_card
-        """;
+        String sql = "SELECT name, era, min_num_players, food_cost, end_game_pp, effect_id, effect_params FROM building_card";
 
-        List<BuildingCard> out = new ArrayList<>();
+        List<BuildingCard> allBuildingCard = new ArrayList<>();
 
         try (Connection c = DatabaseManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
@@ -125,56 +132,75 @@ public class DataDepository {
                 int endGamePp = rs.getInt("end_game_pp");
                 String effectId = rs.getString("effect_id");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
-
                 IBuildingEffect effect = createBuildingEffect(effectId, params);
-                out.add(new BuildingCard(name, era, minNumPlayers, foodCost, endGamePp, effect));
+
+                allBuildingCard.add(new BuildingCard(name, era, minNumPlayers, foodCost, endGamePp, effect));
             }
         }
-
-        return out;
+        return allBuildingCard;
     }
 
-    private CharacterCard createCharacterCard(
-            String name, Era era, int minNumPlayers, CharacterType type, JsonNode params
-    ) {
+    /**
+     * Create a character card based on the type and parameters
+     *
+     * @param name
+     * @param era
+     * @param minNumPlayers
+     * @param type
+     * @param params
+     * @return
+     */
+    private CharacterCard createCharacterCard(String name, Era era, int minNumPlayers, CharacterType type, JsonNode params) {
         return switch (type) {
             case GATHERER -> new GathererCharacterCard(name, era, minNumPlayers);
             case ARTIST -> new ArtistCharacterCard(name, era, minNumPlayers);
             case HUNTER -> new HunterCharacterCard(name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false));
             case SHAMAN -> new ShamanCharacterCard(name, era, minNumPlayers, params.path("shamanStars").asInt(1));
             case BUILDER -> new BuilderCharacterCard(name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0));
-            case INVENTOR -> new InventorCharacterCard(name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("BOAT"))
-            );
+            //The parameter ARROW is the default parameter choose in the case that the effectParam is not filled
+            case INVENTOR -> new InventorCharacterCard(name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("ARROW")));
         };
     }
 
+    /**
+     * Create an event effect based on the event type
+     *
+     * @param eventType
+     * @return
+     */
     private IEventEffect createEventEffect(EventType eventType) {
-        switch (eventType) {
-            case HUNT -> {return new HuntEventEffect();}
-            case SHAMANIC_RITUAL -> {return new ShamanicRitualEventEffect();}
-            case ROCK_PAINTINGS -> {return new RockPaintingEventEffect();}
-            case SUSTENANCE -> {return new SustenanceEventEffect();}
+        if(eventType == null){
+            throw new NullPointerException("eventType is null");
+        }else{
+            switch (eventType) {
+                case HUNT -> {return new HuntEventEffect();}
+                case SHAMANIC_RITUAL -> {return new ShamanicRitualEventEffect();}
+                case ROCK_PAINTINGS -> {return new RockPaintingEventEffect();}
+                case SUSTENANCE -> {return new SustenanceEventEffect();}
+                default -> throw new IllegalArgumentException("eventType non gestito: " + eventType);
+            }
         }
-        default -> throw new IllegalArgumentException("eventType not supported: " + eventType);
     }
 
+    /**
+     * Create a building effect based on the effect id and parameters
+     *
+     * @param effectId
+     * @param params
+     * @return
+     */
     private IBuildingEffect createBuildingEffect(String effectId, JsonNode params) {
         return switch (effectId) {
             case "DOUBLEBUILDERBUILDINGEFFECT" -> new DoubleBuilderBuildingEffect();
             case "ENDPPCARDSSETBUILDINGEFFECT" -> new EndPpCardsSetBuildingEffect();
             case "FLATPRESTIGEPOINTBUILDINGCARD" -> new FlatPrestigePointBuildingCard();
-            case "PPPERCHARACTERBUILDINGEFFECT" -> new PpPerCharacterBuildingEffect(
-                    params.path("pp").asInt(1),
-                    CharacterType.valueOf(params.path("characterType").asText("HUNTER"))
-            );
+            case "PPPERCHARACTERBUILDINGEFFECT" -> new PpPerCharacterBuildingEffect(params.path("pp").asInt(1), CharacterType.valueOf(params.path("characterType").asText("HUNTER")));
             case "EXTRACARDBUILDINGEFFECT" -> new ExtraCardBuildingEffect();
             case "HUNTBONUSBUILDINGEFFECT" -> new HuntBonusBuildingEffect();
             case "ROCKPAINTINGSBONUSBUILDINGEFFECT" -> new RockPaintingsBonusBuildingEffect();
             case "SHAMANICDOUBLEBUILDINGEFFECT" -> new ShamanicDoubleBuildingEffect();
             case "SHAMANICIMMUNITYBUILDINGEFFECT" -> new ShamanicImmunityBuildingEffect();
-            case "SUSTENANCEDISCOUNTBUILDINGEFFECT" -> new SustenanceDiscountBuildingEffect(
-                    CharacterType.valueOf(params.path("characterType").asText("GATHERER"))
-            );
+            case "SUSTENANCEDISCOUNTBUILDINGEFFECT" -> new SustenanceDiscountBuildingEffect(CharacterType.valueOf(params.path("characterType").asText("GATHERER")));
             case "SHAMANICSTARSBUILDINGEFFECT" -> new ShamanicStarsBuildingEffect();
             case "TOTEMBONUSBUILDINGEFFECT" -> new TotemBonusBuildingEffect();
             case "TRIGGERCARDSSETBUILDINGEFFECT" -> new TriggerCardsSetBuildingEffect();
