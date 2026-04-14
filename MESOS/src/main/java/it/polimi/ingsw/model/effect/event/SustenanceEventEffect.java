@@ -35,7 +35,8 @@ public class SustenanceEventEffect implements IEventEffect {
             int gathererDiscount = player.getPlayerDeck().getTotalGathererDiscount();
 
             // Add the effect result for the player
-            effectEventResults.add(new EffectEventResult(Math.abs(-baseCost + gathererDiscount), 0, player));
+            int foodCost = Math.max(baseCost - gathererDiscount, 0);
+            effectEventResults.add(new EffectEventResult(-foodCost, 0, player));
         }
 
         return effectEventResults;

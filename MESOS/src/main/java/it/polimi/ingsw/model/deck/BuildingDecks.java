@@ -52,13 +52,21 @@ public class BuildingDecks {
         }
     }
 
-
+    /**
+     * This method allows to set the building decks with a new composition of building cards
+     * @param deckComposition the new composition of building cards to be set in the building decks
+     * @throws IllegalArgumentException if the deckComposition parameter is null or empty
+     */
     public void setBuildingDeck(List<BuildingCard> deckComposition) {
         if (deckComposition == null || deckComposition.isEmpty()) {
             throw new IllegalArgumentException("Cards cannot be null or empty");
         }
 
         this.buildingDecks.clear();
+        for (Era era : Era.values()) {
+            buildingDecks.put(era, new BuildingDeck());
+        }
+
         for (BuildingCard card : deckComposition) {
             buildingDecks.get(card.getEra()).addBuildingCard(card);
         }
