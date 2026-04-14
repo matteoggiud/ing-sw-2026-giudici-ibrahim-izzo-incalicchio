@@ -1,1 +1,1 @@
-- Come risolvere IEventModifier dentro la classe GathererCharacterCard
+- Come richiedere al player di prendere la carta

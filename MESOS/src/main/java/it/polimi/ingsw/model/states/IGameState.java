@@ -51,9 +51,6 @@ public interface IGameState {
 
     default void removePlayer(Game game, Player player) {}
 
-    default boolean isNextState(Game game) {
-        throw new IllegalStateException("This method is not applicable for the current state.");
-    }
 
 
 }

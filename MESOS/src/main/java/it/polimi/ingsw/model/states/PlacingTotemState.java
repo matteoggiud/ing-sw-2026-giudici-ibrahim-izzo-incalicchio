@@ -38,6 +38,10 @@ public class PlacingTotemState implements IGameState {
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 
+        // Check if all players have placed their totems, if so, transition to the next state
+        if (game.getBoard().getTurnOrderBox().isCompletelyEmpty()) {
+            nextState(game);
+        }
     }
 
     /**
@@ -55,8 +59,4 @@ public class PlacingTotemState implements IGameState {
                 .orElseThrow(() -> new IllegalStateException("Placed all totems, no other totem have to be placed"));
     }
 
-    @Override
-    public boolean isNextState(Game game) {
-        return game.getBoard().getTurnOrderBox().isCompletelyEmpty();
-    }
 }
