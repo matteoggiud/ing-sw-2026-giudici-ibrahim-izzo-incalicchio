@@ -39,6 +39,8 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
+    int getExtraAction(Player player);
+
     default void resolveAction(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards) {
         throw new IllegalStateException("You cannot take card during this phase of the game.");
     }
