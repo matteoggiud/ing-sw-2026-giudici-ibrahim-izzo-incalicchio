@@ -5,12 +5,12 @@ CREATE TABLE character_card
     era             VARCHAR(5) CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     min_num_players INTEGER CHECK (min_num_players BETWEEN 2 AND 5),
     character_type  VARCHAR(8) CHECK (character_type IN (
-                                                         'HUNTER',
-                                                         'GATHERER',
-                                                         'SHAMAN',
-                                                         'ARTIST',
-                                                         'BUILDER',
-                                                         'INVENTOR'
+            'HUNTER',
+            'GATHERER',
+            'SHAMAN',
+            'ARTIST',
+            'BUILDER',
+            'INVENTOR'
         )),
     effect_params   JSON
 );
@@ -24,20 +24,20 @@ CREATE TABLE building_card
     food_cost       INTEGER NOT NULL CHECK (food_cost >= 0),
     end_game_pp     INTEGER NOT NULL CHECK (end_game_pp >= 0),
     effect_id       VARCHAR(64) NOT NULL CHECK (effect_id IN (
-          'DOUBLEBUILDERBUILDINGEFFECT',
-          'ENDPPCARDSSETBUILDINGEFFECT',
-          'FLATPRESTIGEPOINTBUILDINGCARD',
-          'PPPERCHARACTERBUILDINGEFFECT',
-          'EXTRACARDBUILDINGEFFECT',
-          'HUNTBONUSBUILDINGEFFECT',
-          'ROCKPAINTINGSBONUSBUILDINGEFFECT',
-          'SHAMANICDOUBLEBUILDINGEFFECT',
-          'SHAMANICIMMUNITYBUILDINGEFFECT',
-          'SUSTENANCEDISCOUNTBUILDINGEFFECT',
-          'SHAMANICSTARSBUILDINGEFFECT',
-          'TOTEMBONUSBUILDINGEFFECT',
-          'TRIGGERCARDSSETBUILDINGEFFECT',
-          'TRIGGERINVENTORSCOUPLEBUILDINGEFFECT'
+        'DOUBLEBUILDERBUILDINGEFFECT',
+        'ENDPPCARDSSETBUILDINGEFFECT',
+        'FLATPRESTIGEPOINTBUILDINGCARD',
+        'PPPERCHARACTERBUILDINGEFFECT',
+        'EXTRACARDBUILDINGEFFECT',
+        'HUNTBONUSBUILDINGEFFECT',
+        'ROCKPAINTINGSBONUSBUILDINGEFFECT',
+        'SHAMANICDOUBLEBUILDINGEFFECT',
+        'SHAMANICIMMUNITYBUILDINGEFFECT',
+        'SUSTENANCEDISCOUNTBUILDINGEFFECT',
+        'SHAMANICSTARSBUILDINGEFFECT',
+        'TOTEMBONUSBUILDINGEFFECT',
+        'TRIGGERCARDSSETBUILDINGEFFECT',
+        'TRIGGERINVENTORSCOUPLEBUILDINGEFFECT'
         )),
     effect_params   JSON
 );

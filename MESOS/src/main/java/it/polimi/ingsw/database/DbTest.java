@@ -14,8 +14,8 @@ public class DbTest {
             boolean ok = d.testConnection();
             System.out.println("Connessione DB valida: " + ok);
 
-            List<CharacterCard> characters = d.loadCharacterCards();
-            List<EventCard> events = d.loadEventCards();
+            List<CharacterCard> characters = d.getCharacterCards();
+            List<EventCard> events = d.getEventCards();
             List<BuildingCard> buildings = d.loadBuildingCards();
 
             System.out.println("CharacterCard caricati: " + characters.size());

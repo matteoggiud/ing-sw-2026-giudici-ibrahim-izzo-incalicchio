@@ -25,6 +25,12 @@ public class DataDepository {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    /**
+     * Test the connection, return true if the connection is valid
+     *
+     * @return true if the connection is valid, false otherwise
+     * @throws SQLException
+     */
     public boolean testConnection() throws SQLException {
         Connection c = DatabaseManager.getConnection();
         if(c != null && !c.isClosed() && c.isValid(3)){
@@ -34,14 +40,20 @@ public class DataDepository {
         }
     }
 
-    public List<TribeCard> loadAllTribeCards() throws SQLException {
+    /**
+     * Load all the tribe cards (character and event) from the database
+     *
+     * @return a list of tribe cards
+     * @throws SQLException
+     */
+    public List<TribeCard> getAllTribeCards() throws SQLException {
         List<TribeCard> allTribeCard = new ArrayList<>();
-        allTribeCard.addAll(loadCharacterCards());
-        allTribeCard.addAll(loadEventCards());
+        allTribeCard.addAll(getCharacterCards());
+        allTribeCard.addAll(getEventCards());
         return allTribeCard;
     }
 
-    public List<CharacterCard> loadCharacterCards() throws SQLException {
+    public List<CharacterCard> getCharacterCards() throws SQLException {
         String sql = "SELECT name, era, min_num_players, character_type, effect_params FROM character_card";
 
         List<CharacterCard> allCharacterCard = new ArrayList<>();
@@ -64,14 +76,10 @@ public class DataDepository {
         return allCharacterCard;
     }
 
-    public List<EventCard> loadEventCards() throws SQLException {
-        String sql = """
-            SELECT name, era, min_num_players, is_final_event, event_type,
-                   gained_food, malus_food, gained_pp, malus_pp, threshold
-            FROM event_card
-        """;
+    public List<EventCard> getEventCards() throws SQLException {
+        String sql = "SELECT name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold FROM event_card";
 
-        List<EventCard> out = new ArrayList<>();
+        List<EventCard> allEventCard = new ArrayList<>();
 
         try (Connection c = DatabaseManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
@@ -84,21 +92,17 @@ public class DataDepository {
                 boolean isFinalEvent = rs.getBoolean("is_final_event");
                 EventType eventType = EventType.valueOf(rs.getString("event_type"));
                 IEventEffect eventEffect = createEventEffect(eventType);
-
                 int gainedFood = rs.getInt("gained_food");
                 int malusFood = rs.getInt("malus_food");
                 int gainedPp = rs.getInt("gained_pp");
                 int malusPp = rs.getInt("malus_pp");
                 int threshold = rs.getInt("threshold");
 
-                out.add(new EventCard(
-                        name, era, minNumPlayers, isFinalEvent, eventType, eventEffect,
-                        gainedFood, malusFood, gainedPp, malusPp, threshold
-                ));
+                allEventCard.add(new EventCard(name, era, minNumPlayers, isFinalEvent, eventType, eventEffect, gainedFood, malusFood, gainedPp, malusPp, threshold));
             }
         }
 
-        return out;
+        return allEventCard;
     }
 
     public List<BuildingCard> loadBuildingCards() throws SQLException {
@@ -138,25 +142,20 @@ public class DataDepository {
             case ARTIST -> new ArtistCharacterCard(name, era, minNumPlayers);
             case HUNTER -> new HunterCharacterCard(name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false));
             case SHAMAN -> new ShamanCharacterCard(name, era, minNumPlayers, params.path("shamanStars").asInt(1));
-            case BUILDER -> new BuilderCharacterCard(
-                    name, era, minNumPlayers,
-                    params.path("endGamePP").asInt(0),
-                    params.path("foodDiscount").asInt(0)
-            );
-            case INVENTOR -> new InventorCharacterCard(
-                    name, era, minNumPlayers,
-                    InventorType.valueOf(params.path("inventorType").asText("BOAT"))
+            case BUILDER -> new BuilderCharacterCard(name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0));
+            case INVENTOR -> new InventorCharacterCard(name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("BOAT"))
             );
         };
     }
 
     private IEventEffect createEventEffect(EventType eventType) {
-        return switch (eventType) {
-            case HUNT -> new HuntEventEffect();
-            case SHAMANIC_RITUAL -> new ShamanicRitualEventEffect();
-            case ROCK_PAINTINGS -> new RockPaintingEventEffect();
-            case SUSTENANCE -> new SustenanceEventEffect();
-        };
+        switch (eventType) {
+            case HUNT -> {return new HuntEventEffect();}
+            case SHAMANIC_RITUAL -> {return new ShamanicRitualEventEffect();}
+            case ROCK_PAINTINGS -> {return new RockPaintingEventEffect();}
+            case SUSTENANCE -> {return new SustenanceEventEffect();}
+        }
+        default -> throw new IllegalArgumentException("eventType not supported: " + eventType);
     }
 
     private IBuildingEffect createBuildingEffect(String effectId, JsonNode params) {
