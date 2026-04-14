@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.states;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.gamelogic.GameBuilder;
 
-public class SetupState implements IGameState{
+public class SetupState implements IGameState {
     @Override
     public void nextState(Game game) {
         game.setGameState(new PlacingTotemState());
@@ -17,11 +17,12 @@ public class SetupState implements IGameState{
      */
     @Override
     public void executePhase(Game game) {
-        GameBuilder  builder = new GameBuilder();
+        GameBuilder builder = new GameBuilder(game);
 
-        //builder.prepareBoard(game);
-        //game.getBoard().setTurnOrderBox(ruleSet.createTurnOrderSlots(numPlayers));
+        // Prepare the game by initializing the board, decks, and other necessary components.
+        builder.prepareGame();
+
+        nextState(game);
     }
 
-
-    }
+}

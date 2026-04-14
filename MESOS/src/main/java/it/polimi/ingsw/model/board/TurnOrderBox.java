@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.model.core.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the turn order box in the game.
@@ -22,19 +23,17 @@ public class TurnOrderBox {
     }
 
     /**
-     * Initializes the turn order box with a given list of turn order slots.
-     *
-     * @param slots the list of turn order slots in the box
+     * Initialize the turn order box with the provided list of turn order slots.
+     * @param turnOrderSlots the list of turn order slots to initialize the box with
+     * @throws IllegalArgumentException if the provided list is null, contains null elements, or is empty
      */
-    public void initializeSlots(ArrayList<TurnOrderSlot> slots) throws IllegalArgumentException {
-        if (slots == null || slots.contains(null) || slots.size() < 2 || slots.size() > 5)
-            throw new IllegalArgumentException("TurnOrderBox must have between 2 and 5 slots and cannot be null");
-        if (!this.slots.isEmpty())
-            throw new IllegalStateException("TurnOrderBox slots have already been initialized");
+    public void initializeTurnOrderBox(List<TurnOrderSlot> turnOrderSlots) {
+        if (turnOrderSlots == null || turnOrderSlots.contains(null) || turnOrderSlots.isEmpty())
+            throw new IllegalArgumentException("TurnOrderBox must have at least one slot and cannot be null");
 
-        this.slots.addAll(slots);
+        this.slots.clear();
+        this.slots.addAll(turnOrderSlots);
     }
-
 
     /**
      * Gets the list of turn order slots in the box.
@@ -92,5 +91,10 @@ public class TurnOrderBox {
             }
         }
         throw new IllegalStateException("Player not found in any slot of the TurnOrderBox");
+    }
+
+
+    public int getIndexBySlot(TurnOrderSlot slot) {
+        return slots.indexOf(slot);
     }
 }

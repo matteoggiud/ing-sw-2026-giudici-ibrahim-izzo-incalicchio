@@ -25,7 +25,7 @@ public class Player {
     /**
      * The player's totem
      */
-    private final Totem totem;
+    private Totem totem;
 
     /**
      * The player's deck of cards
@@ -159,5 +159,14 @@ public class Player {
             playerDeck.addCard(card);
         }
 
+    }
+
+    /**
+     * Sets the player's totem.
+     *
+     * @param totem the totem to be set for the player
+     */
+    public void setTotem(Totem totem) {
+        this.totem = totem;
     }
 }

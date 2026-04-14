@@ -53,4 +53,14 @@ public class BuildingDecks {
     }
 
 
+    public void setBuildingDeck(List<BuildingCard> deckComposition) {
+        if (deckComposition == null || deckComposition.isEmpty()) {
+            throw new IllegalArgumentException("Cards cannot be null or empty");
+        }
+
+        this.buildingDecks.clear();
+        for (BuildingCard card : deckComposition) {
+            buildingDecks.get(card.getEra()).addBuildingCard(card);
+        }
+    }
 }

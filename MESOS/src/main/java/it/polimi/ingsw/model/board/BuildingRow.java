@@ -83,4 +83,8 @@ public class BuildingRow {
     public boolean isEmpty() {
         return this.buildingCards.isEmpty();
     }
+
+    public int count() {
+        return this.buildingCards.size();
+    }
 }

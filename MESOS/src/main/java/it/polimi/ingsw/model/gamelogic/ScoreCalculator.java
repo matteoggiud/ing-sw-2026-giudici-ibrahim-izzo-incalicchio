@@ -79,7 +79,7 @@ public class ScoreCalculator {
      * and multiplying the result by 10.
      */
     public static int computeArtistScore(Player player) {
-        int artists = player.getPlayerDeck().getTotalArtist();
+        int artists = player.getPlayerDeck().countCharactersByType(CharacterType.ARTIST);
 
         return (artists / 2) * 10; //
     }

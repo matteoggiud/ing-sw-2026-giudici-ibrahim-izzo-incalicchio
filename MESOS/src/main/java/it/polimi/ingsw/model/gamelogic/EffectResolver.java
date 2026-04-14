@@ -69,7 +69,7 @@ public class EffectResolver {
     /**
      * Resolves the effects of active triggers from the player's deck at the end of the turn.
      *
-     * @param player
+     * @param player the player for whom the triggers are to be resolved.
      */
     public void resolveTrigger(Player player) {
                 List<EffectEventResult> changes = new ArrayList<>();

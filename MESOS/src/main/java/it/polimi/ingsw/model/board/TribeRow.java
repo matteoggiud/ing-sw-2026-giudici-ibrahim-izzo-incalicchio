@@ -100,4 +100,8 @@ public class TribeRow {
     public boolean isEmpty() {
         return this.tribeCards.isEmpty();
     }
+
+    public int count(){
+        return this.tribeCards.size();
+    }
 }

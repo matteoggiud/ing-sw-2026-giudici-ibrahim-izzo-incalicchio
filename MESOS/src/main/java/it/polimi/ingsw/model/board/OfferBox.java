@@ -117,7 +117,7 @@ public class OfferBox {
      * @throws IllegalArgumentException if the player is null
      */ //da capire come gestire quando l'offerbox ti da 3 di cibo, chi deve gestirlo??
     public void placePlayer(Player player) throws IllegalStateException, IllegalArgumentException {
-        if(placedPlayer == null) throw new IllegalArgumentException("Player cannot be null");
+        if(player == null) throw new IllegalArgumentException("Player cannot be null");
 
         if (!isFree()) throw new IllegalStateException("Offer box is already occupied");
 
