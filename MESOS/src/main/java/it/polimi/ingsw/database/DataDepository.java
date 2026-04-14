@@ -42,7 +42,7 @@ public class DataDepository {
     }
 
     public List<CharacterCard> loadCharacterCards() throws SQLException {
-        String sql = "SELECT name, era, minNumPlayers, characterType, effectParams FROM CharacterCard";
+        String sql = "SELECT name, era, min_num_players, character_type, effect_params FROM character_card";
 
         List<CharacterCard> allCharacterCard = new ArrayList<>();
 
@@ -53,9 +53,9 @@ public class DataDepository {
             while (rs.next()) {
                 String name = rs.getString("name");
                 Era era = Era.valueOf(rs.getString("era"));
-                int minNumPlayers = rs.getInt("minNumPlayers");
-                CharacterType type = CharacterType.valueOf(rs.getString("characterType"));
-                JsonNode params = parseJsonOrEmpty(rs.getString("effectParams"));
+                int minNumPlayers = rs.getInt("min_num_players");
+                CharacterType type = CharacterType.valueOf(rs.getString("character_type"));
+                JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
 
                 allCharacterCard.add(createCharacterCard(name, era, minNumPlayers, type, params));
             }
@@ -66,9 +66,9 @@ public class DataDepository {
 
     public List<EventCard> loadEventCards() throws SQLException {
         String sql = """
-            SELECT name, era, minNumPlayers, isFinalEvent, eventType,
-                   gainedFood, malusFood, gainedPp, malusPp, threshold
-            FROM EventCard
+            SELECT name, era, min_num_players, is_final_event, event_type,
+                   gained_food, malus_food, gained_pp, malus_pp, threshold
+            FROM event_card
         """;
 
         List<EventCard> out = new ArrayList<>();
@@ -80,15 +80,15 @@ public class DataDepository {
             while (rs.next()) {
                 String name = rs.getString("name");
                 Era era = Era.valueOf(rs.getString("era"));
-                int minNumPlayers = rs.getInt("minNumPlayers");
-                boolean isFinalEvent = rs.getBoolean("isFinalEvent");
-                EventType eventType = EventType.valueOf(rs.getString("eventType"));
+                int minNumPlayers = rs.getInt("min_num_players");
+                boolean isFinalEvent = rs.getBoolean("is_final_event");
+                EventType eventType = EventType.valueOf(rs.getString("event_type"));
                 IEventEffect eventEffect = createEventEffect(eventType);
 
-                int gainedFood = rs.getInt("gainedFood");
-                int malusFood = rs.getInt("malusFood");
-                int gainedPp = rs.getInt("gainedPp");
-                int malusPp = rs.getInt("malusPp");
+                int gainedFood = rs.getInt("gained_food");
+                int malusFood = rs.getInt("malus_food");
+                int gainedPp = rs.getInt("gained_pp");
+                int malusPp = rs.getInt("malus_pp");
                 int threshold = rs.getInt("threshold");
 
                 out.add(new EventCard(
@@ -103,8 +103,8 @@ public class DataDepository {
 
     public List<BuildingCard> loadBuildingCards() throws SQLException {
         String sql = """
-            SELECT name, era, minNumPlayers, foodCost, endGamePp, effectId, effectParams
-            FROM BuildingCard
+            SELECT name, era, min_num_players, food_cost, end_game_pp, effect_id, effect_params
+            FROM building_card
         """;
 
         List<BuildingCard> out = new ArrayList<>();
@@ -116,11 +116,11 @@ public class DataDepository {
             while (rs.next()) {
                 String name = rs.getString("name");
                 Era era = Era.valueOf(rs.getString("era"));
-                int minNumPlayers = rs.getInt("minNumPlayers");
-                int foodCost = rs.getInt("foodCost");
-                int endGamePp = rs.getInt("endGamePp");
-                String effectId = rs.getString("effectId");
-                JsonNode params = parseJsonOrEmpty(rs.getString("effectParams"));
+                int minNumPlayers = rs.getInt("min_num_players");
+                int foodCost = rs.getInt("food_cost");
+                int endGamePp = rs.getInt("end_game_pp");
+                String effectId = rs.getString("effect_id");
+                JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
 
                 IBuildingEffect effect = createBuildingEffect(effectId, params);
                 out.add(new BuildingCard(name, era, minNumPlayers, foodCost, endGamePp, effect));
