@@ -22,11 +22,11 @@ class GameBuilderTest {
 
     @BeforeEach
     void setUp() {
-        // Step 1: Initialize the host player (Page 3, Rule 8)
+        // Initialize the host player
         Player host = new Player("Player1", Totem.RED);
         game = new Game(host);
 
-        // Step 2: Add two more players to reach the minimum for a standard test
+        // Add two more players to reach the minimum for a standard test
         game.getPlayers().addPlayer(new Player("Player2", Totem.WHITE));
         game.getPlayers().addPlayer(new Player("Player3", Totem.BLUE));
 
@@ -51,7 +51,7 @@ class GameBuilderTest {
             int food = playerInSlot.getFood();
 
             if (i == 0) {
-                // First player in random order gets 2 food [cite: 57]
+                // First player in random order gets 2 food
                 assertEquals(2, food, "The player randomly placed in the 1st slot must have 2 food.");
             } else if (i == 1 || i == 2) {
                 // Second and third players get 3 food
@@ -88,7 +88,7 @@ class GameBuilderTest {
         gameBuilder.prepareGame();
         TribeDeck deck = game.getTribeDeck();
 
-        // The sequence is crucial for gameplay (Page 2, Rule 3)
+        // Check that the deck is not empty and has the expected number of cards
         assertFalse(deck.isEmpty(), "Tribe deck should not be empty after preparation.");
     }
 
