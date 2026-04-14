@@ -13,8 +13,8 @@ public class PlacingTotemState implements IGameState {
     /**
      * This method allows a player to place their totem on the offer box during the Placing Totem phase.
      *
-     * @param game the current game context
-     * @param player the player making the action
+     * @param game     the current game context
+     * @param player   the player making the action
      * @param offerBox the offer box where the player wants to place their totem
      * @throws IllegalStateException if it's not the player's turn to place a totem or if the offer box is already occupied
      */
@@ -38,8 +38,6 @@ public class PlacingTotemState implements IGameState {
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 
-        // If all players have placed their totems, transition to the next state
-        if (game.getBoard().getTurnOrderBox().isCompletelyEmpty()) nextState(game);
     }
 
     /**
@@ -55,5 +53,10 @@ public class PlacingTotemState implements IGameState {
                 .map(TurnOrderSlot::getPlacedPlayer)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Placed all totems, no other totem have to be placed"));
+    }
+
+    @Override
+    public boolean isNextState(Game game) {
+        return game.getBoard().getTurnOrderBox().isCompletelyEmpty();
     }
 }
