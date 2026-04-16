@@ -1,5 +1,34 @@
 package it.polimi.ingsw.model.gamemodel;
 
-public class GamePortal {
+import it.polimi.ingsw.model.board.OfferBox;
+import it.polimi.ingsw.model.card.Card;
+import it.polimi.ingsw.model.core.Game;
+import it.polimi.ingsw.model.core.Player;
 
+import java.util.ArrayList;
+
+public class GamePortal implements IGameModel {
+    @Override
+    public void drawCard(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards){
+        if (game == null || player == null || upperCards == null || lowerCards == null) {
+            throw new IllegalArgumentException("Game, player, upperCards, and lowerCards cannot be null");
+        }
+
+        game.getGameState().resolveAction(game, player, upperCards, lowerCards);
+    }
+    @Override
+    public void Placing(Game game, Player player, OfferBox offerBox) {
+        if (game == null || player == null || offerBox == null) {
+            throw new IllegalArgumentException("Game, player e offerBox cannot be null");
+        }
+
+        game.getGameState().placeTotem(game, player, offerBox);
+    }
+    @Override
+    public void loginPlayer(String nickname, String password){
+        if (nickname == null || password == null) {
+            throw new IllegalArgumentException("Nickname and password cannot be null");
+        }
+
+    }
 }

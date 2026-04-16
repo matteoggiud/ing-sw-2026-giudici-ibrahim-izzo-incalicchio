@@ -9,7 +9,7 @@ import it.polimi.ingsw.model.core.Player;
 import java.util.ArrayList;
 
 public interface IGameModel {
-    void addPlayerToMenu(String nickname, String password);
+    void loginPlayer(String nickname, String password);
     void drawCard(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards);
     void Placing(Game game, Player player, OfferBox offerBox);
 }
