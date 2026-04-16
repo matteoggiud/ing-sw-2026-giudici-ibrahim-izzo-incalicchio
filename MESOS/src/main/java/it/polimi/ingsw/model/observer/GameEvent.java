@@ -5,19 +5,14 @@ import java.util.UUID;
 /**
  * Represents a game event that can be observed.
  */
-public class GameEvent {
-    private final GameEventType type;
-    private final UUID gameId;
-    private final UUID playerId;
-    private final String message;
-
+public record GameEvent(GameEventType type, UUID gameId, UUID playerId, String message) {
     /**
      * Constructor for GameEvent.
      *
-     * @param type the type of event
-     * @param gameId the ID of the game
+     * @param type     the type of event
+     * @param gameId   the ID of the game
      * @param playerId the ID of the player involved (can be null if not player-specific)
-     * @param message a message describing the event
+     * @param message  a message describing the event
      */
     public GameEvent(GameEventType type, UUID gameId, UUID playerId, String message) {
         if (type == null) {
@@ -35,28 +30,32 @@ public class GameEvent {
     /**
      * Gets the type of the event.
      */
-    public GameEventType getType() {
+    @Override
+    public GameEventType type() {
         return type;
     }
 
     /**
      * Gets the ID of the game.
      */
-    public UUID getGameId() {
+    @Override
+    public UUID gameId() {
         return gameId;
     }
 
     /**
      * Gets the ID of the player involved in the event.
      */
-    public UUID getPlayerId() {
+    @Override
+    public UUID playerId() {
         return playerId;
     }
 
     /**
      * Gets the message describing the event.
      */
-    public String getMessage() {
+    @Override
+    public String message() {
         return message;
     }
 
