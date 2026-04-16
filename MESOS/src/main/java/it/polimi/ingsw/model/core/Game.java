@@ -2,6 +2,7 @@ package it.polimi.ingsw.model.core;
 
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.deck.*;
+import it.polimi.ingsw.model.observer.ObserverManager;
 import it.polimi.ingsw.model.ruleset.*;
 import it.polimi.ingsw.model.states.*;
 
@@ -57,7 +58,12 @@ public class Game {
     /**
      * The rule set of the game
      */
-    private IGameRuleSet ruleSet;
+    private final IGameRuleSet ruleSet;
+
+    /**
+     * The responsible for managing the observers of the game.
+     */
+    private final ObserverManager observerManager;
 
 
     /**
@@ -79,6 +85,7 @@ public class Game {
         this.currentEra = null;
         this.lastRoundTriggered = false;
         this.ruleSet = new StandardRuleSet();
+        this.observerManager = new ObserverManager();
 
         players.addPlayer(hostPlayer);
     }
@@ -172,6 +179,13 @@ public class Game {
     public IGameRuleSet getRuleSet() {
         return ruleSet;
     }
+
+    /**
+     * Gets the observer manager of the game, which is responsible for managing the observers of the game.
+     *
+     * @return the observer manager of the game
+     */
+    public ObserverManager getObserverManager() { return observerManager; }
 
     /**
      * Gets the number of the players in the game.

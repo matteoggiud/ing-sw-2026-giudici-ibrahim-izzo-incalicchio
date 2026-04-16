@@ -21,42 +21,14 @@ public record GameEvent(GameEventType type, UUID gameId, UUID playerId, String m
         if (gameId == null) {
             throw new IllegalArgumentException("Game ID cannot be null");
         }
+        if (message == null){
+            message = "";
+        }
+
         this.type = type;
         this.gameId = gameId;
         this.playerId = playerId;
-        this.message = message != null ? message : "";
-    }
-
-    /**
-     * Gets the type of the event.
-     */
-    @Override
-    public GameEventType type() {
-        return type;
-    }
-
-    /**
-     * Gets the ID of the game.
-     */
-    @Override
-    public UUID gameId() {
-        return gameId;
-    }
-
-    /**
-     * Gets the ID of the player involved in the event.
-     */
-    @Override
-    public UUID playerId() {
-        return playerId;
-    }
-
-    /**
-     * Gets the message describing the event.
-     */
-    @Override
-    public String message() {
-        return message;
+        this.message = message;
     }
 
     @Override
