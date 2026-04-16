@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model.observer;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ObserverManager {
     private final List<IGameObserver> observers;
 
     public ObserverManager() {
-        observers = new ArrayList<>();
+        observers = new CopyOnWriteArrayList<>();
     }
 
     public void addObserver(IGameObserver newObserver) {
