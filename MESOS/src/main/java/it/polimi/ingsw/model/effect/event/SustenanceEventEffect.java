@@ -41,4 +41,30 @@ public class SustenanceEventEffect implements IEventEffect {
 
         return effectEventResults;
     }
+
+    /**
+     * Post-processes sustenance event changes to handle food deficits.
+     * If a player cannot pay the full cost, they lose PP for each unfed character.
+     *
+     * @param change the EffectEventResult to be refined.
+     * @param eventCard the sustenance event card.
+     */
+    @Override
+    public void postProcessChange(EffectEventResult change, EventCard eventCard) {
+        if (change.getFoodChange() < 0) {
+            Player player = change.getTargetPlayer();
+
+            // Calculate the total food deficit after applying the change
+            int foodDeficit = player.getFood() + change.getFoodChange();
+
+            if (foodDeficit < 0) {
+                // If the player cannot pay the food cost, they pay all remaining food...
+                change.setFoodChange(-player.getFood());
+
+                // ...and lose PP for each unfed character, based on the malus indicated on the Event card
+                int ppLoss = Math.abs(foodDeficit) * eventCard.getMalusPP();
+                change.setPpChange(change.getPpChange() - ppLoss);
+            }
+        }
+    }
 }

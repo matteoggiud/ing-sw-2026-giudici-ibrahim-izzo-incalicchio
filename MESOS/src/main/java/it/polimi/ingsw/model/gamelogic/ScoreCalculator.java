@@ -1,4 +1,6 @@
 package it.polimi.ingsw.model.gamelogic;
+
+import it.polimi.ingsw.model.card.CharacterCard;
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.core.Game;
@@ -23,7 +25,7 @@ public class ScoreCalculator {
      * Computes the final score for a given player at the end of the game.
      *
      * @param player the player for whom the final score is being calculated
-     * @param game the current game state
+     * @param game   the current game state
      * @return the final score of the player
      */
     public static int computeFinalScore(Player player, Game game) {
@@ -43,11 +45,9 @@ public class ScoreCalculator {
      * @param player the player for whom the builder score is being calculated
      * @return the total score from the player's builder character cards.
      */
-    public static int computeBuilderScore(Player player) {
-
+    private static int computeBuilderScore(Player player) {
         return player.getPlayerDeck().getCharacters().stream()
-                .filter(c -> c instanceof BuilderCharacterCard)
-                .mapToInt(c -> ((BuilderCharacterCard) c).getEndGamePP())
+                .mapToInt(CharacterCard::getEndGamePPBonus)
                 .sum();
     }
 
@@ -59,12 +59,10 @@ public class ScoreCalculator {
      * @return the total score from the player's inventor character cards.
      *
      */
-    public static int computeInventorScore(Player player) {
+    private static int computeInventorScore(Player player) {
         PlayerDeck deck = player.getPlayerDeck();
 
-        int countInventors = (int) deck.getCharacters().stream()
-                .filter(c -> c instanceof InventorCharacterCard)
-                .count();
+        int countInventors = deck.countCharactersByType(CharacterType.INVENTOR);
 
         return countInventors * deck.getDifferentInventorItem();
     }
@@ -78,25 +76,26 @@ public class ScoreCalculator {
      * calculated by dividing the number of artist cards in the player's deck by 2
      * and multiplying the result by 10.
      */
-    public static int computeArtistScore(Player player) {
+    private static int computeArtistScore(Player player) {
         int artists = player.getPlayerDeck().countCharactersByType(CharacterType.ARTIST);
 
-        return (artists / 2) * 10; //
+        return (artists / 2) * 10;
     }
 
     /**
      *
      * Computes the score from the player's building cards.
+     *
      * @param player the player for whom the building score is being calculated
      * @return the total score from the player's building cards.
      */
-    public static int computeBuildingScore(Player player) {
+    private static int computeBuildingScore(Player player) {
         return player.getPlayerDeck().getBuildings().stream()
                 .mapToInt(b -> {
                     int basePoints = b.getEndGamePP();
                     int bonusPoints = 0;
 
-                    if(b.getEffect().getEndGameScoring().isPresent()){
+                    if (b.getEffect().getEndGameScoring().isPresent()) {
                         bonusPoints = b.getEffect().getEndGameScoring().get().calculateEndGameBonus(player);
                     }
                     return basePoints + bonusPoints;
@@ -105,7 +104,7 @@ public class ScoreCalculator {
     }
 
     /**
-     *  Ranks the players in the game based on their final scores.
+     * Ranks the players in the game based on their final scores.
      *
      * @param game the current game state
      * @return a map of players and their corresponding final scores, sorted in descending order of scores.

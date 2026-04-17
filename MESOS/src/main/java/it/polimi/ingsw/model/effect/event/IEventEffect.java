@@ -23,4 +23,15 @@ public interface IEventEffect {
      * @return a list of EffectEventResult representing the base effect of the event card.
      */
     List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard);
+
+    /**
+     * Post-process an effect result to apply event-specific refinement rules.
+     * Default implementation does nothing; subclasses can override to add custom logic.
+     *
+     * @param change the EffectEventResult to be refined.
+     * @param eventCard the event card that triggered this effect.
+     */
+    default void postProcessChange(EffectEventResult change, EventCard eventCard) {
+        // Default: no post-processing.
+    }
 }

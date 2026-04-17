@@ -201,7 +201,7 @@ public class ResolveActionsState implements IGameState {
         for (Card card : cards) {
             if (card instanceof CharacterCard characterCard) {
                 simulatedCharacters.add(characterCard);
-                if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.isFoodIcon()) {
+                if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.hasFoodIcon()) {
                     simulatedFood += countHunters(simulatedCharacters);
                 }
             } else if (card instanceof BuildingCard buildingCard) {
@@ -232,7 +232,7 @@ public class ResolveActionsState implements IGameState {
                 row.getTribeRow().remove(characterCard);
                 player.getPlayerDeck().addCard(characterCard);
 
-                if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.isFoodIcon()) {
+                if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.hasFoodIcon()) {
                     player.addFood(player.getPlayerDeck().countCharactersByType(CharacterType.HUNTER));
                 }
             }
@@ -248,7 +248,7 @@ public class ResolveActionsState implements IGameState {
         return characters.stream()
                 .filter(BuilderCharacterCard.class::isInstance)
                 .map(BuilderCharacterCard.class::cast)
-                .mapToInt(BuilderCharacterCard::getFoodDiscount)
+                .mapToInt(BuilderCharacterCard::getBuilderFoodDiscount)
                 .sum();
     }
 

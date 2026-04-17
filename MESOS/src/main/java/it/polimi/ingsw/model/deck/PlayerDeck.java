@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.card.characters.BuilderCharacterCard;
-import it.polimi.ingsw.model.card.characters.InventorCharacterCard;
-import it.polimi.ingsw.model.card.characters.ShamanCharacterCard;
 import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
 import it.polimi.ingsw.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
@@ -41,6 +38,13 @@ public class PlayerDeck {
         this.buildings = new ArrayList<>();
     }
 
+    public ArrayList<CharacterCard> getCharacters() {
+        return characters;
+    }
+
+    public ArrayList<BuildingCard> getBuildings() {
+        return buildings;
+    }
 
     /**
      * This method counts the number of character cards in the player's deck that have a specific character type.
@@ -88,33 +92,13 @@ public class PlayerDeck {
 
 
     /**
-     * This method returns the list of character cards in the player's deck.
-     *
-     * @return All the character card of the player
-     */
-    public ArrayList<CharacterCard> getCharacters() {
-        return this.characters;
-    }
-
-    /**
-     * This method returns the list of building cards in the player's deck.
-     *
-     * @return All the building card of the player
-     */
-    public ArrayList<BuildingCard> getBuildings() {
-        return this.buildings;
-    }
-
-    /**
      * Gets the total builder discount that the player has accumulated from their character cards.
      *
      * @return the total builder discount for the player.
      */
     public int getTotalBuilderDiscount() {
         return this.characters.stream()
-                .filter(BuilderCharacterCard.class::isInstance)
-                .map(BuilderCharacterCard.class::cast)
-                .mapToInt(BuilderCharacterCard::getFoodDiscount)
+                .mapToInt(CharacterCard::getBuilderFoodDiscount)
                 .sum();
     }
 
@@ -126,20 +110,17 @@ public class PlayerDeck {
     public int getTotalGathererDiscount() {
         return countCharactersByType(CharacterType.GATHERER) * 3;
     }
+
     /**
      * Gets the total number of shaman stars that the player has accumulated from their character cards.
      *
      * @return the total number of shaman stars for the player.
      */
     public int getTotalShamanStars() {
-        int totalStars = 0;
-
         // Calculate the total number of shaman stars from the character cards in the player's deck
-        for (CharacterCard card : this.characters) {
-            if (card instanceof ShamanCharacterCard shamanCard) {
-                totalStars += shamanCard.getShamanStars();
-            }
-        }
+        int totalStars = this.characters.stream()
+                .mapToInt(CharacterCard::getShamanStars)
+                .sum();
 
         // Calculate the total number of shaman stars from the building cards in the player's deck
         for (BuildingCard building : this.buildings) {
@@ -158,13 +139,12 @@ public class PlayerDeck {
      */
     public int getDifferentInventorItem() {
         return (int) this.characters.stream()
-                .filter(InventorCharacterCard.class::isInstance)
-                .map(InventorCharacterCard.class::cast)
-                .map(InventorCharacterCard::getInventorType)
+                .map(CharacterCard::getInventorType)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .distinct()
                 .count();
     }
-
 
     /**
      * This method retrieves a list of active event modifiers from the player's building cards.
@@ -201,7 +181,7 @@ public class PlayerDeck {
         return activeTriggers;
     }
 
-    public List<IEndGameScoring> getActiveEndGameBuildingScorings(){
+    public List<IEndGameScoring> getActiveEndGameBuildingScorings() {
         List<IEndGameScoring> endGameScorings = new ArrayList<>();
 
         for (BuildingCard building : this.buildings) {
@@ -214,10 +194,10 @@ public class PlayerDeck {
         return endGameScorings;
     }
 
-    public List<IExtraActionEffect> getActiveExtractionEffects(){
+    public List<IExtraActionEffect> getActiveExtractionEffects() {
         List<IExtraActionEffect> extraActionEffects = new ArrayList<>();
 
-        for(BuildingCard building : this.buildings){
+        for (BuildingCard building : this.buildings) {
             Optional<IExtraActionEffect> extraActionEffectOpt = building.getEffect().getExtraActionEffect();
 
             extraActionEffectOpt.ifPresent(extraActionEffects::add);
@@ -236,23 +216,6 @@ public class PlayerDeck {
         return characters;
     }
 
-    /**
-     * Gets the total number of artist cards currently in the player's deck.
-     *
-     * @return the total number of artist cards
-     */
-    public int getTotalArtist() {
-        return countCharactersByType(CharacterType.ARTIST);
-    }
-
-    /**
-     * Gets the total number of hunter cards currently in the player's deck.
-     *
-     * @return the total number of hunter cards
-     */
-    public int getTotalHunter() {
-        return countCharactersByType(CharacterType.HUNTER);
-    }
 
 }
 

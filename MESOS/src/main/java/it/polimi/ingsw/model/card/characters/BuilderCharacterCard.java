@@ -22,7 +22,7 @@ public class BuilderCharacterCard extends CharacterCard {
      * @param foodDiscount the amount of food discount this card provides during the game (must be >= 0)
      */
     public BuilderCharacterCard(String name, Era era, int minNumPlayers, int endGamePP, int foodDiscount) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+        super(name, era, minNumPlayers, CharacterType.BUILDER);
 
         if (endGamePP < 0)
             throw new IllegalArgumentException("End Game PP must not be negative");
@@ -34,15 +34,6 @@ public class BuilderCharacterCard extends CharacterCard {
         this.foodDiscount = foodDiscount;
     }
 
-    /**
-     * Indicates that this card is a Builder character card.
-     *
-     * @return true, since this card is a Builder character card.
-     */
-    @Override
-    public boolean isBuilder() {
-        return true;
-    }
 
     /**
      * Gets the number of prestige points this Builder card provides at the end of the game.

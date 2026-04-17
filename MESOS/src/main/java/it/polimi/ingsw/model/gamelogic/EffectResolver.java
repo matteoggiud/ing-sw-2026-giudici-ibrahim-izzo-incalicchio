@@ -57,8 +57,8 @@ public class EffectResolver {
                     buildingModifier.applyModifier(eventType, change);
                 }
 
-                // Refine the change based on specific rules for certain event types, such as the Sustenance event
-                refineChange(change, eventCard);
+                // Allow the event effect to post-process the change (e.g., Sustenance handling food deficits)
+                eventCard.getEventEffect().postProcessChange(change, eventCard);
             }
 
             // Finally, apply all the changes to the players' resources based on the log of effect results
@@ -82,31 +82,6 @@ public class EffectResolver {
                 applyAllChanges(changes);
             }
 
-    /**
-     * Refines the effect change based on specific rules for certain event types, such as the Sustenance event.
-     *
-     * @param change
-     * @param eventCard
-     */
-    private void refineChange(EffectEventResult change, EventCard eventCard) {
-        EventType eventType = eventCard.getEventType();
-        Player player = change.getTargetPlayer();
-
-        if (eventType == EventType.SUSTENANCE && change.getFoodChange() < 0) {
-
-            // Calculate the total food deficit after applying the change
-            int foodDeficit = player.getFood() + change.getFoodChange();
-
-            if (foodDeficit < 0) {
-                // If the player cannot pay the food cost, he pays all his remaining food...
-                change.setFoodChange(-player.getFood());
-
-                // ...and loses PP for each unfed Character in the tribe, based on the malus indicated on the Event card
-                int ppLoss = Math.abs(foodDeficit) * eventCard.getMalusPP();
-                change.setPpChange(change.getPpChange() - ppLoss);
-            }
-        }
-    }
 
     /**
      * Applies all the changes to the players based on the log of effect results.

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.card;
 
+import it.polimi.ingsw.model.deck.PlayerDeck;
 import it.polimi.ingsw.model.effect.event.IEventEffect;
 
 /**
@@ -168,5 +169,16 @@ public class EventCard extends TribeCard {
      */
     public EventType getEventType() {
         return eventType;
+    }
+
+    /**
+     * Event cards cannot be added to a player's deck
+     *
+     * @param playerDeck the player's deck to which this card would be added
+      * @throws UnsupportedOperationException always, since event cards cannot be added to a player's deck
+     */
+    @Override
+    public void addTo(PlayerDeck playerDeck) {
+        throw new UnsupportedOperationException("Event cards cannot be added to a player's deck");
     }
 }

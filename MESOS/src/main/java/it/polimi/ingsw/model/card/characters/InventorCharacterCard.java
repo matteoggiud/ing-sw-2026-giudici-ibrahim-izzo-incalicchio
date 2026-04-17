@@ -26,7 +26,7 @@ public class InventorCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
     public InventorCharacterCard(String name, Era era, int minNumPlayers, InventorType inventorType) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+        super(name, era, minNumPlayers, CharacterType.INVENTOR);
         if (inventorType == null)
             throw new IllegalArgumentException("Inventor type must not be null");
 
@@ -43,11 +43,4 @@ public class InventorCharacterCard extends CharacterCard {
         return Optional.ofNullable(inventorType);
     }
 
-    /**
-     * Indicates that this card is an Inventor character card.
-     *
-     * @return true, since this is an Inventor character card.
-     */
-    @Override
-    public boolean isInventor() { return true; }
 }

@@ -69,12 +69,10 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
         Map<InventorType, Integer> frequency = new HashMap<>();
         int n_couple = 0;
 
-        List<CharacterCard> inventors = player.getPlayerDeck().getCharactersByType(CharacterType.INVENTOR);
+        List<CharacterCard> inventors = player.getPlayerDeck().getCharacters();
 
         for (CharacterCard inventor : inventors) {
-            InventorCharacterCard inventorCard = (InventorCharacterCard) inventor;
-
-            frequency.put(inventorCard.getInventorType(), frequency.getOrDefault(inventorCard.getInventorType(), 0) + 1);
+            inventor.getInventorType().ifPresent(type -> frequency.put(type, frequency.getOrDefault(type, 0) + 1));
         }
 
         for (Integer count : frequency.values()) {

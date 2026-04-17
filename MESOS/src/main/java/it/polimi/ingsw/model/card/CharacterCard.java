@@ -10,12 +10,7 @@ import java.util.Optional;
  */
 public class CharacterCard extends TribeCard {
 
-    public boolean isHunter() { return false; }
-    public boolean isArtist() { return false; }
-    public boolean isGatherer() { return false; }
-    public boolean isBuilder() { return false; }
-    public boolean isInventor() { return false; }
-    public boolean isShaman() { return false; }
+    private final CharacterType type;
 
     /**
      * Construct a new CharacterCard with specific properties.
@@ -24,8 +19,9 @@ public class CharacterCard extends TribeCard {
      * @param minNumPlayers the minimum number of players required to use this character card
      * @throws IllegalArgumentException if numeric constraints are violated or something is null.
      */
-    public CharacterCard(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+    public CharacterCard(String name, Era era, int minNumPlayers, CharacterType type) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
+        this.type = type;
     }
 
     public int getBuilderFoodDiscount() { return 0; }
@@ -34,6 +30,12 @@ public class CharacterCard extends TribeCard {
     public int getEndGamePPBonus() { return 0; }
     public boolean hasFoodIcon() { return false; }
 
+    /**
+     * Gets the type of this character card (e.g., HUNTER, GATHERER, SHAMAN, INVENTOR).
+     *
+     * @return the type of this character card.
+     */
+    public CharacterType getType() { return type; }
 
 
     /**

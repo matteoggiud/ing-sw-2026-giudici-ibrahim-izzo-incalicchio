@@ -15,17 +15,12 @@ public class DoubleBuilderBuildingEffect implements IBuildingEffect, IEndGameSco
 
     @Override
     public int calculateEndGameBonus(Player player) {
-        int n_builders=0;
-        for(CharacterCard c : player.getPlayerDeck().getCharacters()){
-            if(c.getType().equals(CharacterType.BUILDER)){
-                n_builders++;
-            }
-        }
+        int n_builders = player.getPlayerDeck().countCharactersByType(CharacterType.BUILDER);
         return 2 * n_builders;
     }
 
     @Override
-    public Optional<IEndGameScoring> getEndGameScoring(){
+    public Optional<IEndGameScoring> getEndGameScoring() {
         return Optional.of(this);
     }
 }
