@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.card;
 
+import it.polimi.ingsw.model.deck.PlayerDeck;
+
 /**
  * This class represents a tribe card, which is a type of card in the game.
  */
-public class TribeCard extends Card{
+public abstract class TribeCard extends Card{
 
     /**
      * Construct a new TribeCard with specific properties.
@@ -14,4 +16,6 @@ public class TribeCard extends Card{
     public TribeCard(String name, Era era, int minNumPlayers) {
         super(name, era, minNumPlayers);
     }
+
+
 }

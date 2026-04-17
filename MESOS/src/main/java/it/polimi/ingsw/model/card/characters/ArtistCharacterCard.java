@@ -18,6 +18,16 @@ public class ArtistCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
     public ArtistCharacterCard(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
-        super(name, era, minNumPlayers, CharacterType.ARTIST);
+        super(name, era, minNumPlayers);
+    }
+
+    /**
+     * Indicates that this card is an Artist character card.
+     *
+     * @return true, since this card is an Artist character card.
+     */
+    @Override
+    public boolean isArtist() {
+        return true;
     }
 }

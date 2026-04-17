@@ -60,18 +60,30 @@ public class PlayerDeck {
 
 
     /**
+     * This method adds a building card to the player's deck
+     *
+     * @param buildingCard the building card to be added to the player's deck
+     */
+    public void addBuildingCard(BuildingCard buildingCard) {
+        buildings.add(buildingCard);
+    }
+
+    /**
+     * This method adds a character card to the player's deck
+     *
+     * @param characterCard the character card to be added to the player's deck
+     */
+    public void addCharacterCard(CharacterCard characterCard) {
+        characters.add(characterCard);
+    }
+
+    /**
      * This method adds a card to the player's deck
      *
-     * @param card to be added
+     * @param card the card to be added to the player's deck
      */
     public void addCard(Card card) {
-        if (card instanceof BuildingCard) {
-            this.buildings.add((BuildingCard) card);
-        } else if (card instanceof CharacterCard) {
-            this.characters.add((CharacterCard) card);
-        } else {
-            throw new IllegalArgumentException("Card must be either a BuildingCard or a CharacterCard");
-        }
+        card.addTo(this);
     }
 
 

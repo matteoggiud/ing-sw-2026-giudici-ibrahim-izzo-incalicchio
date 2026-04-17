@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.card;
 
+import it.polimi.ingsw.model.deck.PlayerDeck;
+
 import java.util.UUID;
 
 /**
@@ -89,5 +91,14 @@ public abstract class Card {
     public boolean isAvailableForPlayerCount(int countPlayers){
         return countPlayers >= minNumPlayers;
     }
+
+
+    /**
+     * Adds this card to the specified player's deck.
+     *
+     * @param playerDeck the player's deck to which this card will be added
+     */
+    public abstract void addTo(PlayerDeck playerDeck);
+
 }
 

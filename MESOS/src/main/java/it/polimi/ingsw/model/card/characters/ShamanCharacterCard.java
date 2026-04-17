@@ -24,11 +24,20 @@ public class ShamanCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
     public ShamanCharacterCard(String name, Era era, int minNumPlayers, int shamanStars) {
-        super(name, era, minNumPlayers, CharacterType.SHAMAN);
+        super(name, era, minNumPlayers);
         if (shamanStars <= 0)
             throw new IllegalArgumentException("Shaman stars must be non-negative");
         this.shamanStars = shamanStars;
     }
+
+    /**
+     * Indicates that this card is a Shaman character card.
+     *
+     * @return true, since this card is a Shaman character card.
+     */
+    @Override
+    public boolean isShaman() { return true; }
+
 
     /**
      * Gets the number of shaman stars provided by this card.

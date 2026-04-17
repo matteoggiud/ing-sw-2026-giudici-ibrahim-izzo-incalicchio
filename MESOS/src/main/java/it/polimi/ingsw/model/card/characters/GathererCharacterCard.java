@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.card.characters;
 
 import it.polimi.ingsw.model.card.CharacterCard;
-import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.Era;
 
 /**
@@ -18,6 +17,16 @@ public class GathererCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
     public GathererCharacterCard(String name, Era era, int minNumPlayers) {
-        super(name, era, minNumPlayers, CharacterType.GATHERER);
+        super(name, era, minNumPlayers);
+    }
+
+    /**
+     * Indicates that this card is a Gatherer character card.
+     *
+     * @return true, since this is a Gatherer character card.
+     */
+    @Override
+    public boolean isGatherer() {
+        return true;
     }
 }

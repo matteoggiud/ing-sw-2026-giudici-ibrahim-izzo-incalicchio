@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.card;
 
+import it.polimi.ingsw.model.deck.PlayerDeck;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 
 /**
@@ -73,4 +74,16 @@ public class BuildingCard extends TribeCard {
     public IBuildingEffect getEffect(){
         return effect;
     }
+
+    /**
+     * Adds this card to the specified player's deck.
+     *
+     * @param playerDeck the player's deck to which this card will be added
+     */
+    @Override
+    public void addTo(PlayerDeck playerDeck) {
+        playerDeck.addBuildingCard(this);
+    }
+
+
 }

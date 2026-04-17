@@ -21,8 +21,19 @@ public class HunterCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
     public HunterCharacterCard(String name, Era era, int minNumPlayers, boolean isFoodIcon) throws IllegalArgumentException {
-        super(name, era, minNumPlayers, CharacterType.HUNTER);
+        super(name, era, minNumPlayers);
         this.isFoodIcon = isFoodIcon;
+    }
+
+
+    /**
+     * Indicates that this card is a Hunter character card.
+     *
+     * @return true, since this is a Hunter character card.
+     */
+    @Override
+    public boolean isHunter() {
+        return true;
     }
 
     /**
@@ -30,7 +41,10 @@ public class HunterCharacterCard extends CharacterCard {
      *
      * @return true if this Hunter card has a food icon, false otherwise.
      */
-    public boolean isFoodIcon() {
+    @Override
+    public boolean hasFoodIcon() {
         return isFoodIcon;
     }
+
+
 }
