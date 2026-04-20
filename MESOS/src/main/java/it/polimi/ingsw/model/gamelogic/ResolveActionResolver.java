@@ -35,8 +35,7 @@ public class ResolveActionResolver {
         CardRow row = fromUpperRow ? board.getUpperRow() : board.getLowerRow();
 
         if (selectedCard == null) {
-            resolveUnavailableCardPick(game, player, box, progress, row, fromUpperRow);
-            return;
+            throw new IllegalArgumentException("Selected card cannot be null.");
         }
 
         selectedCard.validateSelectableFrom(row);
@@ -144,17 +143,6 @@ public class ResolveActionResolver {
         }
     }
 
-    private void resolveUnavailableCardPick(Game game, Player player, OfferBox box,
-                                            ActionResolutionProgress progress,
-                                            CardRow row,
-                                            boolean fromUpperRow) {
-        if (row.hasSelectableCardFor(player)) {
-            throw new IllegalStateException("You must select a card because this row still has available cards.");
-        }
-
-        markCardPickResolved(progress, fromUpperRow);
-        completeActionIfNeeded(game, player, box, progress);
-    }
 
     private void markCardPickResolved(ActionResolutionProgress progress, boolean fromUpperRow) {
         if (fromUpperRow) {
@@ -176,6 +164,12 @@ public class ResolveActionResolver {
         return progress.upperCardsResolved == box.getUpperRowPicks()
                 && progress.lowerCardsResolved == box.getLowerRowPicks();
     }
+
+    private boolean hasSelectableCardForPendingPick(Board board, Player player, OfferBox box, ActionResolutionProgress progress) {
+        return hasPendingUpperPick(box, progress) && board.getUpperRow().hasSelectableCardFor(player)
+                || hasPendingLowerPick(box, progress) && board.getLowerRow().hasSelectableCardFor(player);
+    }
+
 
 
     public void resolveAutomaticSkips(Game game) {
@@ -205,13 +199,17 @@ public class ResolveActionResolver {
 
             ActionResolutionProgress progress = getProgress(player);
 
-            if (hasPendingUpperPick(box, progress) && !board.getUpperRow().hasSelectableCardFor(player)) {
-                progress.upperCardsResolved++;
+            if (hasSelectableCardForPendingPick(board, player, box, progress)) {
+                return;
+            }
+
+            if (hasPendingUpperPick(box, progress)) {
+                markCardPickResolved(progress, true);
                 progressed = true;
             }
 
-            if (hasPendingLowerPick(box, progress) && !board.getLowerRow().hasSelectableCardFor(player)) {
-                progress.lowerCardsResolved++;
+            if (hasPendingLowerPick(box, progress)) {
+                markCardPickResolved(progress, false);
                 progressed = true;
             }
 
@@ -223,6 +221,7 @@ public class ResolveActionResolver {
 
         } while (progressed);
     }
+
 
 
 }

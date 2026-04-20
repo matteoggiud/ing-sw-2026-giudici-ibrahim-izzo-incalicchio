@@ -14,6 +14,16 @@ public class ResolveActionsState implements IGameState {
     private final ResolveActionResolver actionResolver = new ResolveActionResolver();
 
     @Override
+    public void executePhase(Game game) {
+        actionResolver.resolveAutomaticSkips(game);
+
+        if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
+            nextState(game);
+        }
+    }
+
+
+    @Override
     public void nextState(Game game) {
         game.setGameState(new EndRoundState());
     }
@@ -21,11 +31,7 @@ public class ResolveActionsState implements IGameState {
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         actionResolver.resolveAction(game, player, selectedCard, fromUpperRow);
-        actionResolver.resolveAutomaticSkips(game);
-
-
-        if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
-            nextState(game);
-        }
+        executePhase(game);
     }
+
 }
