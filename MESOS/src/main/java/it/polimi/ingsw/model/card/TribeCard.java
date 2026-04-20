@@ -17,5 +17,13 @@ public abstract class TribeCard extends Card{
         super(name, era, minNumPlayers);
     }
 
+    public boolean isFinalEvent(){
+        return false;
+    }
+
+    public boolean goesInUpperRow(){
+        return false;
+    }
+
 
 }

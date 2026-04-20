@@ -104,8 +104,19 @@ public class EventCard extends TribeCard {
      *
      * @return true if this event card is a special card, false otherwise.
      */
+    @Override
     public boolean isFinalEvent() {
         return isFinalEvent;
+    }
+
+    /**
+     * Indicates whether this event card should be placed in the upper row during the initial setup
+     *
+     * @return true if this event card should be placed in the upper row, false otherwise.
+     */
+    @Override
+    public boolean goesInUpperRow() {
+        return true;
     }
 
     /**

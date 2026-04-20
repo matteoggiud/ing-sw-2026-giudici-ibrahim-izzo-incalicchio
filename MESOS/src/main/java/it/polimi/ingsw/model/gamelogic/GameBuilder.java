@@ -66,8 +66,8 @@ public class GameBuilder {
 
         // Divide the valid tribe cards into their respective eras and separate final event cards from the rest of era 3 cards.
         for (TribeCard card : validCards) {
-            if (card.getEra() == Era.ERA_3 && card instanceof EventCard eventCard && eventCard.isFinalEvent()) {
-                finalEvents.add(eventCard);
+            if (card.getEra() == Era.ERA_3 && card.isFinalEvent()) {
+                finalEvents.add(card);
             } else {
                 switch (card.getEra()) {
                     case Era.ERA_1 -> era_I.add(card);
@@ -250,7 +250,7 @@ public class GameBuilder {
 
         while (lowerRow.countRow() < lowerRowTarget) {
             TribeCard drawnCard = tribeDeck.drawCard();
-            if (drawnCard instanceof EventCard) {
+            if (drawnCard.goesInUpperRow()) {
                 upperRow.addCard(drawnCard);
             } else {
                 lowerRow.addCard(drawnCard);
