@@ -1,11 +1,13 @@
 package it.polimi.ingsw.model.gamelogic;
 
+import it.polimi.ingsw.database.DataDepository;
 import it.polimi.ingsw.model.core.*;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.deck.*;
 import it.polimi.ingsw.model.board.*;
 import it.polimi.ingsw.model.ruleset.IGameRuleSet;
 
+import java.sql.SQLException;
 import java.util.*;
 
 
@@ -24,8 +26,17 @@ public class GameBuilder {
     }
 
     public void prepareGame() {
-        List<TribeCard> allTribeCards = new ArrayList<>(); //TODO: get all tribe cards from db
-        List<BuildingCard> allBuildingCards = new ArrayList<>();
+        DataDepository db = new DataDepository();
+        List<TribeCard> allTribeCards;
+        List<BuildingCard> allBuildingCards;
+
+        try{
+            allTribeCards = db.getAllTribeCards();
+            allBuildingCards = db.getBuildingCards();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load cards from the database");
+        }
 
         game.setCurrentEra(Era.ERA_1);
 
