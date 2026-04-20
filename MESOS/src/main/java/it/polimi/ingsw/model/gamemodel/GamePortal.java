@@ -10,13 +10,14 @@ import java.util.ArrayList;
 
 public class GamePortal implements IGameModel {
     @Override
-    public void drawCard(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards){
-        if (game == null || player == null || upperCards == null || lowerCards == null) {
-            throw new IllegalArgumentException("Game, player, upperCards, and lowerCards cannot be null");
+    public void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+        if (game == null || player == null || selectedCard == null) {
+            throw new IllegalArgumentException("Game, player, selectedCard and lowerCards cannot be null");
         }
 
-        game.getGameState().resolveAction(game, player, upperCards, lowerCards);
+        game.getGameState().resolveAction(game, player, selectedCard, fromUpperRow);
     }
+
     @Override
     public void Placing(Game game, Player player, OfferBox offerBox) {
         if (game == null || player == null || offerBox == null) {

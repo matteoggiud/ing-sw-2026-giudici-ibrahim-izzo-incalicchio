@@ -12,6 +12,6 @@ import java.util.ArrayList;
 public interface IGameModel {
     void login(String nickname, String password) throws SQLException;
     void register(String nickname, String password) throws SQLException;
-    void drawCard(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards);
+    void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow);
     void Placing(Game game, Player player, OfferBox offerBox);
 }
