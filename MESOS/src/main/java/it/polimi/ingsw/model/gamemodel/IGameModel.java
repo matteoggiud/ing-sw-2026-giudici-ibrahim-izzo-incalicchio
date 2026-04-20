@@ -10,6 +10,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface IGameModel {
+
+    /**
+     * Attempts to log in a user with the provided nickname and password.
+     * @param nickname
+     * @param password
+     * @throws SQLException
+     */
     void login(String nickname, String password) throws SQLException;
     void register(String nickname, String password) throws SQLException;
     void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow);
