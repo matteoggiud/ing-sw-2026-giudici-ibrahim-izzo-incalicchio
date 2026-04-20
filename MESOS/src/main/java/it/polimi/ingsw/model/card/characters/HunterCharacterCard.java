@@ -44,6 +44,7 @@ public class HunterCharacterCard extends CharacterCard {
      */
     @Override
     public void onAddedToPlayer(Player player) {
+        //TODO: void to int
         if (isFoodIcon) {
             int hunterCount = player.getPlayerDeck().countCharactersByType(CharacterType.HUNTER);
             player.addFood(hunterCount);
