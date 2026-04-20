@@ -30,6 +30,7 @@ public class GameBuilder {
         List<TribeCard> allTribeCards;
         List<BuildingCard> allBuildingCards;
 
+        //We use the try-catch to avoid adding on every method that use these parameter a throw SQLException
         try{
             allTribeCards = db.getAllTribeCards();
             allBuildingCards = db.getBuildingCards();
