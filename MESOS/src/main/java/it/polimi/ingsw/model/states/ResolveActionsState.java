@@ -21,6 +21,8 @@ public class ResolveActionsState implements IGameState {
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         actionResolver.resolveAction(game, player, selectedCard, fromUpperRow);
+        actionResolver.resolveAutomaticSkips(game);
+
 
         if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
             nextState(game);

@@ -7,8 +7,11 @@ import it.polimi.ingsw.model.core.*;
 public class PlacingTotemState implements IGameState {
     @Override
     public void nextState(Game game) {
-        game.setGameState(new ResolveActionsState());
+        ResolveActionsState resolveActionsState = new ResolveActionsState();
+        game.setGameState(resolveActionsState);
+        resolveActionsState.executePhase(game);
     }
+
 
     /**
      * This method allows a player to place their totem on the offer box during the Placing Totem phase.
