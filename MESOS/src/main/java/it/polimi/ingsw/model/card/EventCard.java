@@ -204,6 +204,11 @@ public class EventCard extends TribeCard {
     }
 
     @Override
+    public boolean canBeSelectedFrom(CardRow row, Player player) {
+        return false;
+    }
+
+    @Override
     public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
     }

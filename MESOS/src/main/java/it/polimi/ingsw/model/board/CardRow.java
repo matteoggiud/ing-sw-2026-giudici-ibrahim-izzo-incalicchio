@@ -1,7 +1,10 @@
 package it.polimi.ingsw.model.board;
 
+import it.polimi.ingsw.model.card.BuildingCard;
+import it.polimi.ingsw.model.card.CharacterCard;
 import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.BuildingDeck;
+import it.polimi.ingsw.model.core.Player;
 
 /**
  * This class represents the card row of the board, which is composed by a tribe row and a building row.
@@ -86,4 +89,21 @@ public class CardRow {
     public int countRow() {
         return tribeRow.count() + buildingRow.count();
     }
+
+    public boolean hasSelectableCardFor(Player player) {
+        for (CharacterCard characterCard : tribeRow.getCharacterCards()) {
+            if (characterCard.canBeSelectedFrom(this, player)) {
+                return true;
+            }
+        }
+
+        for (BuildingCard buildingCard : buildingRow.getBuildingCards()) {
+            if (buildingCard.canBeSelectedFrom(this, player)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

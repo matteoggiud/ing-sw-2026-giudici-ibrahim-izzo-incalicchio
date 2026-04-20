@@ -89,6 +89,19 @@ public class BuildingCard extends TribeCard {
     }
 
     @Override
+    public boolean canBeSelectedFrom(CardRow row, Player player) {
+        if (!row.getBuildingRow().getBuildingCards().contains(this)) {
+            return false;
+        }
+
+        int discount = player.getPlayerDeck().getTotalBuilderDiscount();
+        int effectiveCost = Math.max(getFoodCost() - discount, 0);
+
+        return effectiveCost <= player.getFood();
+    }
+
+
+    @Override
     public void validateSelectableFrom(CardRow row) {
         if (!row.getBuildingRow().getBuildingCards().contains(this)) {
             throw new IllegalArgumentException("Selected building is not available in the building row.");
