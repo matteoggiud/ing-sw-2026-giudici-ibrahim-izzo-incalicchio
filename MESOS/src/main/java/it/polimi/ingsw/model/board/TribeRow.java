@@ -51,9 +51,7 @@ public class TribeRow {
         ArrayList<CharacterCard> characters = new ArrayList<>();
 
         for (TribeCard tribeCard : this.tribeCards)
-            if (tribeCard instanceof CharacterCard characterCard) {
-                characters.add(characterCard);
-            }
+            tribeCard.addToCharacterList(characters);
 
         return characters;
     }
@@ -67,9 +65,7 @@ public class TribeRow {
         ArrayList<EventCard> events = new ArrayList<>();
 
         for (TribeCard tribeCard : this.tribeCards) {
-            if (tribeCard instanceof EventCard eventCard) {
-                events.add(eventCard);
-            }
+            tribeCard.addToEventList(events);
         }
         return events;
     }

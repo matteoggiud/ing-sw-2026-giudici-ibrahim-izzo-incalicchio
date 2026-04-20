@@ -230,9 +230,9 @@ public class Game {
      *
      * @return true if the game has ended, false otherwise
      */
-    public boolean isEnded() {
+    /*public boolean isEnded() {
         return gameState instanceof EndedState;
-    }
+    }*/
 
     public void transferUpperTribeToLower() { // da portare nel game state
         board.transferUpperTribeToLower();
@@ -302,11 +302,11 @@ public class Game {
         this.gameState = new EndedState();
     }
 
-    public void getFinalRanking() throws IllegalStateException { // da portare nel game state
+    public void getFinalRanking() throws IllegalStateException { //TODO: da portare nel game state
 
-        if (!(this.gameState instanceof ComputeFinalScoreState)) {
+       /* if (!(this.gameState instanceof ComputeFinalScoreState)) {
             throw new IllegalStateException("The game state is not FinalScoreState");
-        }
+        }*/
 
     }
 
