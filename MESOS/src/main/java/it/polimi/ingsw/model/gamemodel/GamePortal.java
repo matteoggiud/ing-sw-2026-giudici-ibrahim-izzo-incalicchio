@@ -4,9 +4,13 @@ import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
+import it.polimi.ingsw.model.menu.GameManager;
+import it.polimi.ingsw.model.menu.PlayerManager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The GamePortal class serves as the main entry point for interacting with the game model.
@@ -14,6 +18,17 @@ import java.util.ArrayList;
  *
  */
 public class GamePortal implements IGameModel {
+
+    private final PlayerManager playerManager;
+
+    private final GameManager gameManager;
+
+    public GamePortal() {
+        this.playerManager = new PlayerManager();
+        this.gameManager = new GameManager();
+    }
+
+
     @Override
     public void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         if (game == null || player == null || selectedCard == null) {
@@ -37,6 +52,62 @@ public class GamePortal implements IGameModel {
         }
 
         game.getGameState().placeTotem(game, player, offerBox);
+    }
+
+    /**
+     * Creates a new game with the specified host player.
+     *
+     * @param hostNickname the player who will host the new game
+     * @return the unique identifier of the newly created game
+     */
+    @Override
+    public UUID createGame(String hostNickname) {
+        Player host = playerManager.getPlayer(hostNickname);
+        if (host == null) {
+            throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
+        }
+        return gameManager.createGame(host);
+    }
+
+    /**
+     * Gets all available games that players can join.
+     *
+     * @return a list of available games
+     */
+    @Override
+    public List<Game> getAvailableGames() {
+        return gameManager.getAvailableGames();
+    }
+
+    /**
+     * Allows a player to join an existing game using the game's unique identifier (UUID).
+     *
+     * @param gameId the unique identifier of the game the player wants to join
+     * @param player the player attempting to join the game
+     */
+    @Override
+    public void joinGame(UUID gameId, String player) {
+        Player playerToJoin = playerManager.getPlayer(player);
+        if (playerToJoin == null) {
+            throw new IllegalStateException("Player with nickname " + player + " does not exist.");
+        }
+        gameManager.joinGame(gameId, playerToJoin);
+    }
+
+    /**
+     * Allows a player to leave a game they have joined using the game's unique identifier (UUID).
+     *
+     * @param gameId the unique identifier of the game the player wants to leave
+     * @param player the player attempting to leave the game
+     */
+    @Override
+    public void leaveGame(UUID gameId, String player) {
+        Player playerToLeave = playerManager.getPlayer(player);
+        if (playerToLeave == null) {
+            throw new IllegalStateException("Player with nickname " + player + " does not exist.");
+        }
+        gameManager.leaveGame(gameId, playerToLeave);
+
     }
 
     /**

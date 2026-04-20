@@ -18,4 +18,9 @@ public class LobbyState implements IGameState {
     public void removePlayer(Game game, Player player) throws IllegalArgumentException {
         game.getPlayers().removePlayer(player);
     }
+
+    @Override
+    public boolean isJoinable() {
+        return true;
+    }
 }

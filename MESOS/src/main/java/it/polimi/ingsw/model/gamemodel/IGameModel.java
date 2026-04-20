@@ -6,6 +6,8 @@ import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * The IGameModel interface defines the core functionalities of the game model,
@@ -51,4 +53,35 @@ public interface IGameModel {
      * @param offerBox the offer box on which the player wants to place their totem
      */
     void Placing(Game game, Player player, OfferBox offerBox);
+
+    /**
+     * Creates a new game with the specified host player.
+     *
+     * @param hostPlayer the player who will host the new game
+     * @return the unique identifier (UUID) of the newly created game
+     */
+    UUID createGame(String hostPlayer);
+
+    /**
+     * Retrieves a list of all available games that players can join.
+     *
+     * @return a list of available games
+     */
+    List<Game> getAvailableGames();
+
+    /**
+     * Allows a player to join an existing game using the game's unique identifier (UUID).
+     *
+     * @param gameId the unique identifier of the game the player wants to join
+     * @param player the player attempting to join the game
+     */
+    void joinGame(UUID gameId, String player);
+
+    /**
+     * Allows a player to leave a game they have joined using the game's unique identifier (UUID).
+     *
+     * @param gameId the unique identifier of the game the player wants to leave
+     * @param player the player attempting to leave the game
+     */
+    void leaveGame(UUID gameId, String player);
 }
