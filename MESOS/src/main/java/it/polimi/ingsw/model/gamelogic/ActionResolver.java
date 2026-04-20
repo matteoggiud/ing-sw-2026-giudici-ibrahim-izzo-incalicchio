@@ -12,11 +12,26 @@ import it.polimi.ingsw.model.core.Player;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ResolveActionResolver {
+public class ActionResolver {
 
     private final Map<Player, ActionResolutionProgress> resolutionProgressByPlayer = new HashMap<>();
 
-    public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+    public void resolveExtraAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+        if (game == null || player == null || selectedCard == null) {
+            throw new IllegalArgumentException("Game, player and selectedCard cannot be null.");
+        }
+
+        if (!fromUpperRow) {
+            throw new IllegalArgumentException("Extra actions can only be resolved from the upper row.");
+        }
+
+        CardRow upperRow = game.getBoard().getUpperRow();
+        selectedCard.validateSelectableFrom(upperRow);
+        selectedCard.resolveFromOfferRow(player, upperRow);
+
+    }
+
+    public void resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         validateArguments(game, player); // checks for null and if it's the player's turn to resolve an action
 
         Board board = game.getBoard();

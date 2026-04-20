@@ -5,8 +5,6 @@ import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 
-import java.util.ArrayList;
-
 /**
  * Interface representing the generic state of the game.
  * Uses the State Design Pattern to handle the game flow.
@@ -39,7 +37,7 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
-    default int getExtraAction(Player player){
+    default boolean getExtraAction(Player player){
         throw new IllegalStateException("You cannot get extra action during this phase of the game.");
     }
 

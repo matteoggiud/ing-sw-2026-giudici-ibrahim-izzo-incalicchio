@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model.observer;
 
+/**
+ * Implemented by VirtualView
+ */
 public interface IGameObserver {
     /**
      * Called when a game event occurs.

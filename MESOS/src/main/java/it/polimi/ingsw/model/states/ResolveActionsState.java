@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.states;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
-import it.polimi.ingsw.model.gamelogic.ResolveActionResolver;
+import it.polimi.ingsw.model.gamelogic.ActionResolver;
 
 /**
  * The ResolveActionsState class represents the state of the game where players resolve their
@@ -11,7 +11,7 @@ import it.polimi.ingsw.model.gamelogic.ResolveActionResolver;
  */
 public class ResolveActionsState implements IGameState {
 
-    private final ResolveActionResolver actionResolver = new ResolveActionResolver();
+    private final ActionResolver actionResolver = new ActionResolver();
 
     @Override
     public void nextState(Game game) {
@@ -20,7 +20,7 @@ public class ResolveActionsState implements IGameState {
 
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        actionResolver.resolveAction(game, player, selectedCard, fromUpperRow);
+        actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
 
         if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
             nextState(game);
