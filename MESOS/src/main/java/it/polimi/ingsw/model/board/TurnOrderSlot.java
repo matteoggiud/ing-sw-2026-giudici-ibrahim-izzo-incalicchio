@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.core.Player;
  * Represents a slot in the turn order track.
  */
 public class TurnOrderSlot {
+    public static final int DEFAULT_PP_MALUS = -2;
 
     //private final int index;
     /** The bonus of food provided by this slot, which can be negative or positive */

@@ -17,13 +17,9 @@ public class ResolveActionResolver {
     private final Map<Player, ActionResolutionProgress> resolutionProgressByPlayer = new HashMap<>();
 
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        validateArguments(game, player);
+        validateArguments(game, player); // checks for null and if it's the player's turn to resolve an action
 
         Board board = game.getBoard();
-
-        if (!getCurrentPlayer(board).equals(player)) {
-            throw new IllegalStateException("It's not your turn to resolve an action.");
-        }
 
         OfferBox box = board.getOfferTrack().getBoxByPlayer(player);
 
@@ -32,6 +28,7 @@ public class ResolveActionResolver {
             return;
         }
 
+        //TODO: it could be null if there aren't any cards
         if (selectedCard == null) {
             throw new IllegalArgumentException("Selected card cannot be null for this offer box.");
         }
@@ -43,7 +40,7 @@ public class ResolveActionResolver {
         CardRow row = fromUpperRow ? board.getUpperRow() : board.getLowerRow();
         String rowName = fromUpperRow ? "upper" : "lower";
 
-        selectedCard.validateSelectableFrom(row, rowName);
+        selectedCard.validateSelectableFrom(row);
         selectedCard.resolveFromOfferRow(player, row);
 
         if (fromUpperRow) {
@@ -71,14 +68,12 @@ public class ResolveActionResolver {
         if (game == null || player == null) {
             throw new IllegalArgumentException("Game and player cannot be null.");
         }
-    }
 
-    private Player getCurrentPlayer(Board board) {
-        return board.getOfferTrack().getBoxes().stream()
-                .filter(box -> !box.isFree())
-                .map(OfferBox::getPlacedPlayer)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Everyone has just taken the cards"));
+        Board board = game.getBoard();
+
+        if (!board.getOfferTrack().getCurrentPlayer().equals(player)) {
+            throw new IllegalStateException("It's not your turn to resolve an action.");
+        }
     }
 
     private boolean isFoodOnlyBox(OfferBox box) {
@@ -131,7 +126,7 @@ public class ResolveActionResolver {
     }
 
     private void applyTurnOrderSlotEffect(Player player, TurnOrderSlot turnOrderSlot) {
-        int foodBonus = turnOrderSlot.getFoodBonus();
+        int foodBonus = turnOrderSlot.getFoodBonus(); //TODO: if possible refactor this method
 
         if (foodBonus > 0) {
             player.addFood(foodBonus);
@@ -142,7 +137,7 @@ public class ResolveActionResolver {
             if (player.getFood() > 0) {
                 player.addFood(foodBonus);
             } else {
-                player.addPP(foodBonus * 2);
+                player.addPP(TurnOrderSlot.DEFAULT_PP_MALUS);
             }
         }
     }
@@ -150,5 +145,10 @@ public class ResolveActionResolver {
     private static class ActionResolutionProgress {
         private int upperCardsResolved;
         private int lowerCardsResolved;
+
+        ActionResolutionProgress() {
+            upperCardsResolved = 0;
+            lowerCardsResolved = 0;
+        }
     }
 }

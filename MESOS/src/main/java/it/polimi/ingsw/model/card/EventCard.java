@@ -204,7 +204,7 @@ public class EventCard extends TribeCard {
     }
 
     @Override
-    public void validateSelectableFrom(CardRow row, String rowName) {
+    public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
     }
 

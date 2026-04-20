@@ -26,7 +26,7 @@ public class OfferTrack {
      * Initializes the OfferTrack with a given list of OfferBoxes.
      *
      * @param offerBoxes the list of OfferBoxes to initialize the track with.
-      * @throws IllegalArgumentException if the offerBoxes list is null or empty.
+     * @throws IllegalArgumentException if the offerBoxes list is null or empty.
      */
     public void initializeOfferTrack(List<OfferBox> offerBoxes) {
         if (offerBoxes == null || offerBoxes.contains(null) || offerBoxes.isEmpty()) {
@@ -94,5 +94,19 @@ public class OfferTrack {
         }
 
         box.placePlayer(player);
+    }
+
+    /**
+     * Gets the first player who has placed their totem on the track, which is the current player whose turn it is to choose cards.
+     *
+     * @return the player who has placed their totem on the track
+     * @throws IllegalStateException if no player has placed a totem on the track
+     */
+    public Player getCurrentPlayer() {
+        return boxes.stream()
+                .filter(box -> !box.isFree())
+                .map(OfferBox::getPlacedPlayer)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Everyone has just taken the cards"));
     }
 }

@@ -67,9 +67,9 @@ public class CharacterCard extends TribeCard {
     }
 
     @Override
-    public void validateSelectableFrom(CardRow row, String rowName) {
+    public void validateSelectableFrom(CardRow row) {
         if (!row.getTribeRow().getCharacterCards().contains(this)) {
-            throw new IllegalArgumentException("Selected character is not available in the " + rowName + " row.");
+            throw new IllegalArgumentException("Selected character is not available in the character row.");
         }
     }
 
