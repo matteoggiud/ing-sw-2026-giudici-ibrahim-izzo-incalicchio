@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.card.characters.*;
+import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 import it.polimi.ingsw.model.effect.building.endgame.*;
 import it.polimi.ingsw.model.effect.building.extraction.ExtraCardBuildingEffect;
@@ -19,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DataDepository {
