@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.card.characters;
 import it.polimi.ingsw.model.card.CharacterCard;
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.core.Player;
 
 /**
  * Represents a Hunter Character Card in the game.
@@ -35,5 +36,18 @@ public class HunterCharacterCard extends CharacterCard {
         return isFoodIcon;
     }
 
+    /**
+     * When this Hunter card is added to a player, if it has a food icon,
+     * grant food bonus equal to the total number of hunters in the player's deck.
+     *
+     * @param player the player to whom this card is being added
+     */
+    @Override
+    public void onAddedToPlayer(Player player) {
+        if (isFoodIcon) {
+            int hunterCount = player.getPlayerDeck().countCharactersByType(CharacterType.HUNTER);
+            player.addFood(hunterCount);
+        }
+    }
 
 }

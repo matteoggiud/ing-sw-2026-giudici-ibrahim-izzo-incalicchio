@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.card;
 
 import it.polimi.ingsw.model.card.characters.InventorType;
+import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.deck.PlayerDeck;
 
 import java.util.Optional;
@@ -37,6 +38,15 @@ public class CharacterCard extends TribeCard {
      */
     public CharacterType getType() { return type; }
 
+    /**
+     * Hook called when this character card is added to a player's deck.
+     * Subclasses can override this to apply special effects upon resolution.
+     *
+     * @param player the player to whom this card is being added
+     */
+    public void onAddedToPlayer(Player player) {
+        // Default: no special effect
+    }
 
     /**
      * Adds this card to the specified player's deck.
