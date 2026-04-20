@@ -26,7 +26,7 @@ public class OfferTrack {
      * Initializes the OfferTrack with a given list of OfferBoxes.
      *
      * @param offerBoxes the list of OfferBoxes to initialize the track with.
-     * @throws IllegalArgumentException if the offerBoxes list is null or empty.
+      * @throws IllegalArgumentException if the offerBoxes list is null or empty.
      */
     public void initializeOfferTrack(List<OfferBox> offerBoxes) {
         if (offerBoxes == null || offerBoxes.contains(null) || offerBoxes.isEmpty()) {
@@ -94,32 +94,5 @@ public class OfferTrack {
         }
 
         box.placePlayer(player);
-    }
-
-    /**
-     * Gets the player who has placed their totem on the first occupied OfferBox in the track.
-     *
-     * @return the player who has placed their totem on the first occupied OfferBox in the track, or null if all boxes are free.
-     */
-    public Player getFirstPlacedPlayer() {
-        for (OfferBox box : boxes) {
-            if (!box.isFree()) {
-                return box.getPlacedPlayer();
-            }
-        }
-        throw new IllegalStateException("No player placed not found");
-    }
-
-    /**
-     * Checks if it's the specified player's turn based on the order of totem placement on the track.
-     *
-     * @param player the player to check
-     * @return true if it's the specified player's turn (i.e., they are the first player to have placed their totem on the track), false otherwise
-     * @throws IllegalArgumentException if the player is null
-     * @throws IllegalStateException    if no player has placed a totem on the track
-     */
-    public boolean isHisTurn(Player player) {
-        if (player == null) throw new IllegalArgumentException("player cannot be null");
-        return getFirstPlacedPlayer().equals(player);
     }
 }

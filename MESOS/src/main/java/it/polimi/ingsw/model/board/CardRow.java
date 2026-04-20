@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.card.TribeCard;
 import it.polimi.ingsw.model.deck.BuildingDeck;
 
@@ -86,9 +85,5 @@ public class CardRow {
 
     public int countRow() {
         return tribeRow.count() + buildingRow.count();
-    }
-
-    public boolean contains(Card card) {
-        return tribeRow.getCharacterCards().contains(card) || buildingRow.getBuildingCards().contains(card);
     }
 }
