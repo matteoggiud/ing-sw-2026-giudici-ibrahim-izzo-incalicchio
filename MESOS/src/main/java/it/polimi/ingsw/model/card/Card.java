@@ -103,7 +103,7 @@ public abstract class Card {
      */
     public abstract void addTo(PlayerDeck playerDeck);
 
-    public void validateSelectableFrom(CardRow row, String rowName) {
+    public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }
 

@@ -89,9 +89,9 @@ public class BuildingCard extends TribeCard {
     }
 
     @Override
-    public void validateSelectableFrom(CardRow row, String rowName) {
+    public void validateSelectableFrom(CardRow row) {
         if (!row.getBuildingRow().getBuildingCards().contains(this)) {
-            throw new IllegalArgumentException("Selected building is not available in the " + rowName + " row.");
+            throw new IllegalArgumentException("Selected building is not available in the building row.");
         }
     }
 
