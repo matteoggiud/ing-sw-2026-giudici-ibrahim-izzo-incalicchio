@@ -9,6 +9,12 @@ import it.polimi.ingsw.model.core.Player;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * The IGameModel interface defines the core functionalities of the game model,
+ * including user authentication and game actions such as drawing cards and placing totems.
+ * It serves as a contract for any class that implements it,
+ * ensuring that the necessary methods for game interaction are provided.
+ */
 public interface IGameModel {
 
     /**
