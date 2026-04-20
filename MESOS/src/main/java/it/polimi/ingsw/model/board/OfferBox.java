@@ -28,6 +28,16 @@ public class OfferBox {
     private final int lowerRowPicks;
 
     /**
+     * Number of picks remaining from the upper row for this offer box (initially equal to upperRowPicks).
+     */
+    private int remainingUpperPicks;
+
+    /**
+     * Number of picks remaining from the lower row for this offer box (initially equal to lowerRowPicks).
+     */
+    private int remainingLowerPicks;
+
+    /**
      * The player who has placed their totem on this offer box, or null if the box is currently free.
      */
     private Player placedPlayer;
@@ -113,15 +123,59 @@ public class OfferBox {
      * Places a player on the offer box, if the offer box is not already occupied by another player.
      *
      * @param player the player to be placed on the offer box
-     * @throws IllegalStateException if the offer box is already occupied by another player
+     * @throws IllegalStateException    if the offer box is already occupied by another player
      * @throws IllegalArgumentException if the player is null
      */ //da capire come gestire quando l'offerbox ti da 3 di cibo, chi deve gestirlo??
     public void placePlayer(Player player) throws IllegalStateException, IllegalArgumentException {
-        if(player == null) throw new IllegalArgumentException("Player cannot be null");
+        if (player == null) throw new IllegalArgumentException("Player cannot be null");
 
         if (!isFree()) throw new IllegalStateException("Offer box is already occupied");
 
         this.placedPlayer = player;
+    }
+
+    /**
+     * Checks if the player can still pick cards from the upper row based on the remaining picks for this offer box.
+     *
+     * @return true if the player can still pick from the upper row, false otherwise.
+     */
+    public boolean canPickUpper() {
+        return remainingUpperPicks > 0;
+    }
+
+    /**
+     * Checks if the player can still pick cards from the lower row based on the remaining picks for this offer box.
+     *
+     * @return true if the player can still pick from the lower row, false otherwise.
+     */
+    public boolean canPickLower() {
+        return remainingLowerPicks > 0;
+    }
+
+    /**
+     * Consumes a pick from either the upper or lower row based on the specified row, and updates the remaining picks accordingly.
+     * @param isUpperRow true if the pick is from the upper row, false if it's from the lower row
+     */
+    public void consumePick(boolean isUpperRow) {
+        if (isUpperRow) {
+            if (remainingUpperPicks <= 0) {
+                throw new IllegalStateException("No upper picks left");
+            }
+            remainingUpperPicks--;
+        } else {
+            if (remainingLowerPicks <= 0) {
+                throw new IllegalStateException("No lower picks left");
+            }
+            remainingLowerPicks--;
+        }
+    }
+
+    /**
+     * Checks if the player has completed all their picks from both the upper and lower rows based on the remaining picks for this offer box.
+     * @return true if the player has completed all picks (i.e., no remaining picks for both rows), false otherwise.
+     */
+    public boolean hasCompletedAllPicks() {
+        return remainingUpperPicks == 0 && remainingLowerPicks == 0;
     }
 
     /**
