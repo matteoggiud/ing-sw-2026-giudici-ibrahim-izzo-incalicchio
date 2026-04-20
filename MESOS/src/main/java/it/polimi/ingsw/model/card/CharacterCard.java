@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.card.characters.InventorType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.deck.PlayerDeck;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -56,6 +57,11 @@ public class CharacterCard extends TribeCard {
     @Override
     public void addTo(PlayerDeck playerDeck) {
         playerDeck.addCharacterCard(this);
+    }
+
+    @Override
+    public void addToCharacterList(List<CharacterCard> characterList) {
+        characterList.add(this);
     }
 
 }

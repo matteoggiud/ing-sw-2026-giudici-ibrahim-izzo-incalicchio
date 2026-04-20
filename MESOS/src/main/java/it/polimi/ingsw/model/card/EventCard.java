@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.card;
 import it.polimi.ingsw.model.deck.PlayerDeck;
 import it.polimi.ingsw.model.effect.event.IEventEffect;
 
+import java.util.List;
+
 /**
  * This class represents an event card, which is a type of card in the game.
  * Event cards can have special effects (IEventEffect) and exists in different types (EventType).
@@ -191,5 +193,10 @@ public class EventCard extends TribeCard {
     @Override
     public void addTo(PlayerDeck playerDeck) {
         throw new UnsupportedOperationException("Event cards cannot be added to a player's deck");
+    }
+
+    @Override
+    public void addToEventList(List<EventCard> eventList) {
+        eventList.add(this);
     }
 }
