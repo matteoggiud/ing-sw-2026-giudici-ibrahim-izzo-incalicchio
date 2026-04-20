@@ -2,6 +2,9 @@ package it.polimi.ingsw.model.card;
 
 import it.polimi.ingsw.model.deck.PlayerDeck;
 import it.polimi.ingsw.model.effect.event.IEventEffect;
+import it.polimi.ingsw.model.board.CardRow;
+import it.polimi.ingsw.model.core.Player;
+
 
 import java.util.List;
 
@@ -199,4 +202,15 @@ public class EventCard extends TribeCard {
     public void addToEventList(List<EventCard> eventList) {
         eventList.add(this);
     }
+
+    @Override
+    public void validateSelectableFrom(CardRow row, String rowName) {
+        throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
+    }
+
+    @Override
+    public void resolveFromOfferRow(Player player, CardRow row) {
+        throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
+    }
+
 }

@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model.card;
 
 import it.polimi.ingsw.model.deck.PlayerDeck;
+import it.polimi.ingsw.model.board.CardRow;
+import it.polimi.ingsw.model.core.Player;
+
 
 import java.util.UUID;
 
@@ -99,6 +102,15 @@ public abstract class Card {
      * @param playerDeck the player's deck to which this card will be added
      */
     public abstract void addTo(PlayerDeck playerDeck);
+
+    public void validateSelectableFrom(CardRow row, String rowName) {
+        throw new IllegalArgumentException("Unsupported card type selected.");
+    }
+
+    public void resolveFromOfferRow(Player player, CardRow row) {
+        throw new IllegalArgumentException("Unsupported card type selected.");
+    }
+
 
 }
 

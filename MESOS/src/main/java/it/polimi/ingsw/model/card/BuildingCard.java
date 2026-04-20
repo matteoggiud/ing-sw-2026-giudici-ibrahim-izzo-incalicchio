@@ -2,6 +2,9 @@ package it.polimi.ingsw.model.card;
 
 import it.polimi.ingsw.model.deck.PlayerDeck;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.model.board.CardRow;
+import it.polimi.ingsw.model.core.Player;
+
 
 /**
  * Represents a Building Card in the game.
@@ -83,6 +86,19 @@ public class BuildingCard extends TribeCard {
     @Override
     public void addTo(PlayerDeck playerDeck) {
         playerDeck.addBuildingCard(this);
+    }
+
+    @Override
+    public void validateSelectableFrom(CardRow row, String rowName) {
+        if (!row.getBuildingRow().getBuildingCards().contains(this)) {
+            throw new IllegalArgumentException("Selected building is not available in the " + rowName + " row.");
+        }
+    }
+
+    @Override
+    public void resolveFromOfferRow(Player player, CardRow row) {
+        player.canBuyBuildingCard(this);
+        row.getBuildingRow().remove(this);
     }
 
 

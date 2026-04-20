@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.card;
 import it.polimi.ingsw.model.card.characters.InventorType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.deck.PlayerDeck;
+import it.polimi.ingsw.model.board.CardRow;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +64,20 @@ public class CharacterCard extends TribeCard {
     @Override
     public void addToCharacterList(List<CharacterCard> characterList) {
         characterList.add(this);
+    }
+
+    @Override
+    public void validateSelectableFrom(CardRow row, String rowName) {
+        if (!row.getTribeRow().getCharacterCards().contains(this)) {
+            throw new IllegalArgumentException("Selected character is not available in the " + rowName + " row.");
+        }
+    }
+
+    @Override
+    public void resolveFromOfferRow(Player player, CardRow row) {
+        row.getTribeRow().remove(this);
+        player.getPlayerDeck().addCard(this);
+        onAddedToPlayer(player);
     }
 
 }
