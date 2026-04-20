@@ -28,29 +28,24 @@ public class ResolveActionResolver {
             return;
         }
 
-        //TODO: it could be null if there aren't any cards
-        if (selectedCard == null) {
-            throw new IllegalArgumentException("Selected card cannot be null for this offer box.");
-        }
-
         ActionResolutionProgress progress = getProgress(player);
 
         validatePickLimit(box, progress, fromUpperRow);
 
         CardRow row = fromUpperRow ? board.getUpperRow() : board.getLowerRow();
-        String rowName = fromUpperRow ? "upper" : "lower";
+
+        if (selectedCard == null) {
+            resolveUnavailableCardPick(game, player, box, progress, row, fromUpperRow);
+            return;
+        }
 
         selectedCard.validateSelectableFrom(row);
         selectedCard.resolveFromOfferRow(player, row);
 
-        if (fromUpperRow) {
-            progress.upperCardsResolved++;
-        } else {
-            progress.lowerCardsResolved++;
-        }
-
+        markCardPickResolved(progress, fromUpperRow);
 
         completeActionIfNeeded(game, player, box, progress);
+
     }
 
     private ActionResolutionProgress getProgress(Player player) {
@@ -151,4 +146,25 @@ public class ResolveActionResolver {
             lowerCardsResolved = 0;
         }
     }
+
+    private void resolveUnavailableCardPick(Game game, Player player, OfferBox box,
+                                            ActionResolutionProgress progress,
+                                            CardRow row,
+                                            boolean fromUpperRow) {
+        if (row.hasSelectableCardFor(player)) {
+            throw new IllegalStateException("You must select a card because this row still has available cards.");
+        }
+
+        markCardPickResolved(progress, fromUpperRow);
+        completeActionIfNeeded(game, player, box, progress);
+    }
+
+    private void markCardPickResolved(ActionResolutionProgress progress, boolean fromUpperRow) {
+        if (fromUpperRow) {
+            progress.upperCardsResolved++;
+        } else {
+            progress.lowerCardsResolved++;
+        }
+    }
+
 }
