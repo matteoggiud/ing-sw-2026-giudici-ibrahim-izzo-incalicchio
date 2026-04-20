@@ -34,8 +34,8 @@ public class ExtraActionState implements IGameState {
     }
 
     @Override
-    public void resolveAction(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards) {
-        //TODO: implement this method
-
+    public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+        // TODO: implement this method
     }
+
 }

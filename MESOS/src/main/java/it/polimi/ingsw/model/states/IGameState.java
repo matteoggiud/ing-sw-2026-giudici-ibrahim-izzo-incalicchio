@@ -43,7 +43,7 @@ public interface IGameState {
         throw new IllegalStateException("You cannot get extra action during this phase of the game.");
     }
 
-    default void resolveAction(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards) {
+    default void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         throw new IllegalStateException("You cannot take card during this phase of the game.");
     }
 

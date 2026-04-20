@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.states;
 
+import it.polimi.ingsw.model.board.CardRow;
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.BuildingCard;
@@ -9,13 +10,17 @@ import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.EventCard;
 import it.polimi.ingsw.model.card.characters.BuilderCharacterCard;
 import it.polimi.ingsw.model.card.characters.HunterCharacterCard;
-import it.polimi.ingsw.model.core.*;
+import it.polimi.ingsw.model.core.Board;
+import it.polimi.ingsw.model.core.Game;
+import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.gamelogic.EffectResolver;
+import it.polimi.ingsw.model.board.OFFER_BOX_ID;
+
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * The ResolveActionsState class represents the state of the game where players resolve their
@@ -23,8 +28,12 @@ import java.util.Set;
  */
 
 public class ResolveActionsState implements IGameState {
+
+    private final Map<Player, ActionResolutionProgress> resolutionProgressByPlayer = new HashMap<>();
+
     /**
      * Transitions the game to the next state, which is the EndRoundState, after all players have resolved their actions.
+     *
      * @param game the current game context
      */
     @Override
@@ -33,67 +42,66 @@ public class ResolveActionsState implements IGameState {
     }
 
     /**
-     * Resolves the player's action by validating their card selections, applying the rewards from the offer box,
+     * Resolves one selected card for the current player.
+     *
      * @param game the current game context
      * @param player the player who is resolving their action
-     * @param upperCards the list of cards selected from the upper row of the offer track
-     * @param lowerCards the list of cards selected from the lower row of the offer track
+     * @param selectedCard the selected card to resolve; can be null only if the offer box requires no card picks
+     * @param fromUpperRow true if the selected card comes from the upper row, false if it comes from the lower row
      */
     @Override
-    public void resolveAction(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards) {
-        validateArguments(game, player, upperCards, lowerCards);
+    public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+        validateArguments(game, player);
 
         Board board = game.getBoard();
 
-        // Check if the player is the current player
         if (!getCurrentPlayer(board).equals(player)) {
             throw new IllegalStateException("It's not your turn to resolve an action.");
         }
 
         OfferBox box = board.getOfferTrack().getBoxByPlayer(player);
 
-        // Check if the player has picked the correct number of cards according to the offer box
-        if (upperCards.size() != box.getUpperRowPicks() || lowerCards.size() != box.getLowerRowPicks()) {
-            throw new IllegalStateException("You must pick the exact number of cards indicated by the offer box.");
+        if (isFoodOnlyBox(box)) {
+            resolveFoodOnlyAction(game, player, box, selectedCard);
+            return;
         }
 
-        // Check for duplicate cards in the selection
-        validateNoDuplicates(upperCards, lowerCards);
-        // Check if the selected cards are actually available in the respective rows
-        validateCardsSelection(board, upperCards, lowerCards);
-        // Simulate the resolution to ensure the player has enough resources to resolve the selected cards
-        simulateResolution(player, box, upperCards, lowerCards);
-
-        // Box A gives food and no cards. The bonus is applied as part of the action resolution.
-        player.addFood(box.getFoodReward());
-        // Now we can resolve the cards, knowing that the player has enough resources to do so.
-        resolveCardsFromRow(player, board.getUpperRow(), upperCards);
-        resolveCardsFromRow(player, board.getLowerRow(), lowerCards);
-
-        // After resolving the cards, we can remove the player from the offer box and place them in the turn order box.
-        box.removePlayer();
-
-        TurnOrderSlot turnOrderSlot = board.getTurnOrderBox().getFirstFreeSlot();
-        turnOrderSlot.placePlayer(player);
-        // Apply the turn order slot effect immediately after placing the player in the slot
-        applyTurnOrderSlotEffect(player, turnOrderSlot);
-
-        new EffectResolver(game).resolveTrigger(player);
-
-        // If all players have resolved their actions and the offer track is empty, we can move to the next state.
-        if (board.getOfferTrack().getBoxes().stream().allMatch(OfferBox::isFree)) {
-            nextState(game);
-        }else{
-            Player nextPlayer = nextPlayer(board);
+        if (selectedCard == null) {
+            throw new IllegalArgumentException("Selected card cannot be null for this offer box.");
         }
+
+        ActionResolutionProgress progress = resolutionProgressByPlayer.get(player);
+
+        if (progress == null) {
+            progress = new ActionResolutionProgress();
+            resolutionProgressByPlayer.put(player, progress);
+        }
+
+        validatePickLimit(box, progress, fromUpperRow);
+
+        CardRow row = fromUpperRow ? board.getUpperRow() : board.getLowerRow();
+        String rowName = fromUpperRow ? "upper" : "lower";
+
+        validateSelectionFromRow(row, selectedCard, rowName);
+        simulateCardResolution(player, selectedCard);
+
+        resolveCardFromRow(player, row, selectedCard);
+
+        if (fromUpperRow) {
+            progress.upperCardsResolved++;
+        } else {
+            progress.lowerCardsResolved++;
+        }
+
+        completeActionIfNeeded(game, player, box, progress);
     }
 
     /**
-     * This method retrieves the current player from the board's turn order box.
+     * Retrieves the current player from the offer track.
      *
      * @param board the game board
-     * @return the current player who is placing their totem
-     * @throws IllegalStateException if everyone has just placed the totem in the offer box
+     * @return the current player who has to resolve their action
+     * @throws IllegalStateException if no player has to resolve an action
      */
     private Player getCurrentPlayer(Board board) throws IllegalStateException {
         return board.getOfferTrack().getBoxes().stream()
@@ -104,145 +112,161 @@ public class ResolveActionsState implements IGameState {
     }
 
     /**
-     * Validates the arguments passed to the resolveAction method, ensuring that none of them are null.
+     * Validates the arguments passed to the resolveAction method.
+     *
      * @param game the current game context
      * @param player the player who is resolving their action
-     * @param upperCards the list of cards selected from the upper row of the offer track
-     * @param lowerCards the list of cards selected from the lower row of the offer track
      */
-    private void validateArguments(Game game, Player player, ArrayList<Card> upperCards, ArrayList<Card> lowerCards) {
-        if (game == null || player == null || upperCards == null || lowerCards == null) {
-            throw new IllegalArgumentException("Game, player and selected cards cannot be null.");
+    private void validateArguments(Game game, Player player) {
+        if (game == null || player == null) {
+            throw new IllegalArgumentException("Game and player cannot be null.");
         }
     }
 
     /**
-     * Validates that there are no duplicate cards in the combined selection of upper and lower cards.
-     * @param upperCards the list of cards selected from the upper row of the offer track
-     * @param lowerCards the list of cards selected from the lower row of the offer track
+     * Validates that the player is not taking more cards than allowed from the selected row.
+     *
+     * @param box the offer box occupied by the player
+     * @param progress the current resolution progress for the player
+     * @param fromUpperRow true if the selected card comes from the upper row
      */
-    private void validateNoDuplicates(List<Card> upperCards, List<Card> lowerCards) {
-        Set<Card> uniqueCards = new HashSet<>();
-        for (Card card : upperCards) {
-            if (!uniqueCards.add(card)) {
-                throw new IllegalArgumentException("Duplicate card selected: " + card.getName());
-            }
+    private void validatePickLimit(OfferBox box, ActionResolutionProgress progress, boolean fromUpperRow) {
+        if (fromUpperRow && progress.upperCardsResolved >= box.getUpperRowPicks()) {
+            throw new IllegalStateException("You cannot pick more cards from the upper row.");
         }
-        for (Card card : lowerCards) {
-            if (!uniqueCards.add(card)) {
-                throw new IllegalArgumentException("Duplicate card selected: " + card.getName());
-            }
+
+        if (!fromUpperRow && progress.lowerCardsResolved >= box.getLowerRowPicks()) {
+            throw new IllegalStateException("You cannot pick more cards from the lower row.");
         }
     }
 
     /**
-     * Validates that the selected cards are actually available in the respective rows
-     * of the offer track and that they are of the correct type.
-     * @param board the game board containing the offer track and its rows
-     * @param upperCards the list of cards selected from the upper row of the offer track
-     * @param lowerCards the list of cards selected from the lower row of the offer track
+     * Validates that the selected card is actually available in the specified row and that it is of the correct type.
+     *
+     * @param row the card row from which the card is selected
+     * @param card the selected card
+     * @param rowName a string representing the name of the row
      */
-    private void validateCardsSelection(Board board, List<Card> upperCards, List<Card> lowerCards) {
-        validateSelectionFromRow(board.getUpperRow(), upperCards, "upper");
-        validateSelectionFromRow(board.getLowerRow(), lowerCards, "lower");
-    }
+    private void validateSelectionFromRow(CardRow row, Card card, String rowName) {
+        if (card == null) {
+            throw new IllegalArgumentException("Selected card cannot be null.");
+        }
 
-    /**
-     * Validates that the selected cards from a specific row are actually available in that row and that they are of the correct type.
-     * @param row the card row (upper or lower) from which the cards are selected
-     * @param selectedCards the list of cards selected from the specified row
-     * @param rowName a string representing the name of the row (for error messages)
-     */
-    private void validateSelectionFromRow(it.polimi.ingsw.model.board.CardRow row, List<Card> selectedCards, String rowName) {
-        for (Card card : selectedCards) {
-            if (card == null) {
-                throw new IllegalArgumentException("Selected cards cannot contain null values.");
+        if (card instanceof EventCard) {
+            throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
+        }
+
+        if (card instanceof BuildingCard buildingCard) {
+            if (!row.getBuildingRow().getBuildingCards().contains(buildingCard)) {
+                throw new IllegalArgumentException("Selected building is not available in the " + rowName + " row.");
             }
-            if (card instanceof EventCard) {
-                throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
+        } else if (card instanceof CharacterCard characterCard) {
+            if (!row.getTribeRow().getCharacterCards().contains(characterCard)) {
+                throw new IllegalArgumentException("Selected character is not available in the " + rowName + " row.");
             }
-            if (card instanceof BuildingCard buildingCard) {
-                if (!row.getBuildingRow().getBuildingCards().contains(buildingCard)) {
-                    throw new IllegalArgumentException("Selected building is not available in the " + rowName + " row.");
-                }
-            } else if (card instanceof CharacterCard characterCard) {
-                if (!row.getTribeRow().getCharacterCards().contains(characterCard)) {
-                    throw new IllegalArgumentException("Selected character is not available in the " + rowName + " row.");
-                }
-            } else {
-                throw new IllegalArgumentException("Unsupported card type selected.");
-            }
+        } else {
+            throw new IllegalArgumentException("Unsupported card type selected.");
         }
     }
 
     /**
-     * Simulates the resolution of the selected cards to ensure that the player has enough resources to resolve them.
-     * @param player the player who is resolving their action
-     * @param box the offer box from which the player is selecting cards, used to calculate the initial food reward
-     * @param upperCards the list of cards selected from the upper row of the offer track
-     * @param lowerCards the list of cards selected from the lower row of the offer track
+     * Simulates the resolution of one card to ensure that the player has enough resources.
+     *
+     * @param player the player who is resolving the card
+     * @param card the selected card to simulate
      */
-    private void simulateResolution(Player player, OfferBox box, List<Card> upperCards, List<Card> lowerCards) {
-        int simulatedFood = player.getFood() + box.getFoodReward();
+    private void simulateCardResolution(Player player, Card card) {
+        int simulatedFood = player.getFood();
         List<CharacterCard> simulatedCharacters = new ArrayList<>(player.getPlayerDeck().getCharacters());
 
-        simulatedFood = simulateCardsList(upperCards, simulatedFood, simulatedCharacters);
-        simulatedFood = simulateCardsList(lowerCards, simulatedFood, simulatedCharacters);
-    }
+        if (card instanceof CharacterCard characterCard) {
+            simulatedCharacters.add(characterCard);
 
-    /**
-     * Simulates the resolution of a list of cards, updating the simulated food and character list accordingly.
-     * @param cards the list of cards to simulate the resolution for
-     * @param simulatedFood the current amount of simulated food available to the player
-     * @param simulatedCharacters the current list of simulated character cards in the player's deck, which may be modified by the resolution of the cards
-     * @return the updated amount of simulated food after resolving the cards
-     */
-    private int simulateCardsList(List<Card> cards, int simulatedFood, List<CharacterCard> simulatedCharacters) {
-        for (Card card : cards) {
-            if (card instanceof CharacterCard characterCard) {
-                simulatedCharacters.add(characterCard);
-                if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.hasFoodIcon()) {
-                    simulatedFood += countHunters(simulatedCharacters);
-                }
-            } else if (card instanceof BuildingCard buildingCard) {
-                int currentDiscount = getBuilderDiscount(simulatedCharacters);
-                int effectiveCost = Math.max(buildingCard.getFoodCost() - currentDiscount, 0);
-                if (effectiveCost > simulatedFood) {
-                    throw new IllegalStateException("Not enough food to resolve the selected building cards.");
-                }
-                simulatedFood -= effectiveCost;
+            if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.hasFoodIcon()) {
+                simulatedFood += countHunters(simulatedCharacters);
+            }
+        } else if (card instanceof BuildingCard buildingCard) {
+            int currentDiscount = getBuilderDiscount(simulatedCharacters);
+            int effectiveCost = Math.max(buildingCard.getFoodCost() - currentDiscount, 0);
+
+            if (effectiveCost > simulatedFood) {
+                throw new IllegalStateException("Not enough food to resolve the selected building card.");
             }
         }
+    }
 
-        return simulatedFood;
+
+
+    /**
+     * Resolves the selected card, applying its effects to the player and removing it from the row.
+     *
+     * @param player the player who is resolving the card
+     * @param row the row from which the card is selected
+     * @param card the selected card
+     */
+    private void resolveCardFromRow(Player player, CardRow row, Card card) {
+        if (card instanceof BuildingCard buildingCard) {
+            player.canBuyBuildingCard(buildingCard);
+            row.getBuildingRow().remove(buildingCard);
+        } else if (card instanceof CharacterCard characterCard) {
+            row.getTribeRow().remove(characterCard);
+            player.getPlayerDeck().addCard(characterCard);
+
+            if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.hasFoodIcon()) {
+                player.addFood(player.getPlayerDeck().countCharactersByType(CharacterType.HUNTER));
+            }
+        }
     }
 
     /**
-     * Resolves the selected cards from a specific row, applying their effects to the player and updating the row accordingly.
+     * Completes the player's action if all required picks have been resolved.
+     *
+     * @param game the current game context
      * @param player the player who is resolving their action
-     * @param row the card row (upper or lower) from which the cards are selected, which will be updated by removing the resolved cards
-     * @param cards the list of cards to resolve, which will be applied to the player and removed from the row
+     * @param box the offer box occupied by the player
+     * @param progress the current resolution progress for the player
      */
-    private void resolveCardsFromRow(Player player, it.polimi.ingsw.model.board.CardRow row, List<Card> cards) {
-        for (Card card : cards) {
-            if (card instanceof BuildingCard buildingCard) {
-                player.canBuyBuildingCard(buildingCard);
-                row.getBuildingRow().remove(buildingCard);
-            } else if (card instanceof CharacterCard characterCard) {
-                row.getTribeRow().remove(characterCard);
-                player.getPlayerDeck().addCard(characterCard);
+    private void completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
+        if (!hasResolvedAllRequiredCards(box, progress)) {
+            return;
+        }
 
-                if (characterCard instanceof HunterCharacterCard hunterCharacterCard && hunterCharacterCard.hasFoodIcon()) {
-                    player.addFood(player.getPlayerDeck().countCharactersByType(CharacterType.HUNTER));
-                }
-            }
+        Board board = game.getBoard();
+
+        resolutionProgressByPlayer.remove(player);
+        box.removePlayer();
+
+        TurnOrderSlot turnOrderSlot = board.getTurnOrderBox().getFirstFreeSlot();
+        turnOrderSlot.placePlayer(player);
+
+        applyTurnOrderSlotEffect(player, turnOrderSlot);
+
+        new EffectResolver(game).resolveTrigger(player);
+
+        if (board.getOfferTrack().getBoxes().stream().allMatch(OfferBox::isFree)) {
+            nextState(game);
+        } else {
+            nextPlayer(board);
         }
     }
 
     /**
-     * Calculates the total food discount provided by the Builder character cards in the player's deck.
+     * Checks whether the player has resolved all card picks required by the offer box.
+     *
+     * @param box the offer box occupied by the player
+     * @param progress the current resolution progress for the player
+     * @return true if all required picks have been resolved
+     */
+    private boolean hasResolvedAllRequiredCards(OfferBox box, ActionResolutionProgress progress) {
+        return progress.upperCardsResolved == box.getUpperRowPicks()
+                && progress.lowerCardsResolved == box.getLowerRowPicks();
+    }
+
+    /**
+     * Calculates the total food discount provided by the Builder character cards.
+     *
      * @param characters the list of character cards currently in the player's deck
-     * @return the total food discount from Builder character cards, which is the sum of the food discounts provided by each Builder card
+     * @return the total food discount from Builder character cards
      */
     private int getBuilderDiscount(List<CharacterCard> characters) {
         return characters.stream()
@@ -253,9 +277,10 @@ public class ResolveActionsState implements IGameState {
     }
 
     /**
-     * Counts the number of Hunter character cards in the player's deck, which determines the food bonus provided by Hunter cards with a food icon.
+     * Counts the number of Hunter character cards in the player's deck.
+     *
      * @param characters the list of character cards currently in the player's deck
-     * @return the number of Hunter character cards, which is used to calculate the food bonus from Hunter cards with a food icon
+     * @return the number of Hunter character cards
      */
     private int countHunters(List<CharacterCard> characters) {
         return (int) characters.stream()
@@ -264,9 +289,10 @@ public class ResolveActionsState implements IGameState {
     }
 
     /**
-     * Applies the effect of the turn order slot to the player, which may provide a food bonus or a PP bonus depending on the specific slot.
-     * @param player the player who is placed in the turn order slot and will receive the effect
-     * @param turnOrderSlot the turn order slot in which the player is placed, which determines the specific effect to be applied (food bonus or PP bonus)
+     * Applies the effect of the turn order slot to the player.
+     *
+     * @param player the player placed in the turn order slot
+     * @param turnOrderSlot the turn order slot in which the player is placed
      */
     private void applyTurnOrderSlotEffect(Player player, TurnOrderSlot turnOrderSlot) {
         int foodBonus = turnOrderSlot.getFoodBonus();
@@ -286,11 +312,12 @@ public class ResolveActionsState implements IGameState {
     }
 
     /**
-     * Determines the next player who will resolve their action
+     * Determines the next player who will resolve their action.
+     *
      * @param board the game board containing the offer track and its boxes
      * @return the next player who will resolve their action
      */
-    private Player nextPlayer(Board board){
+    private Player nextPlayer(Board board) {
         if (board == null) {
             throw new IllegalArgumentException("Board cannot be null.");
         }
@@ -301,4 +328,29 @@ public class ResolveActionsState implements IGameState {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No next player, end of round"));
     }
+
+
+    private boolean isFoodOnlyBox(OfferBox box) {
+        return box.getBoxId() == OFFER_BOX_ID.A;
+    }
+
+    private void resolveFoodOnlyAction(Game game, Player player, OfferBox box, Card selectedCard) {
+        if (selectedCard != null) {
+            throw new IllegalArgumentException("Offer box A gives only food and does not allow card picks.");
+        }
+
+        player.addFood(box.getFoodReward());
+
+        ActionResolutionProgress progress = new ActionResolutionProgress();
+        completeActionIfNeeded(game, player, box, progress);
+    }
+
+    /**
+     * Tracks how many cards the player has already resolved during the current action.
+     */
+    private static class ActionResolutionProgress {
+        private int upperCardsResolved;
+        private int lowerCardsResolved;
+    }
+
 }
