@@ -19,32 +19,6 @@ public class RockPaintingsBonusBuildingEffect implements IBuildingEffect, IEvent
         return Optional.of(this);
     }
 
-    @Override
-    public boolean isSupported(EventType eventType) {
-        return eventType == EventType.ROCK_PAINTINGS;
-    }
-
-    /**
-     * Apply the modifier to the given EffectEventResult.
-     *
-     * @param eventType the type of event that triggered the effect.
-     * @param result    the EffectEventResult to which the modifier should be applied.
-     */
-    @Override
-    public void applyModifier(EventType eventType, EffectEventResult result) {
-        if (eventType != EventType.ROCK_PAINTINGS) {
-            throw new IllegalStateException("RockPaintingsBonusModifier can only be applied to Exploration events");
-        }
-
-        Player p = result.getTargetPlayer();
-
-        // Count the number of "Artists" in the player's tribe
-        int numbersOfArtists = p.getPlayerDeck().countCharactersByType(CharacterType.ARTIST);
-
-        // For each Artist, gain 1 Food
-        result.setFoodChange(result.getFoodChange() + numbersOfArtists);
-
-    }
 
     @Override
     public void visitEvent(RockPaintingEventEffect eventCard, EffectEventResult result) {

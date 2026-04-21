@@ -146,28 +146,23 @@ public class PlayerDeck {
                 .count();
     }
 
+
     /**
      * This method retrieves a list of active event modifiers from the player's building cards.
-     *
-     * @return a list of IEventModifier objects representing the active event modifiers from the player's building cards.
      */
-    public List<IEventModifier> getActiveBuildingEventModifiers(EventType eventType) {
-        List<IEventModifier> activeModifiers = new ArrayList<>();
-
-
-        // Gets the active event modifiers from the building cards in the player's deck and add them to the list of active modifiers
-        for (BuildingCard building : this.buildings) {
-            Optional<IEventModifier> buildingModifierOpt = building.getEffect().getEventModifier();
-
-            // Check if the building has an event modifier and add it to the list of active modifiers
-            if (buildingModifierOpt.isPresent() && buildingModifierOpt.get().isSupported(eventType)) {
-                activeModifiers.add(buildingModifierOpt.get());
-            }
-        }
-
-        return activeModifiers;
+    public List<IEventModifier> getActiveBuildingEventModifiers() {
+        return this.buildings.stream()
+                .map(building -> building.getEffect().getEventModifier())
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
+    /**
+     * This method retrieves a list of active event triggers from the player's building cards.
+     *
+     * @return a list of active event triggers from the player's building cards.
+     */
     public List<IEventTrigger> getActiveBuildingEventTriggers() {
         List<IEventTrigger> activeTriggers = new ArrayList<>();
 

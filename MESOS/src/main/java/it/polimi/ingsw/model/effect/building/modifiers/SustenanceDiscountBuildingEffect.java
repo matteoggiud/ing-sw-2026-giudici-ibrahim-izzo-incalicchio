@@ -45,40 +45,6 @@ public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEvent
     }
 
 
-    // IEventModifier methods
-
-    /**
-     * Checks if the modifier is applicable to the given event type.
-     *
-     * @param eventType the type of event to check for applicability.
-     * @return true if the modifier is applicable to the given event type, false otherwise.
-     */
-    @Override
-    public boolean isSupported(EventType eventType) {
-        return eventType == EventType.SUSTENANCE;
-    }
-
-    /**
-     * Apply the modifier to the given EffectEventResult.
-     *
-     * @param eventType the type of event that triggered the effect.
-     * @param result    the EffectEventResult to which the modifier should be applied.
-     */
-    @Override
-    public void applyModifier(EventType eventType, EffectEventResult result) {
-        if (eventType != EventType.SUSTENANCE) {
-            throw new IllegalStateException("SustenanceDiscountModifier can only be applied to Sustenance events");
-        }
-
-        Player p = result.getTargetPlayer();
-
-        // Count the number of specified character type in the player's tribe
-        int numbersOfCharacters = p.getPlayerDeck().countCharactersByType(characterType);
-
-        // For each character of the specified type, apply a discount of 1 Food
-        result.setFoodChange(result.getFoodChange() + numbersOfCharacters);
-    }
-
     @Override
     public void visitEvent(SustenanceEventEffect eventCard, EffectEventResult result) {
         Player p = result.getTargetPlayer();

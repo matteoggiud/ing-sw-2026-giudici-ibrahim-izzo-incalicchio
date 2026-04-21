@@ -22,7 +22,7 @@ public class ShamanicRitualEventEffect implements IEventEffect {
      * @param effectEventResult the effect result that may be modified by the eventModifier.
      */
     @Override
-    public void accept(IEventModifier eventModifier, EffectEventResult effectEventResult) {
+    public void acceptModifier(IEventModifier eventModifier, EffectEventResult effectEventResult) {
         eventModifier.visitEvent(this, effectEventResult);
 
     }

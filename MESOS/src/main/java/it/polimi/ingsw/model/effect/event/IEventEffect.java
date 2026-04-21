@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.effect.event;
 
 import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
@@ -36,5 +35,5 @@ public interface IEventEffect {
      * @param eventModifier the visitor that will apply modifications to the effect result.
      * @param effectEventResult the effect result that may be modified by the eventModifier.
      */
-    void accept(IEventModifier eventModifier, EffectEventResult effectEventResult);
+    void acceptModifier(IEventModifier eventModifier, EffectEventResult effectEventResult);
 }

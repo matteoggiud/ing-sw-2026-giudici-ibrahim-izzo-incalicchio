@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.gamelogic;
 
 import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
@@ -42,7 +41,6 @@ public class EffectResolver {
         // Apply each event card in the sorted order
         while (!sortedEventCards.isEmpty()) {
             EventCard eventCard = sortedEventCards.pop();
-            EventType eventType = eventCard.getEventType();
 
             // Generate the base effect of the event card for all players
             List<EffectEventResult> changes = eventCard.getEventEffect().calculateBaseEffect(game, eventCard);
@@ -52,9 +50,9 @@ public class EffectResolver {
                 Player p = change.getTargetPlayer();
 
                 //Cycle to apply eventual character and building effect given be the event
-                List<IEventModifier> activeBuildingModifiers = p.getPlayerDeck().getActiveBuildingEventModifiers(eventType);
+                List<IEventModifier> activeBuildingModifiers = p.getPlayerDeck().getActiveBuildingEventModifiers();
                 for (IEventModifier buildingModifier : activeBuildingModifiers) {
-                    buildingModifier.applyModifier(eventType, change);
+                    eventCard.getEventEffect().acceptModifier(buildingModifier, change);
                 }
 
                 // Allow the event effect to post-process the change (e.g., Sustenance handling food deficits)

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model.effect.building.modifiers;
 
-import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.event.HuntEventEffect;
 import it.polimi.ingsw.model.effect.event.RockPaintingEventEffect;
@@ -11,25 +9,39 @@ import it.polimi.ingsw.model.effect.event.SustenanceEventEffect;
 public interface IEventModifier {
 
     /**
-     * Checks if the modifier is applicable to the given event type.
+     * This method is called when a sustenance event occurs.
+     * It uses visitor pattern
      *
-     * @param eventType the type of event to check for applicability.
-     * @return true if the modifier is applicable to the given event type, false otherwise.
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
      */
-    @Deprecated
-    boolean isSupported(EventType eventType);
+    default void visitEvent(SustenanceEventEffect eventCard, EffectEventResult result) {
+    }
 
     /**
-     * Apply the modifier to the given EffectEventResult.
+     * This method is called when a hunt event occurs.
      *
-     * @param eventType the type of event that triggered the effect.
-     * @param result the EffectEventResult to which the modifier should be applied.
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
      */
-    @Deprecated
-    void applyModifier(EventType eventType, EffectEventResult result);
+    default void visitEvent(HuntEventEffect eventCard, EffectEventResult result) {
+    }
 
-    default void visitEvent(SustenanceEventEffect eventCard, EffectEventResult result) {}
-    default void visitEvent(HuntEventEffect eventCard, EffectEventResult result) {}
-    default void visitEvent(ShamanicRitualEventEffect eventCard, EffectEventResult result) {}
-    default void visitEvent(RockPaintingEventEffect eventCard, EffectEventResult result) {}
+    /**
+     * This method is called when a shamanic ritual event occurs.
+     *
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
+     */
+    default void visitEvent(ShamanicRitualEventEffect eventCard, EffectEventResult result) {
+    }
+
+    /**
+     * This method is called when a rock painting event occurs.
+     *
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
+     */
+    default void visitEvent(RockPaintingEventEffect eventCard, EffectEventResult result) {
+    }
 }
