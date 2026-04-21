@@ -44,4 +44,5 @@ public class HuntBonusBuildingEffect implements IBuildingEffect, IEventModifier 
         result.setFoodChange(result.getFoodChange() + numbersOfHunters);
         result.setPpChange(result.getPpChange() + numbersOfHunters);
     }
+
 }
