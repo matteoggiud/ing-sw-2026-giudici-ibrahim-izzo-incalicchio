@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.observer;
 public enum GameEventType {
     PLAYER_JOINED,           // A player joined the game
     PLAYER_LEFT,             // A player left the game
+    GAME_STARTED,            // The game started
     GAME_STATE_CHANGED,      // The game state changed
     TOTEM_PLACED,            // A totem was placed
     ACTION_RESOLVED,         // An action was resolved

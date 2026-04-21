@@ -23,12 +23,12 @@ class GameBuilderTest {
     @BeforeEach
     void setUp() {
         // Initialize the host player
-        Player host = new Player("Player1", Totem.RED);
+        Player host = new Player("Player1");
         game = new Game(host);
 
         // Add two more players to reach the minimum for a standard test
-        game.getPlayers().addPlayer(new Player("Player2", Totem.WHITE));
-        game.getPlayers().addPlayer(new Player("Player3", Totem.BLUE));
+        game.getPlayers().addPlayer(new Player("Player2"));
+        game.getPlayers().addPlayer(new Player("Player3"));
 
         gameBuilder = new GameBuilder(game);
     }
@@ -67,8 +67,8 @@ class GameBuilderTest {
     @Test
     void testInitialFoodForFivePlayers() {
         // Adding 4th and 5th players
-        game.getPlayers().addPlayer(new Player("Player4", Totem.YELLOW));
-        game.getPlayers().addPlayer(new Player("Player5", Totem.PURPLE));
+        game.getPlayers().addPlayer(new Player("Player4"));
+        game.getPlayers().addPlayer(new Player("Player5"));
 
         gameBuilder.prepareGame();
 

@@ -5,16 +5,16 @@ import java.util.UUID;
 /**
  * Represents a game event that can be observed.
  */
-public record GameEvent(GameEventType type, UUID gameId, UUID playerId, String message) {
+public record GameEvent(GameEventType type, UUID gameId, String nickname, String message) {
     /**
      * Constructor for GameEvent.
      *
      * @param type     the type of event
      * @param gameId   the ID of the game
-     * @param playerId the ID of the player involved (can be null if not player-specific)
+     * @param nickname the ID of the player involved (can be null if not player-specific)
      * @param message  a message describing the event
      */
-    public GameEvent(GameEventType type, UUID gameId, UUID playerId, String message) {
+    public GameEvent(GameEventType type, UUID gameId, String nickname, String message) {
         if (type == null) {
             throw new IllegalArgumentException("Event type cannot be null");
         }
@@ -27,7 +27,7 @@ public record GameEvent(GameEventType type, UUID gameId, UUID playerId, String m
 
         this.type = type;
         this.gameId = gameId;
-        this.playerId = playerId;
+        this.nickname = nickname;
         this.message = message;
     }
 
@@ -36,7 +36,7 @@ public record GameEvent(GameEventType type, UUID gameId, UUID playerId, String m
         return "GameEvent{" +
                 "type=" + type +
                 ", gameId=" + gameId +
-                ", playerId=" + playerId +
+                ", playerId=" + nickname +
                 ", message='" + message + '\'' +
                 '}';
     }
