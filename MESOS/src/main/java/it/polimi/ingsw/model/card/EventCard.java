@@ -19,11 +19,6 @@ public class EventCard extends TribeCard {
     private final boolean isFinalEvent;
 
     /**
-     * The specific type of the event card (i.e., HUNT, SHAMANIC_RITUAL, etc.).
-     */
-    private final EventType eventType;
-
-    /**
      * The effect associated with this event card, which defines what happens when you have to resolve the event.
      */
     private final IEventEffect eventEffect;
@@ -61,7 +56,6 @@ public class EventCard extends TribeCard {
      * @param era           the era to which the event card belongs
      * @param minNumPlayers the minimum number of players required to use this event card
      * @param isFinalEvent indicates whether this event card is a special card
-     * @param eventType     the specific type of the event card
      * @param eventEffect   the effect associated with this event card
      * @param gainedFood        the amount of food gained
      * @param gainedPP        the amount of PP gained
@@ -70,11 +64,8 @@ public class EventCard extends TribeCard {
      * @param threshold     the threshold value that determines who receives bonus or malus
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
-    public EventCard(String name, Era era, int minNumPlayers, boolean isFinalEvent, EventType eventType, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold) throws IllegalArgumentException {
+    public EventCard(String name, Era era, int minNumPlayers, boolean isFinalEvent, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
-
-        if (eventType == null)
-            throw new IllegalArgumentException("eventType cannot be null");
 
         if (eventEffect == null)
             throw new IllegalArgumentException("eventEffect cannot be null");
@@ -95,7 +86,6 @@ public class EventCard extends TribeCard {
             throw new IllegalArgumentException("threshold cannot be negative");
 
         this.isFinalEvent = isFinalEvent;
-        this.eventType = eventType;
         this.eventEffect = eventEffect;
         this.gainedFood = gainedFood;
         this.malusFood = malusFood;
@@ -176,15 +166,6 @@ public class EventCard extends TribeCard {
      */
     public int getThreshold() {
         return threshold;
-    }
-
-    /**
-     * Gets the specific type of the event card.
-     *
-     * @return the event card's type.
-     */
-    public EventType getEventType() {
-        return eventType;
     }
 
     /**
