@@ -103,6 +103,11 @@ public abstract class Card {
      */
     public abstract void addTo(PlayerDeck playerDeck);
 
+    public boolean canBeSelectedFrom(CardRow row, Player player) {
+        return false;
+    }
+
+
     public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }
@@ -110,6 +115,7 @@ public abstract class Card {
     public void resolveFromOfferRow(Player player, CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }
+
 
 
 }

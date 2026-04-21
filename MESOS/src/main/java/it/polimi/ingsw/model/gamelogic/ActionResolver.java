@@ -43,29 +43,23 @@ public class ActionResolver {
             return;
         }
 
-        //TODO: it could be null if there aren't any cards
-        if (selectedCard == null) {
-            throw new IllegalArgumentException("Selected card cannot be null for this offer box.");
-        }
-
         ActionResolutionProgress progress = getProgress(player);
 
         validatePickLimit(box, progress, fromUpperRow);
 
         CardRow row = fromUpperRow ? board.getUpperRow() : board.getLowerRow();
-        String rowName = fromUpperRow ? "upper" : "lower";
+
+        if (selectedCard == null) {
+            throw new IllegalArgumentException("Selected card cannot be null.");
+        }
 
         selectedCard.validateSelectableFrom(row);
         selectedCard.resolveFromOfferRow(player, row);
 
-        if (fromUpperRow) {
-            progress.upperCardsResolved++;
-        } else {
-            progress.lowerCardsResolved++;
-        }
-
+        markCardPickResolved(progress, fromUpperRow);
 
         completeActionIfNeeded(game, player, box, progress);
+
     }
 
     private ActionResolutionProgress getProgress(Player player) {
@@ -115,17 +109,14 @@ public class ActionResolver {
     }
 
     private void completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
-        if (progress.upperCardsResolved != box.getUpperRowPicks()) {
-            return;
-        }
-
-        if (progress.lowerCardsResolved != box.getLowerRowPicks()) {
+        if (!hasResolvedAllRequiredCards(box, progress)) {
             return;
         }
 
         resolutionProgressByPlayer.remove(player);
         completeAction(game, player, box);
     }
+
 
     private void completeAction(Game game, Player player, OfferBox box) {
         Board board = game.getBoard();
@@ -166,4 +157,86 @@ public class ActionResolver {
             lowerCardsResolved = 0;
         }
     }
+
+
+    private void markCardPickResolved(ActionResolutionProgress progress, boolean fromUpperRow) {
+        if (fromUpperRow) {
+            progress.upperCardsResolved++;
+        } else {
+            progress.lowerCardsResolved++;
+        }
+    }
+
+    private boolean hasPendingUpperPick(OfferBox box, ActionResolutionProgress progress) {
+        return progress.upperCardsResolved < box.getUpperRowPicks();
+    }
+
+    private boolean hasPendingLowerPick(OfferBox box, ActionResolutionProgress progress) {
+        return progress.lowerCardsResolved < box.getLowerRowPicks();
+    }
+
+    private boolean hasResolvedAllRequiredCards(OfferBox box, ActionResolutionProgress progress) {
+        return progress.upperCardsResolved == box.getUpperRowPicks()
+                && progress.lowerCardsResolved == box.getLowerRowPicks();
+    }
+
+    private boolean hasSelectableCardForPendingPick(Board board, Player player, OfferBox box, ActionResolutionProgress progress) {
+        return hasPendingUpperPick(box, progress) && board.getUpperRow().hasSelectableCardFor(player)
+                || hasPendingLowerPick(box, progress) && board.getLowerRow().hasSelectableCardFor(player);
+    }
+
+
+
+    public void resolveAutomaticSkips(Game game) {
+        if (game == null) {
+            throw new IllegalArgumentException("Game cannot be null.");
+        }
+
+        boolean progressed;
+
+        do {
+            progressed = false;
+
+            Board board = game.getBoard();
+
+            if (board.getOfferTrack().getBoxes().stream().allMatch(OfferBox::isFree)) {
+                return;
+            }
+
+            Player player = board.getOfferTrack().getCurrentPlayer();
+            OfferBox box = board.getOfferTrack().getBoxByPlayer(player);
+
+            if (isFoodOnlyBox(box)) {
+                resolveFoodOnlyAction(game, player, box, null);
+                progressed = true;
+                continue;
+            }
+
+            ActionResolutionProgress progress = getProgress(player);
+
+            if (hasSelectableCardForPendingPick(board, player, box, progress)) {
+                return;
+            }
+
+            if (hasPendingUpperPick(box, progress)) {
+                markCardPickResolved(progress, true);
+                progressed = true;
+            }
+
+            if (hasPendingLowerPick(box, progress)) {
+                markCardPickResolved(progress, false);
+                progressed = true;
+            }
+
+            if (hasResolvedAllRequiredCards(box, progress)) {
+                resolutionProgressByPlayer.remove(player);
+                completeAction(game, player, box);
+                progressed = true;
+            }
+
+        } while (progressed);
+    }
+
+
+
 }

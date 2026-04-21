@@ -67,6 +67,11 @@ public class CharacterCard extends TribeCard {
     }
 
     @Override
+    public boolean canBeSelectedFrom(CardRow row, Player player) {
+        return row.getTribeRow().getCharacterCards().contains(this);
+    }
+
+    @Override
     public void validateSelectableFrom(CardRow row) {
         if (!row.getTribeRow().getCharacterCards().contains(this)) {
             throw new IllegalArgumentException("Selected character is not available in the character row.");
