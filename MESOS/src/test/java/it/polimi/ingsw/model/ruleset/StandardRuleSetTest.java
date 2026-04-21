@@ -4,16 +4,10 @@ import it.polimi.ingsw.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.Era;
-import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
-import it.polimi.ingsw.model.core.Game;
-import it.polimi.ingsw.model.effect.EffectEventResult;
-import it.polimi.ingsw.model.effect.event.IEventEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 

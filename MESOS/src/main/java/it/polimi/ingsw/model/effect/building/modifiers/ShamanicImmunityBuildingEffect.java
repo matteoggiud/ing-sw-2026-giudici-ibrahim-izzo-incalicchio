@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.effect.building.modifiers;
 
-import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
 import it.polimi.ingsw.model.effect.event.ShamanicRitualEventEffect;

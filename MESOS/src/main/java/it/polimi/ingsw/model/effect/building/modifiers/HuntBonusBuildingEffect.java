@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.effect.building.modifiers;
 
 import it.polimi.ingsw.model.card.CharacterType;
-import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;

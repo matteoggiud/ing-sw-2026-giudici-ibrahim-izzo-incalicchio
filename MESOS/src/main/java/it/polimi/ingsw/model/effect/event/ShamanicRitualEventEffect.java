@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model.effect.event;
 
 import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;

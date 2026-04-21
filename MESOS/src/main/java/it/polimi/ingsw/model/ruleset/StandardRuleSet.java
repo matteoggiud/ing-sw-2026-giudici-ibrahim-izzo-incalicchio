@@ -5,8 +5,6 @@ import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
-import it.polimi.ingsw.model.effect.event.IEventEffect;
 
 import java.util.ArrayList;
 import java.util.Comparator;
