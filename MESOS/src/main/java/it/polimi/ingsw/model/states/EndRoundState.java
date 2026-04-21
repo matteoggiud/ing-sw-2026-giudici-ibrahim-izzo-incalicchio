@@ -88,7 +88,9 @@ public class EndRoundState implements IGameState {
             throw new IllegalArgumentException("New era cannot be null");
         }
 
-        Era currentEra = initializeCurrentEraIfNeeded(game);
+        //Era currentEra = initializeCurrentEraIfNeeded(game);
+        Era currentEra = game.getCurrentEra();
+
         if (newEra.ordinal() <= currentEra.ordinal()) {
             return currentEra;
         }
@@ -106,12 +108,11 @@ public class EndRoundState implements IGameState {
         return newEra;
     }
 
+    @Deprecated
     private Era initializeCurrentEraIfNeeded(Game game) {
-        try {
-            return game.getCurrentEra();
-        } catch (IllegalStateException ignored) {
+        if (game.getCurrentEra() == null) {
             game.setCurrentEra(Era.ERA_1);
-            return Era.ERA_1;
         }
+        return game.getCurrentEra();
     }
 }

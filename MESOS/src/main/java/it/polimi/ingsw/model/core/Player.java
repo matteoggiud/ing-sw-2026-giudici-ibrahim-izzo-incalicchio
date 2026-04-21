@@ -43,16 +43,16 @@ public class Player {
     private int food;
 
 
+
     /**
      * Constructs a new Player with the specified nickname and totem.
      *
      * @param nickname the player's nickname
-     * @param totem    the player's chosen totem
      */
-    public Player(String nickname, Totem totem) {
+    public Player(String nickname) {
         this.playerId = UUID.randomUUID();
         this.nickname = nickname;
-        this.totem = totem;
+        this.totem = null;
         this.playerDeck = new PlayerDeck();
         this.PP = 0;
         this.food = 0;

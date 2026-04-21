@@ -49,6 +49,10 @@ public interface IGameState {
 
     default void removePlayer(Game game, Player player) {}
 
+    default boolean isJoinable(Game game) {
+        return false;
+    }
+
 
 
 }
