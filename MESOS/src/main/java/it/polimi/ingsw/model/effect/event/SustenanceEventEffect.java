@@ -72,4 +72,14 @@ public class SustenanceEventEffect implements IEventEffect {
     public void acceptModifier(IEventModifier eventModifier, EffectEventResult effectEventResult) {
         eventModifier.visitEvent(this, effectEventResult);
     }
+
+    /**
+     * Defines the priority of the sustenance event effect for sorting purposes. This effect must always be resolved last, so it has a higher priority value than other event effects.
+     *
+     * @return the sort priority of the sustenance event effect, which is set to 1 to ensure it is applied after other effects with the default priority of 0.
+     */
+    @Override
+    public int getSortPriority() {
+        return 1;
+    }
 }

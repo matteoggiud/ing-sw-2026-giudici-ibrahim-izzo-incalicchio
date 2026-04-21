@@ -6,8 +6,10 @@ import it.polimi.ingsw.model.board.TurnOrderSlot;
 import it.polimi.ingsw.model.card.Era;
 import it.polimi.ingsw.model.card.EventCard;
 import it.polimi.ingsw.model.card.EventType;
+import it.polimi.ingsw.model.effect.event.IEventEffect;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -136,7 +138,7 @@ public class StandardRuleSet implements IGameRuleSet {
             if (era == Era.ERA_1) return 2;
             if (era == Era.ERA_2) return 2;
             return 4;
-        }else if (numPlayers == 4) {
+        } else if (numPlayers == 4) {
             if (era == Era.ERA_1) return 2;
             if (era == Era.ERA_2) return 3;
             return 4;
@@ -160,24 +162,11 @@ public class StandardRuleSet implements IGameRuleSet {
         }
 
         Stack<EventCard> stack = new Stack<>();
-        ArrayList<EventCard> sustenanceCards = new ArrayList<>();
-        ArrayList<EventCard> otherCards = new ArrayList<>();
 
-        for (EventCard card : eventCards) {
-            if (card.getEventType() == EventType.SUSTENANCE) {
-                sustenanceCards.add(card);
-            } else {
-                otherCards.add(card);
-            }
-        }
-
-        for (int i = sustenanceCards.size() - 1; i >= 0; i--) {
-            stack.push(sustenanceCards.get(i));
-        }
-
-        for (int i = otherCards.size() - 1; i >= 0; i--) {
-            stack.push(otherCards.get(i));
-        }
+        // Sort the event cards by the effect priority, priority 0 in top of stack, priority 1 in top
+        eventCards.stream()
+                .sorted(Comparator.comparingInt((EventCard e) -> e.getEventEffect().getSortPriority()).reversed())
+                .forEach(stack::push);
 
         return stack;
     }
