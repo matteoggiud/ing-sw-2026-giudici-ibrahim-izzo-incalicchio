@@ -53,6 +53,7 @@ public interface IGameState {
         return false;
     }
 
-
-
+    default void startGame(Game game){
+        throw new IllegalStateException("You cannot start this phase of the game.");
+    }
 }
