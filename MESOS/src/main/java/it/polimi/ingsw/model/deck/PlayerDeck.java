@@ -26,6 +26,9 @@ public class PlayerDeck {
      */
     private final ArrayList<BuildingCard> buildings;
 
+    /**
+     * A map that keeps track of the count of character cards of each character type in the player's deck.
+     */
     private final Map<CharacterType, Integer> characterTypeCounts;
 
     /**
