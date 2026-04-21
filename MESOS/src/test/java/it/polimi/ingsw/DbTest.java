@@ -17,7 +17,7 @@ public class DbTest {
 
             List<CharacterCard> characters = d.getCharacterCards();
             List<EventCard> events = d.getEventCards();
-            List<BuildingCard> buildings = d.loadBuildingCards();
+            List<BuildingCard> buildings = d.getBuildingCards();
 
             System.out.println("CharacterCard caricati: " + characters.size());
             System.out.println("EventCard caricati: " + events.size());
