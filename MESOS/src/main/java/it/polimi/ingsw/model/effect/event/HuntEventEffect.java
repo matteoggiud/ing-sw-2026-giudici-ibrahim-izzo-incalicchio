@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
+import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +39,15 @@ public class HuntEventEffect implements IEventEffect {
         return effectEventResults;
     }
 
+    /**
+     * Accept a visitor that can modify the effect result based on event-specific rules.
+     *
+     * @param eventModifier     the visitor that will apply modifications to the effect result.
+     * @param effectEventResult the effect result that may be modified by the eventModifier.
+     */
     @Override
-    public EventType getEventEffectType() {
-        return EventType.HUNT;
+    public void accept(IEventModifier eventModifier, EffectEventResult effectEventResult) {
+        eventModifier.visitEvent(this, effectEventResult);
     }
+
 }

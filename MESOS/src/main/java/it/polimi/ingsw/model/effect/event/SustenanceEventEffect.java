@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
+import it.polimi.ingsw.model.effect.building.modifiers.IEventModifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,6 @@ import java.util.List;
  */
 
 public class SustenanceEventEffect implements IEventEffect {
-
-    @Override
-    public EventType getEventEffectType() {
-        return EventType.SUSTENANCE;
-    }
 
     @Override
     public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
@@ -66,5 +62,14 @@ public class SustenanceEventEffect implements IEventEffect {
                 change.setPpChange(change.getPpChange() - ppLoss);
             }
         }
+    }
+
+    /**
+     * @param eventModifier     the visitor that will apply modifications to the effect result.
+     * @param effectEventResult the effect result that may be modified by the eventModifier.
+     */
+    @Override
+    public void accept(IEventModifier eventModifier, EffectEventResult effectEventResult) {
+        eventModifier.visitEvent(this, effectEventResult);
     }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.model.effect.event.RockPaintingEventEffect;
 
 import java.util.Optional;
 
@@ -43,5 +44,16 @@ public class RockPaintingsBonusBuildingEffect implements IBuildingEffect, IEvent
         // For each Artist, gain 1 Food
         result.setFoodChange(result.getFoodChange() + numbersOfArtists);
 
+    }
+
+    @Override
+    public void visitEvent(RockPaintingEventEffect eventCard, EffectEventResult result) {
+        Player p = result.getTargetPlayer();
+
+        // Count the number of "Artists" in the player's tribe
+        int numbersOfArtists = p.getPlayerDeck().countCharactersByType(CharacterType.ARTIST);
+
+        // For each Artist, gain 1 Food
+        result.setFoodChange(result.getFoodChange() + numbersOfArtists);
     }
 }

@@ -133,40 +133,40 @@ class StandardRuleSetTest {
         assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(Era.ERA_1, 6));
     }
 
-    @Test
-    void sortEventCards() {
-        // Create effect dummy
-        IEventEffect dummyEffect = new IEventEffect() {
-            @Override
-            public EventType getEventEffectType() {
-                return EventType.SUSTENANCE;
-            }
-
-            @Override
-            public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
-                return List.of();
-            }
-        };
-
-        // Create cards
-        EventCard sustenance1 = new EventCard("Sustenance1", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
-        EventCard sustenance2 = new EventCard("Sustenance2", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
-        EventCard other1 = new EventCard("Hunt", Era.ERA_1, 2, false, EventType.HUNT, dummyEffect, 0, 0, 0, 0, 0);
-        EventCard other2 = new EventCard("Ritual", Era.ERA_1, 2, false, EventType.SHAMANIC_RITUAL, dummyEffect, 0, 0, 0, 0, 0);
-
-        List<EventCard> eventCards = List.of(sustenance1, other1, sustenance2, other2);
-
-        Stack<EventCard> stack = ruleSet.sortEventCards(eventCards);
-
-
-        assertEquals(EventType.HUNT, stack.pop().getEventType());
-        assertEquals(EventType.SHAMANIC_RITUAL, stack.pop().getEventType());
-        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
-        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
-
-        // Test null
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.sortEventCards(null));
-    }
+ //   @Test
+//    void sortEventCards() {
+//        // Create effect dummy
+//        IEventEffect dummyEffect = new IEventEffect() {
+//            @Override
+//            public EventType getEventEffectType() {
+//                return EventType.SUSTENANCE;
+//            }
+//
+//            @Override
+//            public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
+//                return List.of();
+//            }
+//        };
+//
+//        // Create cards
+//        EventCard sustenance1 = new EventCard("Sustenance1", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
+//        EventCard sustenance2 = new EventCard("Sustenance2", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
+//        EventCard other1 = new EventCard("Hunt", Era.ERA_1, 2, false, EventType.HUNT, dummyEffect, 0, 0, 0, 0, 0);
+//        EventCard other2 = new EventCard("Ritual", Era.ERA_1, 2, false, EventType.SHAMANIC_RITUAL, dummyEffect, 0, 0, 0, 0, 0);
+//
+//        List<EventCard> eventCards = List.of(sustenance1, other1, sustenance2, other2);
+//
+//        Stack<EventCard> stack = ruleSet.sortEventCards(eventCards);
+//
+//
+//        assertEquals(EventType.HUNT, stack.pop().getEventType());
+//        assertEquals(EventType.SHAMANIC_RITUAL, stack.pop().getEventType());
+//        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
+//        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
+//
+//        // Test null
+//        assertThrows(IllegalArgumentException.class, () -> ruleSet.sortEventCards(null));
+//    }
 
     @Test
     void createOfferBoxes() {

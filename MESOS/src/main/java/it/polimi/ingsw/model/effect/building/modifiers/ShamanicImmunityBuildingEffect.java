@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.effect.building.modifiers;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.model.effect.event.ShamanicRitualEventEffect;
 
 import java.util.Optional;
 
@@ -40,6 +41,13 @@ public class ShamanicImmunityBuildingEffect implements IBuildingEffect, IEventMo
             throw new IllegalStateException("ShamanicImmunityModifier can only be applied to Shamanic events");
         }
 
+        // This modifier makes the player immune to the negative effects of the Shamanic event, so we set any negative changes to 0
+        if (result.getPpChange() < 0)
+            result.setPpChange(0);
+    }
+
+    @Override
+    public void visitEvent(ShamanicRitualEventEffect eventCard, EffectEventResult result) {
         // This modifier makes the player immune to the negative effects of the Shamanic event, so we set any negative changes to 0
         if (result.getPpChange() < 0)
             result.setPpChange(0);

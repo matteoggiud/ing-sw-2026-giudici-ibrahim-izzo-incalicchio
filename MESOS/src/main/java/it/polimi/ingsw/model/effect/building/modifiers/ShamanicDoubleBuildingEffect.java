@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.effect.building.modifiers;
 import it.polimi.ingsw.model.card.EventType;
 import it.polimi.ingsw.model.effect.EffectEventResult;
 import it.polimi.ingsw.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.model.effect.event.ShamanicRitualEventEffect;
 
 import java.util.Optional;
 
@@ -41,6 +42,14 @@ public class ShamanicDoubleBuildingEffect implements IBuildingEffect, IEventModi
             throw new IllegalStateException("ShamanicDoubleModifier can only be applied to Shamanic Ritual events");
         }
 
+        // If the player has more shamanic stars than the others, gain double the PP you would normally gain.
+        if (result.getPpChange() > 0) {
+            result.setPpChange(result.getPpChange() * 2);
+        }
+    }
+
+    @Override
+    public void visitEvent(ShamanicRitualEventEffect eventCard, EffectEventResult result) {
         // If the player has more shamanic stars than the others, gain double the PP you would normally gain.
         if (result.getPpChange() > 0) {
             result.setPpChange(result.getPpChange() * 2);
