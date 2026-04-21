@@ -19,16 +19,31 @@ import java.util.stream.Collectors;
 
 public class ScoreCalculator {
 
+    /**
+     * Calculates the final ranking of players based on their final scores at the end of the game.
+     *
+     * @param game the current game context
+     * @return a map of player nicknames and their corresponding final scores, sorted in descending order of scores.
+     */
+    public static Map<String, Integer> getFinalRanking(Game game) {
+        Map<String, Integer> finalRanking = new HashMap<>();
+
+        for (Player player : game.getPlayers().getShuffledPlayers()) {
+            finalRanking.put(player.getNickname(), computeFinalScore(player));
+        }
+
+        return finalRanking;
+    }
+
 
     /**
      *
      * Computes the final score for a given player at the end of the game.
      *
      * @param player the player for whom the final score is being calculated
-     * @param game   the current game state
      * @return the final score of the player
      */
-    public static int computeFinalScore(Player player, Game game) {
+    public static int computeFinalScore(Player player) {
         int total = player.getPP();
 
         total += computeBuilderScore(player);
@@ -113,7 +128,7 @@ public class ScoreCalculator {
         return game.getPlayers().getShuffledPlayers().stream()
                 .collect(Collectors.toMap(
                         p -> p,
-                        p -> computeFinalScore(p, game)
+                        ScoreCalculator::computeFinalScore
                 ))
                 .entrySet()
                 .stream()

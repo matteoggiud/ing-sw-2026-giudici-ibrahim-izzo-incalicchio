@@ -15,7 +15,7 @@ public class ResolveActionsState implements IGameState {
 
     @Override
     public void nextState(Game game) {
-        game.setGameState(new EndRoundState());
+        game.setGameState(new ExtraActionState());
     }
 
     @Override
