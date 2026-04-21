@@ -132,7 +132,7 @@ public class ActionResolver {
     }
 
     private void applyTurnOrderSlotEffect(Player player, TurnOrderSlot turnOrderSlot) {
-        int foodBonus = turnOrderSlot.getFoodBonus(); //TODO: if possible refactor this method
+        int foodBonus = turnOrderSlot.getFoodBonus();
 
         if (foodBonus > 0) {
             player.addFood(foodBonus);
