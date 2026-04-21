@@ -26,6 +26,8 @@ public interface IGameModel {
      */
     void login(String nickname, String password) throws SQLException;
 
+    void logout(String nickname) throws IllegalArgumentException;
+
     /**
      * Attempts to register a new user with the provided nickname and password.
      *

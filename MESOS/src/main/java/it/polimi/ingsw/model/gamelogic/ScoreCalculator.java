@@ -25,14 +25,20 @@ public class ScoreCalculator {
      * @param game the current game context
      * @return a map of player nicknames and their corresponding final scores, sorted in descending order of scores.
      */
-    public static Map<String, Integer> getFinalRanking(Game game) {
+    public static LinkedHashMap<String, Integer> getFinalRanking(Game game) {
         Map<String, Integer> finalRanking = new HashMap<>();
 
         for (Player player : game.getPlayers().getShuffledPlayers()) {
             finalRanking.put(player.getNickname(), computeFinalScore(player));
         }
 
-        return finalRanking;
+        // Sort the final ranking by score in descending order
+        return finalRanking.entrySet().stream()
+                .sorted((r1, r2) -> Integer.compare(r2.getValue(), r1.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldV, newV) -> oldV,
+                        LinkedHashMap::new));
     }
 
 

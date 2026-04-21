@@ -8,7 +8,6 @@ import it.polimi.ingsw.model.menu.GameManager;
 import it.polimi.ingsw.model.menu.PlayerManager;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -125,11 +124,19 @@ public class GamePortal implements IGameModel {
             throw new IllegalArgumentException("Nickname and password cannot be null");
         }
         successfull = db.loginUser(nickname, password);
-        if (!successfull) {
-            throw new IllegalArgumentException("Invalid nickname or password");
+        if (successfull) {
+            playerManager.addPlayer(new Player(nickname));
         } else {
-            //We need to think about the menu interface
+            throw new IllegalArgumentException("Invalid nickname or password");
         }
+    }
+
+    @Override
+    public void logout(String nickname) throws IllegalArgumentException{
+        if (nickname == null) {
+            throw new IllegalArgumentException("Nickname cannot be null");
+        }
+        playerManager.removePlayer(nickname);
     }
 
     /**
