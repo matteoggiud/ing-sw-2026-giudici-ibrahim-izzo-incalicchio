@@ -30,7 +30,6 @@ public class GameManager {
     public List<Game> getAvailableGames() {
         return activeGames.values().stream()
                 .filter(g -> g.getGameState().isJoinable(g))
-                .filter(g -> g.getPlayers().isFull())
                 .toList();
     }
 
