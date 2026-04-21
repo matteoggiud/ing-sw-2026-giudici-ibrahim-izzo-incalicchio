@@ -117,7 +117,7 @@ public class DataDepository {
      * @return a list of building cards
      * @throws SQLException
      */
-    public List<BuildingCard> loadBuildingCards() throws SQLException {
+    public List<BuildingCard> getBuildingCards() throws SQLException {
         String sql = "SELECT name, era, min_num_players, food_cost, end_game_pp, effect_id, effect_params FROM building_card";
 
         List<BuildingCard> allBuildingCard = new ArrayList<>();
