@@ -12,9 +12,7 @@ import java.util.Optional;
 /**
  * This class represents a character card, which is a type of card in the game.
  */
-public class CharacterCard extends TribeCard {
-
-    private final CharacterType type;
+public abstract class CharacterCard extends TribeCard {
 
     /**
      * Construct a new CharacterCard with specific properties.
@@ -23,9 +21,8 @@ public class CharacterCard extends TribeCard {
      * @param minNumPlayers the minimum number of players required to use this character card
      * @throws IllegalArgumentException if numeric constraints are violated or something is null.
      */
-    public CharacterCard(String name, Era era, int minNumPlayers, CharacterType type) throws IllegalArgumentException {
+    public CharacterCard(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
-        this.type = type;
     }
 
     public int getBuilderFoodDiscount() { return 0; }
@@ -34,12 +31,7 @@ public class CharacterCard extends TribeCard {
     public int getEndGamePPBonus() { return 0; }
     public boolean hasFoodIcon() { return false; }
 
-    /**
-     * Gets the type of this character card (e.g., HUNTER, GATHERER, SHAMAN, INVENTOR).
-     *
-     * @return the type of this character card.
-     */
-    public CharacterType getType() { return type; }
+
 
     /**
      * Hook called when this character card is added to a player's deck.
@@ -84,5 +76,12 @@ public class CharacterCard extends TribeCard {
         player.getPlayerDeck().addCard(this);
         onAddedToPlayer(player);
     }
+
+    /**
+     * Hook method that can be overridden by subclasses to apply special effects when this character card is added to a player's deck.
+     *
+     * @param playerDeck the player's deck to which this card is being added.
+     */
+    public abstract void onAddToPlayerDeck(PlayerDeck playerDeck);
 
 }

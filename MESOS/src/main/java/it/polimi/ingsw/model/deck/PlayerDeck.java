@@ -1,8 +1,6 @@
 package it.polimi.ingsw.model.deck;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import it.polimi.ingsw.model.card.*;
 import it.polimi.ingsw.model.effect.building.endgame.IEndGameScoring;
@@ -28,6 +26,8 @@ public class PlayerDeck {
      */
     private final ArrayList<BuildingCard> buildings;
 
+    private final Map<CharacterType, Integer> characterTypeCounts;
+
     /**
      * Constructor for the PlayerDeck class,
      * it initializes the player's deck with empty lists of character and building cards,
@@ -36,6 +36,11 @@ public class PlayerDeck {
     public PlayerDeck() {
         this.characters = new ArrayList<>();
         this.buildings = new ArrayList<>();
+
+        this.characterTypeCounts = new EnumMap<>(CharacterType.class);
+        for (CharacterType characterType : CharacterType.values()) {
+            characterTypeCounts.put(characterType, 0);
+        }
     }
 
     public ArrayList<CharacterCard> getCharacters() {
@@ -53,15 +58,17 @@ public class PlayerDeck {
      * @return the number of character cards in the player's deck that have the specified character type.
      */
     public int countCharactersByType(CharacterType type) {
-        int count = 0;
-        for (CharacterCard card : this.characters) {
-            if (card.getType() == type) {
-                count++;
-            }
-        }
-        return count;
+        return characterTypeCounts.get(type);
     }
 
+    /**
+     * This method increments the count of character cards of a specific character type in the player's deck.
+     *
+     * @param characterType the character type for which the count should be incremented
+     */
+    public void incrementTypeCount(CharacterType characterType) {
+        this.characterTypeCounts.put(characterType, this.characterTypeCounts.get(characterType) + 1);
+    }
 
     /**
      * This method adds a building card to the player's deck
@@ -79,6 +86,7 @@ public class PlayerDeck {
      */
     public void addCharacterCard(CharacterCard characterCard) {
         characters.add(characterCard);
+        characterCard.onAddToPlayerDeck(this);
     }
 
     /**
@@ -206,15 +214,6 @@ public class PlayerDeck {
         return extraActionEffects;
     }
 
-    public List<CharacterCard> getCharactersByType(CharacterType type) {
-        List<CharacterCard> characters = new ArrayList<>();
-        for (CharacterCard card : this.characters) {
-            if (card.getType() == type) {
-                characters.add(card);
-            }
-        }
-        return characters;
-    }
 
 
 }

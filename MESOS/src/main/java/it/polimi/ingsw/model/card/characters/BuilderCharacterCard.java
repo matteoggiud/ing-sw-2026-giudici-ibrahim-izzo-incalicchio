@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.card.characters;
 import it.polimi.ingsw.model.card.CharacterCard;
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.deck.PlayerDeck;
 
 /**
  * Represents a Builder Character Card in the game.
@@ -22,7 +23,7 @@ public class BuilderCharacterCard extends CharacterCard {
      * @param foodDiscount the amount of food discount this card provides during the game (must be >= 0)
      */
     public BuilderCharacterCard(String name, Era era, int minNumPlayers, int endGamePP, int foodDiscount) throws IllegalArgumentException {
-        super(name, era, minNumPlayers, CharacterType.BUILDER);
+        super(name, era, minNumPlayers);
 
         if (endGamePP < 0)
             throw new IllegalArgumentException("End Game PP must not be negative");
@@ -43,6 +44,14 @@ public class BuilderCharacterCard extends CharacterCard {
     @Override
     public int getEndGamePPBonus() {
         return endGamePP;
+    }
+
+    /**
+     * @param playerDeck the player's deck to which this card is being added.
+     */
+    @Override
+    public void onAddToPlayerDeck(PlayerDeck playerDeck) {
+        playerDeck.incrementTypeCount(CharacterType.BUILDER);
     }
 
     /**
