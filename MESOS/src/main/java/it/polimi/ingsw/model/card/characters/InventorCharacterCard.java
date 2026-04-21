@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.card.characters;
 import it.polimi.ingsw.model.card.CharacterCard;
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.deck.PlayerDeck;
 
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class InventorCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
     public InventorCharacterCard(String name, Era era, int minNumPlayers, InventorType inventorType) throws IllegalArgumentException {
-        super(name, era, minNumPlayers, CharacterType.INVENTOR);
+        super(name, era, minNumPlayers);
         if (inventorType == null)
             throw new IllegalArgumentException("Inventor type must not be null");
 
@@ -43,4 +44,8 @@ public class InventorCharacterCard extends CharacterCard {
         return Optional.ofNullable(inventorType);
     }
 
+    @Override
+    public void onAddToPlayerDeck(PlayerDeck playerDeck) {
+        playerDeck.incrementTypeCount(CharacterType.INVENTOR);
+    }
 }

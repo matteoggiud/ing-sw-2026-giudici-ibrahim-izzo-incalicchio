@@ -3,6 +3,7 @@ package it.polimi.ingsw.model.card.characters;
 import it.polimi.ingsw.model.card.CharacterCard;
 import it.polimi.ingsw.model.card.CharacterType;
 import it.polimi.ingsw.model.card.Era;
+import it.polimi.ingsw.model.deck.PlayerDeck;
 
 /**
  * Represent a Shaman character card in the game.
@@ -24,7 +25,7 @@ public class ShamanCharacterCard extends CharacterCard {
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
     public ShamanCharacterCard(String name, Era era, int minNumPlayers, int shamanStars) {
-        super(name, era, minNumPlayers, CharacterType.SHAMAN);
+        super(name, era, minNumPlayers);
         if (shamanStars <= 0)
             throw new IllegalArgumentException("Shaman stars must be non-negative");
         this.shamanStars = shamanStars;
@@ -40,4 +41,8 @@ public class ShamanCharacterCard extends CharacterCard {
         return shamanStars;
     }
 
+    @Override
+    public void onAddToPlayerDeck(PlayerDeck playerDeck) {
+        playerDeck.incrementTypeCount(CharacterType.SHAMAN);
+    }
 }
