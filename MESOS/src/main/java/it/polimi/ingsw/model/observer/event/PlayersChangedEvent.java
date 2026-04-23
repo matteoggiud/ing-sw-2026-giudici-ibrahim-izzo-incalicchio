@@ -18,6 +18,15 @@ public class PlayersChangedEvent implements IGameEvent {
     }
 
     /**
+     * Returns the list of player nicknames participating in the game.
+     *
+     * @return the list of player nicknames, never null or empty
+     */
+    public List<String> getPlayerNicknames() {
+        return playerNicknames;
+    }
+
+    /**
      * @param observer the observer to which the event should be dispatched
      */
     @Override

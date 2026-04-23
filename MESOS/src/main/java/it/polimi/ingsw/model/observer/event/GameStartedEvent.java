@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameStartedEvent implements IGameEvent {
 
-    List<String> playerNicknames;
+    private final List<String> playerNicknames;
 
     /**
      * Constructs a new GameStartedEvent with the given game context, extracting the player nicknames from the game
@@ -28,6 +28,15 @@ public class GameStartedEvent implements IGameEvent {
     }
 
     /**
+     * Returns the list of player nicknames participating in the game.
+     *
+     * @return the list of player nicknames, never null or empty
+     */
+    public List<String> getPlayerNicknames() {
+        return playerNicknames;
+    }
+
+    /**
      * Dispatches the GameStartedEvent to the given observer, allowing the observer to react to the event.
      *
      * @param observer the observer to which the event should be dispatched
@@ -36,4 +45,7 @@ public class GameStartedEvent implements IGameEvent {
     public void dispatch(IGameObserver observer) {
         observer.update(this);
     }
+
+
+
 }
