@@ -50,6 +50,7 @@ public class DataDepository {
      */
     public List<TribeCard> getAllTribeCards() throws SQLException {
         List<TribeCard> allTribeCard = new ArrayList<>();
+        allTribeCard.addAll(getCharacterCards());
         allTribeCard.addAll(getEventCards());
         return allTribeCard;
     }
