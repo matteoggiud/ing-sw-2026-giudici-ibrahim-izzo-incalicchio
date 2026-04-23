@@ -46,7 +46,7 @@ public class GameManager {
             throw new IllegalArgumentException("Game with id " + gameId + " does not exist.");
         }
 
-        game.getPlayers().addPlayer(player);
+        game.getGameState().addPlayer(game, player);
     }
 
     /**
@@ -62,6 +62,7 @@ public class GameManager {
             throw new IllegalArgumentException("Game with id " + gameId + " does not exist.");
         }
 
-        game.getPlayers().removePlayer(player);
+
+        game.getGameState().removePlayer(game, player);
     }
 }
