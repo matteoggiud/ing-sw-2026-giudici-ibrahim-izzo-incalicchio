@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.menu.GameManager;
 import it.polimi.ingsw.model.menu.PlayerManager;
+import it.polimi.ingsw.model.ruleset.StandardRuleSet;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -67,6 +68,53 @@ public class GamePortal implements IGameModel {
         }
         return gameManager.createGame(host);
     }
+
+    /**
+     * Retrieves an active game by its unique identifier.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the game associated with the given id
+     * @throws IllegalArgumentException if the game id is null or no game exists with that id
+     */
+    @Override
+    public Game getGame(UUID gameId) {
+        return gameManager.getGame(gameId);
+    }
+
+    /**
+     * Starts an existing game.
+     * Only the host player can start the game, and the game must have enough players.
+     * Starting the game first moves it from LobbyState to SetupState, then executes
+     * the setup phase so the board, decks, turn order, and totems are initialized.
+     *
+     * @param gameId the unique identifier of the game to start
+     * @param hostNickname the nickname of the player requesting the start
+     * @throws IllegalArgumentException if any argument is null
+     * @throws IllegalStateException if the requester is not the host or there are not enough players
+     */
+    @Override
+    public void startGame(UUID gameId, String hostNickname) {
+        if (gameId == null) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+        if (hostNickname == null) {
+            throw new IllegalArgumentException("Host nickname cannot be null.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        if (!game.getHostPlayer().getNickname().equals(hostNickname)) {
+            throw new IllegalStateException("Only the host can start the game.");
+        }
+
+        if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS) {
+            throw new IllegalStateException("Not enough players to start the game.");
+        }
+
+        game.getGameState().startGame(game);
+        game.getGameState().executePhase(game);
+    }
+
 
     /**
      * Gets all available games that players can join.

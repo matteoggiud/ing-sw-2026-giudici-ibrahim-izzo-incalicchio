@@ -65,6 +65,28 @@ public interface IGameModel {
     UUID createGame(String hostPlayer);
 
     /**
+     * Retrieves an active game by its unique identifier.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the game associated with the given id
+     * @throws IllegalArgumentException if the game id is null or no game exists with that id
+     */
+    Game getGame(UUID gameId);
+
+    /**
+     * Starts an existing game.
+     * Only the host player is allowed to start the game, and the game must have
+     * at least the minimum number of players required by the rules.
+     *
+     * @param gameId the unique identifier of the game to start
+     * @param hostNickname the nickname of the player requesting the start
+     * @throws IllegalArgumentException if any argument is null
+     * @throws IllegalStateException if the requester is not the host or there are not enough players
+     */
+    void startGame(UUID gameId, String hostNickname);
+
+
+    /**
      * Retrieves a list of all available games that players can join.
      *
      * @return a list of available games
