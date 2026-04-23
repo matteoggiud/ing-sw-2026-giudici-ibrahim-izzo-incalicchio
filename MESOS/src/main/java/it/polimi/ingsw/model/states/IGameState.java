@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
+
 import java.util.Map;
 
 /**
@@ -38,7 +39,7 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
-    default boolean getExtraAction(Player player){
+    default boolean getExtraAction(Player player) {
         throw new IllegalStateException("You cannot get extra action during this phase of the game.");
     }
 
@@ -46,15 +47,22 @@ public interface IGameState {
         throw new IllegalStateException("You cannot take card during this phase of the game.");
     }
 
-    default void addPlayer(Game game, Player player) {}
+    default void addPlayer(Game game, Player player) {
+    }
 
-    default void removePlayer(Game game, Player player) {}
+    default void removePlayer(Game game, Player player) {
+    }
 
     default Map<Player, Integer> getFinalRanking(Game game) {
         throw new IllegalStateException("You cannot get final ranking during this phase of the game.");
     }
 
+    default boolean isJoinable(Game game) {
+        return false;
+    }
 
-
+    default void startGame(Game game) {
+        throw new IllegalStateException("You cannot start this phase of the game.");
+    }
 
 }
