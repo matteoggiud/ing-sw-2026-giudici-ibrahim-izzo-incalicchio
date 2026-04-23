@@ -39,9 +39,19 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
+
+    /**
+     * Checks whether the given player has a pending extra action in the current phase.
+     * By default, this operation is not allowed outside the extra action phase.
+     *
+     * @param player the player to check
+     * @return true if the player has a pending extra action, false otherwise
+     * @throws IllegalStateException if the current phase does not support extra actions
+     */
     default boolean getExtraAction(Player player) {
         throw new IllegalStateException("You cannot get extra action during this phase of the game.");
     }
+
 
     default void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         throw new IllegalStateException("You cannot take card during this phase of the game.");

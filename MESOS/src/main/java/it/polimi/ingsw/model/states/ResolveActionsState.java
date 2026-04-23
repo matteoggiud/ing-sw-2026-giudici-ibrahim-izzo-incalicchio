@@ -22,11 +22,18 @@ public class ResolveActionsState implements IGameState {
         }
     }
 
-
+    /**
+     * Advances the game to the next logical state, which is the ExtraActionState
+     * where players can resolve a possible extra actions they have.
+     * @param game the current game context
+     */
     @Override
     public void nextState(Game game) {
-        game.setGameState(new ExtraActionState());
+        ExtraActionState extraActionState = new ExtraActionState();
+        game.setGameState(extraActionState);
+        extraActionState.executePhase(game);
     }
+
 
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {

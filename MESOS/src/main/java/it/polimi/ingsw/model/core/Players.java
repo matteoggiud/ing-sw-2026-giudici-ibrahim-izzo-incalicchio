@@ -66,6 +66,16 @@ public class Players {
     }
 
     /**
+     * Returns the players in their stable lobby order.
+     *
+     * @return a copy of the players currently in the game
+     */
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+
+    /**
      * Checks if the lobby is empty
      *
      * @return true if the lobby is empty
