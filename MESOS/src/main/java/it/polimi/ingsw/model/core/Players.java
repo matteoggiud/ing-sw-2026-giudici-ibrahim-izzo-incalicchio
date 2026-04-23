@@ -50,11 +50,13 @@ public class Players {
      * @throws IllegalArgumentException if the player is not in the lobby
      */
     public void removePlayer(Player player) throws IllegalArgumentException {
-        if(!players.contains(player)) {
-            throw new IllegalArgumentException("Player not in the lobby");
+        if(!players.contains(player) && getHost().equals(player)) {
+            throw new IllegalArgumentException("Player not in the lobby or is the host");
         }
+
         players.remove(player);
     }
+
 
     /**
      * Returns the number of players currently in the lobby.
@@ -90,6 +92,15 @@ public class Players {
      */
     public boolean contains(Player player) {
         return players.contains(player);
+    }
+
+    /**
+     * Gets a list of the nicknames of the players in the lobby.
+     *
+     * @return a list of the nicknames of the players in the lobby
+     */
+    public List<String> getPlayerNicknames() {
+        return players.stream().map(Player::getNickname).toList();
     }
 
     /**
