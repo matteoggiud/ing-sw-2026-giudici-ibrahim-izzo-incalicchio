@@ -18,8 +18,8 @@ public class GathererCharacterCard extends CharacterCard {
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
-    public GathererCharacterCard(String name, Era era, int minNumPlayers) {
-        super(name, era, minNumPlayers);
+    public GathererCharacterCard(int cardId, String name, Era era, int minNumPlayers) {
+        super(cardId, name, era, minNumPlayers);
     }
 
     /**

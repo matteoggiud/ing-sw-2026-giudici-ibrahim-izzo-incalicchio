@@ -24,8 +24,8 @@ public class ShamanCharacterCard extends CharacterCard {
      * @param shamanStars   the number of shaman stars provided by this card (>= 1)
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
-    public ShamanCharacterCard(String name, Era era, int minNumPlayers, int shamanStars) {
-        super(name, era, minNumPlayers);
+    public ShamanCharacterCard(int cardId, String name, Era era, int minNumPlayers, int shamanStars) {
+        super(cardId, name, era, minNumPlayers);
         if (shamanStars <= 0)
             throw new IllegalArgumentException("Shaman stars must be non-negative");
         this.shamanStars = shamanStars;

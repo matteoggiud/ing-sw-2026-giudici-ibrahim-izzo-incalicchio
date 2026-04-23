@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model.card;
 
-import it.polimi.ingsw.model.deck.PlayerDeck;
-
 import java.util.List;
 
 /**
@@ -9,14 +7,19 @@ import java.util.List;
  */
 public abstract class TribeCard extends Card{
 
+
+
+
     /**
      * Construct a new TribeCard with specific properties.
+     *
+     * @param cardId The unique identifier of the card
      * @param name The name of the card
      * @param era The era of the card
      * @param minNumPlayers The minimum number of player to use this card
      */
-    public TribeCard(String name, Era era, int minNumPlayers) {
-        super(name, era, minNumPlayers);
+    protected TribeCard(int cardId, String name, Era era, int minNumPlayers) {
+        super(cardId, name, era, minNumPlayers);
     }
 
     public boolean isFinalEvent(){

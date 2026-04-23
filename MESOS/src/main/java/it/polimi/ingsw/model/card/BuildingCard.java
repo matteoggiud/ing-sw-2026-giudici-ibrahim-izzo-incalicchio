@@ -25,6 +25,7 @@ public class BuildingCard extends TribeCard {
     /**
      * Constructs a new BuildingCard.
      *
+     * @param cardId the unique identifier of the card
      * @param name the name of the building card
      * @param era the era of the building card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
@@ -33,8 +34,8 @@ public class BuildingCard extends TribeCard {
      * @param effect the effect associated with the building (must not be null)
      * @throws IllegalArgumentException if numeric constraints are violated or if effect is null
      */
-    public BuildingCard(String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+    public BuildingCard(int cardId,  String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers);
 
         if (foodCost < 3 || foodCost > 9) {
             throw new IllegalArgumentException("Food cost must be between 3 and 9.");
@@ -50,6 +51,8 @@ public class BuildingCard extends TribeCard {
         this.endGamePP = endGamePP;
         this.effect = effect;
     }
+
+
 
     /**
      * Gets the food cost required to build this card.

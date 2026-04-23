@@ -64,8 +64,8 @@ public class EventCard extends TribeCard {
      * @param threshold     the threshold value that determines who receives bonus or malus
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
-    public EventCard(String name, Era era, int minNumPlayers, boolean isFinalEvent, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+    public EventCard(int cardId, String name, Era era, int minNumPlayers, boolean isFinalEvent, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers);
 
         if (eventEffect == null)
             throw new IllegalArgumentException("eventEffect cannot be null");

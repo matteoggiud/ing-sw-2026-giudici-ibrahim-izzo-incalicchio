@@ -21,8 +21,8 @@ public abstract class CharacterCard extends TribeCard {
      * @param minNumPlayers the minimum number of players required to use this character card
      * @throws IllegalArgumentException if numeric constraints are violated or something is null.
      */
-    public CharacterCard(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+    public CharacterCard(int cardId, String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+        super(cardId ,name, era, minNumPlayers);
     }
 
     public int getBuilderFoodDiscount() { return 0; }

@@ -15,7 +15,7 @@ import java.util.UUID;
 public abstract class Card {
 
     /** The unique identifier of the card. */
-    private final UUID cardId;
+    private final int cardId;
 
     /** The display name of the card. */
     private final String name;
@@ -34,7 +34,7 @@ public abstract class Card {
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      * @throws IllegalArgumentException if minNumPlayers is less than 2 or greater than 5 or some values are null
      */
-    public Card(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+    protected Card(int cardId, String name, Era era, int minNumPlayers) throws IllegalArgumentException {
         if (name == null) {
             throw new IllegalArgumentException("Card name cannot be null.");
         }
@@ -44,7 +44,23 @@ public abstract class Card {
         if (minNumPlayers < 2 || minNumPlayers > 5) {
             throw new IllegalArgumentException("Minimum number of players must be between 2 and 5.");
         }
-        this.cardId = UUID.randomUUID();
+        this.cardId = cardId;
+        this.name = name;
+        this.era = era;
+        this.minNumPlayers = minNumPlayers;
+    }
+
+    protected Card(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+        if (name == null) {
+            throw new IllegalArgumentException("Card name cannot be null.");
+        }
+        if (era == null) {
+            throw new IllegalArgumentException("Card era cannot be null.");
+        }
+        if (minNumPlayers < 2 || minNumPlayers > 5) {
+            throw new IllegalArgumentException("Minimum number of players must be between 2 and 5.");
+        }
+        this.cardId = -1;
         this.name = name;
         this.era = era;
         this.minNumPlayers = minNumPlayers;
@@ -53,9 +69,9 @@ public abstract class Card {
     /**
      * Gets the unique identifier of the card.
      *
-     * @return the card's UUID.
+     * @return the card's id.
      */
-    public UUID getCardId() {
+    public int getCardId() {
         return this.cardId;
     }
 
