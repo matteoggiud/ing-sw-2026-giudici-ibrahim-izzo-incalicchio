@@ -36,11 +36,11 @@ public class BuildingCard extends TribeCard {
     public BuildingCard(String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) throws IllegalArgumentException {
         super(name, era, minNumPlayers);
 
-        if (foodCost < 3 || foodCost > 9) {
-            throw new IllegalArgumentException("Food cost must be between 3 and 9.");
+        if(endGamePP < 0){
+            throw new IllegalArgumentException("End game prestige points must be non-negative.");
         }
-        if (endGamePP < 2) {
-            throw new IllegalArgumentException("End game prestige points must be at least 2.");
+        if (foodCost < 2 || foodCost > 11) {
+            throw new IllegalArgumentException("Food cost must be between 3 and 9.");
         }
         if (effect == null) {
             throw new IllegalArgumentException("Effect cannot be null.");
