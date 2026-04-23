@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.menu.GameManager;
 import it.polimi.ingsw.model.menu.PlayerManager;
+import it.polimi.ingsw.model.ruleset.StandardRuleSet;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -30,8 +31,8 @@ public class GamePortal implements IGameModel {
 
     @Override
     public void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        if (game == null || player == null || selectedCard == null) {
-            throw new IllegalArgumentException("Game, player, selectedCard and lowerCards cannot be null");
+        if (game == null || player == null) {
+            throw new IllegalArgumentException("Game, player cannot be null");
         }
 
         game.getGameState().resolveAction(game, player, selectedCard, fromUpperRow);
@@ -67,6 +68,53 @@ public class GamePortal implements IGameModel {
         }
         return gameManager.createGame(host);
     }
+
+    /**
+     * Retrieves an active game by its unique identifier.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the game associated with the given id
+     * @throws IllegalArgumentException if the game id is null or no game exists with that id
+     */
+    @Override
+    public Game getGame(UUID gameId) {
+        return gameManager.getGame(gameId);
+    }
+
+    /**
+     * Starts an existing game.
+     * Only the host player can start the game, and the game must have enough players.
+     * Starting the game first moves it from LobbyState to SetupState, then executes
+     * the setup phase so the board, decks, turn order, and totems are initialized.
+     *
+     * @param gameId the unique identifier of the game to start
+     * @param hostNickname the nickname of the player requesting the start
+     * @throws IllegalArgumentException if any argument is null
+     * @throws IllegalStateException if the requester is not the host or there are not enough players
+     */
+    @Override
+    public void startGame(UUID gameId, String hostNickname) {
+        if (gameId == null) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+        if (hostNickname == null) {
+            throw new IllegalArgumentException("Host nickname cannot be null.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        if (!game.getHostPlayer().getNickname().equals(hostNickname)) {
+            throw new IllegalStateException("Only the host can start the game.");
+        }
+
+        if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS) {
+            throw new IllegalStateException("Not enough players to start the game.");
+        }
+
+        game.getGameState().startGame(game);
+        game.getGameState().executePhase(game);
+    }
+
 
     /**
      * Gets all available games that players can join.
@@ -131,6 +179,11 @@ public class GamePortal implements IGameModel {
         }
     }
 
+    /**
+     * Logs out the user with the specified nickname.
+     * @param nickname the nickname of the user to log out
+     * @throws IllegalArgumentException if the nickname is null
+     */
     @Override
     public void logout(String nickname) throws IllegalArgumentException{
         if (nickname == null) {
@@ -138,6 +191,45 @@ public class GamePortal implements IGameModel {
         }
         playerManager.removePlayer(nickname);
     }
+
+    /**
+     * Retrieves a currently logged-in player by nickname.
+     *
+     * @param nickname the nickname of the player to retrieve
+     * @return the player associated with the given nickname
+     * @throws IllegalArgumentException if the nickname is null
+     * @throws IllegalStateException if no logged-in player exists with that nickname
+     */
+    @Override
+    public Player getLoggedPlayer(String nickname) {
+        if (nickname == null) {
+            throw new IllegalArgumentException("Nickname cannot be null.");
+        }
+
+        Player player = playerManager.getPlayer(nickname);
+        if (player == null) {
+            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+        }
+
+        return player;
+    }
+
+    /**
+     * Checks whether a player is currently logged in.
+     *
+     * @param nickname the nickname of the player to check
+     * @return true if the player is logged in, false otherwise
+     * @throws IllegalArgumentException if the nickname is null
+     */
+    @Override
+    public boolean isLoggedIn(String nickname) {
+        if (nickname == null) {
+            throw new IllegalArgumentException("Nickname cannot be null.");
+        }
+
+        return playerManager.isLoggedIn(nickname);
+    }
+
 
     /**
      * Attempts to register a new user with the provided nickname and password.

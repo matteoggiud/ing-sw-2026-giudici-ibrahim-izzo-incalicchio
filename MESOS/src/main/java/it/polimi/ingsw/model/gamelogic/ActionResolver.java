@@ -16,6 +16,16 @@ public class ActionResolver {
 
     private final Map<Player, ActionResolutionProgress> resolutionProgressByPlayer = new HashMap<>();
 
+    /**
+     * Resolves an extra action granted by a building effect.
+     * Extra actions can only draw one card from the upper row.
+     *
+     * @param game the current game context
+     * @param player the player resolving the extra action
+     * @param selectedCard the selected upper-row card
+     * @param fromUpperRow true if the selected card is from the upper row
+     * @throws IllegalArgumentException if any argument is invalid
+     */
     public void resolveExtraAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         if (game == null || player == null || selectedCard == null) {
             throw new IllegalArgumentException("Game, player and selectedCard cannot be null.");
@@ -25,11 +35,15 @@ public class ActionResolver {
             throw new IllegalArgumentException("Extra actions can only be resolved from the upper row.");
         }
 
+        if (!canResolveExtraAction(game, player)) {
+            throw new IllegalStateException("The player has no selectable card for the extra action.");
+        }
+
         CardRow upperRow = game.getBoard().getUpperRow();
         selectedCard.validateSelectableFrom(upperRow);
         selectedCard.resolveFromOfferRow(player, upperRow);
-
     }
+
 
     public void resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         validateArguments(game, player); // checks for null and if it's the player's turn to resolve an action
@@ -183,6 +197,24 @@ public class ActionResolver {
     private boolean hasSelectableCardForPendingPick(Board board, Player player, OfferBox box, ActionResolutionProgress progress) {
         return hasPendingUpperPick(box, progress) && board.getUpperRow().hasSelectableCardFor(player)
                 || hasPendingLowerPick(box, progress) && board.getLowerRow().hasSelectableCardFor(player);
+    }
+
+    /**
+     * Checks whether a player can resolve an extra action.
+     * Extra actions can only draw from the upper row, so the player must have
+     * at least one selectable card in the upper row.
+     *
+     * @param game the current game context
+     * @param player the player to check
+     * @return true if the player can draw at least one card from the upper row
+     * @throws IllegalArgumentException if game or player is null
+     */
+    public boolean canResolveExtraAction(Game game, Player player) {
+        if (game == null || player == null) {
+            throw new IllegalArgumentException("Game and player cannot be null.");
+        }
+
+        return game.getBoard().getUpperRow().hasSelectableCardFor(player);
     }
 
 

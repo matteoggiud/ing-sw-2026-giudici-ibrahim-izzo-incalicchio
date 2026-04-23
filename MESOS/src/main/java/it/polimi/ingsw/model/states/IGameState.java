@@ -39,19 +39,48 @@ public interface IGameState {
         throw new IllegalStateException("You cannot place a totem during this phase of the game.");
     }
 
+
+    /**
+     * Checks whether the given player has a pending extra action in the current phase.
+     * By default, this operation is not allowed outside the extra action phase.
+     *
+     * @param player the player to check
+     * @return true if the player has a pending extra action, false otherwise
+     * @throws IllegalStateException if the current phase does not support extra actions
+     */
     default boolean getExtraAction(Player player) {
         throw new IllegalStateException("You cannot get extra action during this phase of the game.");
     }
+
 
     default void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         throw new IllegalStateException("You cannot take card during this phase of the game.");
     }
 
+    /**
+     * Adds a player to the game.
+     * By default, players cannot join outside the lobby phase.
+     *
+     * @param game the current game context
+     * @param player the player who wants to join
+     * @throws IllegalStateException if players cannot join during the current phase
+     */
     default void addPlayer(Game game, Player player) {
+        throw new IllegalStateException("You cannot join the game during this phase.");
     }
 
+    /**
+     * Removes a player from the game.
+     * By default, players cannot leave outside the lobby phase.
+     *
+     * @param game the current game context
+     * @param player the player who wants to leave
+     * @throws IllegalStateException if players cannot leave during the current phase
+     */
     default void removePlayer(Game game, Player player) {
+        throw new IllegalStateException("You cannot leave the game during this phase.");
     }
+
 
     default Map<Player, Integer> getFinalRanking(Game game) {
         throw new IllegalStateException("You cannot get final ranking during this phase of the game.");

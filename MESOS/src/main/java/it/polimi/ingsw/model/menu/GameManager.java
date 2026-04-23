@@ -27,6 +27,27 @@ public class GameManager {
         return newGame.getGameId();
     }
 
+    /**
+     * Retrieves an active game by its unique identifier.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the game associated with the given id
+     * @throws IllegalArgumentException if the game id is null or no game exists with that id
+     */
+    public Game getGame(UUID gameId) {
+        if (gameId == null) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+
+        Game game = activeGames.get(gameId);
+        if (game == null) {
+            throw new IllegalArgumentException("Game with id " + gameId + " does not exist.");
+        }
+
+        return game;
+    }
+
+
     public List<Game> getAvailableGames() {
         return activeGames.values().stream()
                 .filter(g -> g.getGameState().isJoinable(g))
@@ -41,13 +62,10 @@ public class GameManager {
      * @throws IllegalArgumentException if the game does not exist or if the player cannot join the game
      */
     public void joinGame(UUID gameId, Player player) {
-        Game game = activeGames.get(gameId);
-        if (game == null) {
-            throw new IllegalArgumentException("Game with id " + gameId + " does not exist.");
-        }
-
+        Game game = getGame(gameId);
         game.getGameState().addPlayer(game, player);
     }
+
 
     /**
      *
@@ -57,12 +75,8 @@ public class GameManager {
      * @param player the player who wants to leave the game
      */
     public void leaveGame(UUID gameId, Player player) {
-        Game game = activeGames.get(gameId);
-        if (game == null) {
-            throw new IllegalArgumentException("Game with id " + gameId + " does not exist.");
-        }
-
-
+        Game game = getGame(gameId);
         game.getGameState().removePlayer(game, player);
     }
+
 }

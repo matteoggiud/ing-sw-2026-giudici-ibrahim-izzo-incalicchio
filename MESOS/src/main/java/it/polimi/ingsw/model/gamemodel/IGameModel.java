@@ -26,7 +26,32 @@ public interface IGameModel {
      */
     void login(String nickname, String password) throws SQLException;
 
+    /**
+     * Logs out the user with the specified nickname.
+     * @param nickname the nickname of the user to log out
+     * @throws IllegalArgumentException
+     */
     void logout(String nickname) throws IllegalArgumentException;
+
+    /**
+     * Retrieves a currently logged-in player by nickname.
+     *
+     * @param nickname the nickname of the player to retrieve
+     * @return the player associated with the given nickname
+     * @throws IllegalArgumentException if the nickname is null
+     * @throws IllegalStateException if no logged-in player exists with that nickname
+     */
+    Player getLoggedPlayer(String nickname);
+
+    /**
+     * Checks whether a player is currently logged in.
+     *
+     * @param nickname the nickname of the player to check
+     * @return true if the player is logged in, false otherwise
+     * @throws IllegalArgumentException if the nickname is null
+     */
+    boolean isLoggedIn(String nickname);
+
 
     /**
      * Attempts to register a new user with the provided nickname and password.
@@ -63,6 +88,28 @@ public interface IGameModel {
      * @return the unique identifier (UUID) of the newly created game
      */
     UUID createGame(String hostPlayer);
+
+    /**
+     * Retrieves an active game by its unique identifier.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the game associated with the given id
+     * @throws IllegalArgumentException if the game id is null or no game exists with that id
+     */
+    Game getGame(UUID gameId);
+
+    /**
+     * Starts an existing game.
+     * Only the host player is allowed to start the game, and the game must have
+     * at least the minimum number of players required by the rules.
+     *
+     * @param gameId the unique identifier of the game to start
+     * @param hostNickname the nickname of the player requesting the start
+     * @throws IllegalArgumentException if any argument is null
+     * @throws IllegalStateException if the requester is not the host or there are not enough players
+     */
+    void startGame(UUID gameId, String hostNickname);
+
 
     /**
      * Retrieves a list of all available games that players can join.
