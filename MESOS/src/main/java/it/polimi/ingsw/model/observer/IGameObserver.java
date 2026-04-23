@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.observer.event.*;
  */
 public interface IGameObserver {
     /**
-     * Called when a game event occurs.
+     * Called when a game started event occurs.
      *
      * @param event the started game event containing relevant information about the game start, such as player nicknames. This method is called by the event dispatch mechanism when a GameStartedEvent is dispatched to this observer.
      */
@@ -16,7 +16,7 @@ public interface IGameObserver {
     }
 
     /**
-     * Called when a game event occurs.
+     * Called when a player changed event occurs.
      *
      * @param event the players changed event containing relevant information about the change in players, such as the updated list of player nicknames. This method is called by the event dispatch mechanism when a PlayersChangedEvent is dispatched to this observer.
      */
@@ -24,5 +24,12 @@ public interface IGameObserver {
         // Default implementation does nothing
     }
 
-
+    /**
+     * Called when a board update event occurs.
+     *
+     * @param event the board update event containing relevant information about the update to the game board. This method is called by the event dispatch mechanism when a BoardUpdateEvent is dispatched to this observer.
+     */
+    default void update(BoardUpdatedEvent event){
+        // Default implementation does nothing
+    }
 }

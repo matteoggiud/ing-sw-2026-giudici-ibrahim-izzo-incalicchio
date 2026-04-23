@@ -4,10 +4,12 @@ import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.observer.IGameObserver;
 
 import java.util.List;
+import java.util.UUID;
 
 public class GameStartedEvent implements IGameEvent {
 
     private final List<String> playerNicknames;
+    private final UUID gameId;
 
     /**
      * Constructs a new GameStartedEvent with the given game context, extracting the player nicknames from the game
@@ -16,6 +18,7 @@ public class GameStartedEvent implements IGameEvent {
      */
     public GameStartedEvent(Game game) {
         this.playerNicknames = game.getPlayers().getPlayerNicknames();
+        this.gameId = game.getGameId();
     }
 
     /**
@@ -23,8 +26,9 @@ public class GameStartedEvent implements IGameEvent {
      *
      * @param playerNicknames the list of player nicknames participating in the game, must not be null or empty
      */
-    public GameStartedEvent(List<String> playerNicknames) {
+    public GameStartedEvent(List<String> playerNicknames, UUID gameId) {
         this.playerNicknames = playerNicknames;
+        this.gameId = gameId;
     }
 
     /**
@@ -37,6 +41,15 @@ public class GameStartedEvent implements IGameEvent {
     }
 
     /**
+     * Returns the unique identifier of the game that has started.
+     *
+     * @return the UUID of the game
+     */
+    public UUID getGameId() {
+        return gameId;
+    }
+
+    /**
      * Dispatches the GameStartedEvent to the given observer, allowing the observer to react to the event.
      *
      * @param observer the observer to which the event should be dispatched
@@ -45,7 +58,6 @@ public class GameStartedEvent implements IGameEvent {
     public void dispatch(IGameObserver observer) {
         observer.update(this);
     }
-
 
 
 }

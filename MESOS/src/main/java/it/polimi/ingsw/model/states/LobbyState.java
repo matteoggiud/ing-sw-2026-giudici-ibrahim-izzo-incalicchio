@@ -67,6 +67,6 @@ public class LobbyState implements IGameState {
     @Override
     public void startGame(Game game) {
         nextState(game);
-        game.getObserverManager().notifyObservers(new GameStartedEvent(game.getPlayers().getPlayerNicknames()));
+        game.getObserverManager().notifyObservers(new GameStartedEvent(game.getPlayers().getPlayerNicknames(), game.getGameId()));
     }
 }
