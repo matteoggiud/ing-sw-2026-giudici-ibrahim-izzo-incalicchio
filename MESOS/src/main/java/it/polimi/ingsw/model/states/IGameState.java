@@ -47,11 +47,30 @@ public interface IGameState {
         throw new IllegalStateException("You cannot take card during this phase of the game.");
     }
 
+    /**
+     * Adds a player to the game.
+     * By default, players cannot join outside the lobby phase.
+     *
+     * @param game the current game context
+     * @param player the player who wants to join
+     * @throws IllegalStateException if players cannot join during the current phase
+     */
     default void addPlayer(Game game, Player player) {
+        throw new IllegalStateException("You cannot join the game during this phase.");
     }
 
+    /**
+     * Removes a player from the game.
+     * By default, players cannot leave outside the lobby phase.
+     *
+     * @param game the current game context
+     * @param player the player who wants to leave
+     * @throws IllegalStateException if players cannot leave during the current phase
+     */
     default void removePlayer(Game game, Player player) {
+        throw new IllegalStateException("You cannot leave the game during this phase.");
     }
+
 
     default Map<Player, Integer> getFinalRanking(Game game) {
         throw new IllegalStateException("You cannot get final ranking during this phase of the game.");
