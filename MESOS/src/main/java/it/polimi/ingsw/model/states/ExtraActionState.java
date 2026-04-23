@@ -6,8 +6,8 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.model.gamelogic.ActionResolver;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the phase where players with a specific building effect
@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class ExtraActionState implements IGameState {
 
-    private final Set<Player> pendingPlayers = new HashSet<>();
+    private final List<Player> pendingPlayers = new ArrayList<>();
     private boolean initialized = false;
 
     /**
@@ -31,8 +31,9 @@ public class ExtraActionState implements IGameState {
     }
 
     /**
-     * Initializes the pending extra actions.
-     * If no player has an extra action, the game immediately advances to the end round phase.
+     * Initializes and refreshes the pending extra actions.
+     * Players that cannot draw any selectable upper-row card are automatically skipped,
+     * because the client would have no valid card to select for them.
      *
      * @param game the current game context
      * @throws IllegalArgumentException if the game is null
@@ -48,10 +49,13 @@ public class ExtraActionState implements IGameState {
             initialized = true;
         }
 
+        resolveAutomaticExtraActionSkips(game);
+
         if (pendingPlayers.isEmpty()) {
             nextState(game);
         }
     }
+
 
     /**
      * Checks whether the given player still has a pending extra action to resolve.
@@ -97,7 +101,21 @@ public class ExtraActionState implements IGameState {
     }
 
     /**
-     * Finds all players that must resolve an extra action during this phase.
+     * Automatically removes pending players that cannot resolve their extra action.
+     * This handles the edge case where the upper row has no selectable card for them.
+     *
+     * @param game the current game context
+     */
+    private void resolveAutomaticExtraActionSkips(Game game) {
+        ActionResolver resolver = new ActionResolver();
+
+        pendingPlayers.removeIf(player -> !resolver.canResolveExtraAction(game, player));
+    }
+
+    /**
+     * Finds all players that own an extra action effect.
+     * Players are added first, then automatic skip logic removes those
+     * who cannot actually resolve the extra draw.
      *
      * @param game the current game context
      */
