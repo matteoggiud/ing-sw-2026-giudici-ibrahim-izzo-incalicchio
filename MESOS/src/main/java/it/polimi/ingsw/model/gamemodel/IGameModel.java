@@ -26,7 +26,32 @@ public interface IGameModel {
      */
     void login(String nickname, String password) throws SQLException;
 
+    /**
+     * Logs out the user with the specified nickname.
+     * @param nickname the nickname of the user to log out
+     * @throws IllegalArgumentException
+     */
     void logout(String nickname) throws IllegalArgumentException;
+
+    /**
+     * Retrieves a currently logged-in player by nickname.
+     *
+     * @param nickname the nickname of the player to retrieve
+     * @return the player associated with the given nickname
+     * @throws IllegalArgumentException if the nickname is null
+     * @throws IllegalStateException if no logged-in player exists with that nickname
+     */
+    Player getLoggedPlayer(String nickname);
+
+    /**
+     * Checks whether a player is currently logged in.
+     *
+     * @param nickname the nickname of the player to check
+     * @return true if the player is logged in, false otherwise
+     * @throws IllegalArgumentException if the nickname is null
+     */
+    boolean isLoggedIn(String nickname);
+
 
     /**
      * Attempts to register a new user with the provided nickname and password.

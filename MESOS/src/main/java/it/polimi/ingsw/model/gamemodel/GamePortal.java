@@ -31,8 +31,8 @@ public class GamePortal implements IGameModel {
 
     @Override
     public void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        if (game == null || player == null || selectedCard == null) {
-            throw new IllegalArgumentException("Game, player, selectedCard and lowerCards cannot be null");
+        if (game == null || player == null) {
+            throw new IllegalArgumentException("Game, player cannot be null");
         }
 
         game.getGameState().resolveAction(game, player, selectedCard, fromUpperRow);
@@ -179,6 +179,11 @@ public class GamePortal implements IGameModel {
         }
     }
 
+    /**
+     * Logs out the user with the specified nickname.
+     * @param nickname the nickname of the user to log out
+     * @throws IllegalArgumentException if the nickname is null
+     */
     @Override
     public void logout(String nickname) throws IllegalArgumentException{
         if (nickname == null) {
@@ -186,6 +191,45 @@ public class GamePortal implements IGameModel {
         }
         playerManager.removePlayer(nickname);
     }
+
+    /**
+     * Retrieves a currently logged-in player by nickname.
+     *
+     * @param nickname the nickname of the player to retrieve
+     * @return the player associated with the given nickname
+     * @throws IllegalArgumentException if the nickname is null
+     * @throws IllegalStateException if no logged-in player exists with that nickname
+     */
+    @Override
+    public Player getLoggedPlayer(String nickname) {
+        if (nickname == null) {
+            throw new IllegalArgumentException("Nickname cannot be null.");
+        }
+
+        Player player = playerManager.getPlayer(nickname);
+        if (player == null) {
+            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+        }
+
+        return player;
+    }
+
+    /**
+     * Checks whether a player is currently logged in.
+     *
+     * @param nickname the nickname of the player to check
+     * @return true if the player is logged in, false otherwise
+     * @throws IllegalArgumentException if the nickname is null
+     */
+    @Override
+    public boolean isLoggedIn(String nickname) {
+        if (nickname == null) {
+            throw new IllegalArgumentException("Nickname cannot be null.");
+        }
+
+        return playerManager.isLoggedIn(nickname);
+    }
+
 
     /**
      * Attempts to register a new user with the provided nickname and password.
