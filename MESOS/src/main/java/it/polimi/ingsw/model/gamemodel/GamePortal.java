@@ -45,7 +45,7 @@ public class GamePortal implements IGameModel {
      * @param offerBox the offer box on which the player wants to place their totem
      */
     @Override
-    public void Placing(Game game, Player player, OfferBox offerBox) {
+    public void placing(Game game, Player player, OfferBox offerBox) {
         if (game == null || player == null || offerBox == null) {
             throw new IllegalArgumentException("Game, player e offerBox cannot be null");
         }
