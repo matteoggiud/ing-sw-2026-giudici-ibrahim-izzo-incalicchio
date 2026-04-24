@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.board.OfferBox;
 import it.polimi.ingsw.model.card.Card;
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
+import java.util.Map;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -133,4 +134,16 @@ public interface IGameModel {
      * @param player the player attempting to leave the game
      */
     void leaveGame(UUID gameId, String player);
+
+    /**
+     * Retrieves the final ranking of a game when the game has reached
+     * the scoring phase.
+     *
+     * @param gameId the unique identifier of the game
+     * @return a map of players and their final scores sorted by ranking
+     * @throws IllegalArgumentException if the game id is null
+     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     */
+    Map<Player, Integer> getFinalRanking(UUID gameId);
+
 }
