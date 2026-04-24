@@ -1,8 +1,6 @@
 package it.polimi.ingsw.server.model.observer;
 
-import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayersChangedEvent;
+import it.polimi.ingsw.server.model.observer.event.*;
 
 /**
  * Observer interface implemented by remote or local views.
