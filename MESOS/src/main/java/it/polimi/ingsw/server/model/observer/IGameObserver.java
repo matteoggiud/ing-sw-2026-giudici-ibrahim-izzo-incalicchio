@@ -27,6 +27,7 @@ public interface IGameObserver {
      *
      * @param event the event containing updated board information
      */
+
     void update(BoardUpdatedEvent event);
 
     /**
