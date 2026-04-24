@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.model.card.BuildingCard;
-import it.polimi.ingsw.model.card.Era;
-import it.polimi.ingsw.model.deck.BuildingDeck;
-import it.polimi.ingsw.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.server.model.board.BuildingRow;
+import it.polimi.ingsw.server.model.card.BuildingCard;
+import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.deck.BuildingDeck;
+import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

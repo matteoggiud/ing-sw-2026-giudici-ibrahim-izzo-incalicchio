@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.model.core.Player;
+import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
+import it.polimi.ingsw.server.model.board.OfferBox;
+import it.polimi.ingsw.server.model.core.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
