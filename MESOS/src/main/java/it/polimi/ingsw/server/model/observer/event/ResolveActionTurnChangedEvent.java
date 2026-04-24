@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class ResolveActionTurnChangedEvent implements IGameEvent {
 
-    private final UUID gameId;
+    private final int gameId;
     private final String currentPlayerNickname;
 
     /**
@@ -18,8 +18,8 @@ public class ResolveActionTurnChangedEvent implements IGameEvent {
      * @param gameId the unique identifier of the game
      * @param currentPlayerNickname the nickname of the player whose turn it is
      */
-    public ResolveActionTurnChangedEvent(UUID gameId, String currentPlayerNickname) {
-        if (gameId == null) {
+    public ResolveActionTurnChangedEvent(int gameId, String currentPlayerNickname) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (currentPlayerNickname == null || currentPlayerNickname.isBlank()) {
@@ -35,7 +35,7 @@ public class ResolveActionTurnChangedEvent implements IGameEvent {
      *
      * @return the game id
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

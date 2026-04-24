@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class PlayerDeckUpdatedEvent implements IGameEvent {
 
-    private final UUID gameId;
+    private final int gameId;
     private final String playerNickname;
     private final PlayerDeckDTO playerDeck;
 
@@ -21,8 +21,8 @@ public class PlayerDeckUpdatedEvent implements IGameEvent {
      * @param playerNickname the nickname of the player whose deck changed
      * @param playerDeck the DTO representing the player's updated deck
      */
-    public PlayerDeckUpdatedEvent(UUID gameId, String playerNickname, PlayerDeckDTO playerDeck) {
-        if (gameId == null) {
+    public PlayerDeckUpdatedEvent(int gameId, String playerNickname, PlayerDeckDTO playerDeck) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (playerNickname == null || playerNickname.isBlank()) {
@@ -42,7 +42,7 @@ public class PlayerDeckUpdatedEvent implements IGameEvent {
      *
      * @return the game id
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

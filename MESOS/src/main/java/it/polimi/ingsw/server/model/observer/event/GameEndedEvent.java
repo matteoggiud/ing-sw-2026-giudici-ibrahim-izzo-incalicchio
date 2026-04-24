@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 public class GameEndedEvent implements IGameEvent {
 
-    private final UUID gameId;
+    private final int gameId;
     private final Map<String, Integer> finalRanking;
 
     /**
@@ -21,8 +21,8 @@ public class GameEndedEvent implements IGameEvent {
      * @param gameId the unique identifier of the game
      * @param finalRanking the final ranking using player nicknames as keys
      */
-    public GameEndedEvent(UUID gameId, Map<String, Integer> finalRanking) {
-        if (gameId == null) {
+    public GameEndedEvent(int gameId, Map<String, Integer> finalRanking) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (finalRanking == null) {
@@ -38,7 +38,7 @@ public class GameEndedEvent implements IGameEvent {
      *
      * @return the game id
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

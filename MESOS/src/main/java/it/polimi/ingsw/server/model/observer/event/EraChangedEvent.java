@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class EraChangedEvent implements IGameEvent {
 
-    private final UUID gameId;
+    private final int gameId;
     private final String newEra;
 
     /**
@@ -18,8 +18,8 @@ public class EraChangedEvent implements IGameEvent {
      * @param gameId the unique identifier of the game
      * @param newEra the new era reached by the game
      */
-    public EraChangedEvent(UUID gameId, String newEra) {
-        if (gameId == null) {
+    public EraChangedEvent(int gameId, String newEra) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (newEra == null || newEra.isBlank()) {
@@ -35,7 +35,7 @@ public class EraChangedEvent implements IGameEvent {
      *
      * @return the game id
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

@@ -66,6 +66,14 @@ public class SocketVirtualView implements VirtualView {
     }
 
     /**
+     * @param event the event containing the new era
+     */
+    @Override
+    public void update(EraChangedEvent event) {
+
+    }
+
+    /**
      * @param event the event containing the current player for the placing totem phase
      */
     @Override
@@ -82,10 +90,34 @@ public class SocketVirtualView implements VirtualView {
     }
 
     /**
+     * @param event the event containing the current player for the extra action phase
+     */
+    @Override
+    public void update(ExtraActionTurnChangedEvent event) {
+
+    }
+
+    /**
      * @param event the event containing the updated resources of one player
      */
     @Override
     public void update(PlayerResourcesUpdatedEvent event) {
+
+    }
+
+    /**
+     * @param event the event containing the updated personal deck of one player
+     */
+    @Override
+    public void update(PlayerDeckUpdatedEvent event) {
+
+    }
+
+    /**
+     * @param event the event containing the final ranking
+     */
+    @Override
+    public void update(GameEndedEvent event) {
 
     }
 }

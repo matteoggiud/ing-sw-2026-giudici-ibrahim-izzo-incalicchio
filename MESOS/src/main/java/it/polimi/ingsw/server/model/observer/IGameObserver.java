@@ -34,9 +34,7 @@ public interface IGameObserver {
      *
      * @param event the event containing the new era
      */
-    default void update(EraChangedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(EraChangedEvent event);
 
     /**
      * Called when the player whose turn it is to place a totem changes.
@@ -71,12 +69,12 @@ public interface IGameObserver {
      *
      * @param event the event containing the updated personal deck of one player
      */
-    default void update(PlayerDeckUpdatedEvent event);
+    void update(PlayerDeckUpdatedEvent event);
 
     /**
      * Called when the game ends and the final ranking becomes available.
      *
      * @param event the event containing the final ranking
      */
-    default void update(GameEndedEvent event);
+    void update(GameEndedEvent event);
 }
