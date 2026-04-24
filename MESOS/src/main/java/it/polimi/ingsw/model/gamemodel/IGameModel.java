@@ -79,7 +79,7 @@ public interface IGameModel {
      * @param player   the player attempting to place their totem
      * @param offerBox the offer box on which the player wants to place their totem
      */
-    void Placing(Game game, Player player, OfferBox offerBox);
+    void placing(Game game, Player player, OfferBox offerBox);
 
     /**
      * Creates a new game with the specified host player.
