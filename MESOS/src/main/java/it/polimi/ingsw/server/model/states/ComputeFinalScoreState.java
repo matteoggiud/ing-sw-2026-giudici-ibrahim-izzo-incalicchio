@@ -3,18 +3,22 @@ package it.polimi.ingsw.server.model.states;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
+import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * The ComputeFinalScoreState class represents the state of the game where the final scores
  * are calculated and the final ranking of players is determined.
  */
-
 public class ComputeFinalScoreState implements IGameState {
+
+    private boolean finalRankingNotified = false;
 
     /**
      * Transitions the game to the EndedState after computing the final scores.
+     *
      * @param game the current game context
      */
     @Override
@@ -23,7 +27,28 @@ public class ComputeFinalScoreState implements IGameState {
     }
 
     /**
-     * Executes the phase of computing final scores and determining player rankings.
+     * Executes the final scoring phase.
+     * The final ranking is computed and notified to observers only once.
+     *
+     * @param game the current game context
+     */
+    @Override
+    public void executePhase(Game game) {
+        if (game == null) {
+            throw new IllegalArgumentException("Game cannot be null.");
+        }
+
+        if (finalRankingNotified) {
+            return;
+        }
+
+        notifyGameEnded(game);
+        finalRankingNotified = true;
+    }
+
+    /**
+     * Returns the final ranking of the players.
+     *
      * @param game the current game context
      * @return a map of players and their corresponding final scores, sorted by rank
      */
@@ -36,4 +61,20 @@ public class ComputeFinalScoreState implements IGameState {
         return ScoreCalculator.rankPlayer(game);
     }
 
+    /**
+     * Notifies observers that the game ended and provides the final ranking.
+     *
+     * @param game the current game context
+     */
+    private void notifyGameEnded(Game game) {
+        Map<String, Integer> rankingByNickname = new LinkedHashMap<>();
+
+        for (Map.Entry<Player, Integer> entry : getFinalRanking(game).entrySet()) {
+            rankingByNickname.put(entry.getKey().getNickname(), entry.getValue());
+        }
+
+        game.getObserverManager().notifyObservers(
+                new GameEndedEvent(game.getGameId(), rankingByNickname)
+        );
+    }
 }

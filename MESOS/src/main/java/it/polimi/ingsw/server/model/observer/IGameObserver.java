@@ -70,4 +70,13 @@ public interface IGameObserver {
     default void update(PlayerResourcesUpdatedEvent event) {
         // Default implementation does nothing
     }
+
+    /**
+     * Called when the game ends and the final ranking becomes available.
+     *
+     * @param event the event containing the final ranking
+     */
+    default void update(GameEndedEvent event) {
+        // Default implementation does nothing
+    }
 }

@@ -30,12 +30,15 @@ public class EndRoundState implements IGameState {
         }
 
         if (game.isLastRoundTriggered()) {
-            game.setGameState(new ComputeFinalScoreState());
+            ComputeFinalScoreState computeFinalScoreState = new ComputeFinalScoreState();
+            game.setGameState(computeFinalScoreState);
+            computeFinalScoreState.executePhase(game);
             return;
         }
 
         game.setGameState(new PlacingTotemState());
     }
+
 
     /**
      * Executes the end round phase of the game.
