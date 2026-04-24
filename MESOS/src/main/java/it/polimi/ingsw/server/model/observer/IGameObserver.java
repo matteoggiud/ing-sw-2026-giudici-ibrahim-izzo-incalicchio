@@ -36,6 +36,15 @@ public interface IGameObserver {
     }
 
     /**
+     * Called when the game transitions to a new era.
+     *
+     * @param event the event containing the new era
+     */
+    default void update(EraChangedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
      * Called when the player whose turn it is to place a totem changes.
      *
      * @param event the event containing the current player for the placing totem phase
@@ -54,11 +63,38 @@ public interface IGameObserver {
     }
 
     /**
+     * Called when the player whose turn it is to resolve an extra action changes.
+     *
+     * @param event the event containing the current player for the extra action phase
+     */
+    default void update(ExtraActionTurnChangedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
      * Called when a player's resources change.
      *
      * @param event the event containing the updated resources of one player
      */
     default void update(PlayerResourcesUpdatedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Called when a player's deck changes.
+     *
+     * @param event the event containing the updated personal deck of one player
+     */
+    default void update(PlayerDeckUpdatedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Called when the game ends and the final ranking becomes available.
+     *
+     * @param event the event containing the final ranking
+     */
+    default void update(GameEndedEvent event) {
         // Default implementation does nothing
     }
 }

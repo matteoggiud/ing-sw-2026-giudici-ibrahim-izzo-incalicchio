@@ -1,20 +1,29 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.card.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;
-import it.polimi.ingsw.server.model.core.*;
 import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.EraChangedEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Extra action -> Eventi + Modifiers ->
+ * Represents the end round phase of the game.
  */
 public class EndRoundState implements IGameState {
+
     @Override
     public void nextState(Game game) {
         if (game == null) {
@@ -22,7 +31,9 @@ public class EndRoundState implements IGameState {
         }
 
         if (game.isLastRoundTriggered()) {
-            game.setGameState(new ComputeFinalScoreState());
+            ComputeFinalScoreState computeFinalScoreState = new ComputeFinalScoreState();
+            game.setGameState(computeFinalScoreState);
+            computeFinalScoreState.executePhase(game);
             return;
         }
 
@@ -30,12 +41,10 @@ public class EndRoundState implements IGameState {
     }
 
     /**
-     * This method executes the end round phase of the game,
-     * it resolves all the events in the lower row and if it's the last round also the upper row,
-     * then it discards all the tribe cards in the lower row,
-     * transfer the upper row to the lower row and refill the upper row with new tribe cards,
-     * if a new era is reached it also transfer the upper building row to the lower building row
-     * and place new building cards in the upper building row.
+     * Executes the end round phase of the game.
+     * It resolves event cards, updates player resources if needed,
+     * refreshes the board, and prepares the next round.
+     *
      * @param game the current game context
      */
     @Override
@@ -48,25 +57,32 @@ public class EndRoundState implements IGameState {
             game.setLastRoundTriggered(true);
         }
 
+        Map<String, ResourceSnapshot> resourcesBefore = capturePlayerResources(game);
+
         List<EventCard> eventsToResolve = collectEventsToResolve(game);
         if (!eventsToResolve.isEmpty()) {
             new EffectResolver(game).resolveEvents(eventsToResolve);
         }
 
-        if(game.isLastRoundTriggered()){
+        notifyChangedPlayerResources(game, resourcesBefore);
+
+        if (game.isLastRoundTriggered()) {
             nextState(game);
-        }else{
-            discardLowerRowTribeCards(game.getBoard());
-            game.getBoard().transferUpperTribeToLower();
-            refillUpperRow(game);
-            nextState(game);
+            return;
         }
 
+        discardLowerRowTribeCards(game.getBoard());
+        game.getBoard().transferUpperTribeToLower();
+        refillUpperRow(game);
 
+        nextState(game);
+        notifyBoardUpdate(game);
+        notifyCurrentPlacingPlayer(game);
     }
 
     /**
-     * This method collects all the event cards that need to be resolved at the end of the round.
+     * Collects all the event cards that need to be resolved at the end of the round.
+     *
      * @param game the current game context
      * @return a list of event cards to resolve
      */
@@ -81,7 +97,8 @@ public class EndRoundState implements IGameState {
     }
 
     /**
-     * This method discards all the tribe cards in the lower row of the board.
+     * Discards all the tribe cards in the lower row of the board.
+     *
      * @param board the game board
      */
     private void discardLowerRowTribeCards(Board board) {
@@ -89,7 +106,8 @@ public class EndRoundState implements IGameState {
     }
 
     /**
-     * This method refills the upper row of the board with new tribe cards drawn from the tribe deck.
+     * Refills the upper row of the board with new tribe cards drawn from the tribe deck.
+     *
      * @param game the current game context
      */
     private void refillUpperRow(Game game) {
@@ -108,7 +126,8 @@ public class EndRoundState implements IGameState {
     }
 
     /**
-     * This method handles the transition between eras when a new era is reached.
+     * Handles the transition between eras when a new era is reached.
+     *
      * @param game the current game context
      * @param newEra the new era that has been reached
      * @return the current era after handling the transition
@@ -118,7 +137,6 @@ public class EndRoundState implements IGameState {
             throw new IllegalArgumentException("New era cannot be null");
         }
 
-        //Era currentEra = initializeCurrentEraIfNeeded(game);
         Era currentEra = game.getCurrentEra();
 
         if (newEra.ordinal() <= currentEra.ordinal()) {
@@ -135,8 +153,115 @@ public class EndRoundState implements IGameState {
         board.transferUpperBuildingToLower();
         board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
 
+        notifyEraChanged(game, newEra);
+
         return newEra;
     }
 
+
+    /**
+     * Notifies observers about the updated board state.
+     *
+     * @param game the current game context
+     */
+    private void notifyBoardUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
+        );
+    }
+
+    /**
+     * Notifies observers about the player who must place the next totem.
+     *
+     * @param game the current game context
+     */
+    private void notifyCurrentPlacingPlayer(Game game) {
+        Player currentPlayer = game.getBoard().getTurnOrderBox().getSlots().stream()
+                .filter(slot -> !slot.isFree())
+                .map(TurnOrderSlot::getPlacedPlayer)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No player is available to place a totem."));
+
+        game.getObserverManager().notifyObservers(
+                new PlaceTotemTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
+        );
+    }
+
+    /**
+     * Captures the current resources of all players in the game.
+     *
+     * @param game the current game context
+     * @return a map from player nickname to resource snapshot
+     */
+    private Map<String, ResourceSnapshot> capturePlayerResources(Game game) {
+        Map<String, ResourceSnapshot> snapshots = new HashMap<>();
+
+        for (Player currentPlayer : game.getPlayers().getPlayers()) {
+            snapshots.put(
+                    currentPlayer.getNickname(),
+                    new ResourceSnapshot(currentPlayer.getFood(), currentPlayer.getPP())
+            );
+        }
+
+        return snapshots;
+    }
+
+    /**
+     * Notifies observers only for players whose resources changed.
+     *
+     * @param game the current game context
+     * @param resourcesBefore the resources captured before the event resolution
+     */
+    private void notifyChangedPlayerResources(Game game, Map<String, ResourceSnapshot> resourcesBefore) {
+        for (Player currentPlayer : game.getPlayers().getPlayers()) {
+            ResourceSnapshot before = resourcesBefore.get(currentPlayer.getNickname());
+
+            if (before == null) {
+                continue;
+            }
+
+            if (before.food() != currentPlayer.getFood() || before.prestigePoints() != currentPlayer.getPP()) {
+                notifyPlayerResourcesUpdate(game, currentPlayer);
+            }
+        }
+    }
+
+    /**
+     * Notifies observers about the updated resources of one player.
+     *
+     * @param game the current game context
+     * @param player the player whose resources changed
+     */
+    private void notifyPlayerResourcesUpdate(Game game, Player player) {
+        game.getObserverManager().notifyObservers(
+                new PlayerResourcesUpdatedEvent(
+                        game.getGameId(),
+                        player.getNickname(),
+                        player.getFood(),
+                        player.getPP()
+                )
+        );
+    }
+
+    /**
+     * Immutable snapshot of one player's resources at a specific moment.
+     *
+     * @param food the food amount
+     * @param prestigePoints the prestige points amount
+     */
+    private record ResourceSnapshot(int food, int prestigePoints) {
+    }
+
+    /**
+     * Notifies observers that the game reached a new era.
+     *
+     * @param game the current game context
+     * @param newEra the new era reached by the game
+     */
+    private void notifyEraChanged(Game game, Era newEra) {
+        game.getObserverManager().notifyObservers(
+                new EraChangedEvent(game.getGameId(), newEra.name())
+        );
+    }
 
 }
