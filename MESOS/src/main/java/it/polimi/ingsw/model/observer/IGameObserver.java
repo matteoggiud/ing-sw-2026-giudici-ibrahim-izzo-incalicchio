@@ -3,33 +3,62 @@ package it.polimi.ingsw.model.observer;
 import it.polimi.ingsw.model.observer.event.*;
 
 /**
- * Implemented by VirtualView
+ * Observer interface implemented by remote or local views.
+ * Each event type has its own dedicated update method.
  */
 public interface IGameObserver {
+
     /**
      * Called when a game started event occurs.
      *
-     * @param event the started game event containing relevant information about the game start, such as player nicknames. This method is called by the event dispatch mechanism when a GameStartedEvent is dispatched to this observer.
+     * @param event the event containing information about the started game
      */
     default void update(GameStartedEvent event) {
         // Default implementation does nothing
     }
 
     /**
-     * Called when a player changed event occurs.
+     * Called when the list of players in the lobby changes.
      *
-     * @param event the players changed event containing relevant information about the change in players, such as the updated list of player nicknames. This method is called by the event dispatch mechanism when a PlayersChangedEvent is dispatched to this observer.
+     * @param event the event containing the updated player list
      */
     default void update(PlayersChangedEvent event) {
         // Default implementation does nothing
     }
 
     /**
-     * Called when a board update event occurs.
+     * Called when the board state changes.
      *
-     * @param event the board update event containing relevant information about the update to the game board. This method is called by the event dispatch mechanism when a BoardUpdateEvent is dispatched to this observer.
+     * @param event the event containing updated board information
      */
-    default void update(BoardUpdatedEvent event){
+    default void update(BoardUpdatedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Called when the player whose turn it is to place a totem changes.
+     *
+     * @param event the event containing the current player for the placing totem phase
+     */
+    default void update(PlaceTotemTurnChangedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Called when the player whose turn it is to resolve an action changes.
+     *
+     * @param event the event containing the current player for the action resolution phase
+     */
+    default void update(ResolveActionTurnChangedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
+     * Called when a player's resources change.
+     *
+     * @param event the event containing the updated resources of one player
+     */
+    default void update(PlayerResourcesUpdatedEvent event) {
         // Default implementation does nothing
     }
 }
