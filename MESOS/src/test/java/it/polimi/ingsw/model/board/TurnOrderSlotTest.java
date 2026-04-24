@@ -1,5 +1,6 @@
-package it.polimi.ingsw.server.model.board;
+package it.polimi.ingsw.model.board;
 
+import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
