@@ -26,7 +26,8 @@ class GameBuilderTest {
     void setUp() {
         // Initialize the host player
         Player host = new Player("Player1");
-        game = new Game(host);
+        int gameId = 1;
+        game = new Game(host, gameId);
 
         // Add two more players to reach the minimum for a standard test
         game.getPlayers().addPlayer(new Player("Player2"));

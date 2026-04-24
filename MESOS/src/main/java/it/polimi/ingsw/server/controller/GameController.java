@@ -55,7 +55,7 @@ public class GameController {
      * @param game the unique identifier of the game the player wishes to join
      * @param player the username of the player attempting to join the game
      */
-    public void join(UUID game, String player) {
+    public void join(int game, String player) {
         tunnel.joinGame(game, player);
     }
 
@@ -65,7 +65,7 @@ public class GameController {
      * @param game the unique identifier of the game the player wishes to leave
      * @param player the username of the player attempting to leave the game
      */
-    public void leaveGame(UUID game, String player) {
+    public void leaveGame(int game, String player) {
         tunnel.leaveGame(game, player);
     }
 

@@ -28,7 +28,7 @@ public class Game {
     /**
      * The game id is generated randomly using the UUID class, it is used to identify the game
      */
-    private final UUID gameId;
+    private final int gameId;
 
     /**
      * The players list contains all the players in the game
@@ -82,11 +82,11 @@ public class Game {
      * @param hostPlayer the player who created the game
      * @throws IllegalArgumentException if the player count is less than 2 or greater than 5
      */
-    public Game(Player hostPlayer) throws IllegalArgumentException {
+    public Game(Player hostPlayer, int gameId) throws IllegalArgumentException {
         if (hostPlayer == null) {
             throw new IllegalArgumentException("Host player cannot be null");
         }
-        this.gameId = UUID.randomUUID();
+        this.gameId = gameId;
         this.players = new  Players();
         this.board = new Board();
         this.gameState = new LobbyState();
@@ -105,7 +105,7 @@ public class Game {
      *
      * @return The gameId
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return this.gameId;
     }
 
