@@ -8,9 +8,12 @@ import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents the phase where players with a specific building effect
@@ -99,8 +102,11 @@ public class ExtraActionState implements IGameState {
             throw new IllegalStateException("You don't have any extra action to resolve.");
         }
 
+        Map<String, ResourceSnapshot> resourcesBefore = capturePlayerResources(game);
+
         ActionResolver resolver = new ActionResolver();
         resolver.resolveExtraAction(game, player, selectedCard, fromUpperRow);
+        notifyChangedPlayerResources(game, resourcesBefore);
 
         pendingPlayers.remove(player);
         executePhase(game);
@@ -164,5 +170,70 @@ public class ExtraActionState implements IGameState {
         game.getObserverManager().notifyObservers(
                 new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
         );
+    }
+
+    /**
+     * Captures the current resources of all players in the game.
+     *
+     * @param game the current game context
+     * @return a map from player nickname to resource snapshot
+     */
+    private Map<String, ResourceSnapshot> capturePlayerResources(Game game) {
+        Map<String, ResourceSnapshot> snapshots = new HashMap<>();
+
+        for (Player currentPlayer : game.getPlayers().getPlayers()) {
+            snapshots.put(
+                    currentPlayer.getNickname(),
+                    new ResourceSnapshot(currentPlayer.getFood(), currentPlayer.getPP())
+            );
+        }
+
+        return snapshots;
+    }
+
+    /**
+     * Notifies observers only for players whose resources changed.
+     *
+     * @param game the current game context
+     * @param resourcesBefore the resources captured before the action
+     */
+    private void notifyChangedPlayerResources(Game game, Map<String, ResourceSnapshot> resourcesBefore) {
+        for (Player currentPlayer : game.getPlayers().getPlayers()) {
+            ResourceSnapshot before = resourcesBefore.get(currentPlayer.getNickname());
+
+            if (before == null) {
+                continue;
+            }
+
+            if (before.food() != currentPlayer.getFood() || before.prestigePoints() != currentPlayer.getPP()) {
+                notifyPlayerResourcesUpdate(game, currentPlayer);
+            }
+        }
+    }
+
+    /**
+     * Notifies observers about the updated resources of one player.
+     *
+     * @param game the current game context
+     * @param player the player whose resources changed
+     */
+    private void notifyPlayerResourcesUpdate(Game game, Player player) {
+        game.getObserverManager().notifyObservers(
+                new PlayerResourcesUpdatedEvent(
+                        game.getGameId(),
+                        player.getNickname(),
+                        player.getFood(),
+                        player.getPP()
+                )
+        );
+    }
+
+    /**
+     * Immutable snapshot of one player's resources at a specific moment.
+     *
+     * @param food the food amount
+     * @param prestigePoints the prestige points amount
+     */
+    private record ResourceSnapshot(int food, int prestigePoints) {
     }
 }
