@@ -146,4 +146,26 @@ public interface IGameModel {
      */
     Map<Player, Integer> getFinalRanking(UUID gameId);
 
+    /**
+     * Checks whether the specified player has a pending extra action in the given game.
+     *
+     * @param gameId the unique identifier of the game
+     * @param nickname the nickname of the player to check
+     * @return true if the player has a pending extra action, false otherwise
+     * @throws IllegalArgumentException if any argument is null or invalid
+     * @throws IllegalStateException if the player is not logged in
+     */
+    boolean hasPendingExtraAction(UUID gameId, String nickname);
+
+    /**
+     * Retrieves the final ranking of a game using player nicknames as keys.
+     * This representation is more suitable for TUI and controller code.
+     *
+     * @param gameId the unique identifier of the game
+     * @return a map of player nicknames and their final scores sorted by ranking
+     * @throws IllegalArgumentException if the game id is null
+     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     */
+    Map<String, Integer> getFinalRankingByNickname(UUID gameId);
+
 }

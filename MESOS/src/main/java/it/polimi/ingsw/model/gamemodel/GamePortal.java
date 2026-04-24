@@ -7,6 +7,8 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.menu.GameManager;
 import it.polimi.ingsw.model.menu.PlayerManager;
 import it.polimi.ingsw.model.ruleset.StandardRuleSet;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import java.sql.SQLException;
@@ -271,6 +273,59 @@ public class GamePortal implements IGameModel {
 
         Game game = gameManager.getGame(gameId);
         return game.getFinalRanking();
+    }
+
+    /**
+     * Checks whether the specified player has a pending extra action in the given game.
+     *
+     * @param gameId the unique identifier of the game
+     * @param nickname the nickname of the player to check
+     * @return true if the player has a pending extra action, false otherwise
+     * @throws IllegalArgumentException if any argument is null or invalid
+     * @throws IllegalStateException if the player is not logged in
+     */
+    @Override
+    public boolean hasPendingExtraAction(UUID gameId, String nickname) {
+        if (gameId == null) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+        if (nickname == null) {
+            throw new IllegalArgumentException("Nickname cannot be null.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        Player player = playerManager.getPlayer(nickname);
+        if (player == null) {
+            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+        }
+
+        return game.getGameState().getExtraAction(player);
+    }
+
+    /**
+     * Retrieves the final ranking of a game using player nicknames as keys.
+     * This representation is more suitable for TUI and controller code.
+     *
+     * @param gameId the unique identifier of the game
+     * @return a map of player nicknames and their final scores sorted by ranking
+     * @throws IllegalArgumentException if the game id is null
+     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     */
+    @Override
+    public Map<String, Integer> getFinalRankingByNickname(UUID gameId) {
+        if (gameId == null) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+
+        Map<Player, Integer> ranking = getFinalRanking(gameId);
+        Map<String, Integer> rankingByNickname = new LinkedHashMap<>();
+
+        for (Map.Entry<Player, Integer> entry : ranking.entrySet()) {
+            rankingByNickname.put(entry.getKey().getNickname(), entry.getValue());
+        }
+
+        return rankingByNickname;
     }
 
 }
