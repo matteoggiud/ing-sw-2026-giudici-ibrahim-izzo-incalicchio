@@ -22,8 +22,8 @@ public class BuilderCharacterCard extends CharacterCard {
      * @param endGamePP the number of victory points this card provides at the end of the game (must be >= 0)
      * @param foodDiscount the amount of food discount this card provides during the game (must be >= 0)
      */
-    public BuilderCharacterCard(String name, Era era, int minNumPlayers, int endGamePP, int foodDiscount) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+    public BuilderCharacterCard(int cardId, String name, Era era, int minNumPlayers, int endGamePP, int foodDiscount) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers);
 
         if (endGamePP < 0)
             throw new IllegalArgumentException("End Game PP must not be negative");
