@@ -72,6 +72,15 @@ public interface IGameObserver {
     }
 
     /**
+     * Called when a player's deck changes.
+     *
+     * @param event the event containing the updated personal deck of one player
+     */
+    default void update(PlayerDeckUpdatedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
      * Called when the game ends and the final ranking becomes available.
      *
      * @param event the event containing the final ranking

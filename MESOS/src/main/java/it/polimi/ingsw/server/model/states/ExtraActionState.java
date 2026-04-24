@@ -1,13 +1,17 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.Card;
+import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerDeckUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
 
 import java.util.ArrayList;
@@ -103,10 +107,13 @@ public class ExtraActionState implements IGameState {
         }
 
         Map<String, ResourceSnapshot> resourcesBefore = capturePlayerResources(game);
+        DeckSnapshot deckBefore = capturePlayerDeck(player);
 
         ActionResolver resolver = new ActionResolver();
         resolver.resolveExtraAction(game, player, selectedCard, fromUpperRow);
+
         notifyChangedPlayerResources(game, resourcesBefore);
+        notifyPlayerDeckUpdateIfChanged(game, player, deckBefore);
 
         pendingPlayers.remove(player);
         executePhase(game);
@@ -229,11 +236,68 @@ public class ExtraActionState implements IGameState {
     }
 
     /**
+     * Captures the current personal deck of one player.
+     *
+     * @param player the player whose deck must be captured
+     * @return a snapshot of the player's current deck
+     */
+    private DeckSnapshot capturePlayerDeck(Player player) {
+        return new DeckSnapshot(
+                player.getPlayerDeck().getCharacters().stream()
+                        .map(CharacterCard::getCardId)
+                        .toList(),
+                player.getPlayerDeck().getBuildings().stream()
+                        .map(BuildingCard::getCardId)
+                        .toList()
+        );
+    }
+
+    /**
+     * Notifies observers if the player's deck changed after the action.
+     *
+     * @param game the current game context
+     * @param player the player whose deck may have changed
+     * @param deckBefore the deck snapshot captured before the action
+     */
+    private void notifyPlayerDeckUpdateIfChanged(Game game, Player player, DeckSnapshot deckBefore) {
+        DeckSnapshot deckAfter = capturePlayerDeck(player);
+
+        if (!deckBefore.equals(deckAfter)) {
+            notifyPlayerDeckUpdate(game, player);
+        }
+    }
+
+    /**
+     * Notifies observers about the updated personal deck of one player.
+     *
+     * @param game the current game context
+     * @param player the player whose deck changed
+     */
+    private void notifyPlayerDeckUpdate(Game game, Player player) {
+        game.getObserverManager().notifyObservers(
+                new PlayerDeckUpdatedEvent(
+                        game.getGameId(),
+                        player.getNickname(),
+                        PlayerDeckDTO.fromPlayer(player)
+                )
+        );
+    }
+
+    /**
      * Immutable snapshot of one player's resources at a specific moment.
      *
      * @param food the food amount
      * @param prestigePoints the prestige points amount
      */
     private record ResourceSnapshot(int food, int prestigePoints) {
+    }
+
+    /**
+     * Immutable snapshot of one player's deck at a specific moment.
+     *
+     * @param characterCardIds the ids of the character cards currently in the deck
+     * @param buildingCardIds the ids of the building cards currently in the deck
+     */
+    private record DeckSnapshot(List<Integer> characterCardIds, List<Integer> buildingCardIds) {
     }
 }
