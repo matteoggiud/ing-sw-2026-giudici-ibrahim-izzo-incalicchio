@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
+import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +56,12 @@ public class ExtraActionState implements IGameState {
 
         if (pendingPlayers.isEmpty()) {
             nextState(game);
+            return;
         }
-    }
 
+        notifyBoardUpdate(game);
+        notifyCurrentExtraActionPlayer(game);
+    }
 
     /**
      * Checks whether the given player still has a pending extra action to resolve.
@@ -108,7 +114,6 @@ public class ExtraActionState implements IGameState {
      */
     private void resolveAutomaticExtraActionSkips(Game game) {
         ActionResolver resolver = new ActionResolver();
-
         pendingPlayers.removeIf(player -> !resolver.canResolveExtraAction(game, player));
     }
 
@@ -136,5 +141,28 @@ public class ExtraActionState implements IGameState {
     private boolean hasExtraActionEffect(Player player) {
         return player.getPlayerDeck().getActiveExtractionEffects().stream()
                 .anyMatch(IExtraActionEffect::hasExtraAction);
+    }
+
+    /**
+     * Notifies observers about the updated board state.
+     *
+     * @param game the current game context
+     */
+    private void notifyBoardUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+        );
+    }
+
+    /**
+     * Notifies observers about the player who must resolve the next extra action.
+     *
+     * @param game the current game context
+     */
+    private void notifyCurrentExtraActionPlayer(Game game) {
+        Player currentPlayer = pendingPlayers.get(0);
+        game.getObserverManager().notifyObservers(
+                new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
+        );
     }
 }

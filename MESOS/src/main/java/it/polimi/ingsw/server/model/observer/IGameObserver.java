@@ -54,6 +54,15 @@ public interface IGameObserver {
     }
 
     /**
+     * Called when the player whose turn it is to resolve an extra action changes.
+     *
+     * @param event the event containing the current player for the extra action phase
+     */
+    default void update(ExtraActionTurnChangedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
      * Called when a player's resources change.
      *
      * @param event the event containing the updated resources of one player

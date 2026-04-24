@@ -56,11 +56,6 @@ public class PlacingTotemState implements IGameState {
         }
 
         // Otherwise, notify the next player who must place a totem.
-        /**
-         * Notify next player to place
-         *
-         * @param game the current game context
-         */
         notifyCurrentPlacingPlayer(game);
     }
 
