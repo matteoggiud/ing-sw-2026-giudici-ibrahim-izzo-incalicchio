@@ -8,6 +8,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * Handles communication with a single client in a separate thread.
+ */
 public class ClientHandler implements Runnable {
 
 
@@ -22,15 +25,16 @@ public class ClientHandler implements Runnable {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
         this.clientVisitor = new ClientVisitor(controller);
-
-
     }
 
     @Override
     public void run() {
-        while (true) {
+        while (!clientSocket.isClosed()) {
             try {
+                // Read a message from the client
                 ClientMessage message = (ClientMessage) inputStream.readObject();
+
+                // Dispatch the message to the client handler in the server
                 message.dispatch(clientVisitor);
             } catch (Exception e) {
                 e.printStackTrace();
