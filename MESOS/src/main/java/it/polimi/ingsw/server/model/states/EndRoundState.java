@@ -12,6 +12,7 @@ import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.EraChangedEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,8 +153,11 @@ public class EndRoundState implements IGameState {
         board.transferUpperBuildingToLower();
         board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
 
+        notifyEraChanged(game, newEra);
+
         return newEra;
     }
+
 
     /**
      * Notifies observers about the updated board state.
@@ -247,4 +251,17 @@ public class EndRoundState implements IGameState {
      */
     private record ResourceSnapshot(int food, int prestigePoints) {
     }
+
+    /**
+     * Notifies observers that the game reached a new era.
+     *
+     * @param game the current game context
+     * @param newEra the new era reached by the game
+     */
+    private void notifyEraChanged(Game game, Era newEra) {
+        game.getObserverManager().notifyObservers(
+                new EraChangedEvent(game.getGameId(), newEra.name())
+        );
+    }
+
 }

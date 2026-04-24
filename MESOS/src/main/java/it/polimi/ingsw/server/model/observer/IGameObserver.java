@@ -36,6 +36,15 @@ public interface IGameObserver {
     }
 
     /**
+     * Called when the game transitions to a new era.
+     *
+     * @param event the event containing the new era
+     */
+    default void update(EraChangedEvent event) {
+        // Default implementation does nothing
+    }
+
+    /**
      * Called when the player whose turn it is to place a totem changes.
      *
      * @param event the event containing the current player for the placing totem phase
