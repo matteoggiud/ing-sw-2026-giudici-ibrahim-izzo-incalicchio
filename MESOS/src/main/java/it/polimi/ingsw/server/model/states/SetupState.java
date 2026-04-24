@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
+import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
 
@@ -16,9 +18,10 @@ public class SetupState implements IGameState {
 
     /**
      * Executes the setup phase of the game.
-     * And notifies the observers about:
-     * each player's initial resources
-     * the first player who must place a totem
+     * After preparing the game, it notifies observers about:
+     * - the current board state
+     * - each player's initial resources
+     * - the first player who must place a totem
      *
      * @param game the current game context
      */
@@ -32,8 +35,20 @@ public class SetupState implements IGameState {
         // The setup is complete, so the next active phase is placing totems.
         nextState(game);
 
+        // Notify observers about the initial board state
+        notifyBoardUpdate(game);
         notifyInitialResources(game);
         notifyCurrentPlacingPlayer(game);
+    }
+
+    /**
+     * Notifies observers about the updated board state
+     * @param game the current game context
+     */
+    private void notifyBoardUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+        );
     }
 
     /**
@@ -55,7 +70,7 @@ public class SetupState implements IGameState {
     }
 
     /**
-     * Notifies observers about the player who must place the first totem.
+     * Notifies observers about the player who must place the next totem.
      *
      * @param game the current game context
      */

@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
+import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ResolveActionTurnChangedEvent;
 
 /**
@@ -17,7 +19,7 @@ public class ResolveActionsState implements IGameState {
     /**
      * Executes the action resolution phase.
      * Automatic skips are processed first. If there are still players on the offer track,
-     * observers are notified about whose turn it is to resolve the next action.
+     * observers are notified about the current board state and whose turn it is next.
      *
      * @param game the current game context
      */
@@ -30,10 +32,8 @@ public class ResolveActionsState implements IGameState {
             return;
         }
 
-        Player currentPlayer = game.getBoard().getOfferTrack().getCurrentPlayer();
-        game.getObserverManager().notifyObservers(
-                new ResolveActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
+        notifyBoardUpdate(game);
+        notifyCurrentResolvingPlayer(game);
     }
 
     /**
@@ -49,7 +49,7 @@ public class ResolveActionsState implements IGameState {
     }
 
     /**
-     * Resolves the current player's action and updates the turn if needed.
+     * Resolves the current player's action and updates the board and turn if needed.
      *
      * @param game the current game context
      * @param player the player resolving the action
@@ -60,5 +60,27 @@ public class ResolveActionsState implements IGameState {
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
         executePhase(game);
+    }
+
+    /**
+     * Notifies observers about the updated board state
+     * @param game the current game context
+     */
+    private void notifyBoardUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+        );
+    }
+
+    /**
+     * Notifies observers about the player who must resolve the next action.
+     *
+     * @param game the current game context
+     */
+    private void notifyCurrentResolvingPlayer(Game game) {
+        Player currentPlayer = game.getBoard().getOfferTrack().getCurrentPlayer();
+        game.getObserverManager().notifyObservers(
+                new ResolveActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
+        );
     }
 }

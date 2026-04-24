@@ -5,6 +5,8 @@ import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 
 public class PlacingTotemState implements IGameState {
@@ -44,6 +46,9 @@ public class PlacingTotemState implements IGameState {
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 
+        // Notify observers about the updated board state
+        notifyBoardUpdate(game);
+
         // If all players have placed their totems, the game moves to action resolution.
         if (game.getBoard().getTurnOrderBox().isCompletelyEmpty()) {
             nextState(game);
@@ -51,10 +56,12 @@ public class PlacingTotemState implements IGameState {
         }
 
         // Otherwise, notify the next player who must place a totem.
-        Player nextPlayer = getCurrentPlayer(game.getBoard());
-        game.getObserverManager().notifyObservers(
-                new PlaceTotemTurnChangedEvent(game.getGameId(), nextPlayer.getNickname())
-        );
+        /**
+         * Notify next player to place
+         *
+         * @param game the current game context
+         */
+        notifyCurrentPlacingPlayer(game);
     }
 
     /**
@@ -70,5 +77,22 @@ public class PlacingTotemState implements IGameState {
                 .map(TurnOrderSlot::getPlacedPlayer)
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("All totems have already been placed."));
+    }
+
+    /**
+     * Notifies observers about the updated board state
+     * @param game the current game context
+     */
+    private void notifyBoardUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+        );
+    }
+
+    private void notifyCurrentPlacingPlayer(Game game) {
+        Player currentPlayer = getCurrentPlayer(game.getBoard());
+        game.getObserverManager().notifyObservers(
+                new PlaceTotemTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
+        );
     }
 }

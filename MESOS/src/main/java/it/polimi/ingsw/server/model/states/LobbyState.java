@@ -15,8 +15,6 @@ public class LobbyState implements IGameState {
     @Override
     public void nextState(Game game) {
         game.setGameState(new SetupState());
-
-        // game.getObserverManager().notifyObservers(new IGameEvent(GameEventType.GAME_STARTED, game.getGameId(), null, "Game has started"));
     }
 
     /**
@@ -30,8 +28,7 @@ public class LobbyState implements IGameState {
     @Override
     public void addPlayer(Game game, Player player) throws IllegalArgumentException, IllegalStateException {
         game.getPlayers().addPlayer(player);
-
-        game.getObserverManager().notifyObservers(new PlayersChangedEvent(game.getPlayers().getPlayerNicknames()));
+        notifyPlayersChanged(game);
     }
 
     /**
@@ -44,8 +41,7 @@ public class LobbyState implements IGameState {
     @Override
     public void removePlayer(Game game, Player player) throws IllegalArgumentException {
         game.getPlayers().removePlayer(player);
-
-        game.getObserverManager().notifyObservers(new PlayersChangedEvent(game.getPlayers().getPlayerNicknames()));
+        notifyPlayersChanged(game);
     }
 
     /**
@@ -67,6 +63,28 @@ public class LobbyState implements IGameState {
     @Override
     public void startGame(Game game) {
         nextState(game);
-        game.getObserverManager().notifyObservers(new GameStartedEvent(game.getPlayers().getPlayerNicknames(), game.getGameId()));
+        notifyGameStarted(game);
+    }
+
+    /**
+     * Notifies observers about the updated list of players in the lobby.
+     *
+     * @param game the current game context
+     */
+    private void notifyPlayersChanged(Game game) {
+        game.getObserverManager().notifyObservers(
+                new PlayersChangedEvent(game.getPlayers().getPlayerNicknames())
+        );
+    }
+
+    /**
+     * Notifies observers that the game has started.
+     *
+     * @param game the current game context
+     */
+    private void notifyGameStarted(Game game) {
+        game.getObserverManager().notifyObservers(
+                new GameStartedEvent(game.getPlayers().getPlayerNicknames(), game.getGameId())
+        );
     }
 }
