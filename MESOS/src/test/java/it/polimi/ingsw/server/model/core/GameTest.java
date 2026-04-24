@@ -16,7 +16,8 @@ class GameTest {
     @BeforeEach
     void setUp() {
         hostPlayer = new Player("host");
-        game = new Game(hostPlayer);
+        int gameId = 1;
+        game = new Game(hostPlayer,  gameId);
     }
 
     @Test
