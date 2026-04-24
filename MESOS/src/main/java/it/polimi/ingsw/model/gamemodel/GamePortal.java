@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.core.Player;
 import it.polimi.ingsw.model.menu.GameManager;
 import it.polimi.ingsw.model.menu.PlayerManager;
 import it.polimi.ingsw.model.ruleset.StandardRuleSet;
+import java.util.Map;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -252,4 +253,24 @@ public class GamePortal implements IGameModel {
             login(nickname, password);
         }
     }
+
+    /**
+     * Retrieves the final ranking of a game when the game has reached
+     * the scoring phase.
+     *
+     * @param gameId the unique identifier of the game
+     * @return a map of players and their final scores sorted by ranking
+     * @throws IllegalArgumentException if the game id is null
+     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     */
+    @Override
+    public Map<Player, Integer> getFinalRanking(UUID gameId) {
+        if (gameId == null) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+        return game.getFinalRanking();
+    }
+
 }

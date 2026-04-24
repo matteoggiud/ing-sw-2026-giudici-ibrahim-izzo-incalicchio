@@ -5,6 +5,8 @@ import it.polimi.ingsw.model.deck.*;
 import it.polimi.ingsw.model.observer.ObserverManager;
 import it.polimi.ingsw.model.ruleset.*;
 import it.polimi.ingsw.model.states.*;
+import java.util.Map;
+
 
 
 import java.util.UUID;
@@ -302,12 +304,15 @@ public class Game {
         this.gameState = new EndedState();
     }
 
-    public void getFinalRanking() throws IllegalStateException { //TODO: da portare nel game state
-
-       /* if (!(this.gameState instanceof ComputeFinalScoreState)) {
-            throw new IllegalStateException("The game state is not FinalScoreState");
-        }*/
-
+    /**
+     * Returns the final ranking when the current game state supports it.
+     *
+     * @return a map of players and their final scores sorted by ranking
+     * @throws IllegalStateException if the current state does not expose the final ranking yet
+     */
+    public Map<Player, Integer> getFinalRanking() {
+        return gameState.getFinalRanking(this);
     }
+
 
 }
