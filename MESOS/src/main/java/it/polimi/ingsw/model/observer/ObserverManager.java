@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.observer;
 
+import it.polimi.ingsw.model.observer.event.IGameEvent;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -18,8 +20,8 @@ public class ObserverManager {
         observers.remove(observer);
     }
 
-    public void notifyObservers(GameEvent event){
+    public void notifyObservers(IGameEvent event) {
         for (IGameObserver observer : observers)
-            observer.update(event);
+            event.dispatch(observer);
     }
 }

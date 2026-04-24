@@ -2,8 +2,8 @@ package it.polimi.ingsw.model.states;
 
 import it.polimi.ingsw.model.core.Game;
 import it.polimi.ingsw.model.core.Player;
-import it.polimi.ingsw.model.observer.GameEvent;
-import it.polimi.ingsw.model.observer.GameEventType;
+import it.polimi.ingsw.model.observer.event.GameStartedEvent;
+import it.polimi.ingsw.model.observer.event.PlayersChangedEvent;
 import it.polimi.ingsw.model.ruleset.StandardRuleSet;
 
 public class LobbyState implements IGameState {
@@ -16,28 +16,28 @@ public class LobbyState implements IGameState {
     public void nextState(Game game) {
         game.setGameState(new SetupState());
 
-        game.getObserverManager().notifyObservers(new GameEvent(GameEventType.GAME_STARTED, game.getGameId(), null, "Game has started"));
+        // game.getObserverManager().notifyObservers(new IGameEvent(GameEventType.GAME_STARTED, game.getGameId(), null, "Game has started"));
     }
 
     /**
      * Adds a player to the game lobby and notifies observers of the new player joining.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param player the player to be added to the game
      * @throws IllegalArgumentException if the player is null or already in the game
-     * @throws IllegalStateException if the game is not in a state that allows adding players (e.g., if the game has already started)
+     * @throws IllegalStateException    if the game is not in a state that allows adding players (e.g., if the game has already started)
      */
     @Override
     public void addPlayer(Game game, Player player) throws IllegalArgumentException, IllegalStateException {
         game.getPlayers().addPlayer(player);
 
-        game.getObserverManager().notifyObservers(new GameEvent(GameEventType.PLAYER_JOINED, game.getGameId(), player.getNickname(), "Joined new player"));
+        game.getObserverManager().notifyObservers(new PlayersChangedEvent(game.getPlayers().getPlayerNicknames()));
     }
 
     /**
      * Removes a player from the game lobby and notifies observers of the player leaving.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param player the player to be removed from the game
      * @throws IllegalArgumentException if the player is null or not in the game
      */
@@ -45,7 +45,7 @@ public class LobbyState implements IGameState {
     public void removePlayer(Game game, Player player) throws IllegalArgumentException {
         game.getPlayers().removePlayer(player);
 
-        game.getObserverManager().notifyObservers(new GameEvent(GameEventType.PLAYER_LEFT, game.getGameId(), player.getNickname(), "Player left the game"));
+        game.getObserverManager().notifyObservers(new PlayersChangedEvent(game.getPlayers().getPlayerNicknames()));
     }
 
     /**
@@ -65,7 +65,8 @@ public class LobbyState implements IGameState {
      * @param game the current game context
      */
     @Override
-    public void startGame(Game game){
+    public void startGame(Game game) {
         nextState(game);
+        game.getObserverManager().notifyObservers(new GameStartedEvent(game.getPlayers().getPlayerNicknames(), game.getGameId()));
     }
 }

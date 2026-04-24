@@ -26,8 +26,8 @@ public class InventorCharacterCard extends CharacterCard {
      * @param inventorType  the specific type of Inventor this card represents (must not be null)
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
-    public InventorCharacterCard(String name, Era era, int minNumPlayers, InventorType inventorType) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+    public InventorCharacterCard(int cardId, String name, Era era, int minNumPlayers, InventorType inventorType) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers);
         if (inventorType == null)
             throw new IllegalArgumentException("Inventor type must not be null");
 

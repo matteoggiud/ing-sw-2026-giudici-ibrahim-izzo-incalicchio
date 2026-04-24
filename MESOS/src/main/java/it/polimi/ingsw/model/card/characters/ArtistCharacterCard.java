@@ -18,8 +18,8 @@ public class ArtistCharacterCard extends CharacterCard {
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
-    public ArtistCharacterCard(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
-        super(name, era, minNumPlayers);
+    public ArtistCharacterCard(int cardId, String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers);
     }
 
     /**
