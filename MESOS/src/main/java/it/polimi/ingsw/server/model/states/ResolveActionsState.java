@@ -1,13 +1,13 @@
 package it.polimi.ingsw.server.model.states;
 
-import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.card.BuildingCard;
+import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerDeckDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerDeckUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
@@ -88,7 +88,7 @@ public class ResolveActionsState implements IGameState {
      */
     private void notifyBoardUpdate(Game game) {
         game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
         );
     }
 
@@ -203,7 +203,7 @@ public class ResolveActionsState implements IGameState {
                 new PlayerDeckUpdatedEvent(
                         game.getGameId(),
                         player.getNickname(),
-                        PlayerDeckDTO.fromPlayer(player)
+                        PlayerDeckDTOMapper.toPlayerDeckDTO(player)
                 )
         );
     }

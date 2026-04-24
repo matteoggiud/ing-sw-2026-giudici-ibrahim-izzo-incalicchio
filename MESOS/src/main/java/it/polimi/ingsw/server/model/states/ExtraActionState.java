@@ -7,8 +7,8 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerDeckDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerDeckUpdatedEvent;
@@ -163,7 +163,7 @@ public class ExtraActionState implements IGameState {
      */
     private void notifyBoardUpdate(Game game) {
         game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
         );
     }
 
@@ -278,7 +278,7 @@ public class ExtraActionState implements IGameState {
                 new PlayerDeckUpdatedEvent(
                         game.getGameId(),
                         player.getNickname(),
-                        PlayerDeckDTO.fromPlayer(player)
+                        PlayerDeckDTOMapper.toPlayerDeckDTO(player)
                 )
         );
     }

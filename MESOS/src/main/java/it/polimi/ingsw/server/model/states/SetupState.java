@@ -4,7 +4,7 @@ import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
@@ -35,19 +35,20 @@ public class SetupState implements IGameState {
         // The setup is complete, so the next active phase is placing totems.
         nextState(game);
 
-        // Notify observers about the initial board state
+        // Notify observers about the initial board state.
         notifyBoardUpdate(game);
         notifyInitialResources(game);
         notifyCurrentPlacingPlayer(game);
     }
 
     /**
-     * Notifies observers about the updated board state
+     * Notifies observers about the updated board state.
+     *
      * @param game the current game context
      */
     private void notifyBoardUpdate(Game game) {
         game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
         );
     }
 

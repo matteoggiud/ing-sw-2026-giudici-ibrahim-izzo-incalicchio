@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
@@ -38,7 +38,6 @@ public class EndRoundState implements IGameState {
 
         game.setGameState(new PlacingTotemState());
     }
-
 
     /**
      * Executes the end round phase of the game.
@@ -163,7 +162,7 @@ public class EndRoundState implements IGameState {
      */
     private void notifyBoardUpdate(Game game) {
         game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
         );
     }
 

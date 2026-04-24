@@ -5,7 +5,7 @@ import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 
@@ -46,7 +46,7 @@ public class PlacingTotemState implements IGameState {
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 
-        // Notify observers about the updated board state
+        // Notify observers about the updated board state.
         notifyBoardUpdate(game);
 
         // If all players have placed their totems, the game moves to action resolution.
@@ -75,15 +75,21 @@ public class PlacingTotemState implements IGameState {
     }
 
     /**
-     * Notifies observers about the updated board state
+     * Notifies observers about the updated board state.
+     *
      * @param game the current game context
      */
     private void notifyBoardUpdate(Game game) {
         game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTO.fromGame(game))
+                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
         );
     }
 
+    /**
+     * Notifies observers about the player who must place the next totem.
+     *
+     * @param game the current game context
+     */
     private void notifyCurrentPlacingPlayer(Game game) {
         Player currentPlayer = getCurrentPlayer(game.getBoard());
         game.getObserverManager().notifyObservers(
