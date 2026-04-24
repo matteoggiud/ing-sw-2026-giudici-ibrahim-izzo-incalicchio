@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.gamelogic;
 
-import it.polimi.ingsw.model.core.*;
-import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.deck.*;
-import it.polimi.ingsw.model.board.*;
+import it.polimi.ingsw.server.model.board.TurnOrderBox;
+import it.polimi.ingsw.server.model.board.TurnOrderSlot;
+import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.deck.TribeDeck;
+import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

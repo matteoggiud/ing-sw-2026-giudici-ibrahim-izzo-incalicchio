@@ -1,0 +1,31 @@
+package it.polimi.ingsw.server.model.effect.building.modifiers;
+
+import it.polimi.ingsw.server.model.card.CharacterType;
+import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.effect.EffectEventResult;
+import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.server.model.effect.event.HuntEventEffect;
+
+import java.util.Optional;
+
+/**
+ * During the Hunt Event, for each Hunter in your tribe, gain 1 Food and 1 additional Prestige Point.
+ */
+public class HuntBonusBuildingEffect implements IBuildingEffect, IEventModifier {
+
+    @Override
+    public Optional<IEventModifier> getEventModifier() {
+        return Optional.of(this);
+    }
+
+    @Override
+    public void visitEvent(HuntEventEffect eventCard, EffectEventResult result) {
+        Player p = result.getTargetPlayer();
+
+        // Count the number of "Hunters" in the player's tribe
+        int numbersOfHunters = p.getPlayerDeck().countCharactersByType(CharacterType.HUNTER);
+
+        // For each Hunter, gain 1 Food and 1 additional Prestige Point
+        result.setFoodChange(result.getFoodChange() + numbersOfHunters);
+        result.setPpChange(result.getPpChange() + numbersOfHunters);    }
+}

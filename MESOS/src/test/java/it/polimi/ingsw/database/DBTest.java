@@ -1,8 +1,9 @@
 package it.polimi.ingsw.database;
 
-import it.polimi.ingsw.model.card.BuildingCard;
-import it.polimi.ingsw.model.card.CharacterCard;
-import it.polimi.ingsw.model.card.EventCard;
+import it.polimi.ingsw.server.database.DataDepository;
+import it.polimi.ingsw.server.model.card.BuildingCard;
+import it.polimi.ingsw.server.model.card.CharacterCard;
+import it.polimi.ingsw.server.model.card.EventCard;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;

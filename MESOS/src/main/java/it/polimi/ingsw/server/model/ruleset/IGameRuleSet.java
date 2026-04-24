@@ -1,0 +1,77 @@
+package it.polimi.ingsw.server.model.ruleset;
+
+import it.polimi.ingsw.server.model.board.OfferBox;
+import it.polimi.ingsw.server.model.board.TurnOrderSlot;
+import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.card.EventCard;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+
+/**
+ * Defines the configuration and dynamic rules for a standard game of Mesos.
+ * Like those based on the number of players.
+ */
+
+public interface IGameRuleSet {
+
+    /**
+     * Creates and initializes the list of slots for the Turn Order Box
+     * based on the player count.
+     *
+     * @param numPlayers the current number of players.
+     * @return a list of initialized TurnOrderSlot objects.
+     * @throws IllegalArgumentException if the player count is invalid.
+     */
+    ArrayList<TurnOrderSlot> createTurnOrderSlots(int numPlayers);
+
+    /**
+     * Creates and initializes the list of OfferBoxes for the OfferTrack based on the player count.
+     * @param numPlayers the current number of players.
+     * @return an ordered list of initialized OfferBox objects.
+     */
+    ArrayList<OfferBox> createOfferBoxes(int numPlayers);
+
+
+    /**
+     * Calculates the number of cards to be placed in the upper offer row.
+     *
+     * @param numPlayers the current number of players in the game.
+     * @return the capacity of the upper row.
+     * @throws IllegalArgumentException if the player count is invalid.
+     */
+    int getUpperRowSize(int numPlayers);
+
+    /**
+     * Calculates the number of cards to be placed in the lower offer row.
+     *
+     * @param numPlayers the current number of players in the game.
+     * @return the capacity of the lower row.
+     * @throws IllegalArgumentException if the player count is invalid.
+     */
+    int getLowerRowSize(int numPlayers);
+
+    /**
+     * Determines the starting amount of food for a player based on their initial turn order.
+     *
+     * @param turnOrderIndex the 0-based index of the player's turn order (e.g., 0 is the first player).
+     * @return the starting food amount.
+     * @throws IllegalArgumentException if the turn order index is out of bounds.
+     */
+    int getInitialFood(int turnOrderIndex);
+
+    /**
+     * Returns the number of building cards to select for the given era
+     * based on the current player count.
+     *
+     * @param era the era for which the limit is requested.
+     * @param numPlayers the current number of players.
+     * @return the maximum number of building cards for that era.
+     * @throws IllegalArgumentException if era is null or player count is invalid.
+     */
+    int getBuildingLimit(Era era, int numPlayers);
+
+    Stack<EventCard> sortEventCards(List<EventCard> eventCards);
+}

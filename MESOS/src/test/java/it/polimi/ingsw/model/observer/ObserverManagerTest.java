@@ -1,11 +1,8 @@
 package it.polimi.ingsw.model.observer;
 
-import it.polimi.ingsw.model.observer.event.IGameEvent;
+import it.polimi.ingsw.server.model.observer.ObserverManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 class ObserverManagerTest {
 
