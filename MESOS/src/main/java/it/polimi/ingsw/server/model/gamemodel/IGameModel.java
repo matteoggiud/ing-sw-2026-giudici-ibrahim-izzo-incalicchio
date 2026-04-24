@@ -88,7 +88,7 @@ public interface IGameModel {
      * @param hostPlayer the player who will host the new game
      * @return the unique identifier (UUID) of the newly created game
      */
-    UUID createGame(String hostPlayer);
+    int createGame(String hostPlayer);
 
     /**
      * Retrieves an active game by its unique identifier.
@@ -97,7 +97,7 @@ public interface IGameModel {
      * @return the game associated with the given id
      * @throws IllegalArgumentException if the game id is null or no game exists with that id
      */
-    Game getGame(UUID gameId);
+    Game getGame(int gameId);
 
     /**
      * Starts an existing game.
@@ -109,7 +109,7 @@ public interface IGameModel {
      * @throws IllegalArgumentException if any argument is null
      * @throws IllegalStateException if the requester is not the host or there are not enough players
      */
-    void startGame(UUID gameId, String hostNickname);
+    void startGame(int gameId, String hostNickname);
 
 
     /**
@@ -125,7 +125,7 @@ public interface IGameModel {
      * @param gameId the unique identifier of the game the player wants to join
      * @param player the player attempting to join the game
      */
-    void joinGame(UUID gameId, String player);
+    void joinGame(int gameId, String player);
 
     /**
      * Allows a player to leave a game they have joined using the game's unique identifier (UUID).
@@ -133,7 +133,7 @@ public interface IGameModel {
      * @param gameId the unique identifier of the game the player wants to leave
      * @param player the player attempting to leave the game
      */
-    void leaveGame(UUID gameId, String player);
+    void leaveGame(int gameId, String player);
 
     /**
      * Retrieves the final ranking of a game when the game has reached
@@ -144,7 +144,7 @@ public interface IGameModel {
      * @throws IllegalArgumentException if the game id is null
      * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
      */
-    Map<Player, Integer> getFinalRanking(UUID gameId);
+    Map<Player, Integer> getFinalRanking(int gameId);
 
     /**
      * Checks whether the specified player has a pending extra action in the given game.
@@ -155,7 +155,7 @@ public interface IGameModel {
      * @throws IllegalArgumentException if any argument is null or invalid
      * @throws IllegalStateException if the player is not logged in
      */
-    boolean hasPendingExtraAction(UUID gameId, String nickname);
+    boolean hasPendingExtraAction(int gameId, String nickname);
 
     /**
      * Retrieves the final ranking of a game using player nicknames as keys.
@@ -166,6 +166,6 @@ public interface IGameModel {
      * @throws IllegalArgumentException if the game id is null
      * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
      */
-    Map<String, Integer> getFinalRankingByNickname(UUID gameId);
+    Map<String, Integer> getFinalRankingByNickname(int gameId);
 
 }

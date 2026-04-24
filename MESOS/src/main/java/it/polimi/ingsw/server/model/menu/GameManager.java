@@ -6,7 +6,7 @@ import it.polimi.ingsw.server.model.core.Player;
 import java.util.*;
 
 public class GameManager {
-    private final Map<UUID, Game> activeGames;
+    private final Map<Integer, Game> activeGames;
 
     public GameManager() {
         activeGames = new HashMap<>();
@@ -18,11 +18,11 @@ public class GameManager {
      * @param host the player who will host the game
      * @return the UUID of the newly created game
      */
-    public UUID createGame(Player host) {
+    public int createGame(Player host, int gameId) {
         if (host == null) {
             throw new IllegalArgumentException("Host player cannot be null.");
         }
-        Game newGame = new Game(host);
+        Game newGame = new Game(host, gameId);
         activeGames.put(newGame.getGameId(), newGame);
         return newGame.getGameId();
     }
@@ -34,8 +34,8 @@ public class GameManager {
      * @return the game associated with the given id
      * @throws IllegalArgumentException if the game id is null or no game exists with that id
      */
-    public Game getGame(UUID gameId) {
-        if (gameId == null) {
+    public Game getGame(int gameId) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
 
@@ -61,7 +61,7 @@ public class GameManager {
      * @param player the player who wants to join the game
      * @throws IllegalArgumentException if the game does not exist or if the player cannot join the game
      */
-    public void joinGame(UUID gameId, Player player) {
+    public void joinGame(int gameId, Player player) {
         Game game = getGame(gameId);
         game.getGameState().addPlayer(game, player);
     }
@@ -74,7 +74,7 @@ public class GameManager {
      * @param gameId the UUID of the game to leave
      * @param player the player who wants to leave the game
      */
-    public void leaveGame(UUID gameId, Player player) {
+    public void leaveGame(int gameId, Player player) {
         Game game = getGame(gameId);
         game.getGameState().removePlayer(game, player);
     }

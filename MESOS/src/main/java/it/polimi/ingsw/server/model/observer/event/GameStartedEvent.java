@@ -9,7 +9,7 @@ import java.util.UUID;
 public class GameStartedEvent implements IGameEvent {
 
     private final List<String> playerNicknames;
-    private final UUID gameId;
+    private final int gameId;
 
     /**
      * Constructs a new GameStartedEvent with the given game context, extracting the player nicknames from the game
@@ -26,7 +26,7 @@ public class GameStartedEvent implements IGameEvent {
      *
      * @param playerNicknames the list of player nicknames participating in the game, must not be null or empty
      */
-    public GameStartedEvent(List<String> playerNicknames, UUID gameId) {
+    public GameStartedEvent(List<String> playerNicknames, int gameId) {
         this.playerNicknames = playerNicknames;
         this.gameId = gameId;
     }
@@ -45,7 +45,7 @@ public class GameStartedEvent implements IGameEvent {
      *
      * @return the UUID of the game
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

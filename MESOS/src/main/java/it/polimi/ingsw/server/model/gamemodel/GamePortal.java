@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.gamemodel;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
@@ -64,12 +65,15 @@ public class GamePortal implements IGameModel {
      * @return the unique identifier of the newly created game
      */
     @Override
-    public UUID createGame(String hostNickname) {
+    public int createGame(String hostNickname) {
+        int gameId;
+        DataWriting dw = new DataWriting();
         Player host = playerManager.getPlayer(hostNickname);
         if (host == null) {
             throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
         }
-        return gameManager.createGame(host);
+        gameId = dw.addNewGame(hostNickname);
+        return gameManager.createGame(host, gameId);
     }
 
     /**
@@ -80,7 +84,7 @@ public class GamePortal implements IGameModel {
      * @throws IllegalArgumentException if the game id is null or no game exists with that id
      */
     @Override
-    public Game getGame(UUID gameId) {
+    public Game getGame(int gameId) {
         return gameManager.getGame(gameId);
     }
 
@@ -96,8 +100,8 @@ public class GamePortal implements IGameModel {
      * @throws IllegalStateException if the requester is not the host or there are not enough players
      */
     @Override
-    public void startGame(UUID gameId, String hostNickname) {
-        if (gameId == null) {
+    public void startGame(int gameId, String hostNickname) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (hostNickname == null) {
@@ -136,7 +140,7 @@ public class GamePortal implements IGameModel {
      * @param player the player attempting to join the game
      */
     @Override
-    public void joinGame(UUID gameId, String player) {
+    public void joinGame(int gameId, String player) {
         Player playerToJoin = playerManager.getPlayer(player);
         if (playerToJoin == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
@@ -151,7 +155,7 @@ public class GamePortal implements IGameModel {
      * @param player the player attempting to leave the game
      */
     @Override
-    public void leaveGame(UUID gameId, String player) {
+    public void leaveGame(int gameId, String player) {
         Player playerToLeave = playerManager.getPlayer(player);
         if (playerToLeave == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
@@ -266,8 +270,8 @@ public class GamePortal implements IGameModel {
      * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
      */
     @Override
-    public Map<Player, Integer> getFinalRanking(UUID gameId) {
-        if (gameId == null) {
+    public Map<Player, Integer> getFinalRanking(int gameId) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
 
@@ -285,8 +289,8 @@ public class GamePortal implements IGameModel {
      * @throws IllegalStateException if the player is not logged in
      */
     @Override
-    public boolean hasPendingExtraAction(UUID gameId, String nickname) {
-        if (gameId == null) {
+    public boolean hasPendingExtraAction(int gameId, String nickname) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (nickname == null) {
@@ -313,8 +317,8 @@ public class GamePortal implements IGameModel {
      * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
      */
     @Override
-    public Map<String, Integer> getFinalRankingByNickname(UUID gameId) {
-        if (gameId == null) {
+    public Map<String, Integer> getFinalRankingByNickname(int gameId) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
 

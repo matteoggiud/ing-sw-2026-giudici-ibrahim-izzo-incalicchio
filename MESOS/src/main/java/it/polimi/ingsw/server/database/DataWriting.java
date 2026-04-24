@@ -11,11 +11,11 @@ import java.sql.Statement;
 public class DataWriting {
 
     /**
-     * Crea un nuovo game vuoto e collega l'host nella tabella game_player.
-     * @param game game da persistere (serve solo per ricavare nickname host)
-     * @return game_id generato dal DB, oppure -1 se fallisce
+     * Creates a new game in the database and links it to the host player specified by their nickname
+     * @param hostNickname the nickname of the player who will host the new game
+     * @return the unique identifier of the newly created game
      */
-    public int addNewGame(Game game) {
+    public int addNewGame(String hostNickname) {
         String insertGameSql = "INSERT INTO game () VALUES ()";
         String insertHostLinkSql = "INSERT INTO game_player (game_id, player_id) " +
                 "VALUES (?, (SELECT player_id FROM player WHERE nickname = ?))";
@@ -31,13 +31,13 @@ public class DataWriting {
                 int rowsAffected = psGame.executeUpdate();
                 if (rowsAffected == 0) {
                     c.rollback();
-                    return -1;
+                    throw new SQLException("Creating game failed.");
                 }
 
                 try (ResultSet rs = psGame.getGeneratedKeys()) {
                     if (!rs.next()) {
                         c.rollback();
-                        return -1;
+                        throw new SQLException("Creating game failed.");
                     }
                     generatedGameId = rs.getInt(1);
                 }
@@ -46,12 +46,12 @@ public class DataWriting {
 
             try (PreparedStatement psHost = c.prepareStatement(insertHostLinkSql)) {
                 psHost.setInt(1, generatedGameId);
-                psHost.setString(2, game.getHostPlayer().getNickname());
+                psHost.setString(2, hostNickname);
 
                 int rowsHost = psHost.executeUpdate();
                 if (rowsHost == 0) {
                     c.rollback();
-                    return -1;
+                    throw new SQLException("Linking host to game failed.");
                 }
             }
 
@@ -59,9 +59,7 @@ public class DataWriting {
             return generatedGameId;
 
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("Error adding new game to the database");
-            return -1;
+            throw new RuntimeException(e);
         }
     }
 }
