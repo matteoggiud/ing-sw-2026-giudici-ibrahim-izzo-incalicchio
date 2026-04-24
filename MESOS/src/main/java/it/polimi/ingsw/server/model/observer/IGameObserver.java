@@ -13,52 +13,40 @@ public interface IGameObserver {
      *
      * @param event the event containing information about the started game
      */
-    default void update(GameStartedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(GameStartedEvent event);
 
     /**
      * Called when the list of players in the lobby changes.
      *
      * @param event the event containing the updated player list
      */
-    default void update(PlayersChangedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(PlayersChangedEvent event);
 
     /**
      * Called when the board state changes.
      *
      * @param event the event containing updated board information
      */
-    default void update(BoardUpdatedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(BoardUpdatedEvent event);
 
     /**
      * Called when the player whose turn it is to place a totem changes.
      *
      * @param event the event containing the current player for the placing totem phase
      */
-    default void update(PlaceTotemTurnChangedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(PlaceTotemTurnChangedEvent event);
 
     /**
      * Called when the player whose turn it is to resolve an action changes.
      *
      * @param event the event containing the current player for the action resolution phase
      */
-    default void update(ResolveActionTurnChangedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(ResolveActionTurnChangedEvent event);
 
     /**
      * Called when a player's resources change.
      *
      * @param event the event containing the updated resources of one player
      */
-    default void update(PlayerResourcesUpdatedEvent event) {
-        // Default implementation does nothing
-    }
+    void update(PlayerResourcesUpdatedEvent event);
 }

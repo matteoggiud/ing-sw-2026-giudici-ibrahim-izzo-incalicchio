@@ -1,7 +1,9 @@
 package it.polimi.ingsw.server.controller;
 
-import java.rmi.Remote;
 
-public interface VirtualView extends Remote {
-    
+import it.polimi.ingsw.server.model.observer.IGameObserver;
+import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
+
+public interface VirtualView extends IGameObserver {
+    void sendMessage(ServerMessage message);
 }

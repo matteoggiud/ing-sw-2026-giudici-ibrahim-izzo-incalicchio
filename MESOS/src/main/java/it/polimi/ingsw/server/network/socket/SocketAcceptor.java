@@ -10,6 +10,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that accepts incoming socket connections and creates a ClientHandler for each of them.
+ */
 public class SocketAcceptor {
     private ServerSocket listenSocket;
     private GameController controller;
