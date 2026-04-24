@@ -33,9 +33,9 @@ public class DataDepository {
      */
     public boolean testConnection() throws SQLException {
         Connection c = DatabaseManager.getConnection();
-        if(c != null && !c.isClosed() && c.isValid(3)){
+        if (c != null && !c.isClosed() && c.isValid(3)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -91,7 +91,7 @@ public class DataDepository {
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
 
-                allBuilderCard.add(new BuilderCharacterCard(cardId ,name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0)));
+                allBuilderCard.add(new BuilderCharacterCard(cardId, name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0)));
             }
         }
         return allBuilderCard;
@@ -186,7 +186,7 @@ public class DataDepository {
     }
 
     public List<CharacterCard> getCharacterCards() throws SQLException {
-        List<CharacterCard>  allCharacterCard = new ArrayList<>();
+        List<CharacterCard> allCharacterCard = new ArrayList<>();
         allCharacterCard.addAll(getHunterCards());
         allCharacterCard.addAll(getInventorCards());
         allCharacterCard.addAll(getShamanCards());
@@ -304,7 +304,7 @@ public class DataDepository {
         return allSustenanceEventCard;
     }
 
-    public List<EventCard> getEventCards() throws SQLException{
+    public List<EventCard> getEventCards() throws SQLException {
         List<EventCard> allEventCards = new ArrayList<>();
         allEventCards.addAll(getHunterEventCards());
         allEventCards.addAll(getRockPaintingEventCards());
@@ -353,17 +353,20 @@ public class DataDepository {
      * @return
      */
     private IBuildingEffect createBuildingEffect(String effectId, JsonNode params) {
+        //TODO: refactor effect id
         return switch (effectId) {
             case "DOUBLEBUILDERBUILDINGEFFECT" -> new DoubleBuilderBuildingEffect();
             case "ENDPPCARDSSETBUILDINGEFFECT" -> new EndPpCardsSetBuildingEffect();
             case "FLATPRESTIGEPOINTBUILDINGCARD" -> new FlatPrestigePointBuildingCard();
-            case "PPPERCHARACTERBUILDINGEFFECT" -> new PpPerCharacterBuildingEffect(params.path("pp").asInt(1), CharacterType.valueOf(params.path("characterType").asText("HUNTER")));
+            case "PPPERCHARACTERBUILDINGEFFECT" ->
+                    new PpPerCharacterBuildingEffect(params.path("pp").asInt(1), CharacterType.valueOf(params.path("characterType").asText("HUNTER")));
             case "EXTRACARDBUILDINGEFFECT" -> new ExtraCardBuildingEffect();
             case "HUNTBONUSBUILDINGEFFECT" -> new HuntBonusBuildingEffect();
             case "ROCKPAINTINGSBONUSBUILDINGEFFECT" -> new RockPaintingsBonusBuildingEffect();
             case "SHAMANICDOUBLEBUILDINGEFFECT" -> new ShamanicDoubleBuildingEffect();
             case "SHAMANICIMMUNITYBUILDINGEFFECT" -> new ShamanicImmunityBuildingEffect();
-            case "SUSTENANCEDISCOUNTBUILDINGEFFECT" -> new SustenanceDiscountBuildingEffect(CharacterType.valueOf(params.path("characterType").asText("GATHERER")));
+            case "SUSTENANCEDISCOUNTBUILDINGEFFECT" ->
+                    new SustenanceDiscountBuildingEffect(CharacterType.valueOf(params.path("characterType").asText("GATHERER")));
             case "SHAMANICSTARSBUILDINGEFFECT" -> new ShamanicStarsBuildingEffect();
             case "TOTEMBONUSBUILDINGEFFECT" -> new TotemBonusBuildingEffect();
             case "TRIGGERCARDSSETBUILDINGEFFECT" -> new TriggerCardsSetBuildingEffect();
@@ -381,5 +384,115 @@ public class DataDepository {
         } catch (Exception e) {
             throw new IllegalArgumentException("effectParams JSON non valido: " + raw, e);
         }
+    }
+
+    /**
+     * Load a card by its id from the database
+     *
+     * @param cardId the id of the card to load
+     * @return the card with the specified id, or null if no such card exists
+     */
+    public CharacterCard getCharacterCardById(int cardId) {
+        String query = "SELECT * FROM character_card WHERE card_id = ?";
+        CharacterCard card = null;
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query)) {
+
+            ps.setInt(1, cardId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String name = rs.getString("name");
+                    Era era = Era.valueOf(rs.getString("era"));
+                    int minNumPlayers = rs.getInt("min_num_players");
+                    CharacterType characterType = CharacterType.valueOf(rs.getString("character_type"));
+                    JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
+
+                    return switch (characterType) {
+                        case ARTIST -> card = new ArtistCharacterCard(cardId, name, era, minNumPlayers);
+                        case BUILDER -> card =
+                                new BuilderCharacterCard(cardId, name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0));
+                        case GATHERER -> card = new GathererCharacterCard(cardId, name, era, minNumPlayers);
+                        case HUNTER -> card =
+                                new HunterCharacterCard(cardId, name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false));
+                        case INVENTOR -> card =
+                                new InventorCharacterCard(cardId, name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("ARROW")));
+                        case SHAMAN -> card =
+                                new ShamanCharacterCard(cardId, name, era, minNumPlayers, params.path("shamanStars").asInt(1));
+                    };
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return card;
+    }
+
+    public BuildingCard getBuildingCardById(int cardId) {
+        String query = "SELECT * FROM building_card WHERE card_id = ?";
+        BuildingCard card = null;
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query)) {
+
+            ps.setInt(1, cardId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String name = rs.getString("name");
+                    Era era = Era.valueOf(rs.getString("era"));
+                    int minNumPlayers = rs.getInt("min_num_players");
+                    int foodCost = rs.getInt("food_cost");
+                    int endGamePp = rs.getInt("end_game_pp");
+                    String effectId = rs.getString("effect_id");
+                    JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
+                    IBuildingEffect effect = createBuildingEffect(effectId, params);
+
+                    card = new BuildingCard(cardId, name, era, minNumPlayers, foodCost, endGamePp, effect);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return card;
+    }
+
+    public EventCard getEventCardById(int cardId) {
+        String query = "SELECT * FROM event_card WHERE card_id = ?";
+        EventCard card = null;
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query)) {
+
+            ps.setInt(1, cardId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String name = rs.getString("name");
+                    Era era = Era.valueOf(rs.getString("era"));
+                    int minNumPlayers = rs.getInt("min_num_players");
+                    boolean isFinalEvent = rs.getBoolean("is_final_event");
+                    String eventTypeStr = rs.getString("event_type");
+                    int gainedFood = rs.getInt("gained_food");
+                    int malusFood = rs.getInt("malus_food");
+                    int gainedPp = rs.getInt("gained_pp");
+                    int malusPp = rs.getInt("malus_pp");
+                    int threshold = rs.getInt("threshold");
+
+                    card = new EventCard(cardId, name, era, minNumPlayers, isFinalEvent, switch (eventTypeStr) {
+                        case "HUNT" -> new HuntEventEffect();
+                        case "ROCK_PAINTINGS" -> new RockPaintingEventEffect();
+                        case "SHAMANIC_RITUAL" -> new ShamanicRitualEventEffect();
+                        case "SUSTENANCE" -> new SustenanceEventEffect();
+                        default -> throw new IllegalArgumentException("eventType invalid: " + eventTypeStr);
+                    }, gainedFood, malusFood, gainedPp, malusPp, threshold);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return card;
     }
 }
