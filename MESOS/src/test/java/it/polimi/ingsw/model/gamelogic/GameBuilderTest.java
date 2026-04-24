@@ -31,6 +31,7 @@ class GameBuilderTest {
         game.getPlayers().addPlayer(new Player("Player3"));
 
         gameBuilder = new GameBuilder(game);
+        gameBuilder.prepareGame();
     }
 
     /**
