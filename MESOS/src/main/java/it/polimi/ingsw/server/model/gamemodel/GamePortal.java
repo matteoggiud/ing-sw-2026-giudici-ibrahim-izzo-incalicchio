@@ -142,9 +142,11 @@ public class GamePortal implements IGameModel {
     @Override
     public void joinGame(int gameId, String player) {
         Player playerToJoin = playerManager.getPlayer(player);
+        DataWriting dw = new DataWriting();
         if (playerToJoin == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
+        dw.joinExistingGame(gameId, player);
         gameManager.joinGame(gameId, playerToJoin);
     }
 

@@ -62,4 +62,23 @@ public class DataWriting {
             throw new RuntimeException(e);
         }
     }
+
+    public void joinExistingGame(int gameId, String playerNickname) {
+        String insertLinkSql = "INSERT INTO game_player (game_id, player_id) VALUES (?, (SELECT player_id FROM player WHERE nickname = ?))";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(insertLinkSql)) {
+
+            ps.setInt(1, gameId);
+            ps.setString(2, playerNickname);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("Joining game failed.");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
