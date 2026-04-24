@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.network.socket.messages;
 
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginRequestMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterRequestMessage;
 import it.polimi.ingsw.server.controller.GameController;
@@ -26,5 +27,10 @@ public class ClientVisitor implements ClientMessageVisitor {
     @Override
     public void visit(CreateGameMessage message) {
         gameController.createGame(message.getUsername());
+    }
+
+    @Override
+    public void visit(JoinGameMessage message) {
+        gameController.join(message.getGameId(), message.getPlayerNickname());
     }
 }
