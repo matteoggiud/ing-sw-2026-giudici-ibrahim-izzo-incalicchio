@@ -16,7 +16,7 @@ public class DataWriting {
      * @return the unique identifier of the newly created game
      */
     public int addNewGame(String hostNickname) {
-        String insertGameSql = "INSERT INTO game () VALUES ()";
+        String insertGameSql = "INSERT INTO game DEFAULT VALUES";
         String insertHostLinkSql = "INSERT INTO game_player (game_id, player_id) " +
                 "VALUES (?, (SELECT player_id FROM player WHERE nickname = ?))";
 
