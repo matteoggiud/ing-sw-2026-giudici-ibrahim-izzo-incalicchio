@@ -68,6 +68,8 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
 
         BoardUpdatedMessage message = new BoardUpdatedMessage(gameId, board);
+
+        sendMessage(message);
     }
 
     /**

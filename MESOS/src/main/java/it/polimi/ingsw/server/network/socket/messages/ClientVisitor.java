@@ -5,32 +5,43 @@ import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginRequestMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterRequestMessage;
 import it.polimi.ingsw.server.controller.GameController;
+import it.polimi.ingsw.server.network.socket.ClientSession;
 
 public class ClientVisitor implements ClientMessageVisitor {
 
     private final GameController gameController;
+    private final ClientSession clientSession;
 
-    public ClientVisitor(GameController gameController) {
+    public ClientVisitor(GameController gameController, ClientSession clientSession) {
         this.gameController = gameController;
+        this.clientSession = clientSession;
+    }
+
+    public ClientSession getClientSession() {
+        return clientSession;
+    }
+
+    public GameController getGameController() {
+        return gameController;
     }
 
     @Override
     public void visit(LoginRequestMessage message) {
-        gameController.login(message.getUsername(), message.getPasswordHash());
+        gameController.login(clientSession, message.getUsername(), message.getPasswordHash());
     }
 
     @Override
     public void visit(RegisterRequestMessage message) {
-        gameController.register(message.getUsername(), message.getPassword());
+        gameController.register(clientSession, message.getUsername(), message.getPassword());
     }
 
     @Override
     public void visit(CreateGameMessage message) {
-        gameController.createGame(message.getUsername());
+        gameController.createGame(clientSession);
     }
 
     @Override
     public void visit(JoinGameMessage message) {
-        gameController.join(message.getGameId(), message.getPlayerNickname());
+        gameController.joinGame(clientSession, message.getGameId());
     }
 }

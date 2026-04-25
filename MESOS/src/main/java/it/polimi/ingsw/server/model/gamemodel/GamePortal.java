@@ -2,11 +2,14 @@ package it.polimi.ingsw.server.model.gamemodel;
 
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
+import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.Card;
+import it.polimi.ingsw.server.model.card.Era;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.menu.PlayerManager;
+import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 import java.util.LinkedHashMap;
@@ -34,28 +37,37 @@ public class GamePortal implements IGameModel {
 
 
     @Override
-    public void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        if (game == null || player == null) {
+    public void drawCard(int gameId, String nickname, int selectedCardId, boolean fromUpperRow) {
+        if (gameId < 0 || nickname == null) {
             throw new IllegalArgumentException("Game, player cannot be null");
         }
 
-        game.getGameState().resolveAction(game, player, selectedCard, fromUpperRow);
+        Game currentGame = gameManager.getGame(gameId);
+        Player currentPlayer = playerManager.getPlayer(nickname);
+
+        //TODO: Get the card based on the id
+        Card card = new BuildingCard(selectedCardId, null, null, 0, 0, 0, null);
+        currentGame.getGameState().resolveAction(currentGame, currentPlayer,card , fromUpperRow);
     }
 
     /**
      * Allows a player to place their totem on a specific offer box on the offer track.
      *
-     * @param game     the current game context
-     * @param player   the player attempting to place their totem
-     * @param offerBox the offer box on which the player wants to place their totem
+     * @param gameId         the unique identifier of the game in which the player is placing their totem
+     * @param nickname      the nickname of the player placing their totem
+     * @param offerBox       the offer box on which the player wants to place their totem
      */
     @Override
-    public void placing(Game game, Player player, OfferBox offerBox) {
-        if (game == null || player == null || offerBox == null) {
+    public void placing(int gameId, String nickname, OfferBox offerBox) {
+        //TODO: change OfferBox param into 'int offerBoxId'
+        if (gameId < 0 || nickname == null || offerBox == null) {
             throw new IllegalArgumentException("Game, player e offerBox cannot be null");
         }
 
-        game.getGameState().placeTotem(game, player, offerBox);
+        Game currentGame = gameManager.getGame(gameId);
+        Player player = playerManager.getPlayer(nickname);
+
+        currentGame.getGameState().placeTotem(currentGame, player, offerBox);
     }
 
     /**
@@ -94,10 +106,10 @@ public class GamePortal implements IGameModel {
      * Starting the game first moves it from LobbyState to SetupState, then executes
      * the setup phase so the board, decks, turn order, and totems are initialized.
      *
-     * @param gameId the unique identifier of the game to start
+     * @param gameId       the unique identifier of the game to start
      * @param hostNickname the nickname of the player requesting the start
      * @throws IllegalArgumentException if any argument is null
-     * @throws IllegalStateException if the requester is not the host or there are not enough players
+     * @throws IllegalStateException    if the requester is not the host or there are not enough players
      */
     @Override
     public void startGame(int gameId, String hostNickname) {
@@ -190,11 +202,12 @@ public class GamePortal implements IGameModel {
 
     /**
      * Logs out the user with the specified nickname.
+     *
      * @param nickname the nickname of the user to log out
      * @throws IllegalArgumentException if the nickname is null
      */
     @Override
-    public void logout(String nickname) throws IllegalArgumentException{
+    public void logout(String nickname) throws IllegalArgumentException {
         if (nickname == null) {
             throw new IllegalArgumentException("Nickname cannot be null");
         }
@@ -207,7 +220,7 @@ public class GamePortal implements IGameModel {
      * @param nickname the nickname of the player to retrieve
      * @return the player associated with the given nickname
      * @throws IllegalArgumentException if the nickname is null
-     * @throws IllegalStateException if no logged-in player exists with that nickname
+     * @throws IllegalStateException    if no logged-in player exists with that nickname
      */
     @Override
     public Player getLoggedPlayer(String nickname) {
@@ -269,7 +282,7 @@ public class GamePortal implements IGameModel {
      * @param gameId the unique identifier of the game
      * @return a map of players and their final scores sorted by ranking
      * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
      */
     @Override
     public Map<Player, Integer> getFinalRanking(int gameId) {
@@ -284,11 +297,11 @@ public class GamePortal implements IGameModel {
     /**
      * Checks whether the specified player has a pending extra action in the given game.
      *
-     * @param gameId the unique identifier of the game
+     * @param gameId   the unique identifier of the game
      * @param nickname the nickname of the player to check
      * @return true if the player has a pending extra action, false otherwise
      * @throws IllegalArgumentException if any argument is null or invalid
-     * @throws IllegalStateException if the player is not logged in
+     * @throws IllegalStateException    if the player is not logged in
      */
     @Override
     public boolean hasPendingExtraAction(int gameId, String nickname) {
@@ -316,7 +329,7 @@ public class GamePortal implements IGameModel {
      * @param gameId the unique identifier of the game
      * @return a map of player nicknames and their final scores sorted by ranking
      * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
      */
     @Override
     public Map<String, Integer> getFinalRankingByNickname(int gameId) {
@@ -334,4 +347,41 @@ public class GamePortal implements IGameModel {
         return rankingByNickname;
     }
 
+    /**
+     * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
+     *
+     * @param gameId      the unique identifier of the game to which the virtual view will be added as an observer
+     * @param virtualView the virtual view to be added as an observer to the specified game
+     */
+    @Override
+    public void addObserver(int gameId, IGameObserver virtualView) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+        if (virtualView == null) {
+            throw new IllegalArgumentException("Virtual view cannot be null.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+        game.getObserverManager().addObserver(virtualView);
+    }
+
+    /**
+     * Removes a virtual view as an observer from the game with the specified id, preventing the virtual view from receiving further updates about the game's state and events.
+     *
+     * @param gameId the unique identifier of the game from which the virtual view will be removed as an observer
+     * @param virtualView  the virtual view to be removed as an observer from the specified game
+     */
+    @Override
+    public void removeObserver(int gameId, IGameObserver virtualView) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be null.");
+        }
+        if (virtualView == null) {
+            throw new IllegalArgumentException("Virtual view cannot be null.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+        game.getObserverManager().removeObserver(virtualView);
+    }
 }

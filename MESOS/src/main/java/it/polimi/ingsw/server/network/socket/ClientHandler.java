@@ -16,15 +16,17 @@ public class ClientHandler implements Runnable {
 
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
-    private final ObjectOutputStream outputStream;
+    private final SocketVirtualView socketVirtualView;
     private final ClientVisitor clientVisitor;
 
 
-     public ClientHandler(Socket clientSocket,  GameController controller, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
+    public ClientHandler(Socket clientSocket, GameController controller, ObjectInputStream inputStream, ObjectOutputStream outputStream) {
+        SocketVirtualView socketVirtualView = new SocketVirtualView(outputStream);
+
         this.clientSocket = clientSocket;
         this.inputStream = inputStream;
-        this.outputStream = outputStream;
-        this.clientVisitor = new ClientVisitor(controller);
+        this.socketVirtualView = socketVirtualView;
+        this.clientVisitor = new ClientVisitor(controller, new ClientSession(clientSocket, socketVirtualView));
     }
 
     @Override
@@ -39,6 +41,8 @@ public class ClientHandler implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
+            } finally {
+                clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());
             }
         }
     }
