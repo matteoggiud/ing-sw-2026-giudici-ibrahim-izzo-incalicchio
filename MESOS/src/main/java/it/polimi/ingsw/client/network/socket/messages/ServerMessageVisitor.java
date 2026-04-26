@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
+import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
@@ -72,4 +73,11 @@ public interface ServerMessageVisitor {
      * @param message the RegisterSuccessMessage to visit
      */
     void visit(RegisterSuccessMessage message);
+
+    /**
+     * Visits a GenericErrorMessage, which indicates that an error has occurred on the server. This message is sent to the client when an unexpected error occurs, and may contain additional information about the error such as an error code or a detailed error message.
+     *
+     * @param message the GenericErrorMessage to visit
+     */
+    void visit(GenericErrorMessage message);
 }

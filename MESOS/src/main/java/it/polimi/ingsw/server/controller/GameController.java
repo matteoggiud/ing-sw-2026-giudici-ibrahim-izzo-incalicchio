@@ -27,7 +27,7 @@ public class GameController {
      * @param username      the username of the player attempting to log in
      * @param password      the password of the player attempting to log in
      */
-    public void login(ClientSession clientSession, String username, String password) {
+    public void login(ClientSession clientSession, String username, String password) throws RuntimeException {
         try {
             model.login(username, password);
             clientSession.setNickname(username);
@@ -43,7 +43,7 @@ public class GameController {
      * @param username      the desired username for the new player account
      * @param password      the desired password for the new player account
      */
-    public void register(ClientSession clientSession, String username, String password) {
+    public void register(ClientSession clientSession, String username, String password) throws RuntimeException {
         try {
             model.register(username, password);
 

@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class ClientVisitor implements ClientMessageVisitor {
@@ -45,9 +46,12 @@ public class ClientVisitor implements ClientMessageVisitor {
             // After a successful login, send the list of available games to the client
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
             clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // If login fails, send a LoginFailedMessage to the client with the error message
             clientSession.getVirtualView().sendMessage(new LoginFailedMessage("Login failed", message.getUsername()));
+        } catch (Exception e) {
+            // If login fails due to any other exception, send a GenericErrorMessage to the client with the error message
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Login failed"));
         }
     }
 
@@ -63,9 +67,12 @@ public class ClientVisitor implements ClientMessageVisitor {
             // After a successful login, send the list of available games to the client
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
             clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
-        } catch (Exception e) {
-            // If login fails, send a LoginFailedMessage to the client with the error message
+        } catch (RuntimeException e) {
+            // If registration fails, send a LoginFailedMessage to the client with the error message
             clientSession.getVirtualView().sendMessage(new RegisterFailedMessage("Registration failed", message.getUsername()));
+        } catch (Exception e) {
+            // If registration fails due to any other exception, send a GenericErrorMessage to the client with the error message
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Registration failed"));
         }
     }
 
