@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
 
+import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
@@ -15,6 +16,15 @@ import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMe
 //TODO: implement the visitor pattern for all the server messages
 public class ServerVisitor implements ServerMessageVisitor {
 
+    private final ClientSessionState sessionState;
+
+    public ServerVisitor(ClientSessionState sessionState) {
+        this.sessionState = sessionState;
+    }
+
+    public ClientSessionState getSessionState() {
+        return sessionState;
+    }
 
     /**
      *

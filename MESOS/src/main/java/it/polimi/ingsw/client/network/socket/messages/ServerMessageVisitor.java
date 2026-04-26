@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
+import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
@@ -12,6 +13,8 @@ import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMes
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
 public interface ServerMessageVisitor {
+
+
     /**
      *
      * Visits a LoginNeededMessage, which indicates that the client needs to log in before performing any other action.
