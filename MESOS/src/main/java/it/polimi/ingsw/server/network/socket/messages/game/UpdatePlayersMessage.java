@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.network.socket.messages.game;
 
+import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
 import java.util.List;
@@ -15,4 +16,13 @@ public class UpdatePlayersMessage extends ServerMessage {
         return playerNicknames;
     }
 
+    /**
+     * Accepts a visitor that will handle the message
+     *
+     * @param serverVisitor the visitor that will handle the message
+     */
+    @Override
+    public void dispatch(ServerMessageVisitor serverVisitor) {
+        serverVisitor.visit(this);
+    }
 }

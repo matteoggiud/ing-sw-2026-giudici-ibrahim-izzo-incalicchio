@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.network.socket.messages.game;
 
+import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
@@ -19,5 +20,15 @@ public class BoardUpdatedMessage extends ServerMessage {
 
     public BoardDTO getBoard() {
         return board;
+    }
+
+    /**
+     * Accepts a visitor that will handle the message
+     *
+     * @param serverVisitor the visitor that will handle the message
+     */
+    @Override
+    public void dispatch(ServerMessageVisitor serverVisitor) {
+        serverVisitor.visit(this);
     }
 }

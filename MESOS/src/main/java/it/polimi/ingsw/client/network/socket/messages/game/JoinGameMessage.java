@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.network.socket.messages.game;
 
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
-import it.polimi.ingsw.server.network.socket.messages.ClientVisitor;
+import it.polimi.ingsw.server.network.socket.messages.ClientMessageVisitor;
 
 public class JoinGameMessage extends ClientMessage {
     private final String playerNickname;
@@ -24,7 +24,7 @@ public class JoinGameMessage extends ClientMessage {
      * @param clientVisitor
      */
     @Override
-    public void dispatch(ClientVisitor clientVisitor) {
+    public void dispatch(ClientMessageVisitor clientVisitor) {
         clientVisitor.visit(this);
 
     }

@@ -10,6 +10,8 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
+import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 import java.util.LinkedHashMap;
@@ -47,15 +49,15 @@ public class GamePortal implements IGameModel {
 
         //TODO: Get the card based on the id
         Card card = new BuildingCard(selectedCardId, null, null, 0, 0, 0, null);
-        currentGame.getGameState().resolveAction(currentGame, currentPlayer,card , fromUpperRow);
+        currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
     }
 
     /**
      * Allows a player to place their totem on a specific offer box on the offer track.
      *
-     * @param gameId         the unique identifier of the game in which the player is placing their totem
-     * @param nickname      the nickname of the player placing their totem
-     * @param offerBox       the offer box on which the player wants to place their totem
+     * @param gameId   the unique identifier of the game in which the player is placing their totem
+     * @param nickname the nickname of the player placing their totem
+     * @param offerBox the offer box on which the player wants to place their totem
      */
     @Override
     public void placing(int gameId, String nickname, OfferBox offerBox) {
@@ -141,8 +143,8 @@ public class GamePortal implements IGameModel {
      * @return a list of available games
      */
     @Override
-    public List<Game> getAvailableGames() {
-        return gameManager.getAvailableGames();
+    public List<GameInfoDTO> getAvailableGames() {
+        return GameInfoDTOMapper.toGameInfoDTOs(gameManager.getAvailableGames());
     }
 
     /**
@@ -369,8 +371,8 @@ public class GamePortal implements IGameModel {
     /**
      * Removes a virtual view as an observer from the game with the specified id, preventing the virtual view from receiving further updates about the game's state and events.
      *
-     * @param gameId the unique identifier of the game from which the virtual view will be removed as an observer
-     * @param virtualView  the virtual view to be removed as an observer from the specified game
+     * @param gameId      the unique identifier of the game from which the virtual view will be removed as an observer
+     * @param virtualView the virtual view to be removed as an observer from the specified game
      */
     @Override
     public void removeObserver(int gameId, IGameObserver virtualView) {

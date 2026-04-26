@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
+import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 
 import java.util.Map;
 
@@ -121,7 +122,7 @@ public interface IGameModel {
      *
      * @return a list of available games
      */
-    List<Game> getAvailableGames();
+    List<GameInfoDTO> getAvailableGames();
 
     /**
      * Allows a player to join an existing game using the game's unique identifier (UUID).

@@ -88,6 +88,13 @@ public class ClientSession {
     }
 
     /**
+     * Clears the nickname for this client session, indicating that the client is no longer logged in.
+     */
+    public void clearNickname() {
+        this.nickname = null;
+    }
+
+    /**
      * Checks if the client associated with this session is logged in by verifying if the nickname is set.
      *
      * @return true if the client is logged in (nickname is set), false otherwise
@@ -135,4 +142,17 @@ public class ClientSession {
     }
 
 
+    /**
+     * Disconnects the client session by closing the socket connection and clearing the nickname and active game ID.
+     */
+    public void disconnectSession() {
+        try {
+            clientSocket.close();
+        } catch (Exception e) {
+            // Log the exception or handle it as needed
+            System.err.println("Error while closing client socket: " + e.getMessage());
+        }
+        this.clearNickname();
+        this.clearActiveGameId();
+    }
 }

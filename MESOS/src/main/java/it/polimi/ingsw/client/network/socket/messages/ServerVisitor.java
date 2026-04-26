@@ -1,0 +1,108 @@
+package it.polimi.ingsw.client.network.socket.messages;
+
+
+import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
+import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
+import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
+import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
+import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+
+//TODO: implement the visitor pattern for all the server messages
+public class ServerVisitor implements ServerMessageVisitor {
+
+
+    /**
+     *
+     * Visits a LoginNeededMessage, which indicates that the client needs to log in before performing any other action.
+     *
+     * @param message the LoginNeededMessage to visit
+     */
+    @Override
+    public void visit(LoginNeededMessage message) {
+
+    }
+
+    /**
+     * Visits an UpdatePlayersMessage, which contains the list of players currently in the game. This message is sent to all clients whenever a player joins or leaves the game.
+     *
+     * @param message the UpdatePlayersMessage to visit
+     */
+    @Override
+    public void visit(UpdatePlayersMessage message) {
+
+    }
+
+    /**
+     * Visits a GameStartedMessage, which indicates that the game has started and contains the initial state of the game board. This message is sent to all clients when the game starts.
+     *
+     * @param message the GameStartedMessage to visit
+     */
+    @Override
+    public void visit(GameStartedMessage message) {
+
+    }
+
+    /**
+     * Visits a BoardUpdatedMessage, which contains the updated state of the game board after a player's action. This message is sent to all clients whenever the game board changes.
+     *
+     * @param message the BoardUpdatedMessage to visit
+     */
+    @Override
+    public void visit(BoardUpdatedMessage message) {
+
+    }
+
+    /**
+     * Visits a LoginFailedMessage, which indicates that the client's login attempt has failed. This message is sent to the client when the login attempt fails, for example due to incorrect credentials or a username that is already in use.
+     *
+     * @param message the LoginFailedMessage to visit
+     */
+    @Override
+    public void visit(LoginFailedMessage message) {
+
+    }
+
+    /**
+     * Visits a LoginSuccessMessage, which indicates that the client's login attempt has succeeded. This message is sent to the client when the login attempt is successful, and may contain additional information such as the client's username or a welcome message.
+     *
+     * @param message the LoginSuccessMessage to visit
+     */
+    @Override
+    public void visit(LoginSuccessMessage message) {
+
+    }
+
+    /**
+     * Visits an AvailableGamesMessage, which contains a list of available games that the client can join. This message is sent to the client when they request the list of available games, and may be updated periodically as new games are created or existing games are filled.
+     *
+     * @param message the AvailableGamesMessage to visit
+     */
+    @Override
+    public void visit(AvailableGamesMessage message) {
+
+    }
+
+    /**
+     * Visits a RegisterFailedMessage, which indicates that the client's registration attempt has failed. This message is sent to the client when the registration attempt fails, for example due to a username that is already in use or invalid registration information.
+     *
+     * @param message the RegisterFailedMessage to visit
+     */
+    @Override
+    public void visit(RegisterFailedMessage message) {
+
+    }
+
+    /**
+     * Visits a RegisterSuccessMessage, which indicates that the client's registration attempt has succeeded. This message is sent to the client when the registration attempt is successful, and may contain additional information such as the client's username or a welcome message.
+     *
+     * @param message the RegisterSuccessMessage to visit
+     */
+    @Override
+    public void visit(RegisterSuccessMessage message) {
+
+    }
+}

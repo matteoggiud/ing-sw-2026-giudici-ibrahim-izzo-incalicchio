@@ -2,9 +2,11 @@ package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
+import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.network.socket.ClientSession;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class GameController {
     private final GamePortal model;
@@ -78,9 +80,11 @@ public class GameController {
     }
 
     /**
-     * Allows a player to leave a game they have joined
+     * Allows a player to leave a game they have joined using the game's unique identifier and the player's username
+     * It also disconnects the player's virtual view from the game they have left and updates the client session
      *
      * @param clientSession the client session of the player
+     * @throws IllegalStateException if the player is not logged in or not currently in a game
      */
     public void leaveGame(ClientSession clientSession) {
         if (!clientSession.isLoggedIn()) {
@@ -174,19 +178,33 @@ public class GameController {
      * Retrieves a list of available games that players can join
      *
      */
-    public void getAvailableGames(ClientSession clientSession) {
+    public List<GameInfoDTO> getAvailableGames(ClientSession clientSession) {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to get available games");
         }
-
-        model.getAvailableGames();
+        return model.getAvailableGames();
     }
 
     /**
      * Handles the disconnection of a client session, performing any necessary cleanup and updates to the game state
+     *
      * @param clientSession the client session that has been disconnected
      */
-    public void handleDisconnect(ClientSession  clientSession) {
-        //TODO: create this method
+    public void handleDisconnect(ClientSession clientSession) {
+        if (!clientSession.isLoggedIn())
+            return;
+
+        if (clientSession.isInGame()) {
+            // The client leave the current game, it also removes his virtual view from the game observers
+            leaveGame(clientSession);
+        }
+
+        try {
+            // Remove the player into the logged players
+            model.logout(clientSession.getNickname());
+        } catch (RuntimeException e) {
+            // This exception is thrown if the player is not logged in, but we already checked that, so we can ignore it
+        }
+        clientSession.disconnectSession();
     }
 }
