@@ -62,6 +62,6 @@ class BuildingDeckTest {
     private BuildingCard newBuilding(int foodCost) {
         it.polimi.ingsw.server.model.effect.building.IBuildingEffect effect = new it.polimi.ingsw.server.model.effect.building.IBuildingEffect() {
         };
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, it.polimi.ingsw.server.model.card.Era.ERA_1, 2, foodCost, 2, effect);
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, it.polimi.ingsw.server.model.card.Era.ERA_1, 2, foodCost, 2, effect, "");
     }
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.observer.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,8 @@ import java.util.List;
 public record PlayerDeckDTO(
         List<CharacterCardDTO> characterCards,
         List<BuildingCardDTO> buildingCards
-) {
+) implements Serializable {
+
 
     public PlayerDeckDTO {
         characterCards = List.copyOf(characterCards);

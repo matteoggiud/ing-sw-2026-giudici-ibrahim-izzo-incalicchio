@@ -78,17 +78,35 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     @Override
     public void visit(CreateGameMessage message) {
-        gameController.createGame(clientSession);
+        try {
+            gameController.createGame(clientSession);
+        } catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to create game: " + e.getMessage()));
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to create game"));
+        }
     }
 
     @Override
     public void visit(JoinGameMessage message) {
-        gameController.joinGame(clientSession, message.getGameId());
+        try {
+            gameController.joinGame(clientSession, message.getGameId());
+        } catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to join game: " + e.getMessage()));
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to join game"));
+        }
     }
 
     @Override
     public void visit(GetAvailableGamesMessage message) {
-        List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
-        clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
+        try {
+            List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
+            clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
+        }  catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to retrieve available games: " + e.getMessage()));
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to retrieve available games"));
+        }
     }
 }

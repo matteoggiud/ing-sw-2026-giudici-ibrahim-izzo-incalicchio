@@ -14,4 +14,6 @@ public interface ClientView {
     Credentials requestRegisterCredentials();
 
     void showAvailableGames(List<GameInfoDTO> games);
+
+    void showGameInfo(GameInfoDTO gameInfo);
 }

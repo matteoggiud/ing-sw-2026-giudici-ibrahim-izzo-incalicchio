@@ -21,7 +21,7 @@ public class Authenticator {
      * @throws SQLException if there is an error accessing the database or if the login credentials are invalid
      */
     public boolean loginUser(String nickname, String password) throws SQLException {
-        String sql = "SELECT player_id, nickname, password, created_at FROM player WHERE nickname = ? AND password_hash = ?";
+        String sql = "SELECT player_id, nickname, password_hash, created_at FROM player WHERE nickname = ? AND password_hash = ?";
 
         try (Connection c = DatabaseManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -44,8 +44,8 @@ public class Authenticator {
      * @throws SQLException if there is an error accessing the database or if the registration fails
      */
     public boolean registerUser(String nickname, String password) throws SQLException {
-        String registration = "INSERT INTO player (nickname, password) VALUES (?, ?)";
-        String players = "SELECT player_id, nickname, password, created_at FROM player WHERE nickname = ?";
+        String registration = "INSERT INTO player (nickname, password_hash) VALUES (?, ?)";
+        String players = "SELECT player_id, nickname, password_hash, created_at FROM player WHERE nickname = ?";
 
         try (Connection c = DatabaseManager.getConnection();
              PreparedStatement ps = c.prepareStatement(players)) {

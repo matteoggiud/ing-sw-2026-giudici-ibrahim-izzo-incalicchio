@@ -2,10 +2,12 @@ package it.polimi.ingsw.server.model.observer.dto;
 
 import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 public record OfferBoxDTO(String boxId, String placedPlayerNickname, int foodReward, int upperRowPicks,
-                          int lowerRowPicks, String imageKey) {
+                          int lowerRowPicks, String imageKey) implements Serializable {
+
     public OfferBoxDTO {
         if (boxId == null)
             throw new IllegalArgumentException("boxId cannot be null");

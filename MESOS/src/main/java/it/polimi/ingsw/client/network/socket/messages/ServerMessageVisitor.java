@@ -10,7 +10,6 @@ import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMes
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
 
-
 public interface ServerMessageVisitor {
 
 
@@ -66,12 +65,14 @@ public interface ServerMessageVisitor {
 
     /**
      * Visits a RegisterFailedMessage, which indicates that the client's registration attempt has failed. This message is sent to the client when the registration attempt fails, for example due to a username that is already in use or invalid registration information.
+     *
      * @param message the RegisterFailedMessage to visit
      */
     void visit(RegisterFailedMessage message);
 
     /**
      * Visits a RegisterSuccessMessage, which indicates that the client's registration attempt has succeeded. This message is sent to the client when the registration attempt is successful, and may contain additional information such as the client's username or a welcome message.
+     *
      * @param message the RegisterSuccessMessage to visit
      */
     void visit(RegisterSuccessMessage message);
@@ -120,15 +121,24 @@ public interface ServerMessageVisitor {
 
     /**
      * Visits a PlayerDeckUpdatedMessage, which indicates that a player's deck has changed.
+     *
      * @param message the PlayerDeckUpdatedMessage to visit
      */
     void visit(PlayerDeckUpdatedMessage message);
 
     /**
      * Visits a GameEndedMessage, which indicates that the game has ended and contains the final ranking of the players. This message is sent to all clients when the game ends.
+     *
      * @param message the GameEndedMessage to visit
      */
     void visit(GameEndedMessage message);
+
+    /**
+     * Visits a GameInfoMessage, which contains general information about the game, such as the game ID, the list of players, and the current game state. This message is sent to the client when they join a game or request information about the game.
+     *
+     * @param gameInfoMessage the GameInfoMessage to visit
+     */
+    void visit(GameInfoMessage gameInfoMessage);
 }
 
 

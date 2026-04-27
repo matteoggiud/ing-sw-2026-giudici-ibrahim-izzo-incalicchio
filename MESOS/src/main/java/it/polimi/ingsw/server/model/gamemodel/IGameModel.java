@@ -81,8 +81,8 @@ public interface IGameModel {
     /**
      * Allows a player to place their totem on a specific offer box on the offer track.
      *
-     * @param gameId   the current game context
-     * @param nickname the player attempting to place their totem
+     * @param gameId     the current game context
+     * @param nickname   the player attempting to place their totem
      * @param offerBoxId the identifier of the offer box on which the player is placing their totem
      */
     void placing(int gameId, String nickname, String offerBoxId);
@@ -91,21 +91,25 @@ public interface IGameModel {
      * Creates a new game with the specified host player.
      *
      * @param hostPlayer the player who will host the new game
+     * @param observer   the observer associated with the host player, which will be added to the game's observers list
      * @return the unique identifier (UUID) of the newly created game
      */
-    int createGame(String hostPlayer);
+    int createGame(String hostPlayer, IGameObserver observer);
 
     /**
      * Creates a new game with the specified host player and expected player count.
-     * @param hostPlayer the player who will host the new game
+     *
+     * @param hostPlayer          the player who will host the new game
      * @param expectedPlayerCount the expected number of players for the game
+     * @param observer            the observer associated with the host player, which will be added to the game's observers list
      * @return the unique identifier (UUID) of the newly created game
      */
-    int createGame(String hostPlayer, int expectedPlayerCount);
+    int createGame(String hostPlayer, int expectedPlayerCount, IGameObserver observer);
 
     /**
      * Checks if the game with the specified id is ready to start (i.e., has enough players)
      * and starts it if it is ready.
+     *
      * @param gameId the unique identifier of the game to check and potentially start
      */
     void startGameIfReady(int gameId);
@@ -143,18 +147,20 @@ public interface IGameModel {
     /**
      * Allows a player to join an existing game using the game's unique identifier (UUID).
      *
-     * @param gameId the unique identifier of the game the player wants to join
-     * @param player the player attempting to join the game
+     * @param gameId   the unique identifier of the game the player wants to join
+     * @param player   the player attempting to join the game
+     * @param observer the observer associated with the player, which will be added to the game's observers list
      */
-    void joinGame(int gameId, String player);
+    void joinGame(int gameId, String player, IGameObserver observer);
 
     /**
      * Allows a player to leave a game they have joined using the game's unique identifier (UUID).
      *
-     * @param gameId the unique identifier of the game the player wants to leave
-     * @param player the player attempting to leave the game
+     * @param gameId   the unique identifier of the game the player wants to leave
+     * @param player   the player attempting to leave the game
+     * @param observer the observer associated with the player, which will be removed from the game's observers list
      */
-    void leaveGame(int gameId, String player);
+    void leaveGame(int gameId, String player, IGameObserver observer);
 
     /**
      * Retrieves the final ranking of a game when the game has reached
@@ -200,22 +206,23 @@ public interface IGameModel {
     /**
      * Removes a virtual view as an observer from the game with the specified id, preventing the virtual view from receiving further updates about the game's state and events.
      *
-     * @param gameId the unique identifier of the game from which the virtual view will be removed as an observer
-     * @param virtualView  the virtual view to be removed as an observer from the specified game
+     * @param gameId      the unique identifier of the game from which the virtual view will be removed as an observer
+     * @param virtualView the virtual view to be removed as an observer from the specified game
      */
     void removeObserver(int gameId, IGameObserver virtualView);
 
     /**
      * Marks a player as disconnected
-     * @param gameId the unique identifier of the game in which the player is participating
+     *
+     * @param gameId   the unique identifier of the game in which the player is participating
      * @param nickname the nickname of the player to be marked as disconnected
      */
     void markPlayerDisconnected(int gameId, String nickname);
 
     /**
      * Marks a player as reconnected
-     * @param nickname the nickname of the player to be marked as reconnected
      *
+     * @param nickname the nickname of the player to be marked as reconnected
      * @return the unique identifier of the game in which the player is participating
      */
     Integer getActiveGameIdForPlayer(String nickname);

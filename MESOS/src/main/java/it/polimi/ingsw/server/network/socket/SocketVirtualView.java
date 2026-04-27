@@ -2,7 +2,9 @@ package it.polimi.ingsw.server.network.socket;
 
 import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
@@ -166,5 +168,16 @@ public class SocketVirtualView implements VirtualView {
 
         sendMessage(message);
 
+    }
+
+    /**
+     *
+     * @param event the event containing information about the joined game and the player who joined
+     */
+    @Override
+    public void update(JoinedGameEvent event) {
+        GameInfoMessage message = new GameInfoMessage(event.getGameInfo());
+
+        sendMessage(message);
     }
 }

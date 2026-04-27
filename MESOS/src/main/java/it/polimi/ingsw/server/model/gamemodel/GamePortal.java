@@ -13,6 +13,7 @@ import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 import java.util.*;
@@ -52,8 +53,8 @@ public class GamePortal implements IGameModel {
     /**
      * Allows a player to place their totem on a specific offer box on the offer track.
      *
-     * @param gameId   the unique identifier of the game in which the player is placing their totem
-     * @param nickname the nickname of the player placing their totem
+     * @param gameId     the unique identifier of the game in which the player is placing their totem
+     * @param nickname   the nickname of the player placing their totem
      * @param offerBoxId the unique identifier of the offer box on which the player wants to place their totem
      */
     @Override
@@ -72,22 +73,25 @@ public class GamePortal implements IGameModel {
 
     /**
      * Creates a new game with the specified host player.
+     *
      * @param hostNickname the player who will host the new game
      * @return the unique identifier (UUID) of the newly created game
      */
     @Override
-    public int createGame(String hostNickname) {
-        return createGame(hostNickname, StandardRuleSet.MIN_PLAYERS);
+    public int createGame(String hostNickname, IGameObserver observer) {
+        return createGame(hostNickname, StandardRuleSet.MIN_PLAYERS, observer);
     }
 
     /**
      * Creates a new game with the specified host player and expected player count.
-     * @param hostNickname the player who will host the new game
+     *
+     * @param hostNickname        the player who will host the new game
      * @param expectedPlayerCount the expected number of players for the game
+     * @param observer            the observer associated with the host player, which will be added to the game's observers list
      * @return the unique identifier (UUID) of the newly created game
      */
     @Override
-    public int createGame(String hostNickname, int expectedPlayerCount) {
+    public int createGame(String hostNickname, int expectedPlayerCount, IGameObserver observer) {
         if (expectedPlayerCount < StandardRuleSet.MIN_PLAYERS || expectedPlayerCount > StandardRuleSet.MAX_PLAYERS) {
             throw new IllegalArgumentException("Expected player count must be between "
                     + StandardRuleSet.MIN_PLAYERS + " and " + StandardRuleSet.MAX_PLAYERS);
@@ -100,8 +104,17 @@ public class GamePortal implements IGameModel {
             throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
         }
 
-        int gameId = dw.addNewGame(hostNickname);
-        return gameManager.createGame(host, gameId, expectedPlayerCount);
+        int gameId = dw.addNewGame(hostNickname); //TODO: add also expected player count
+        gameManager.createGame(host, gameId, expectedPlayerCount);
+
+        // Add the observer for the host player to the newly created game
+        addObserver(gameId, observer);
+
+        // Notify the host player's observer about the game creation so they can update their lobby view
+        Game game = gameManager.getGame(gameId);
+        game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+
+        return gameId;
     }
 
     @Override
@@ -117,7 +130,6 @@ public class GamePortal implements IGameModel {
             game.getGameState().executePhase(game);
         }
     }
-
 
 
     /**
@@ -184,7 +196,7 @@ public class GamePortal implements IGameModel {
      * @param player the player attempting to join the game
      */
     @Override
-    public void joinGame(int gameId, String player) {
+    public void joinGame(int gameId, String player, IGameObserver observer) {
         Player playerToJoin = playerManager.getPlayer(player);
         DataWriting dw = new DataWriting();
         if (playerToJoin == null) {
@@ -192,6 +204,14 @@ public class GamePortal implements IGameModel {
         }
         dw.joinExistingGame(gameId, player);
         gameManager.joinGame(gameId, playerToJoin);
+
+        // Add the observer for the player to the newly joined game
+        addObserver(gameId, observer);
+
+        // Notify the player's observer about the join so they can update their lobby view
+        Game game = gameManager.getGame(gameId);
+        game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+
     }
 
     /**
@@ -201,12 +221,14 @@ public class GamePortal implements IGameModel {
      * @param player the player attempting to leave the game
      */
     @Override
-    public void leaveGame(int gameId, String player) {
+    public void leaveGame(int gameId, String player, IGameObserver observer) {
         Player playerToLeave = playerManager.getPlayer(player);
         if (playerToLeave == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
         gameManager.leaveGame(gameId, playerToLeave);
+
+        removeObserver(gameId, observer);
 
     }
 
@@ -437,7 +459,8 @@ public class GamePortal implements IGameModel {
 
     /**
      * Marks a player as disconnected in the specified game
-     * @param gameId the unique identifier of the game in which the player is participating
+     *
+     * @param gameId   the unique identifier of the game in which the player is participating
      * @param nickname the nickname of the player to be marked as disconnected
      */
     @Override
@@ -461,8 +484,8 @@ public class GamePortal implements IGameModel {
 
     /**
      * Marks a player as reconnected in the game they are currently participating in, if any.
-     * @param nickname the nickname of the player to be marked as reconnected
      *
+     * @param nickname the nickname of the player to be marked as reconnected
      * @return the unique identifier of the game in which the player is participating
      */
     @Override

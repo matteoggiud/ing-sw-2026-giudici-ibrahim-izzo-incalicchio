@@ -78,4 +78,11 @@ public interface IGameObserver {
      * @param event the event containing the final ranking
      */
     void update(GameEndedEvent event);
+
+    /**
+     * Called when a player joins a game.
+     *
+     * @param event the event containing information about the joined game and the player who joined
+     */
+    void update(JoinedGameEvent event);
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.observer.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ public record BoardDTO(
         List<BuildingCardDTO> lowerBuildingCards,
         List<OfferBoxDTO> offerTrackBoxes,
         List<TurnOrderSlotDTO> turnOrderSlots
-) {
+) implements Serializable {
 
     public BoardDTO {
         if (currentEra == null || currentEra.isBlank()) {

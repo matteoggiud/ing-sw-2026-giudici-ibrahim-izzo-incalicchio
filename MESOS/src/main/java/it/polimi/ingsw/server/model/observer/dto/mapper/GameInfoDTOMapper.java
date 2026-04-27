@@ -20,7 +20,7 @@ public final class GameInfoDTOMapper {
             throw new IllegalArgumentException("Game is null");
         }
 
-        return new GameInfoDTO(game.getGameId(), game.getNumberOfPlayers());
+        return new GameInfoDTO(game.getGameId(), game.getNumberOfPlayers(), game.getPlayers().getPlayerNicknames());
     }
 
     public static List<GameInfoDTO> toGameInfoDTOs(List<Game> games) {

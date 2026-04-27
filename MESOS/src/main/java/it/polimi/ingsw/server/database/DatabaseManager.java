@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    private static final String URL = "jdbc:postgresql://ep-crimson-block-alo6l7uh-pooler.c-3.eu-central-1.aws.neon.tech/neondb?user=neondb_owner&passwordHash=npg_gI0ru4jahYAQ&sslmode=require&channelBinding=require";
+    private static final String URL = "jdbc:postgresql://ep-crimson-block-alo6l7uh-pooler.c-3.eu-central-1.aws.neon.tech/neondb?user=neondb_owner&password=npg_gI0ru4jahYAQ&sslmode=require&channelBinding=require";
     /*private static final String USER = "neondb_owner";
     private static final String PASSWORD = "neondb_owner";*/
 

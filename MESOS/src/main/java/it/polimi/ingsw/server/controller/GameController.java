@@ -74,10 +74,8 @@ public class GameController {
             throw new IllegalStateException("Player is already in a game and cannot join another.");
         }
 
-        model.joinGame(gameId, clientSession.getNickname());
+        model.joinGame(gameId, clientSession.getNickname(),  clientSession.getVirtualView());
 
-        // connect the client virtual view to the game joined observer
-        model.addObserver(gameId, clientSession.getVirtualView());
 
         // update the client session to reflect the game they have joined
         clientSession.setActiveGameId(gameId);
@@ -101,10 +99,8 @@ public class GameController {
             throw new IllegalStateException("Player is not currently in a game and cannot leave.");
         }
 
-        model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname());
-
-        // disconnect the client virtual view from the game left observer
-        model.removeObserver(clientSession.getActiveGameId(), clientSession.getVirtualView());
+        model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(),  clientSession.getVirtualView());
+        //TODO: send a message to the client to notify them that they have left the game and return to the main menu
 
         // update the client session to reflect that they have left the game
         clientSession.clearActiveGameId();
@@ -147,10 +143,9 @@ public class GameController {
             throw new IllegalStateException("Player is currently in a game and cannot create another.");
         }
 
-        int gameId = model.createGame(clientSession.getNickname(), expectedPlayerCount);
+        int gameId = model.createGame(clientSession.getNickname(), expectedPlayerCount, clientSession.getVirtualView());
         clientSession.setActiveGameId(gameId);
 
-        model.addObserver(gameId, clientSession.getVirtualView());
     }
 
 

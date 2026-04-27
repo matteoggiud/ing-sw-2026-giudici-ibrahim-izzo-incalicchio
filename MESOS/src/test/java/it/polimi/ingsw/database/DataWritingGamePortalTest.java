@@ -85,14 +85,14 @@ class DataWritingGamePortalTest {
         addLoggedInPlayer(portal, hostNickname);
         addLoggedInPlayer(portal, joinerNickname);
 
-        int gameId = portal.createGame(hostNickname);
+        int gameId = portal.createGame(hostNickname, null);
         assertTrue(gameId > 0, "createGame deve restituire un id DB valido.");
         createdGameIds.add(gameId);
 
         assertTrue(gameExists(gameId), "createGame deve creare la riga su game.");
         assertTrue(gamePlayerLinkExists(gameId, hostNickname), "createGame deve collegare l'host su game_player.");
 
-        portal.joinGame(gameId, joinerNickname);
+        portal.joinGame(gameId, joinerNickname, null);
 
         assertTrue(gamePlayerLinkExists(gameId, joinerNickname), "joinGame deve inserire il collegamento player-game nel DB.");
         assertEquals(2, portal.getGame(gameId).getNumberOfPlayers(), "Nel model il player deve risultare aggiunto alla partita.");

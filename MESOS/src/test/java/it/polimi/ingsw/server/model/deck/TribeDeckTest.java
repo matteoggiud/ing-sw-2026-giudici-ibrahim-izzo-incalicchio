@@ -89,6 +89,6 @@ class TribeDeckTest {
     }
 
     private HunterCharacterCard newHunter() {
-        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false);
+        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false, "");
     }
 }
