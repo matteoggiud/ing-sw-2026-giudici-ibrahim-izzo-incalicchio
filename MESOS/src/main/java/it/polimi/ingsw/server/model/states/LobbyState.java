@@ -21,18 +21,22 @@ public class LobbyState implements IGameState {
     }
 
     /**
-     * Adds a player to the game lobby and notifies observers of the new player joining.
-     *
-     * @param game   the current game context
-     * @param player the player to be added to the game
+     * Adds a player to the game lobby if the lobby is joinable
+     * @param game the current game context
+     * @param player the player who wants to join
      * @throws IllegalArgumentException if the player is null or already in the game
-     * @throws IllegalStateException    if the game is not in a state that allows adding players (e.g., if the game has already started)
+     * @throws IllegalStateException if the lobby is full and cannot accept more players
      */
     @Override
     public void addPlayer(Game game, Player player) throws IllegalArgumentException, IllegalStateException {
+        if (!isJoinable(game)) {
+            throw new IllegalStateException("Lobby is full.");
+        }
+
         game.getPlayers().addPlayer(player);
         notifyPlayersChanged(game);
     }
+
 
     /**
      * Removes a player from the game lobby and notifies observers of the player leaving.
@@ -48,14 +52,15 @@ public class LobbyState implements IGameState {
     }
 
     /**
-     * Checks if a player can join the game lobby based on the current number of players and the maximum allowed players defined in the standard ruleset.
+     * Checks if the game lobby is joinable by comparing the current number of players
+     * with the expected player count.
      *
      * @param game the current game context
      * @return true if the game lobby is joinable (i.e., has fewer players than the maximum), false otherwise
      */
     @Override
     public boolean isJoinable(Game game) {
-        return game.getNumberOfPlayers() < StandardRuleSet.MAX_PLAYERS;
+        return game.getNumberOfPlayers() < game.getExpectedPlayerCount();
     }
 
     /**

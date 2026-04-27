@@ -75,6 +75,11 @@ public class Game {
      */
     private final ObserverManager observerManager;
 
+    /**
+     * The expected number of players in the game
+     */
+    private final int expectedPlayerCount;
+
 
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
@@ -83,11 +88,28 @@ public class Game {
      * @throws IllegalArgumentException if the player count is less than 2 or greater than 5
      */
     public Game(Player hostPlayer, int gameId) throws IllegalArgumentException {
+        this(hostPlayer, gameId, StandardRuleSet.MIN_PLAYERS);
+    }
+
+    /**
+     * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
+     * @param hostPlayer the player who created the game
+     * @param gameId the unique identifier of the game
+     * @param expectedPlayerCount the expected number of players in the game, must be between 2 and 5
+     * @throws IllegalArgumentException if the player count is less than 2 or greater than 5, or if the host player is null
+     */
+    public Game(Player hostPlayer, int gameId, int expectedPlayerCount) throws IllegalArgumentException {
         if (hostPlayer == null) {
             throw new IllegalArgumentException("Host player cannot be null");
         }
+        if (expectedPlayerCount < StandardRuleSet.MIN_PLAYERS || expectedPlayerCount > StandardRuleSet.MAX_PLAYERS) {
+            throw new IllegalArgumentException("Expected player count must be between "
+                    + StandardRuleSet.MIN_PLAYERS + " and " + StandardRuleSet.MAX_PLAYERS);
+        }
+
         this.gameId = gameId;
-        this.players = new  Players();
+        this.expectedPlayerCount = expectedPlayerCount;
+        this.players = new Players();
         this.board = new Board();
         this.gameState = new LobbyState();
         this.tribeDeck = new TribeDeck();
@@ -99,6 +121,7 @@ public class Game {
 
         players.addPlayer(hostPlayer);
     }
+
 
     /**
      * Gets the unique identifier of the game.
@@ -205,6 +228,15 @@ public class Game {
     public int getNumberOfPlayers() {
         return this.players.size();
     }
+
+    /**
+     * Gets the expected number of players in the game
+     * @return the expected number of players in the game
+     */
+    public int getExpectedPlayerCount() {
+        return expectedPlayerCount;
+    }
+
 
     /**
      * Sets the game state to the specified game state. This method is used to update the game state during the game.

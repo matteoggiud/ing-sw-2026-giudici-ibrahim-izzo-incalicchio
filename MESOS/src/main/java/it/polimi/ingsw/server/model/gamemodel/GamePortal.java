@@ -14,12 +14,9 @@ import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * The GamePortal class serves as the main entry point for interacting with the game model.
@@ -74,21 +71,53 @@ public class GamePortal implements IGameModel {
 
     /**
      * Creates a new game with the specified host player.
-     *
      * @param hostNickname the player who will host the new game
-     * @return the unique identifier of the newly created game
+     * @return the unique identifier (UUID) of the newly created game
      */
     @Override
     public int createGame(String hostNickname) {
-        int gameId;
+        return createGame(hostNickname, StandardRuleSet.MIN_PLAYERS);
+    }
+
+    /**
+     * Creates a new game with the specified host player and expected player count.
+     * @param hostNickname the player who will host the new game
+     * @param expectedPlayerCount the expected number of players for the game
+     * @return the unique identifier (UUID) of the newly created game
+     */
+    @Override
+    public int createGame(String hostNickname, int expectedPlayerCount) {
+        if (expectedPlayerCount < StandardRuleSet.MIN_PLAYERS || expectedPlayerCount > StandardRuleSet.MAX_PLAYERS) {
+            throw new IllegalArgumentException("Expected player count must be between "
+                    + StandardRuleSet.MIN_PLAYERS + " and " + StandardRuleSet.MAX_PLAYERS);
+        }
+
         DataWriting dw = new DataWriting();
         Player host = playerManager.getPlayer(hostNickname);
+
         if (host == null) {
             throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
         }
-        gameId = dw.addNewGame(hostNickname);
-        return gameManager.createGame(host, gameId);
+
+        int gameId = dw.addNewGame(hostNickname);
+        return gameManager.createGame(host, gameId, expectedPlayerCount);
     }
+
+    @Override
+    public void startGameIfReady(int gameId) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
+            game.getGameState().startGame(game);
+            game.getGameState().executePhase(game);
+        }
+    }
+
+
 
     /**
      * Retrieves an active game by its unique identifier.
@@ -189,18 +218,36 @@ public class GamePortal implements IGameModel {
      */
     @Override
     public void login(String nickname, String password) throws SQLException {
-        boolean successfull = false;
         Authenticator db = new Authenticator();
+
         if (nickname == null || password == null) {
             throw new IllegalArgumentException("Nickname and password cannot be null");
         }
-        successfull = db.loginUser(nickname, password);
-        if (successfull) {
+
+        Player existingPlayer = playerManager.getPlayer(nickname);
+
+        if (existingPlayer != null) {
+            if (existingPlayer.isConnected()) {
+                throw new IllegalStateException("Nickname is already connected.");
+            }
+
+            boolean successful = db.loginUser(nickname, password);
+            if (!successful) {
+                throw new IllegalArgumentException("Invalid nickname or password");
+            }
+
+            existingPlayer.reconnect();
+            return;
+        }
+
+        boolean successful = db.loginUser(nickname, password);
+        if (successful) {
             playerManager.addPlayer(new Player(nickname));
         } else {
             throw new IllegalArgumentException("Invalid nickname or password");
         }
     }
+
 
     /**
      * Logs out the user with the specified nickname.
@@ -386,4 +433,45 @@ public class GamePortal implements IGameModel {
         Game game = gameManager.getGame(gameId);
         game.getObserverManager().removeObserver(virtualView);
     }
+
+    /**
+     * Marks a player as disconnected in the specified game
+     * @param gameId the unique identifier of the game in which the player is participating
+     * @param nickname the nickname of the player to be marked as disconnected
+     */
+    @Override
+    public void markPlayerDisconnected(int gameId, String nickname) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
+        }
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        Player player = game.getPlayers().getPlayers().stream()
+                .filter(p -> p.getNickname().equals(nickname))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Player " + nickname + " is not in game " + gameId + "."));
+
+        player.disconnect();
+    }
+
+    /**
+     * Marks a player as reconnected in the game they are currently participating in, if any.
+     * @param nickname the nickname of the player to be marked as reconnected
+     *
+     * @return the unique identifier of the game in which the player is participating
+     */
+    @Override
+    public Integer getActiveGameIdForPlayer(String nickname) {
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+
+        Optional<Integer> gameId = gameManager.findGameIdByPlayerNickname(nickname);
+        return gameId.orElse(null);
+    }
+
 }

@@ -31,10 +31,17 @@ public class GameController {
         try {
             model.login(username, password);
             clientSession.setNickname(username);
+
+            Integer activeGameId = model.getActiveGameIdForPlayer(username);
+            if (activeGameId != null) {
+                clientSession.setActiveGameId(activeGameId);
+                model.addObserver(activeGameId, clientSession.getVirtualView());
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
+
 
     /**
      * Allows a new player to register an account using a username and password
@@ -76,6 +83,7 @@ public class GameController {
         // update the client session to reflect the game they have joined
         clientSession.setActiveGameId(gameId);
 
+        model.startGameIfReady(gameId);
 
     }
 
@@ -120,24 +128,32 @@ public class GameController {
     }
 
     /**
-     * Allows a player to create a new game, which will be added to the list of available games that other players can join
-     *
+     * Allows a player to create a new game, which they will host
      * @param clientSession the client session of the player
      */
     public void createGame(ClientSession clientSession) {
+        createGame(clientSession, 2);
+    }
+
+    /**
+     * Allows a player to create a new game with a specified expected player count, which they will host
+     * @param clientSession the client session of the player
+     * @param expectedPlayerCount the expected number of players for the game being created
+     */
+    public void createGame(ClientSession clientSession, int expectedPlayerCount) {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to create a game.");
         }
         if (clientSession.isInGame()) {
             throw new IllegalStateException("Player is currently in a game and cannot create another.");
         }
-        int gameId = model.createGame(clientSession.getNickname());
+
+        int gameId = model.createGame(clientSession.getNickname(), expectedPlayerCount);
         clientSession.setActiveGameId(gameId);
 
-        // connect the client virtual view to the game created observer
         model.addObserver(gameId, clientSession.getVirtualView());
-
     }
+
 
     /**
      * Allows a player to draw a card from the game
@@ -186,25 +202,41 @@ public class GameController {
     }
 
     /**
-     * Handles the disconnection of a client session, performing any necessary cleanup and updates to the game state
+     * Handles the disconnection of a client session, ensuring that the player's state is
+     * properly updated in the game model and that any necessary cleanup is performed.
      *
      * @param clientSession the client session that has been disconnected
      */
     public void handleDisconnect(ClientSession clientSession) {
-        if (!clientSession.isLoggedIn())
+        if (!clientSession.isLoggedIn()) {
+            clientSession.disconnectSession();
             return;
+        }
+
+        String nickname = clientSession.getNickname();
 
         if (clientSession.isInGame()) {
-            // The client leave the current game, it also removes his virtual view from the game observers
-            leaveGame(clientSession);
+            int gameId = clientSession.getActiveGameId();
+
+            try {
+                model.removeObserver(gameId, clientSession.getVirtualView());
+            } catch (RuntimeException ignored) {
+                // The observer may already have been removed.
+            }
+
+            model.markPlayerDisconnected(gameId, nickname);
+            clientSession.clearActiveGameId();
+            clientSession.disconnectSession();
+            return;
         }
 
         try {
-            // Remove the player into the logged players
-            model.logout(clientSession.getNickname());
-        } catch (RuntimeException e) {
-            // This exception is thrown if the player is not logged in, but we already checked that, so we can ignore it
+            model.logout(nickname);
+        } catch (RuntimeException ignored) {
+            // The player may already have been removed.
         }
+
         clientSession.disconnectSession();
     }
+
 }
