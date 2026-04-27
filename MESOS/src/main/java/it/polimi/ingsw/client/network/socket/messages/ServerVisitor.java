@@ -144,5 +144,17 @@ public class ServerVisitor implements ServerMessageVisitor {
     @Override
     public void visit(ExtraActionTurnChangedMessage message){
     }
+
+    /**
+     * Visits a PlayerResourcesUpdatedMessage, which indicates that a player's resources have been updated.
+     * @param message the PlayerResourcesUpdatedMessage to visit
+     */
+    @Override
+    public void visit(PlayerResourcesUpdatedMessage message) {
+    }
+
+    @Override
+    public void visit(PlayerDeckUpdatedMessage message) {
+    }
 }
 

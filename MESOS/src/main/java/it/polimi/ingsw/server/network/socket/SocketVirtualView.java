@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.network.socket;
 
 import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
@@ -106,6 +107,8 @@ public class SocketVirtualView implements VirtualView {
 
         ResolveActionTurnChangedMessage message= new ResolveActionTurnChangedMessage(gameId,currentPlayerNickname);
 
+        sendMessage(message);
+
     }
 
     /**
@@ -118,6 +121,7 @@ public class SocketVirtualView implements VirtualView {
 
         ExtraActionTurnChangedMessage message= new ExtraActionTurnChangedMessage(gameId,currentPlayerNickname);
 
+        sendMessage(message);
     }
 
     /**
@@ -125,7 +129,14 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerResourcesUpdatedEvent event) {
+        int gameId=event.getGameId();
+        String playerNickname=event.getPlayerNickname();
+        int food=event.getFood();
+        int prestigePoints=event.getPrestigePoints();
+        
+        PlayerResourcesUpdatedMessage message = new PlayerResourcesUpdatedMessage(gameId,playerNickname,food,prestigePoints);
 
+        sendMessage(message);
     }
 
     /**
@@ -133,7 +144,13 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerDeckUpdatedEvent event) {
+        int gameId=event.getGameId();
+        String playerNickname=event.getPlayerNickname();
+        PlayerDeckDTO playerdeck=event.getPlayerDeck();
 
+        PlayerDeckUpdatedMessage message= new PlayerDeckUpdatedMessage(gameId,playerNickname,playerdeck);
+
+        sendMessage(message);
     }
 
     /**
@@ -141,6 +158,5 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(GameEndedEvent event) {
-
     }
 }

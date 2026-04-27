@@ -1,13 +1,7 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.EraChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.PlaceTotemTurnChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.ResolveActionTurnChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.ExtraActionTurnChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.*;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
@@ -116,6 +110,15 @@ public interface ServerMessageVisitor {
      * @param message the ExtraActionTurnChangedMessage to visit
      */
     void visit(ExtraActionTurnChangedMessage message);
+
+    /**
+     * Visits a PlayerResourcesUpdatedMessage, which indicates that a player's resources have changed.
+     *
+     * @param message the PlayerResourcesUpdatedMessage to visit
+     */
+    void visit(PlayerResourcesUpdatedMessage message);
+
+    void visit(PlayerDeckUpdatedMessage message);
 }
 
 
