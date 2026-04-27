@@ -79,7 +79,7 @@ public class SocketVirtualView implements VirtualView {
     @Override
     public void update(EraChangedEvent event) {
 
-        EraChangedMessage message= new EraChangedMessage();
+        EraChangedMessage message = new EraChangedMessage();
 
         sendMessage(message);
     }
@@ -89,10 +89,10 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlaceTotemTurnChangedEvent event) {
-        int gameId=event.getGameId();
-        String currentPlayerNickname=event.getCurrentPlayerNickname();
+        int gameId = event.getGameId();
+        String currentPlayerNickname = event.getCurrentPlayerNickname();
 
-        PlaceTotemTurnChangedMessage message= new PlaceTotemTurnChangedMessage(gameId,currentPlayerNickname);
+        PlaceTotemTurnChangedMessage message = new PlaceTotemTurnChangedMessage(gameId, currentPlayerNickname);
 
         sendMessage(message);
 
@@ -103,10 +103,10 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(ResolveActionTurnChangedEvent event) {
-        int gameId=event.getGameId();
-        String currentPlayerNickname=event.getCurrentPlayerNickname();
+        int gameId = event.getGameId();
+        String currentPlayerNickname = event.getCurrentPlayerNickname();
 
-        ResolveActionTurnChangedMessage message= new ResolveActionTurnChangedMessage(gameId,currentPlayerNickname);
+        ResolveActionTurnChangedMessage message = new ResolveActionTurnChangedMessage(gameId, currentPlayerNickname);
 
         sendMessage(message);
 
@@ -117,10 +117,10 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(ExtraActionTurnChangedEvent event) {
-        int gameId=event.getGameId();
-        String currentPlayerNickname=event.getCurrentPlayerNickname();
+        int gameId = event.getGameId();
+        String currentPlayerNickname = event.getCurrentPlayerNickname();
 
-        ExtraActionTurnChangedMessage message= new ExtraActionTurnChangedMessage(gameId,currentPlayerNickname);
+        ExtraActionTurnChangedMessage message = new ExtraActionTurnChangedMessage(gameId, currentPlayerNickname);
 
         sendMessage(message);
     }
@@ -130,12 +130,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerResourcesUpdatedEvent event) {
-        int gameId=event.getGameId();
-        String playerNickname=event.getPlayerNickname();
-        int food=event.getFood();
-        int prestigePoints=event.getPrestigePoints();
-        
-        PlayerResourcesUpdatedMessage message = new PlayerResourcesUpdatedMessage(gameId,playerNickname,food,prestigePoints);
+        int gameId = event.getGameId();
+        String playerNickname = event.getPlayerNickname();
+        int food = event.getFood();
+        int prestigePoints = event.getPrestigePoints();
+
+        PlayerResourcesUpdatedMessage message = new PlayerResourcesUpdatedMessage(gameId, playerNickname, food, prestigePoints);
 
         sendMessage(message);
     }
@@ -145,11 +145,11 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerDeckUpdatedEvent event) {
-        int gameId=event.getGameId();
-        String playerNickname=event.getPlayerNickname();
-        PlayerDeckDTO playerdeck=event.getPlayerDeck();
+        int gameId = event.getGameId();
+        String playerNickname = event.getPlayerNickname();
+        PlayerDeckDTO playerDeck = event.getPlayerDeck();
 
-        PlayerDeckUpdatedMessage message= new PlayerDeckUpdatedMessage(gameId,playerNickname,playerdeck);
+        PlayerDeckUpdatedMessage message = new PlayerDeckUpdatedMessage(gameId, playerNickname, playerDeck);
 
         sendMessage(message);
     }
@@ -159,10 +159,10 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(GameEndedEvent event) {
-        int gameId=event.getGameId();
-        Map<String, Integer> finalRanking=event.getFinalRanking();
+        int gameId = event.getGameId();
+        Map<String, Integer> finalRanking = event.getFinalRanking();
 
-        GameEndedMessage message= new GameEndedMessage(gameId,finalRanking);
+        GameEndedMessage message = new GameEndedMessage(gameId, finalRanking);
 
         sendMessage(message);
 

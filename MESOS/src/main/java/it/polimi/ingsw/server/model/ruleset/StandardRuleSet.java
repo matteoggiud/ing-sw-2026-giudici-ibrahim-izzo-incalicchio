@@ -80,7 +80,7 @@ public class StandardRuleSet implements IGameRuleSet {
      * @return a list of initialized TurnOrderSlot objects for the Turn Order Box.
      */
     @Override
-    public ArrayList<TurnOrderSlot> createTurnOrderSlots(int numPlayers) {  //TODO: Try to connect it with the db directly
+    public ArrayList<TurnOrderSlot> createTurnOrderSlots(int numPlayers) {
         validatePlayerCount(numPlayers);
 
         ArrayList<TurnOrderSlot> slots = new ArrayList<>();
@@ -177,7 +177,7 @@ public class StandardRuleSet implements IGameRuleSet {
      * @return an ordered list of initialized OfferBox objects.
      */
     @Override
-    public ArrayList<OfferBox> createOfferBoxes(int numPlayers) { //TODO: Try to connect it with the db directly
+    public ArrayList<OfferBox> createOfferBoxes(int numPlayers) {
         validatePlayerCount(numPlayers);
 
         ArrayList<OfferBox> boxes = new ArrayList<>();
