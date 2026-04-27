@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.network.socket.messages.game.*;
 
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Map;
 
 public class SocketVirtualView implements VirtualView {
 
@@ -158,5 +159,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(GameEndedEvent event) {
+        int gameId=event.getGameId();
+        Map<String, Integer> finalRanking=event.getFinalRanking();
+
+        GameEndedMessage message= new GameEndedMessage(gameId,finalRanking);
+
+        sendMessage(message);
+
     }
 }

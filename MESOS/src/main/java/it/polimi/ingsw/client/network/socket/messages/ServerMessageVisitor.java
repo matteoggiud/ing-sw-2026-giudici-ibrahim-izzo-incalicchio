@@ -118,7 +118,17 @@ public interface ServerMessageVisitor {
      */
     void visit(PlayerResourcesUpdatedMessage message);
 
+    /**
+     * Visits a PlayerDeckUpdatedMessage, which indicates that a player's deck has changed.
+     * @param message the PlayerDeckUpdatedMessage to visit
+     */
     void visit(PlayerDeckUpdatedMessage message);
+
+    /**
+     * Visits a GameEndedMessage, which indicates that the game has ended and contains the final ranking of the players. This message is sent to all clients when the game ends.
+     * @param message the GameEndedMessage to visit
+     */
+    void visit(GameEndedMessage message);
 }
 
 
