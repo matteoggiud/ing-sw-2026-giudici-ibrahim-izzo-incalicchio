@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.EraChangedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.PlaceTotemTurnChangedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.ResolveActionTurnChangedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.ExtraActionTurnChangedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
@@ -12,6 +14,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+
 
 
 public interface ServerMessageVisitor {
@@ -99,4 +102,21 @@ public interface ServerMessageVisitor {
      * @param message the PlaceTotemTurnChangedMessage to visit
      */
     void visit(PlaceTotemTurnChangedMessage message);
+
+    /**
+     * Visits a ResolveActionTurnChangedMessage, which indicates the turn changed during the action resolution phase.
+     *
+     * @param message the ResolveActionTurnChangedMessage to visit
+     */
+    void visit(ResolveActionTurnChangedMessage message);
+
+    /**
+     * Visits an ExtraActionTurnChangedMessage, which indicates the turn changed during the extra action phase.
+     *
+     * @param message the ExtraActionTurnChangedMessage to visit
+     */
+    void visit(ExtraActionTurnChangedMessage message);
 }
+
+
+

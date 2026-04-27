@@ -4,11 +4,8 @@ import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.EraChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.PlaceTotemTurnChangedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.*;
+
 
 import java.io.ObjectOutputStream;
 import java.util.List;
@@ -91,11 +88,11 @@ public class SocketVirtualView implements VirtualView {
     @Override
     public void update(PlaceTotemTurnChangedEvent event) {
         int gameId=event.getGameId();
-            String currentPlayerNickname=event.getCurrentPlayerNickname();
+        String currentPlayerNickname=event.getCurrentPlayerNickname();
 
-            PlaceTotemTurnChangedMessage message= new PlaceTotemTurnChangedMessage(gameId,currentPlayerNickname);
+        PlaceTotemTurnChangedMessage message= new PlaceTotemTurnChangedMessage(gameId,currentPlayerNickname);
 
-            sendMessage(message);
+        sendMessage(message);
 
     }
 
@@ -104,6 +101,10 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(ResolveActionTurnChangedEvent event) {
+        int gameId=event.getGameId();
+        String currentPlayerNickname=event.getCurrentPlayerNickname();
+
+        ResolveActionTurnChangedMessage message= new ResolveActionTurnChangedMessage(gameId,currentPlayerNickname);
 
     }
 
@@ -112,6 +113,10 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(ExtraActionTurnChangedEvent event) {
+        int gameId=event.getGameId();
+        String currentPlayerNickname=event.getCurrentPlayerNickname();
+
+        ExtraActionTurnChangedMessage message= new ExtraActionTurnChangedMessage(gameId,currentPlayerNickname);
 
     }
 

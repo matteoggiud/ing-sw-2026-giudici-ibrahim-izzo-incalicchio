@@ -1,13 +1,8 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
-
 import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.EraChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.PlaceTotemTurnChangedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.*;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
@@ -28,15 +23,8 @@ public class ServerVisitor implements ServerMessageVisitor {
         return sessionState;
     }
 
-    /**
-     *
-     * Visits a LoginNeededMessage, which indicates that the client needs to log in before performing any other action.
-     *
-     * @param message the LoginNeededMessage to visit
-     */
     @Override
     public void visit(LoginNeededMessage message) {
-
     }
 
     /**
@@ -86,7 +74,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(LoginSuccessMessage message) {
-
     }
 
     /**
@@ -106,7 +93,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(RegisterFailedMessage message) {
-
     }
 
     /**
@@ -116,7 +102,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(RegisterSuccessMessage message) {
-
     }
 
     /**
@@ -126,7 +111,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(GenericErrorMessage message) {
-        
     }
 
     /**
@@ -135,7 +119,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(EraChangedMessage message) {
-
     }
 
     /**
@@ -144,7 +127,22 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(PlaceTotemTurnChangedMessage message) {
-
     }
 
+    /**
+     * Visits a ResolveActionTurnChangedMessage, which indicates the turn changed during the action resolution phase.
+     * @param message the ResolveActionTurnChangedMessage to visit
+     */
+    @Override
+    public void visit(ResolveActionTurnChangedMessage message) {
+    }
+
+    /**
+     * Visits an ExtraActionTurnChangedMessage, which indicates the turn changed during the extra action phase.
+     * @param message the ExtraActionTurnChangedMessage to visit
+     */
+    @Override
+    public void visit(ExtraActionTurnChangedMessage message){
+    }
 }
+
