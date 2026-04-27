@@ -76,6 +76,7 @@ public class GameController {
         // update the client session to reflect the game they have joined
         clientSession.setActiveGameId(gameId);
 
+        model.startGameIfReady(gameId);
 
     }
 
@@ -120,24 +121,32 @@ public class GameController {
     }
 
     /**
-     * Allows a player to create a new game, which will be added to the list of available games that other players can join
-     *
+     * Allows a player to create a new game, which they will host
      * @param clientSession the client session of the player
      */
     public void createGame(ClientSession clientSession) {
+        createGame(clientSession, 2);
+    }
+
+    /**
+     * Allows a player to create a new game with a specified expected player count, which they will host
+     * @param clientSession the client session of the player
+     * @param expectedPlayerCount the expected number of players for the game being created
+     */
+    public void createGame(ClientSession clientSession, int expectedPlayerCount) {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to create a game.");
         }
         if (clientSession.isInGame()) {
             throw new IllegalStateException("Player is currently in a game and cannot create another.");
         }
-        int gameId = model.createGame(clientSession.getNickname());
+
+        int gameId = model.createGame(clientSession.getNickname(), expectedPlayerCount);
         clientSession.setActiveGameId(gameId);
 
-        // connect the client virtual view to the game created observer
         model.addObserver(gameId, clientSession.getVirtualView());
-
     }
+
 
     /**
      * Allows a player to draw a card from the game
