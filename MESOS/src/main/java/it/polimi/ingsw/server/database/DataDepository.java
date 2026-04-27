@@ -65,7 +65,7 @@ public class DataDepository {
     }
 
     public List<CharacterCard> getArtistCards() throws SQLException {
-        String sql = "SELECT card_id, name, era, min_num_players, character_type, effect_params FROM character_card WHERE character_type = 'ARTIST'";
+        String sql = "SELECT id,name, era, min_num_players, character_type, effect_params,image_key FROM character_card JOIN card ON card_id=character_card_id WHERE character_type = 'ARTIST'";
 
         List<CharacterCard> allArtistCard = new ArrayList<>();
 
@@ -74,7 +74,7 @@ public class DataDepository {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                int cardId = rs.getInt("card_id");
+                int cardId = rs.getInt("id");
                 String name = rs.getString("name");
                 Era era = Era.valueOf(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
