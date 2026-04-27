@@ -1,8 +1,9 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
-import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.EraChangedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.PlaceTotemTurnChangedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+
 
 public interface ServerMessageVisitor {
 
@@ -83,4 +85,18 @@ public interface ServerMessageVisitor {
      * @param message the GenericErrorMessage to visit
      */
     void visit(GenericErrorMessage message);
+
+    /**
+     * Visits an EraChangedMessage, which indicates that the game era has changed.
+     *
+     * @param message the EraChangedMessage to visit
+     */
+    void visit(EraChangedMessage message);
+
+    /**
+     * Visits a PlaceTotemTurnChangedMessage, which indicates the turn changed during the totem placement phase.
+     *
+     * @param message the PlaceTotemTurnChangedMessage to visit
+     */
+    void visit(PlaceTotemTurnChangedMessage message);
 }

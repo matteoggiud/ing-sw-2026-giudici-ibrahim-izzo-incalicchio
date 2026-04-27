@@ -7,6 +7,8 @@ import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.EraChangedMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.PlaceTotemTurnChangedMessage;
 
 import java.io.ObjectOutputStream;
 import java.util.List;
@@ -78,6 +80,9 @@ public class SocketVirtualView implements VirtualView {
     @Override
     public void update(EraChangedEvent event) {
 
+        EraChangedMessage message= new EraChangedMessage();
+
+        sendMessage(message);
     }
 
     /**
@@ -85,6 +90,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlaceTotemTurnChangedEvent event) {
+        int gameId=event.getGameId();
+            String currentPlayerNickname=event.getCurrentPlayerNickname();
+
+            PlaceTotemTurnChangedMessage message= new PlaceTotemTurnChangedMessage(gameId,currentPlayerNickname);
+
+            sendMessage(message);
 
     }
 
