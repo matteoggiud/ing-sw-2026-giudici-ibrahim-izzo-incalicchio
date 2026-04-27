@@ -21,7 +21,7 @@ public class Authenticator {
      * @throws SQLException if there is an error accessing the database or if the login credentials are invalid
      */
     public boolean loginUser(String nickname, String password) throws SQLException {
-        String sql = "SELECT player_id, nickname, password, created_at FROM player WHERE nickname = ? AND password = ?";
+        String sql = "SELECT player_id, nickname, password, created_at FROM player WHERE nickname = ? AND password_hash = ?";
 
         try (Connection c = DatabaseManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
