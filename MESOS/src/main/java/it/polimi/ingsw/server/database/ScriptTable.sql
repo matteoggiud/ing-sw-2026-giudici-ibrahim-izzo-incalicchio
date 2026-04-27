@@ -57,6 +57,36 @@ CREATE TABLE event_card
     threshold       INTEGER NOT NULL CHECK (threshold >= 0)
 );
 
+CREATE TABLE card(
+    id                SERIAL PRIMARY KEY,
+    character_card_id INTEGER,
+    building_card_id  INTEGER,
+    event_card_id     INTEGER,
+    image_key         VARCHAR(255) NOT NULL UNIQUE,
+
+    CONSTRAINT fk_card_character
+        FOREIGN KEY (character_card_id)
+            REFERENCES character_card (card_id),
+
+    CONSTRAINT fk_card_building
+        FOREIGN KEY (building_card_id)
+            REFERENCES building_card (card_id),
+
+    CONSTRAINT fk_card_event
+        FOREIGN KEY (event_card_id)
+            REFERENCES event_card (card_id),
+
+    CONSTRAINT uq_card_character UNIQUE (character_card_id),
+
+    CONSTRAINT uq_card_building UNIQUE (building_card_id),
+
+    CONSTRAINT uq_card_event UNIQUE (event_card_id),
+
+    CONSTRAINT ck_card_exactly_one_type
+        CHECK (num_nonnulls(character_card_id, building_card_id, event_card_id) = 1)
+);
+
+
 CREATE TABLE offer_box
 (
     box_id          VARCHAR(2) CHECK (box_id IN ('A', 'B', 'C', 'D', 'E', 'F', 'G')) PRIMARY KEY,
