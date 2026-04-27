@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class PlayerResourcesUpdatedEvent implements IGameEvent {
 
-    private final UUID gameId;
+    private final int gameId;
     private final String playerNickname;
     private final int food;
     private final int prestigePoints;
@@ -22,8 +22,8 @@ public class PlayerResourcesUpdatedEvent implements IGameEvent {
      * @param food the player's current food amount
      * @param prestigePoints the player's current prestige points amount
      */
-    public PlayerResourcesUpdatedEvent(UUID gameId, String playerNickname, int food, int prestigePoints) {
-        if (gameId == null) {
+    public PlayerResourcesUpdatedEvent(int gameId, String playerNickname, int food, int prestigePoints) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (playerNickname == null || playerNickname.isBlank()) {
@@ -44,7 +44,7 @@ public class PlayerResourcesUpdatedEvent implements IGameEvent {
      *
      * @return the game id
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

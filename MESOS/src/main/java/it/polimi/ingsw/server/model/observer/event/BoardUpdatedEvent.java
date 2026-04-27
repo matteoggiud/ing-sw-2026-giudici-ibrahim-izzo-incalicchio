@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class BoardUpdatedEvent implements IGameEvent {
 
-    private final UUID gameId;
+    private final int gameId;
     private final BoardDTO board;
 
     /**
@@ -19,8 +19,8 @@ public class BoardUpdatedEvent implements IGameEvent {
      * @param gameId the unique identifier of the game
      * @param board the DTO representing the current visible board state
      */
-    public BoardUpdatedEvent(UUID gameId, BoardDTO board) {
-        if (gameId == null) {
+    public BoardUpdatedEvent(int gameId, BoardDTO board) {
+        if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (board == null) {
@@ -36,7 +36,7 @@ public class BoardUpdatedEvent implements IGameEvent {
      *
      * @return the game id
      */
-    public UUID getGameId() {
+    public int getGameId() {
         return gameId;
     }
 

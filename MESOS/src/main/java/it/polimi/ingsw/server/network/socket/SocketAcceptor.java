@@ -10,11 +10,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that accepts incoming socket connections and creates a ClientHandler for each of them.
+ */
 public class SocketAcceptor {
-    private ServerSocket listenSocket;
-    private GameController controller;
+    private final ServerSocket listenSocket;
+    private final GameController controller;
 
-    List<ClientHandler> clients = new ArrayList<ClientHandler>();
+    List<ClientHandler> clients = new ArrayList<>();
 
     public SocketAcceptor(ServerSocket listenSocket, GameController controller) {
         this.listenSocket = listenSocket;
@@ -33,9 +36,14 @@ public class SocketAcceptor {
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
 
-            ClientHandler client = new ClientHandler(clientSocket, controller,  inputStream, outputStream);
+            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this);
             clients.add(client);
             new Thread(client).start();
         }
+    }
+
+
+    public void removeClientHandler(ClientHandler clientHandler) {
+        this.clients.remove(clientHandler);
     }
 }

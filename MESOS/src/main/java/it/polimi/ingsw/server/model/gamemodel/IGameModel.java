@@ -1,9 +1,13 @@
 package it.polimi.ingsw.server.model.gamemodel;
 
+import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.observer.IGameObserver;
+import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+
 import java.util.Map;
 
 import java.sql.SQLException;
@@ -29,6 +33,7 @@ public interface IGameModel {
 
     /**
      * Logs out the user with the specified nickname.
+     *
      * @param nickname the nickname of the user to log out
      * @throws IllegalArgumentException
      */
@@ -40,7 +45,7 @@ public interface IGameModel {
      * @param nickname the nickname of the player to retrieve
      * @return the player associated with the given nickname
      * @throws IllegalArgumentException if the nickname is null
-     * @throws IllegalStateException if no logged-in player exists with that nickname
+     * @throws IllegalStateException    if no logged-in player exists with that nickname
      */
     Player getLoggedPlayer(String nickname);
 
@@ -66,21 +71,21 @@ public interface IGameModel {
     /**
      * Allows a player to draw a card from either the upper or lower row of the offer track.
      *
-     * @param game         the current game context
-     * @param player       the player attempting to draw the card
-     * @param selectedCard the card the player has selected to draw
-     * @param fromUpperRow a boolean indicating whether the card is being drawn from the upper row (true) or lower row (false)
+     * @param gameId         the current game context
+     * @param nickname       the player attempting to draw the card
+     * @param selectedCardId the card the player has selected to draw
+     * @param fromUpperRow   a boolean indicating whether the card is being drawn from the upper row (true) or lower row (false)
      */
-    void drawCard(Game game, Player player, Card selectedCard, boolean fromUpperRow);
+    void drawCard(int gameId, String nickname, int selectedCardId, boolean fromUpperRow);
 
     /**
      * Allows a player to place their totem on a specific offer box on the offer track.
      *
-     * @param game     the current game context
-     * @param player   the player attempting to place their totem
+     * @param gameId   the current game context
+     * @param nickname the player attempting to place their totem
      * @param offerBox the offer box on which the player wants to place their totem
      */
-    void placing(Game game, Player player, OfferBox offerBox);
+    void placing(int gameId, String nickname, OfferBox offerBox);
 
     /**
      * Creates a new game with the specified host player.
@@ -104,10 +109,10 @@ public interface IGameModel {
      * Only the host player is allowed to start the game, and the game must have
      * at least the minimum number of players required by the rules.
      *
-     * @param gameId the unique identifier of the game to start
+     * @param gameId       the unique identifier of the game to start
      * @param hostNickname the nickname of the player requesting the start
      * @throws IllegalArgumentException if any argument is null
-     * @throws IllegalStateException if the requester is not the host or there are not enough players
+     * @throws IllegalStateException    if the requester is not the host or there are not enough players
      */
     void startGame(int gameId, String hostNickname);
 
@@ -117,7 +122,7 @@ public interface IGameModel {
      *
      * @return a list of available games
      */
-    List<Game> getAvailableGames();
+    List<GameInfoDTO> getAvailableGames();
 
     /**
      * Allows a player to join an existing game using the game's unique identifier (UUID).
@@ -142,18 +147,18 @@ public interface IGameModel {
      * @param gameId the unique identifier of the game
      * @return a map of players and their final scores sorted by ranking
      * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
      */
     Map<Player, Integer> getFinalRanking(int gameId);
 
     /**
      * Checks whether the specified player has a pending extra action in the given game.
      *
-     * @param gameId the unique identifier of the game
+     * @param gameId   the unique identifier of the game
      * @param nickname the nickname of the player to check
      * @return true if the player has a pending extra action, false otherwise
      * @throws IllegalArgumentException if any argument is null or invalid
-     * @throws IllegalStateException if the player is not logged in
+     * @throws IllegalStateException    if the player is not logged in
      */
     boolean hasPendingExtraAction(int gameId, String nickname);
 
@@ -164,8 +169,23 @@ public interface IGameModel {
      * @param gameId the unique identifier of the game
      * @return a map of player nicknames and their final scores sorted by ranking
      * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException if the game is not in a phase that exposes the final ranking yet
+     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
      */
     Map<String, Integer> getFinalRankingByNickname(int gameId);
 
+    /**
+     * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
+     *
+     * @param gameId      the unique identifier of the game to which the virtual view will be added as an observer
+     * @param virtualView the virtual view to be added as an observer to the specified game
+     */
+    void addObserver(int gameId, IGameObserver virtualView);
+
+    /**
+     * Removes a virtual view as an observer from the game with the specified id, preventing the virtual view from receiving further updates about the game's state and events.
+     *
+     * @param gameId the unique identifier of the game from which the virtual view will be removed as an observer
+     * @param virtualView  the virtual view to be removed as an observer from the specified game
+     */
+    void removeObserver(int gameId, IGameObserver virtualView);
 }
