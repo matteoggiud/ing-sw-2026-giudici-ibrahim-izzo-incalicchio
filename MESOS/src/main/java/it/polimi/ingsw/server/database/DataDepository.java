@@ -415,7 +415,7 @@ public class DataDepository {
      * @return the card with the specified id, or null if no such card exists
      */
     public CharacterCard getCharacterCardById(int cardId) {
-        String query = "SELECT * FROM character_card WHERE card_id = ?";
+        String query = "SELECT * FROM character_card JOIN card ON charcter_card_id=card_id WHERE id = ?";
         CharacterCard card = null;
 
         try (Connection c = DatabaseManager.getConnection();
@@ -430,18 +430,19 @@ public class DataDepository {
                     int minNumPlayers = rs.getInt("min_num_players");
                     CharacterType characterType = CharacterType.valueOf(rs.getString("character_type"));
                     JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
+                    String imageKey = rs.getString("image_key");
 
                     return switch (characterType) {
-                        case ARTIST -> card = new ArtistCharacterCard(cardId, name, era, minNumPlayers);
+                        case ARTIST -> card = new ArtistCharacterCard(cardId, name, era, minNumPlayers,imageKey);
                         case BUILDER -> card =
-                                new BuilderCharacterCard(cardId, name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0));
-                        case GATHERER -> card = new GathererCharacterCard(cardId, name, era, minNumPlayers);
+                                new BuilderCharacterCard(cardId, name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0), imageKey);
+                        case GATHERER -> card = new GathererCharacterCard(cardId, name, era, minNumPlayers, imageKey);
                         case HUNTER -> card =
-                                new HunterCharacterCard(cardId, name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false));
+                                new HunterCharacterCard(cardId, name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false), imageKey);
                         case INVENTOR -> card =
-                                new InventorCharacterCard(cardId, name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("ARROW")));
+                                new InventorCharacterCard(cardId, name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("ARROW")), imageKey);
                         case SHAMAN -> card =
-                                new ShamanCharacterCard(cardId, name, era, minNumPlayers, params.path("shamanStars").asInt(1));
+                                new ShamanCharacterCard(cardId, name, era, minNumPlayers, params.path("shamanStars").asInt(1), imageKey);
                     };
                 }
             }
@@ -452,7 +453,7 @@ public class DataDepository {
     }
 
     public BuildingCard getBuildingCardById(int cardId) {
-        String query = "SELECT * FROM building_card WHERE card_id = ?";
+        String query = "SELECT * FROM building_card JOIN card ON building_card_id=card_id WHERE card_id = ?";
         BuildingCard card = null;
 
         try (Connection c = DatabaseManager.getConnection();
@@ -470,8 +471,9 @@ public class DataDepository {
                     String effectId = rs.getString("effect_id");
                     JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                     IBuildingEffect effect = createBuildingEffect(effectId, params);
+                    String imageKey = rs.getString("image_key");
 
-                    card = new BuildingCard(cardId, name, era, minNumPlayers, foodCost, endGamePp, effect);
+                    card = new BuildingCard(cardId, name, era, minNumPlayers, foodCost, endGamePp, effect, imageKey);
                 }
             }
         } catch (SQLException e) {
@@ -482,7 +484,7 @@ public class DataDepository {
     }
 
     public EventCard getEventCardById(int cardId) {
-        String query = "SELECT * FROM event_card WHERE card_id = ?";
+        String query = "SELECT * FROM event_card JOIN card ON event_card_id=card_id WHERE card_id = ?";
         EventCard card = null;
 
         try (Connection c = DatabaseManager.getConnection();
@@ -502,6 +504,7 @@ public class DataDepository {
                     int gainedPp = rs.getInt("gained_pp");
                     int malusPp = rs.getInt("malus_pp");
                     int threshold = rs.getInt("threshold");
+                    String imageKey = rs.getString("image_key");
 
                     card = new EventCard(cardId, name, era, minNumPlayers, isFinalEvent, switch (eventTypeStr) {
                         case "HUNT" -> new HuntEventEffect();
@@ -509,11 +512,31 @@ public class DataDepository {
                         case "SHAMANIC_RITUAL" -> new ShamanicRitualEventEffect();
                         case "SUSTENANCE" -> new SustenanceEventEffect();
                         default -> throw new IllegalArgumentException("eventType invalid: " + eventTypeStr);
-                    }, gainedFood, malusFood, gainedPp, malusPp, threshold);
+                    }, gainedFood, malusFood, gainedPp, malusPp, threshold, imageKey);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return card;
+    }
+
+    public Card getCardbyId(int id){
+        Card card = null;
+        try{
+            card=getCharacterCardById(id);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            card=getBuildingCardById(id);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        try{
+            card=getEventCardById(id);
+        }catch (Exception e){
+            System.out.println(e);
         }
         return card;
     }

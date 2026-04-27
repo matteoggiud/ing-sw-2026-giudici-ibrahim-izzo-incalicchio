@@ -103,13 +103,13 @@ class CardTest {
         private PlayerDeck lastDeck;
 
         private TestCard(int cardId, String name, Era era, int minNumPlayers) {
-            super(cardId, name, era, minNumPlayers);
+            super(cardId, name, era, minNumPlayers, "");
             this.added = false;
             this.lastDeck = null;
         }
 
         private TestCard(String name, Era era, int minNumPlayers) {
-            super(name, era, minNumPlayers);
+            super(1 ,name, era, minNumPlayers,"");
             this.added = false;
             this.lastDeck = null;
         }

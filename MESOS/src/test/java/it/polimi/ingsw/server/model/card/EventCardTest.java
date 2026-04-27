@@ -26,8 +26,8 @@ class EventCardTest {
     void setUp() {
         nextCardId = 1;
         effect = new DummyEventEffect();
-        eventCard = new EventCard(nextCardId++, "EventA", Era.ERA_1, 2, false, effect, 3, 1, 2, 1, 4);
-        finalEventCard = new EventCard(nextCardId++, "FinalEvent", Era.ERA_2, 3, true, effect, 0, 2, 1, 3, 5);
+        eventCard = new EventCard(nextCardId++, "EventA", Era.ERA_1, 2, false, effect, 3, 1, 2, 1, 4, "");
+        finalEventCard = new EventCard(nextCardId++, "FinalEvent", Era.ERA_2, 3, true, effect, 0, 2, 1, 3, 5, "");
     }
 
     @Test
@@ -112,22 +112,22 @@ class EventCardTest {
     @Test
     void constructorValidation() {
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, null, 0, 0, 0, 0, 0));
+                () -> new EventCard(99, "E", Era.ERA_1, 2, false, null, 0, 0, 0, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, -1, 0, 0, 0, 0));
+                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, -1, 0, 0, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, -1, 0, 0, 0));
+                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, -1, 0, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, -1, 0, 0));
+                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, -1, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, 0, -1, 0));
+                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, 0, -1, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, 0, 0, -1));
+                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, 0, 0, -1,""));
     }
 
     private static final class DummyEventEffect implements IEventEffect {

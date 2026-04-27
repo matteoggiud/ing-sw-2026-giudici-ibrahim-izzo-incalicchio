@@ -97,7 +97,7 @@ class PlayerTest {
     @Test
     void canBuyBuildingCardWithDiscount() {
         BuildingCard building = newBuilding(2);
-        BuilderCharacterCard builder = new BuilderCharacterCard(nextCardId++, "Builder", Era.ERA_1, 2, 0, 4);
+        BuilderCharacterCard builder = new BuilderCharacterCard(nextCardId++, "Builder", Era.ERA_1, 2, 0, 4, "");
 
         player.getPlayerDeck().addCard(builder);
         player.canBuyBuildingCard(building);
@@ -122,7 +122,7 @@ class PlayerTest {
     void addCardsInDeck() {
         ArrayList<Card> cards = new ArrayList<>();
         BuildingCard building = newBuilding(3);
-        HunterCharacterCard hunter = new HunterCharacterCard(nextCardId++, "Hunter", Era.ERA_1, 2, false);
+        HunterCharacterCard hunter = new HunterCharacterCard(nextCardId++, "Hunter", Era.ERA_1, 2, false, "");
 
         cards.add(building);
         cards.add(hunter);
@@ -145,7 +145,7 @@ class PlayerTest {
     }
 
     private BuildingCard newBuilding(int foodCost) {
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect);
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect, "");
     }
 }
 

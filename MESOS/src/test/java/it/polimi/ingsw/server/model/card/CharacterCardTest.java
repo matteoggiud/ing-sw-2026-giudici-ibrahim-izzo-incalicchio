@@ -139,7 +139,7 @@ class CharacterCardTest {
         private PlayerDeck lastPlayerDeck;
 
         private TestCharacterCard(int cardId, String name, Era era, int minNumPlayers) {
-            super(cardId, name, era, minNumPlayers);
+            super(cardId, name, era, minNumPlayers,"");
             this.addedToPlayer = false;
             this.onAddToPlayerDeckCalls = 0;
             this.lastPlayerDeck = null;

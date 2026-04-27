@@ -139,12 +139,12 @@ class CardRowTest {
     }
 
     private HunterCharacterCard newHunter() {
-        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false);
+        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false,"");
     }
 
     private BuildingCard newBuilding(int foodCost) {
         IBuildingEffect effect = new IBuildingEffect() {
         };
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect);
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect,"");
     }
 }
