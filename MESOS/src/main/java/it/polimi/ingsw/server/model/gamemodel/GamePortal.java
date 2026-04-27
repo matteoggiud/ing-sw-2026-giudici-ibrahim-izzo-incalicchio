@@ -88,7 +88,7 @@ public class GamePortal implements IGameModel {
      * @param hostNickname        the player who will host the new game
      * @param expectedPlayerCount the expected number of players for the game
      * @param observer            the observer associated with the host player, which will be added to the game's observers list
-     * @return the unique identifier (UUID) of the newly created game
+     * @return the unique identifier of the newly created game
      */
     @Override
     public int createGame(String hostNickname, int expectedPlayerCount, IGameObserver observer) {

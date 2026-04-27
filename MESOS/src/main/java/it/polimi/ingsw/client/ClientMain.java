@@ -43,7 +43,7 @@ public class ClientMain {
         }
 
         // 8. Start the Application
-        TuiClientApp app = new TuiClientApp(controller);
+        TuiClientApp app = new TuiClientApp(controller, sessionState);
         app.run();
     }
 }

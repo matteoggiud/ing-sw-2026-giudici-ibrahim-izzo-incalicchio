@@ -92,7 +92,7 @@ public class TuiClientView implements ClientView {
     @Override
     public void showGameInfo(GameInfoDTO gameInfo) {
         System.out.println("Game ID: " + gameInfo.gameId());
-        System.out.println("Players [" + gameInfo.numOfPlayers() + "]: " + String.join(", ", gameInfo.players()));
+        System.out.println("Players [" + gameInfo.numOfPlayers() + "/" + gameInfo.expectedPlayerCount() + "]: " + String.join(", ", gameInfo.players()));
 
     }
 }

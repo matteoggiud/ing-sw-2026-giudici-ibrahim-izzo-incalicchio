@@ -2,10 +2,7 @@ package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.client.controller.VirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
+
 
 public class SocketVirtualServer implements VirtualServer {
 
@@ -24,11 +21,4 @@ public class SocketVirtualServer implements VirtualServer {
         socketClient.sendMessage(message);
     }
 
-    /**
-     *
-     */
-    @Override
-    public void disconnect() {
-        socketClient.disconnect();
-    }
 }

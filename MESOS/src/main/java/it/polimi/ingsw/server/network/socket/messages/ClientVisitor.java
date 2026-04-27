@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.network.socket.messages;
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.controller.GameController;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.server.network.socket.ClientSession;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -79,7 +81,7 @@ public class ClientVisitor implements ClientMessageVisitor {
     @Override
     public void visit(CreateGameMessage message) {
         try {
-            gameController.createGame(clientSession);
+            gameController.createGame(clientSession, message.getExpectedNumOfPlayers());
         } catch (RuntimeException e) {
             clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to create game: " + e.getMessage()));
         } catch (Exception e) {
@@ -103,10 +105,23 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
             clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
-        }  catch (RuntimeException e) {
+        } catch (RuntimeException e) {
             clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to retrieve available games: " + e.getMessage()));
         } catch (Exception e) {
             clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to retrieve available games"));
+        }
+    }
+
+    @Override
+    public void visit(DisconnectMessage message) {
+        try {
+            String nickname = clientSession.isLoggedIn() ? clientSession.getNickname() : "";
+            clientSession.getVirtualView().sendMessage(new DisconnectSuccessMessage("Disconnected from server, see you " + nickname));
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to disconnect"));
+        } finally {
+            gameController.handleDisconnect(clientSession);
+            clientSession.disconnectSession();
         }
     }
 }

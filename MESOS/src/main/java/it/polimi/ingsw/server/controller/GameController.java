@@ -74,7 +74,7 @@ public class GameController {
             throw new IllegalStateException("Player is already in a game and cannot join another.");
         }
 
-        model.joinGame(gameId, clientSession.getNickname(),  clientSession.getVirtualView());
+        model.joinGame(gameId, clientSession.getNickname(), clientSession.getVirtualView());
 
 
         // update the client session to reflect the game they have joined
@@ -99,7 +99,7 @@ public class GameController {
             throw new IllegalStateException("Player is not currently in a game and cannot leave.");
         }
 
-        model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(),  clientSession.getVirtualView());
+        model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getVirtualView());
         //TODO: send a message to the client to notify them that they have left the game and return to the main menu
 
         // update the client session to reflect that they have left the game
@@ -123,16 +123,9 @@ public class GameController {
     }
 
     /**
-     * Allows a player to create a new game, which they will host
-     * @param clientSession the client session of the player
-     */
-    public void createGame(ClientSession clientSession) {
-        createGame(clientSession, 2);
-    }
-
-    /**
      * Allows a player to create a new game with a specified expected player count, which they will host
-     * @param clientSession the client session of the player
+     *
+     * @param clientSession       the client session of the player
      * @param expectedPlayerCount the expected number of players for the game being created
      */
     public void createGame(ClientSession clientSession, int expectedPlayerCount) {
@@ -171,7 +164,7 @@ public class GameController {
      * Allows a player to place a Totem on the OfferBox
      *
      * @param clientSession the client session of the player
-     * @param offerBoxId the identifier of the offer box on which the player is placing their totem
+     * @param offerBoxId    the identifier of the offer box on which the player is placing their totem
      */
     public void placing(ClientSession clientSession, String offerBoxId) {
         if (!clientSession.isLoggedIn()) {
@@ -203,7 +196,6 @@ public class GameController {
      */
     public void handleDisconnect(ClientSession clientSession) {
         if (!clientSession.isLoggedIn()) {
-            clientSession.disconnectSession();
             return;
         }
 
@@ -213,14 +205,12 @@ public class GameController {
             int gameId = clientSession.getActiveGameId();
 
             try {
-                model.removeObserver(gameId, clientSession.getVirtualView());
+                model.leaveGame(gameId, nickname, clientSession.getVirtualView());
             } catch (RuntimeException ignored) {
                 // The observer may already have been removed.
             }
 
             model.markPlayerDisconnected(gameId, nickname);
-            clientSession.clearActiveGameId();
-            clientSession.disconnectSession();
             return;
         }
 
@@ -230,7 +220,6 @@ public class GameController {
             // The player may already have been removed.
         }
 
-        clientSession.disconnectSession();
     }
 
 }

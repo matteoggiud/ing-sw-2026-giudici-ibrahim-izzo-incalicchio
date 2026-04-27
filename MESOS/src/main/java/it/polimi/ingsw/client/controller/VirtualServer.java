@@ -6,5 +6,4 @@ public interface VirtualServer {
 
    void sendMessage(ClientMessage message);
 
-   void disconnect();
 }

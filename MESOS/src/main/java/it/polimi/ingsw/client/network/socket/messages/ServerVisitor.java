@@ -8,6 +8,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -112,5 +113,11 @@ public class ServerVisitor implements ServerMessageVisitor {
     @Override
     public void visit(GameInfoMessage message) {
         view.showGameInfo(message.getGameInfo());
+    }
+
+    @Override
+    public void visit(DisconnectSuccessMessage message) {
+        view.showMessage(message.getMessage());
+        sessionState.disconnect();
     }
 }

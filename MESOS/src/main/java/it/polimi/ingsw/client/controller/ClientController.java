@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.controller;
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.client.view.ClientView;
@@ -36,8 +37,8 @@ public class ClientController {
         view.showMessage(message);
     }
 
-    public void createGame() {
-        network.sendMessage(new CreateGameMessage());
+    public void createGame(int expectedNumOfPlayers) {
+        network.sendMessage(new CreateGameMessage(expectedNumOfPlayers));
     }
 
     public void joinGame(int gameId) {
@@ -46,5 +47,9 @@ public class ClientController {
 
     public void getAvailableGames() {
         network.sendMessage(new GetAvailableGamesMessage());
+    }
+
+    public void disconnect() {
+        network.sendMessage(new DisconnectMessage());
     }
 }

@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -136,9 +137,16 @@ public interface ServerMessageVisitor {
     /**
      * Visits a GameInfoMessage, which contains general information about the game, such as the game ID, the list of players, and the current game state. This message is sent to the client when they join a game or request information about the game.
      *
-     * @param gameInfoMessage the GameInfoMessage to visit
+     * @param message the GameInfoMessage to visit
      */
-    void visit(GameInfoMessage gameInfoMessage);
+    void visit(GameInfoMessage message);
+
+    /**
+     * Visits a DisconnectSuccessMessage, which indicates that the client has successfully disconnected from the server. This message is sent to the client when they request to disconnect, and may contain additional information such as a goodbye message or instructions for reconnecting.
+     *
+     * @param message the DisconnectSuccessMessage to visit
+     */
+    void visit(DisconnectSuccessMessage message);
 }
 
 

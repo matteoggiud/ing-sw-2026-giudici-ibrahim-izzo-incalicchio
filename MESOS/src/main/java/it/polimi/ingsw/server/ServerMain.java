@@ -17,7 +17,7 @@ public class ServerMain {
             GameController controller = new GameController(gamePortal);
             SocketAcceptor socketServer = new SocketAcceptor(serverSocket, controller);
 
-            System.out.println("[SERVER] Starting on port " + port + "...");
+            System.out.println("[SERVER] Listening on port " + port + "...");
             socketServer.run();
         } catch (Exception e) {
             e.printStackTrace();
