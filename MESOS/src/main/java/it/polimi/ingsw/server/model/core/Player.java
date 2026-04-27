@@ -43,6 +43,11 @@ public class Player {
      */
     private int food;
 
+    /**
+     * Indicates whether the player is currently connected to the game.
+     */
+    private boolean connected;
+
 
 
     /**
@@ -57,6 +62,7 @@ public class Player {
         this.playerDeck = new PlayerDeck();
         this.PP = 0;
         this.food = 0;
+        this.connected = true;
     }
 
     /**
@@ -170,4 +176,27 @@ public class Player {
     public void setTotem(Totem totem) {
         this.totem = totem;
     }
+
+    /**
+     * Checks if the player is currently connected to the game.
+     * @return true if the player is connected, false otherwise.
+     */
+    public boolean isConnected() {
+        return connected;
+    }
+
+    /**
+     * Disconnects the player from the game by setting their connected status to false.
+     */
+    public void disconnect() {
+        this.connected = false;
+    }
+
+    /**
+     * Reconnects the player to the game by setting their connected status to true.
+     */
+    public void reconnect() {
+        this.connected = true;
+    }
+
 }

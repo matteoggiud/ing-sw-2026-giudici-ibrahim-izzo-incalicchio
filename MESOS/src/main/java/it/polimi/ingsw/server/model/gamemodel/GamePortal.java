@@ -14,12 +14,9 @@ import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * The GamePortal class serves as the main entry point for interacting with the game model.
@@ -221,18 +218,36 @@ public class GamePortal implements IGameModel {
      */
     @Override
     public void login(String nickname, String password) throws SQLException {
-        boolean successfull = false;
         Authenticator db = new Authenticator();
+
         if (nickname == null || password == null) {
             throw new IllegalArgumentException("Nickname and password cannot be null");
         }
-        successfull = db.loginUser(nickname, password);
-        if (successfull) {
+
+        Player existingPlayer = playerManager.getPlayer(nickname);
+
+        if (existingPlayer != null) {
+            if (existingPlayer.isConnected()) {
+                throw new IllegalStateException("Nickname is already connected.");
+            }
+
+            boolean successful = db.loginUser(nickname, password);
+            if (!successful) {
+                throw new IllegalArgumentException("Invalid nickname or password");
+            }
+
+            existingPlayer.reconnect();
+            return;
+        }
+
+        boolean successful = db.loginUser(nickname, password);
+        if (successful) {
             playerManager.addPlayer(new Player(nickname));
         } else {
             throw new IllegalArgumentException("Invalid nickname or password");
         }
     }
+
 
     /**
      * Logs out the user with the specified nickname.
@@ -418,4 +433,45 @@ public class GamePortal implements IGameModel {
         Game game = gameManager.getGame(gameId);
         game.getObserverManager().removeObserver(virtualView);
     }
+
+    /**
+     * Marks a player as disconnected in the specified game
+     * @param gameId the unique identifier of the game in which the player is participating
+     * @param nickname the nickname of the player to be marked as disconnected
+     */
+    @Override
+    public void markPlayerDisconnected(int gameId, String nickname) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
+        }
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        Player player = game.getPlayers().getPlayers().stream()
+                .filter(p -> p.getNickname().equals(nickname))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Player " + nickname + " is not in game " + gameId + "."));
+
+        player.disconnect();
+    }
+
+    /**
+     * Marks a player as reconnected in the game they are currently participating in, if any.
+     * @param nickname the nickname of the player to be marked as reconnected
+     *
+     * @return the unique identifier of the game in which the player is participating
+     */
+    @Override
+    public Integer getActiveGameIdForPlayer(String nickname) {
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+
+        Optional<Integer> gameId = gameManager.findGameIdByPlayerNickname(nickname);
+        return gameId.orElse(null);
+    }
+
 }

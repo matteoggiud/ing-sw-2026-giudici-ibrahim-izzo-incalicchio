@@ -204,4 +204,20 @@ public interface IGameModel {
      * @param virtualView  the virtual view to be removed as an observer from the specified game
      */
     void removeObserver(int gameId, IGameObserver virtualView);
+
+    /**
+     * Marks a player as disconnected
+     * @param gameId the unique identifier of the game in which the player is participating
+     * @param nickname the nickname of the player to be marked as disconnected
+     */
+    void markPlayerDisconnected(int gameId, String nickname);
+
+    /**
+     * Marks a player as reconnected
+     * @param nickname the nickname of the player to be marked as reconnected
+     *
+     * @return the unique identifier of the game in which the player is participating
+     */
+    Integer getActiveGameIdForPlayer(String nickname);
+
 }

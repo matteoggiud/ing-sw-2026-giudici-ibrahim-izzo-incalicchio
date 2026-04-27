@@ -31,10 +31,17 @@ public class GameController {
         try {
             model.login(username, password);
             clientSession.setNickname(username);
+
+            Integer activeGameId = model.getActiveGameIdForPlayer(username);
+            if (activeGameId != null) {
+                clientSession.setActiveGameId(activeGameId);
+                model.addObserver(activeGameId, clientSession.getVirtualView());
+            }
         } catch (SQLException e) {
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
+
 
     /**
      * Allows a new player to register an account using a username and password
@@ -195,25 +202,41 @@ public class GameController {
     }
 
     /**
-     * Handles the disconnection of a client session, performing any necessary cleanup and updates to the game state
+     * Handles the disconnection of a client session, ensuring that the player's state is
+     * properly updated in the game model and that any necessary cleanup is performed.
      *
      * @param clientSession the client session that has been disconnected
      */
     public void handleDisconnect(ClientSession clientSession) {
-        if (!clientSession.isLoggedIn())
+        if (!clientSession.isLoggedIn()) {
+            clientSession.disconnectSession();
             return;
+        }
+
+        String nickname = clientSession.getNickname();
 
         if (clientSession.isInGame()) {
-            // The client leave the current game, it also removes his virtual view from the game observers
-            leaveGame(clientSession);
+            int gameId = clientSession.getActiveGameId();
+
+            try {
+                model.removeObserver(gameId, clientSession.getVirtualView());
+            } catch (RuntimeException ignored) {
+                // The observer may already have been removed.
+            }
+
+            model.markPlayerDisconnected(gameId, nickname);
+            clientSession.clearActiveGameId();
+            clientSession.disconnectSession();
+            return;
         }
 
         try {
-            // Remove the player into the logged players
-            model.logout(clientSession.getNickname());
-        } catch (RuntimeException e) {
-            // This exception is thrown if the player is not logged in, but we already checked that, so we can ignore it
+            model.logout(nickname);
+        } catch (RuntimeException ignored) {
+            // The player may already have been removed.
         }
+
         clientSession.disconnectSession();
     }
+
 }

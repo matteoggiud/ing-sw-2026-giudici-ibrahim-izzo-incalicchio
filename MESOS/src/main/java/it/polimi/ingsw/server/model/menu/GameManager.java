@@ -93,4 +93,23 @@ public class GameManager {
         game.getGameState().removePlayer(game, player);
     }
 
+    /**
+     * Finds the game id of the game that a player with the given nickname is currently in.
+     * @param nickname the nickname of the player to search for
+     * @return an Optional containing the game id if a player with the given nickname is found
+     * in an active game, or an empty Optional if no such player is found
+     */
+    public Optional<Integer> findGameIdByPlayerNickname(String nickname) {
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+
+        return activeGames.values().stream()
+                .filter(game -> game.getPlayers().getPlayers().stream()
+                        .anyMatch(player -> player.getNickname().equals(nickname)))
+                .map(Game::getGameId)
+                .findFirst();
+    }
+
+
 }
