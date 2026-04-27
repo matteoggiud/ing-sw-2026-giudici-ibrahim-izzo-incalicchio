@@ -16,14 +16,15 @@ public class BuilderCharacterCard extends CharacterCard {
     /**
      * Constructs a new BuilderCharacterCard with the specified attributes.
      *
+     * @param cardId the unique identifier of the card
      * @param name the name of the card
      * @param era the era of the card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
      * @param endGamePP the number of victory points this card provides at the end of the game (must be >= 0)
      * @param foodDiscount the amount of food discount this card provides during the game (must be >= 0)
      */
-    public BuilderCharacterCard(int cardId, String name, Era era, int minNumPlayers, int endGamePP, int foodDiscount) throws IllegalArgumentException {
-        super(cardId, name, era, minNumPlayers);
+    public BuilderCharacterCard(int cardId, String name, Era era, int minNumPlayers, int endGamePP, int foodDiscount, String imageKey) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers, imageKey);
 
         if (endGamePP < 0)
             throw new IllegalArgumentException("End Game PP must not be negative");

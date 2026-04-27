@@ -19,10 +19,11 @@ public abstract class CharacterCard extends TribeCard {
      * @param name the name of the character card
      * @param era the era to which the character card belongs
      * @param minNumPlayers the minimum number of players required to use this character card
+     * @param imageKey the key used to retrieve the card's image from the resource manager
      * @throws IllegalArgumentException if numeric constraints are violated or something is null.
      */
-    public CharacterCard(int cardId, String name, Era era, int minNumPlayers) throws IllegalArgumentException {
-        super(cardId ,name, era, minNumPlayers);
+    public CharacterCard(int cardId, String name, Era era, int minNumPlayers, String imageKey) throws IllegalArgumentException {
+        super(cardId ,name, era, minNumPlayers, imageKey);
     }
 
     public int getBuilderFoodDiscount() { return 0; }
