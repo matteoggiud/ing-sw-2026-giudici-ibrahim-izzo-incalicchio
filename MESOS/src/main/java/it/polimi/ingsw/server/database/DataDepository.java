@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.database;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.*;
 import it.polimi.ingsw.server.model.card.characters.*;
 import it.polimi.ingsw.server.model.card.*;
@@ -539,5 +540,19 @@ public class DataDepository {
             System.out.println(e);
         }
         return card;
+    }
+
+    public OfferBox getOfferBoxbyId(String OfferBoxId) {
+        String query = "SELECT * FROM offer_box WHERE box_id = ?";
+        OfferBox offerBox = null;
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query)) {
+
+            ps.setString(1, OfferBoxId);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return offerBox;
     }
 }

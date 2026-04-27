@@ -85,7 +85,7 @@ public interface IGameModel {
      * @param nickname the player attempting to place their totem
      * @param offerBox the offer box on which the player wants to place their totem
      */
-    void placing(int gameId, String nickname, OfferBox offerBox);
+    void placing(int gameId, String nickname, String offerBoxId);
 
     /**
      * Creates a new game with the specified host player.

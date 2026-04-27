@@ -57,14 +57,15 @@ public class GamePortal implements IGameModel {
      * @param offerBox the offer box on which the player wants to place their totem
      */
     @Override
-    public void placing(int gameId, String nickname, OfferBox offerBox) {
-        //TODO: change OfferBox param into 'int offerBoxId'
-        if (gameId < 0 || nickname == null || offerBox == null) {
+    public void placing(int gameId, String nickname, String offerBoxId) {
+        if (gameId < 0 || nickname == null) {
             throw new IllegalArgumentException("Game, player e offerBox cannot be null");
         }
-
+        DataDepository db = new DataDepository();
         Game currentGame = gameManager.getGame(gameId);
         Player player = playerManager.getPlayer(nickname);
+
+        OfferBox offerBox = db.getOfferBoxbyId(offerBoxId);
 
         currentGame.getGameState().placeTotem(currentGame, player, offerBox);
     }

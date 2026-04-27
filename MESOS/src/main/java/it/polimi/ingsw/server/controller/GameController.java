@@ -179,7 +179,7 @@ public class GameController {
      * @param clientSession the client session of the player
      * @param offerBox      the OfferBox on which the player is placing the Totem
      */
-    public void placing(ClientSession clientSession, OfferBox offerBox) {
+    public void placing(ClientSession clientSession, String offerBox) {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to place a totem");
         }
