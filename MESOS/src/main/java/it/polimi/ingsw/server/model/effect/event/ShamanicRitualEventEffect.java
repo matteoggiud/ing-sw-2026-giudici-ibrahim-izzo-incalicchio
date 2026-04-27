@@ -49,9 +49,9 @@ public class ShamanicRitualEventEffect implements IEventEffect {
             if (starCount < minStars) {
                 minStars = starCount;
                 leastStarPlayers.clear();
-                leastStarPlayers.add(new EffectEventResult(0, eventCard.getMalusPP(), player)); // Player loses PP for having the least stars
+                leastStarPlayers.add(new EffectEventResult(0, -eventCard.getMalusPP(), player)); // Player loses PP for having the least stars
             } else if (starCount == minStars) {
-                leastStarPlayers.add(new EffectEventResult(0, eventCard.getMalusPP(), player)); // Player also loses PP if tied for least stars
+                leastStarPlayers.add(new EffectEventResult(0, -eventCard.getMalusPP(), player)); // Player also loses PP if tied for least stars
             }
         }
 
