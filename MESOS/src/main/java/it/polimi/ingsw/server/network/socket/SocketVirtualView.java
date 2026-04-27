@@ -2,14 +2,15 @@ package it.polimi.ingsw.server.network.socket;
 
 import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.*;
+
 
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.Map;
 
 public class SocketVirtualView implements VirtualView {
 
@@ -78,6 +79,9 @@ public class SocketVirtualView implements VirtualView {
     @Override
     public void update(EraChangedEvent event) {
 
+        EraChangedMessage message= new EraChangedMessage();
+
+        sendMessage(message);
     }
 
     /**
@@ -85,6 +89,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlaceTotemTurnChangedEvent event) {
+        int gameId=event.getGameId();
+        String currentPlayerNickname=event.getCurrentPlayerNickname();
+
+        PlaceTotemTurnChangedMessage message= new PlaceTotemTurnChangedMessage(gameId,currentPlayerNickname);
+
+        sendMessage(message);
 
     }
 
@@ -93,6 +103,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(ResolveActionTurnChangedEvent event) {
+        int gameId=event.getGameId();
+        String currentPlayerNickname=event.getCurrentPlayerNickname();
+
+        ResolveActionTurnChangedMessage message= new ResolveActionTurnChangedMessage(gameId,currentPlayerNickname);
+
+        sendMessage(message);
 
     }
 
@@ -101,7 +117,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(ExtraActionTurnChangedEvent event) {
+        int gameId=event.getGameId();
+        String currentPlayerNickname=event.getCurrentPlayerNickname();
 
+        ExtraActionTurnChangedMessage message= new ExtraActionTurnChangedMessage(gameId,currentPlayerNickname);
+
+        sendMessage(message);
     }
 
     /**
@@ -109,7 +130,14 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerResourcesUpdatedEvent event) {
+        int gameId=event.getGameId();
+        String playerNickname=event.getPlayerNickname();
+        int food=event.getFood();
+        int prestigePoints=event.getPrestigePoints();
+        
+        PlayerResourcesUpdatedMessage message = new PlayerResourcesUpdatedMessage(gameId,playerNickname,food,prestigePoints);
 
+        sendMessage(message);
     }
 
     /**
@@ -117,7 +145,13 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerDeckUpdatedEvent event) {
+        int gameId=event.getGameId();
+        String playerNickname=event.getPlayerNickname();
+        PlayerDeckDTO playerdeck=event.getPlayerDeck();
 
+        PlayerDeckUpdatedMessage message= new PlayerDeckUpdatedMessage(gameId,playerNickname,playerdeck);
+
+        sendMessage(message);
     }
 
     /**
@@ -125,6 +159,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(GameEndedEvent event) {
+        int gameId=event.getGameId();
+        Map<String, Integer> finalRanking=event.getFinalRanking();
+
+        GameEndedMessage message= new GameEndedMessage(gameId,finalRanking);
+
+        sendMessage(message);
 
     }
 }

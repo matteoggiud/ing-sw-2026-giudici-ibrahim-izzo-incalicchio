@@ -1,11 +1,8 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
-
 import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.*;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
@@ -26,15 +23,8 @@ public class ServerVisitor implements ServerMessageVisitor {
         return sessionState;
     }
 
-    /**
-     *
-     * Visits a LoginNeededMessage, which indicates that the client needs to log in before performing any other action.
-     *
-     * @param message the LoginNeededMessage to visit
-     */
     @Override
     public void visit(LoginNeededMessage message) {
-
     }
 
     /**
@@ -84,7 +74,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(LoginSuccessMessage message) {
-
     }
 
     /**
@@ -104,7 +93,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(RegisterFailedMessage message) {
-
     }
 
     /**
@@ -114,7 +102,6 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(RegisterSuccessMessage message) {
-
     }
 
     /**
@@ -124,6 +111,63 @@ public class ServerVisitor implements ServerMessageVisitor {
      */
     @Override
     public void visit(GenericErrorMessage message) {
-        
+    }
+
+    /**
+     * Visits an EraChangedMessage, which indicates that the game era has changed.
+     * @param message the EraChangedMessage to visit
+     */
+    @Override
+    public void visit(EraChangedMessage message) {
+    }
+
+    /**
+     * Visits a PlaceTotemTurnChangedMessage, which indicates the turn changed during the totem placement phase.
+     * @param message the PlaceTotemTurnChangedMessage to visit
+     */
+    @Override
+    public void visit(PlaceTotemTurnChangedMessage message) {
+    }
+
+    /**
+     * Visits a ResolveActionTurnChangedMessage, which indicates the turn changed during the action resolution phase.
+     * @param message the ResolveActionTurnChangedMessage to visit
+     */
+    @Override
+    public void visit(ResolveActionTurnChangedMessage message) {
+    }
+
+    /**
+     * Visits an ExtraActionTurnChangedMessage, which indicates the turn changed during the extra action phase.
+     * @param message the ExtraActionTurnChangedMessage to visit
+     */
+    @Override
+    public void visit(ExtraActionTurnChangedMessage message){
+    }
+
+    /**
+     * Visits a PlayerResourcesUpdatedMessage, which indicates that a player's resources have been updated.
+     * @param message the PlayerResourcesUpdatedMessage to visit
+     */
+    @Override
+    public void visit(PlayerResourcesUpdatedMessage message) {
+    }
+
+    /**
+     * Visits a PlayerDeckUpdatedMessage, which indicates that a player's deck has been updated.
+     * @param message the PlayerDeckUpdatedMessage to visit
+     */
+    @Override
+    public void visit(PlayerDeckUpdatedMessage message) {
+    }
+
+    /**
+     *  Visits a GameEndedMessage, which indicates that the game has ended and contains the final ranking of the players.
+     *  This message is sent to all clients when the game ends.
+     * @param message the GameEndedMessage to visit
+     */
+    @Override
+    public void visit(GameEndedMessage message) {
     }
 }
+

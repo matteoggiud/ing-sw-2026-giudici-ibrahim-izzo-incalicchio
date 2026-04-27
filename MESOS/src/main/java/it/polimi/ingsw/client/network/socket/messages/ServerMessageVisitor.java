@@ -1,16 +1,15 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
-import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.BoardUpdatedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.GameStartedMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.UpdatePlayersMessage;
+import it.polimi.ingsw.server.network.socket.messages.game.*;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+
+
 
 public interface ServerMessageVisitor {
 
@@ -83,4 +82,54 @@ public interface ServerMessageVisitor {
      * @param message the GenericErrorMessage to visit
      */
     void visit(GenericErrorMessage message);
+
+    /**
+     * Visits an EraChangedMessage, which indicates that the game era has changed.
+     *
+     * @param message the EraChangedMessage to visit
+     */
+    void visit(EraChangedMessage message);
+
+    /**
+     * Visits a PlaceTotemTurnChangedMessage, which indicates the turn changed during the totem placement phase.
+     *
+     * @param message the PlaceTotemTurnChangedMessage to visit
+     */
+    void visit(PlaceTotemTurnChangedMessage message);
+
+    /**
+     * Visits a ResolveActionTurnChangedMessage, which indicates the turn changed during the action resolution phase.
+     *
+     * @param message the ResolveActionTurnChangedMessage to visit
+     */
+    void visit(ResolveActionTurnChangedMessage message);
+
+    /**
+     * Visits an ExtraActionTurnChangedMessage, which indicates the turn changed during the extra action phase.
+     *
+     * @param message the ExtraActionTurnChangedMessage to visit
+     */
+    void visit(ExtraActionTurnChangedMessage message);
+
+    /**
+     * Visits a PlayerResourcesUpdatedMessage, which indicates that a player's resources have changed.
+     *
+     * @param message the PlayerResourcesUpdatedMessage to visit
+     */
+    void visit(PlayerResourcesUpdatedMessage message);
+
+    /**
+     * Visits a PlayerDeckUpdatedMessage, which indicates that a player's deck has changed.
+     * @param message the PlayerDeckUpdatedMessage to visit
+     */
+    void visit(PlayerDeckUpdatedMessage message);
+
+    /**
+     * Visits a GameEndedMessage, which indicates that the game has ended and contains the final ranking of the players. This message is sent to all clients when the game ends.
+     * @param message the GameEndedMessage to visit
+     */
+    void visit(GameEndedMessage message);
 }
+
+
+
