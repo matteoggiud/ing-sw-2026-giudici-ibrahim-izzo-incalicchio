@@ -96,6 +96,22 @@ public interface IGameModel {
     int createGame(String hostPlayer);
 
     /**
+     * Creates a new game with the specified host player and expected player count.
+     * @param hostPlayer the player who will host the new game
+     * @param expectedPlayerCount the expected number of players for the game
+     * @return the unique identifier (UUID) of the newly created game
+     */
+    int createGame(String hostPlayer, int expectedPlayerCount);
+
+    /**
+     * Checks if the game with the specified id is ready to start (i.e., has enough players)
+     * and starts it if it is ready.
+     * @param gameId the unique identifier of the game to check and potentially start
+     */
+    void startGameIfReady(int gameId);
+
+
+    /**
      * Retrieves an active game by its unique identifier.
      *
      * @param gameId the unique identifier of the game

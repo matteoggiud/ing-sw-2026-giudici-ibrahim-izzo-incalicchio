@@ -74,21 +74,38 @@ public class GamePortal implements IGameModel {
 
     /**
      * Creates a new game with the specified host player.
-     *
      * @param hostNickname the player who will host the new game
-     * @return the unique identifier of the newly created game
+     * @return the unique identifier (UUID) of the newly created game
      */
     @Override
     public int createGame(String hostNickname) {
-        int gameId;
+        return createGame(hostNickname, StandardRuleSet.MIN_PLAYERS);
+    }
+
+    /**
+     * Creates a new game with the specified host player and expected player count.
+     * @param hostNickname the player who will host the new game
+     * @param expectedPlayerCount the expected number of players for the game
+     * @return the unique identifier (UUID) of the newly created game
+     */
+    @Override
+    public int createGame(String hostNickname, int expectedPlayerCount) {
+        if (expectedPlayerCount < StandardRuleSet.MIN_PLAYERS || expectedPlayerCount > StandardRuleSet.MAX_PLAYERS) {
+            throw new IllegalArgumentException("Expected player count must be between "
+                    + StandardRuleSet.MIN_PLAYERS + " and " + StandardRuleSet.MAX_PLAYERS);
+        }
+
         DataWriting dw = new DataWriting();
         Player host = playerManager.getPlayer(hostNickname);
+
         if (host == null) {
             throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
         }
-        gameId = dw.addNewGame(hostNickname);
-        return gameManager.createGame(host, gameId);
+
+        int gameId = dw.addNewGame(hostNickname);
+        return gameManager.createGame(host, gameId, expectedPlayerCount);
     }
+
 
     /**
      * Retrieves an active game by its unique identifier.
