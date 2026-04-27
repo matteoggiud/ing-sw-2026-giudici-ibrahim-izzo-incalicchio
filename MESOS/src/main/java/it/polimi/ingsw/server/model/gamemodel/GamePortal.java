@@ -106,6 +106,21 @@ public class GamePortal implements IGameModel {
         return gameManager.createGame(host, gameId, expectedPlayerCount);
     }
 
+    @Override
+    public void startGameIfReady(int gameId) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
+            game.getGameState().startGame(game);
+            game.getGameState().executePhase(game);
+        }
+    }
+
+
 
     /**
      * Retrieves an active game by its unique identifier.
