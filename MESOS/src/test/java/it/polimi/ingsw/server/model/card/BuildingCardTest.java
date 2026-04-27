@@ -22,7 +22,7 @@ class BuildingCardTest {
         nextCardId = 1;
         effect = new IBuildingEffect() {
         };
-        buildingCard = new BuildingCard(nextCardId++, "BuildingA", Era.ERA_1, 2, 5, 3, effect);
+        buildingCard = new BuildingCard(nextCardId++, "BuildingA", Era.ERA_1, 2, 5, 3, effect,"");
     }
 
     @Test
@@ -65,7 +65,7 @@ class BuildingCardTest {
 
         Player discountedPlayer = new Player("p2");
         discountedPlayer.addFood(3);
-        discountedPlayer.getPlayerDeck().addCard(new BuilderCharacterCard(nextCardId++, "Builder", Era.ERA_1, 2, 0, 2));
+        discountedPlayer.getPlayerDeck().addCard(new BuilderCharacterCard(nextCardId++, "Builder", Era.ERA_1, 2, 0, 2,""));
         assertTrue(buildingCard.canBeSelectedFrom(row, discountedPlayer));
     }
 
@@ -94,7 +94,7 @@ class BuildingCardTest {
         assertSame(buildingCard, player.getPlayerDeck().getBuildings().get(0));
         assertEquals(1, player.getFood());
 
-        BuildingCard expensive = new BuildingCard(nextCardId++, "TooExpensive", Era.ERA_1, 2, 9, 1, effect);
+        BuildingCard expensive = new BuildingCard(nextCardId++, "TooExpensive", Era.ERA_1, 2, 9, 1, effect,"");
         row.getBuildingRow().add(expensive);
         Player poorPlayer = new Player("p2");
         poorPlayer.addFood(2);

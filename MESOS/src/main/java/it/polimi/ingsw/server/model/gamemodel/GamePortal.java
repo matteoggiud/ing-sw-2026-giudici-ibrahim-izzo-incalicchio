@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.gamemodel;
 
+import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.BuildingCard;
@@ -40,12 +41,11 @@ public class GamePortal implements IGameModel {
         if (gameId < 0 || nickname == null) {
             throw new IllegalArgumentException("Game, player cannot be null");
         }
-
+        DataDepository db = new DataDepository();
         Game currentGame = gameManager.getGame(gameId);
         Player currentPlayer = playerManager.getPlayer(nickname);
 
-        //TODO: Get the card based on the id
-        Card card = new BuildingCard(selectedCardId, null, null, 0, 0, 0, null);
+        Card card = db.getCardbyId(selectedCardId);
         currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
     }
 

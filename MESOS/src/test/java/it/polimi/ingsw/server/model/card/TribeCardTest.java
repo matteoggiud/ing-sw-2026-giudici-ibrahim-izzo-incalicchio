@@ -43,7 +43,7 @@ class TribeCardTest {
     @Test
     void addToEventList() {
         ArrayList<EventCard> events = new ArrayList<>();
-        events.add(new EventCard(nextCardId++, "EventX", Era.ERA_1, 2, false, new DummyEventEffect(), 1, 0, 1, 0, 1));
+        events.add(new EventCard(nextCardId++, "EventX", Era.ERA_1, 2, false, new DummyEventEffect(), 1, 0, 1, 0, 1,""));
 
         tribeCard.addToEventList(events);
 
@@ -54,7 +54,7 @@ class TribeCardTest {
     private static final class TestTribeCard extends TribeCard {
 
         private TestTribeCard(int cardId, String name, Era era, int minNumPlayers) {
-            super(cardId, name, era, minNumPlayers);
+            super(cardId, name, era, minNumPlayers,"");
         }
 
         @Override
@@ -66,7 +66,7 @@ class TribeCardTest {
     private static final class TestCharacterCard extends CharacterCard {
 
         private TestCharacterCard(int cardId, String name, Era era, int minNumPlayers) {
-            super(cardId, name, era, minNumPlayers);
+            super(cardId, name, era, minNumPlayers,"");
         }
 
         @Override

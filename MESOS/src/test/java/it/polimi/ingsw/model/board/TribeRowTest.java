@@ -192,7 +192,7 @@ class TribeRowTest {
     }
 
     private HunterCharacterCard newHunter() {
-        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false);
+        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false, "");
     }
 
     private EventCard newEvent(boolean finalEvent) {
@@ -207,7 +207,8 @@ class TribeRowTest {
                 1,
                 0,
                 1,
-                0
+                0,
+                ""
         );
     }
 }

@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.card;
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 /**
  * Abstract class representing a generic card in the game.
@@ -11,56 +12,59 @@ import it.polimi.ingsw.server.model.core.Player;
  */
 public abstract class Card {
 
-    /** The unique identifier of the card. */
+    /**
+     * The unique identifier of the card.
+     */
     private final int cardId;
 
-    /** The display name of the card. */
+    /**
+     * The display name of the card.
+     */
     private final String name;
 
-    /** The era to which the card belongs (Era I, II, III) */
+    /**
+     * The era to which the card belongs (Era I, II, III)
+     */
     private final Era era;
 
-    /** The minimum number of players required for this card to be included in the game. */
+    /**
+     * The minimum number of players required for this card to be included in the game.
+     */
     private final int minNumPlayers;
+
+    /**
+     * The key used to retrieve the card's image from the resource manager.
+     */
+    private final String imageKey;
 
     /**
      * Construct a new Card with specific properties.
      *
-     * @param name the name of the building card
-     * @param era the era of the building card (Era I, II, III)
+     * @param cardId        the unique identifier of the card
+     * @param name          the name of the building card
+     * @param era           the era of the building card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
+     * @param imageKey      the key used to retrieve the card's image from the resource manager
      * @throws IllegalArgumentException if minNumPlayers is less than 2 or greater than 5 or some values are null
      */
-    protected Card(int cardId, String name, Era era, int minNumPlayers) throws IllegalArgumentException {
+    protected Card(int cardId, String name, Era era, int minNumPlayers, String imageKey) throws IllegalArgumentException {
         if (name == null) {
             throw new IllegalArgumentException("Card name cannot be null.");
         }
         if (era == null) {
             throw new IllegalArgumentException("Card era cannot be null.");
         }
-        if (minNumPlayers < 2 || minNumPlayers > 5) {
+        if (imageKey == null) {
+            throw new IllegalArgumentException("Card imageKey cannot be null.");
+        }
+        if (minNumPlayers < StandardRuleSet.MIN_PLAYERS || minNumPlayers > StandardRuleSet.MAX_PLAYERS) {
             throw new IllegalArgumentException("Minimum number of players must be between 2 and 5.");
         }
         this.cardId = cardId;
         this.name = name;
         this.era = era;
         this.minNumPlayers = minNumPlayers;
-    }
-
-    protected Card(String name, Era era, int minNumPlayers) throws IllegalArgumentException {
-        if (name == null) {
-            throw new IllegalArgumentException("Card name cannot be null.");
-        }
-        if (era == null) {
-            throw new IllegalArgumentException("Card era cannot be null.");
-        }
-        if (minNumPlayers < 2 || minNumPlayers > 5) {
-            throw new IllegalArgumentException("Minimum number of players must be between 2 and 5.");
-        }
-        this.cardId = -1;
-        this.name = name;
-        this.era = era;
-        this.minNumPlayers = minNumPlayers;
+        this.imageKey = imageKey;
     }
 
     /**
@@ -92,10 +96,20 @@ public abstract class Card {
 
     /**
      * Gets the minimum number of players required to include this card in game.
+     *
      * @return the minimum player count.
      */
     public int getMinNumPlayers() {
         return minNumPlayers;
+    }
+
+    /**
+     * Gets the key used to retrieve the card's image from the resource manager.
+     *
+     * @return the image key for this card.
+     */
+    public String getImageKey() {
+        return imageKey;
     }
 
     /**
@@ -104,7 +118,7 @@ public abstract class Card {
      * @param countPlayers the current number of players in the game.
      * @return true if the card is available for the given number of players, false otherwise
      */
-    public boolean isAvailableForPlayerCount(int countPlayers){
+    public boolean isAvailableForPlayerCount(int countPlayers) {
         return countPlayers >= minNumPlayers;
     }
 
