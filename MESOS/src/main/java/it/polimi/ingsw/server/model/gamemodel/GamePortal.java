@@ -54,7 +54,7 @@ public class GamePortal implements IGameModel {
      *
      * @param gameId   the unique identifier of the game in which the player is placing their totem
      * @param nickname the nickname of the player placing their totem
-     * @param offerBox the offer box on which the player wants to place their totem
+     * @param offerBoxId the unique identifier of the offer box on which the player wants to place their totem
      */
     @Override
     public void placing(int gameId, String nickname, String offerBoxId) {

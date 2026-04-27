@@ -83,7 +83,7 @@ public interface IGameModel {
      *
      * @param gameId   the current game context
      * @param nickname the player attempting to place their totem
-     * @param offerBox the offer box on which the player wants to place their totem
+     * @param offerBoxId the identifier of the offer box on which the player is placing their totem
      */
     void placing(int gameId, String nickname, String offerBoxId);
 

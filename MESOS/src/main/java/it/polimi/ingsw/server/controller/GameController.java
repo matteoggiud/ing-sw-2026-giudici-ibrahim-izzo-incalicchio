@@ -177,9 +177,9 @@ public class GameController {
      * Allows a player to place a Totem on the OfferBox
      *
      * @param clientSession the client session of the player
-     * @param offerBox      the OfferBox on which the player is placing the Totem
+     * @param offerBoxId the identifier of the offer box on which the player is placing their totem
      */
-    public void placing(ClientSession clientSession, String offerBox) {
+    public void placing(ClientSession clientSession, String offerBoxId) {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to place a totem");
         }
@@ -187,7 +187,7 @@ public class GameController {
             throw new IllegalStateException("Player is not currently in a game and cannot place a totem.");
         }
 
-        model.placing(clientSession.getActiveGameId(), clientSession.getNickname(), offerBox);
+        model.placing(clientSession.getActiveGameId(), clientSession.getNickname(), offerBoxId);
     }
 
     /**
