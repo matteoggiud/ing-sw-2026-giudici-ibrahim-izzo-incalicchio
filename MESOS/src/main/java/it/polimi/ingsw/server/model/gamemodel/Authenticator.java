@@ -13,10 +13,10 @@ import java.sql.SQLException;
  */
 public class Authenticator {
     /**
-     * Attempts to log in a user with the provided nickname and password.
+     * Attempts to log in a user with the provided nickname and passwordHash.
      *
      * @param nickname the nickname of the user trying to log in
-     * @param password the password of the user trying to log in
+     * @param password the passwordHash of the user trying to log in
      * @return true if the login is successful, false otherwise
      * @throws SQLException if there is an error accessing the database or if the login credentials are invalid
      */
@@ -36,10 +36,10 @@ public class Authenticator {
     }
 
     /**
-     * Attempts to register a new user with the provided nickname and password.
+     * Attempts to register a new user with the provided nickname and passwordHash.
      *
      * @param nickname the nickname of the user trying to register
-     * @param password the password of the user trying to register
+     * @param password the passwordHash of the user trying to register
      * @return true if the registration is successful, false otherwise
      * @throws SQLException if there is an error accessing the database or if the registration fails
      */

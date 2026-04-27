@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.controller;
 
-import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.network.socket.ClientSession;
@@ -21,11 +20,11 @@ public class GameController {
     }
 
     /**
-     * Allows a player to log in to the game using their username and password
+     * Allows a player to log in to the game using their username and passwordHash
      *
      * @param clientSession the client session of the player
      * @param username      the username of the player attempting to log in
-     * @param password      the password of the player attempting to log in
+     * @param password      the passwordHash of the player attempting to log in
      */
     public void login(ClientSession clientSession, String username, String password) throws RuntimeException {
         try {
@@ -44,11 +43,11 @@ public class GameController {
 
 
     /**
-     * Allows a new player to register an account using a username and password
+     * Allows a new player to register an account using a username and passwordHash
      *
      * @param clientSession the client session of the player
      * @param username      the desired username for the new player account
-     * @param password      the desired password for the new player account
+     * @param password      the desired passwordHash for the new player account
      */
     public void register(ClientSession clientSession, String username, String password) throws RuntimeException {
         try {

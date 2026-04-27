@@ -3,11 +3,11 @@ package it.polimi.ingsw.client.network.socket.messages.login;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.server.network.socket.messages.ClientMessageVisitor;
 
-public class LoginRequestMessage extends ClientMessage {
+public class LoginSubmitMessage extends ClientMessage {
     private final String username;
     private final String passwordHash;
 
-    public LoginRequestMessage(String username, String passwordHash) {
+    public LoginSubmitMessage(String username, String passwordHash) {
         this.username = username;
         this.passwordHash = passwordHash;
     }

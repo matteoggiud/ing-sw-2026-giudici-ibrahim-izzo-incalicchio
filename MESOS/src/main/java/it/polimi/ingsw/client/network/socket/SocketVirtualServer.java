@@ -4,8 +4,8 @@ import it.polimi.ingsw.client.controller.VirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginRequestMessage;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterRequestMessage;
+import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
+import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 
 public class SocketVirtualServer implements VirtualServer {
 
@@ -15,38 +15,13 @@ public class SocketVirtualServer implements VirtualServer {
         this.socketClient = socketClient;
     }
 
-    /**
-     * @param username
-     * @param passwordHash
-     */
-    @Override
-    public void login(String username, String passwordHash) {
-    	socketClient.sendMessage(new LoginRequestMessage(username, passwordHash));
-    }
 
     /**
-     * @param username
-     * @param password
+     * @param message
      */
     @Override
-    public void register(String username, String password) {
-        socketClient.sendMessage(new RegisterRequestMessage(username, password));
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void createGame() {
-        socketClient.sendMessage(new CreateGameMessage());
-    }
-
-    /**
-     * @param gameId
-     */
-    @Override
-    public void joinGame(int gameId) {
-        socketClient.sendMessage(new JoinGameMessage(gameId));
+    public void sendMessage(ClientMessage message) {
+        socketClient.sendMessage(message);
     }
 
     /**

@@ -23,10 +23,10 @@ import java.util.UUID;
 public interface IGameModel {
 
     /**
-     * Attempts to log in a user with the provided nickname and password.
+     * Attempts to log in a user with the provided nickname and passwordHash.
      *
      * @param nickname the nickname of the user trying to log in
-     * @param password the password of the user trying to log in
+     * @param password the passwordHash of the user trying to log in
      * @throws SQLException if there is an error accessing the database or if the login credentials are invalid
      */
     void login(String nickname, String password) throws SQLException;
@@ -60,10 +60,10 @@ public interface IGameModel {
 
 
     /**
-     * Attempts to register a new user with the provided nickname and password.
+     * Attempts to register a new user with the provided nickname and passwordHash.
      *
      * @param nickname the nickname of the user trying to register
-     * @param password the password of the user trying to register
+     * @param password the passwordHash of the user trying to register
      * @throws SQLException if there is an error accessing the database or if the registration fails
      */
     void register(String nickname, String password) throws SQLException;

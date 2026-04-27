@@ -211,10 +211,10 @@ public class GamePortal implements IGameModel {
     }
 
     /**
-     * Attempts to log in a user with the provided nickname and password.
+     * Attempts to log in a user with the provided nickname and passwordHash.
      *
      * @param nickname the nickname of the user trying to log in
-     * @param password the password of the user trying to log in
+     * @param password the passwordHash of the user trying to log in
      * @throws SQLException if there is an error accessing the database or if the login credentials are invalid
      */
     @Override
@@ -222,7 +222,7 @@ public class GamePortal implements IGameModel {
         Authenticator db = new Authenticator();
 
         if (nickname == null || password == null) {
-            throw new IllegalArgumentException("Nickname and password cannot be null");
+            throw new IllegalArgumentException("Nickname and passwordHash cannot be null");
         }
 
         Player existingPlayer = playerManager.getPlayer(nickname);
@@ -234,7 +234,7 @@ public class GamePortal implements IGameModel {
 
             boolean successful = db.loginUser(nickname, password);
             if (!successful) {
-                throw new IllegalArgumentException("Invalid nickname or password");
+                throw new IllegalArgumentException("Invalid nickname or passwordHash");
             }
 
             existingPlayer.reconnect();
@@ -245,7 +245,7 @@ public class GamePortal implements IGameModel {
         if (successful) {
             playerManager.addPlayer(new Player(nickname));
         } else {
-            throw new IllegalArgumentException("Invalid nickname or password");
+            throw new IllegalArgumentException("Invalid nickname or passwordHash");
         }
     }
 
@@ -304,10 +304,10 @@ public class GamePortal implements IGameModel {
 
 
     /**
-     * Attempts to register a new user with the provided nickname and password.
+     * Attempts to register a new user with the provided nickname and passwordHash.
      *
      * @param nickname the nickname of the user trying to register
-     * @param password the password of the user trying to register
+     * @param password the passwordHash of the user trying to register
      * @throws SQLException if there is an error accessing the database or if the registration fails
      */
     @Override
@@ -315,7 +315,7 @@ public class GamePortal implements IGameModel {
         boolean successfull = false;
         Authenticator db = new Authenticator();
         if (nickname == null || password == null) {
-            throw new IllegalArgumentException("Nickname and password cannot be null");
+            throw new IllegalArgumentException("Nickname and passwordHash cannot be null");
         }
         successfull = db.registerUser(nickname, password);
         if (!successfull) {

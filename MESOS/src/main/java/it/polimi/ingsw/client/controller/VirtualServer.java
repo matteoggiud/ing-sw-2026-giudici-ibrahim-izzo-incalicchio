@@ -4,13 +4,7 @@ import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 
 public interface VirtualServer {
 
-    void login(String username, String passwordHash);
+   void sendMessage(ClientMessage message);
 
-    void register(String username, String password);
-
-    void createGame();
-
-    void joinGame(int gameId);
-
-    void disconnect();
+   void disconnect();
 }

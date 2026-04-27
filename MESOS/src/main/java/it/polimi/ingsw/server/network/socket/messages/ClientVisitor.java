@@ -2,8 +2,9 @@ package it.polimi.ingsw.server.network.socket.messages;
 
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginRequestMessage;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterRequestMessage;
+import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
+import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.network.socket.ClientSession;
@@ -13,7 +14,6 @@ import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class ClientVisitor implements ClientMessageVisitor {
@@ -35,9 +35,9 @@ public class ClientVisitor implements ClientMessageVisitor {
     }
 
     @Override
-    public void visit(LoginRequestMessage message) {
+    public void visit(LoginSubmitMessage message) {
         try {
-            // Attempt to log in the user with the provided username and password hash
+            // Attempt to log in the user with the provided username and passwordHash hash
             gameController.login(clientSession, message.getUsername(), message.getPasswordHash());
 
             // If login is successful, send a LoginSuccessMessage to the client
@@ -56,9 +56,9 @@ public class ClientVisitor implements ClientMessageVisitor {
     }
 
     @Override
-    public void visit(RegisterRequestMessage message) {
+    public void visit(RegisterSubmitMessage message) {
         try {
-            // Attempt to register the user with the provided username and password, if successful, log them in immediately
+            // Attempt to register the user with the provided username and passwordHash, if successful, log them in immediately
             gameController.register(clientSession, message.getUsername(), message.getPassword());
 
             // If registration is successful, send a RegisterSuccessMessage to the client
@@ -84,5 +84,11 @@ public class ClientVisitor implements ClientMessageVisitor {
     @Override
     public void visit(JoinGameMessage message) {
         gameController.joinGame(clientSession, message.getGameId());
+    }
+
+    @Override
+    public void visit(GetAvailableGamesMessage message) {
+        List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
+        clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
     }
 }
