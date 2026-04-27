@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.menu;
 
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 import java.util.*;
 
@@ -13,19 +14,32 @@ public class GameManager {
     }
 
     /**
-     * Creates a new game with the specified host player and adds it to the active games map.
-     *
+     * Creates a new game with the specified host player and game id
      * @param host the player who will host the game
-     * @return the UUID of the newly created game
+     * @param gameId the unique identifier for the game
+     * @return the unique identifier of the created game
      */
     public int createGame(Player host, int gameId) {
+        return createGame(host, gameId, StandardRuleSet.MIN_PLAYERS);
+    }
+
+    /**
+     * Creates a new game with the specified host player, game id, and expected player count.
+     * @param host the player who will host the game
+     * @param gameId the unique identifier for the game
+     * @param expectedPlayerCount the expected number of players for the game
+     * @return the unique identifier of the created game
+     */
+    public int createGame(Player host, int gameId, int expectedPlayerCount) {
         if (host == null) {
             throw new IllegalArgumentException("Host player cannot be null.");
         }
-        Game newGame = new Game(host, gameId);
+
+        Game newGame = new Game(host, gameId, expectedPlayerCount);
         activeGames.put(newGame.getGameId(), newGame);
         return newGame.getGameId();
     }
+
 
     /**
      * Retrieves an active game by its unique identifier.
