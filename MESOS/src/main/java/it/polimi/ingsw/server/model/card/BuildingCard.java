@@ -13,29 +13,35 @@ import it.polimi.ingsw.server.model.core.Player;
  */
 public class BuildingCard extends TribeCard {
 
-    /** The amount of food required to build this card. */
+    /**
+     * The amount of food required to build this card.
+     */
     private final int foodCost;
 
-    /** The number of prestige points awarded at the end of the game. */
+    /**
+     * The number of prestige points awarded at the end of the game.
+     */
     private final int endGamePP;
 
-    /** The specific effect triggered by this building. */
+    /**
+     * The specific effect triggered by this building.
+     */
     private final IBuildingEffect effect;
 
     /**
      * Constructs a new BuildingCard.
      *
-     * @param cardId the unique identifier of the card
-     * @param name the name of the building card
-     * @param era the era of the building card (Era I, II, III)
+     * @param cardId        the unique identifier of the card
+     * @param name          the name of the building card
+     * @param era           the era of the building card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
-     * @param foodCost the amount of food required to build it (>= 3 && <= 9)
-     * @param endGamePP the prestige points awarded at the end of the game (>= 2)
-     * @param effect the effect associated with the building (must not be null)
+     * @param foodCost      the amount of food required to build it (>= 3 && <= 9)
+     * @param endGamePP     the prestige points awarded at the end of the game (>= 2)
+     * @param effect        the effect associated with the building (must not be null)
      * @throws IllegalArgumentException if numeric constraints are violated or if effect is null
      */
-    public BuildingCard(int cardId,  String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect) throws IllegalArgumentException {
-        super(cardId, name, era, minNumPlayers);
+    public BuildingCard(int cardId, String name, Era era, int minNumPlayers, int foodCost, int endGamePP, IBuildingEffect effect, String imageKey) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers, imageKey);
 
         if (effect == null || foodCost < 0 || endGamePP < 0) {
             throw new IllegalArgumentException("Invalid effect, food cost or end gamePP");
@@ -45,7 +51,6 @@ public class BuildingCard extends TribeCard {
         this.endGamePP = endGamePP;
         this.effect = effect;
     }
-
 
 
     /**
@@ -71,7 +76,7 @@ public class BuildingCard extends TribeCard {
      *
      * @return the building effect.
      */
-    public IBuildingEffect getEffect(){
+    public IBuildingEffect getEffect() {
         return effect;
     }
 

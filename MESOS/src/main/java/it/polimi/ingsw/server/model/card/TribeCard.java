@@ -17,9 +17,10 @@ public abstract class TribeCard extends Card{
      * @param name The name of the card
      * @param era The era of the card
      * @param minNumPlayers The minimum number of player to use this card
+     * @param imageKey The key used to retrieve the card's image from the resource manager
      */
-    protected TribeCard(int cardId, String name, Era era, int minNumPlayers) {
-        super(cardId, name, era, minNumPlayers);
+    protected TribeCard(int cardId, String name, Era era, int minNumPlayers, String imageKey) {
+        super(cardId, name, era, minNumPlayers, imageKey);
     }
 
     public boolean isFinalEvent(){

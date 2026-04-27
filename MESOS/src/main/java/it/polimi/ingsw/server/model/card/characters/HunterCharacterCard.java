@@ -10,21 +10,24 @@ import it.polimi.ingsw.server.model.deck.PlayerDeck;
  * Represents a Hunter Character Card in the game.
  */
 public class HunterCharacterCard extends CharacterCard {
-    /** Indicates whether this Hunter card has a food icon. */
+    /**
+     * Indicates whether this Hunter card has a food icon.
+     */
     private final boolean isFoodIcon;
 
     /**
      * Constructs a new HunterCharacterCard with the specified attributes.
      *
-     * @param cardId the unique identifier of the card
-     * @param name the name of the card
-     * @param era the era of the card (Era I, II, III)
+     * @param cardId        the unique identifier of the card
+     * @param name          the name of the card
+     * @param era           the era of the card (Era I, II, III)
      * @param minNumPlayers the minimum number of players required for this card to be in the game (>= 2 && <= 5)
-     * @param isFoodIcon indicates whether this Hunter card has a food icon (true if it does, false otherwise)
+     * @param isFoodIcon    indicates whether this Hunter card has a food icon (true if it does, false otherwise)
+     * @param imageKey      the key used to retrieve the card's image from the resource manager
      * @throws IllegalArgumentException if numeric constraints are violated or if something is null
      */
-    public HunterCharacterCard(int cardId, String name, Era era, int minNumPlayers, boolean isFoodIcon) throws IllegalArgumentException {
-        super(cardId, name, era, minNumPlayers);
+    public HunterCharacterCard(int cardId, String name, Era era, int minNumPlayers, boolean isFoodIcon, String imageKey) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers, imageKey);
         this.isFoodIcon = isFoodIcon;
     }
 

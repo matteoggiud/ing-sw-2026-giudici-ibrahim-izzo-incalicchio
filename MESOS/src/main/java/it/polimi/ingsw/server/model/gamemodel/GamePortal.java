@@ -48,7 +48,7 @@ public class GamePortal implements IGameModel {
         Player currentPlayer = playerManager.getPlayer(nickname);
 
         //TODO: Get the card based on the id
-        Card card = new BuildingCard(selectedCardId, null, null, 0, 0, 0, null);
+        Card card = new BuildingCard(selectedCardId, "Test Card", Era.ERA_1, 2, 3, 2, null, "test_card_image");
         currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
     }
 

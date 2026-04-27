@@ -52,20 +52,22 @@ public class EventCard extends TribeCard {
     /**
      * Construct a new EventCard with specific properties.
      *
+     * @param cardId        the unique identifier of the card
      * @param name          the name of the event card
      * @param era           the era to which the event card belongs
      * @param minNumPlayers the minimum number of players required to use this event card
-     * @param isFinalEvent indicates whether this event card is a special card
+     * @param isFinalEvent  indicates whether this event card is a special card
      * @param eventEffect   the effect associated with this event card
-     * @param gainedFood        the amount of food gained
-     * @param gainedPP        the amount of PP gained
-     * @param malusFood         the amount of food lost (malus)
-     * @param malusPP         the amount of food lost (malus)
+     * @param gainedFood    the amount of food gained
+     * @param gainedPP      the amount of PP gained
+     * @param malusFood     the amount of food lost (malus)
+     * @param malusPP       the amount of food lost (malus)
      * @param threshold     the threshold value that determines who receives bonus or malus
+     * @param imageKey      the key used to retrieve the card's image from the resource manager
      * @throws IllegalArgumentException if numeric constraints are violated or something is null
      */
-    public EventCard(int cardId, String name, Era era, int minNumPlayers, boolean isFinalEvent, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold) throws IllegalArgumentException {
-        super(cardId, name, era, minNumPlayers);
+    public EventCard(int cardId, String name, Era era, int minNumPlayers, boolean isFinalEvent, IEventEffect eventEffect, int gainedFood, int malusFood, int gainedPP, int malusPP, int threshold, String imageKey) throws IllegalArgumentException {
+        super(cardId, name, era, minNumPlayers, imageKey);
 
         if (eventEffect == null)
             throw new IllegalArgumentException("eventEffect cannot be null");
@@ -172,7 +174,7 @@ public class EventCard extends TribeCard {
      * Event cards cannot be added to a player's deck
      *
      * @param playerDeck the player's deck to which this card would be added
-      * @throws UnsupportedOperationException always, since event cards cannot be added to a player's deck
+     * @throws UnsupportedOperationException always, since event cards cannot be added to a player's deck
      */
     @Override
     public void addTo(PlayerDeck playerDeck) {
