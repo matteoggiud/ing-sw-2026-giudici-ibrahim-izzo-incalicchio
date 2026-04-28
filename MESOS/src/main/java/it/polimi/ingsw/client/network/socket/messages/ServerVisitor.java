@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
 import it.polimi.ingsw.client.network.socket.ClientSessionState;
+import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
@@ -9,6 +10,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -119,5 +121,11 @@ public class ServerVisitor implements ServerMessageVisitor {
     public void visit(DisconnectSuccessMessage message) {
         view.showMessage(message.getMessage());
         sessionState.disconnect();
+    }
+
+    @Override
+    public void visit(LeftGameSuccessMessage message) {
+        view.showMessage(message.getMessage());
+        sessionState.setActiveGameId(null);
     }
 }

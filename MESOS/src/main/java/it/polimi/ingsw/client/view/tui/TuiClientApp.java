@@ -67,11 +67,15 @@ public class TuiClientApp {
      */
     private void registerCommands() {
         put("help", "help", "Show this help menu", args -> printHelp());
+
         put("login", "login", "Login with username and password", args -> controller.login());
         put("register", "register", "Create a new account", args -> controller.register());
+
+        put("games", "games", "Show available games", args -> controller.getAvailableGames());
         put("create", "create <expectedNumOfPlayers>", "Create a new game", this::handleCreateGame);
         put("join", "join <gameId>", "Join an existing game", this::handleJoin);
-        put("games", "games", "Show available games", args -> controller.getAvailableGames());
+        put("left", "left", "Left the actual game in lobby", args -> controller.leftGame()); // to create
+
         put("quit", "quit", "Exit the client", args -> quit());
     }
 

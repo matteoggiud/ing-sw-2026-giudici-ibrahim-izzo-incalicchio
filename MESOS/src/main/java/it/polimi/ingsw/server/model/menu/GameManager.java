@@ -15,7 +15,8 @@ public class GameManager {
 
     /**
      * Creates a new game with the specified host player and game id
-     * @param host the player who will host the game
+     *
+     * @param host   the player who will host the game
      * @param gameId the unique identifier for the game
      * @return the unique identifier of the created game
      */
@@ -25,8 +26,9 @@ public class GameManager {
 
     /**
      * Creates a new game with the specified host player, game id, and expected player count.
-     * @param host the player who will host the game
-     * @param gameId the unique identifier for the game
+     *
+     * @param host                the player who will host the game
+     * @param gameId              the unique identifier for the game
      * @param expectedPlayerCount the expected number of players for the game
      * @return the unique identifier of the created game
      */
@@ -90,11 +92,16 @@ public class GameManager {
      */
     public void leaveGame(int gameId, Player player) {
         Game game = getGame(gameId);
+        if (game.getPlayers().getHost().equals(player)) {
+            activeGames.remove(gameId);
+            return;
+        }
         game.getGameState().removePlayer(game, player);
     }
 
     /**
      * Finds the game id of the game that a player with the given nickname is currently in.
+     *
      * @param nickname the nickname of the player to search for
      * @return an Optional containing the game id if a player with the given nickname is found
      * in an active game, or an empty Optional if no such player is found

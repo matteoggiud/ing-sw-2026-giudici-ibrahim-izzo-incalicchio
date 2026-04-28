@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
@@ -51,5 +52,9 @@ public class ClientController {
 
     public void disconnect() {
         network.sendMessage(new DisconnectMessage());
+    }
+
+    public void leftGame() {
+        network.sendMessage(new LeftGameMessage());
     }
 }

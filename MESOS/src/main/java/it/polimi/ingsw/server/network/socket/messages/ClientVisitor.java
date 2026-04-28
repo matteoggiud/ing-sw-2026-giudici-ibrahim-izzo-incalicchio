@@ -5,14 +5,17 @@ import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.network.socket.ClientSession;
+import it.polimi.ingsw.server.network.socket.messages.game.GameInfoMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -122,6 +125,20 @@ public class ClientVisitor implements ClientMessageVisitor {
         } finally {
             gameController.handleDisconnect(clientSession);
             clientSession.disconnectSession();
+        }
+    }
+
+    @Override
+    public void visit(LeftGameMessage message) {
+        try {
+            gameController.leaveGame(clientSession);
+            clientSession.getVirtualView().sendMessage(new LeftGameSuccessMessage("Left game successfully"));
+
+            clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(gameController.getAvailableGames(clientSession)));
+        } catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to leave game: " + e.getMessage()));
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to leave game"));
         }
     }
 }

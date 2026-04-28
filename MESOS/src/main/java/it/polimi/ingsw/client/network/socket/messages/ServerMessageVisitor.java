@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
+import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
@@ -7,6 +8,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -147,6 +149,14 @@ public interface ServerMessageVisitor {
      * @param message the DisconnectSuccessMessage to visit
      */
     void visit(DisconnectSuccessMessage message);
+
+    /**
+     * Visits a LeftGameSuccessMessage, which indicates that the client has successfully left the game. This message is sent to the client when they request to leave the game, and may contain additional information such as a confirmation message or instructions for joining another game.
+     *
+     * @param message the LeftGameSuccessMessage to visit
+     */
+    void visit(LeftGameSuccessMessage message);
+
 }
 
 

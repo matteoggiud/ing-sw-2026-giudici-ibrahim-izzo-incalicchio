@@ -3,9 +3,7 @@ package it.polimi.ingsw.server.model.gamemodel;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
-import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.Card;
-import it.polimi.ingsw.server.model.card.Era;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.menu.GameManager;
@@ -108,7 +106,7 @@ public class GamePortal implements IGameModel {
         gameManager.createGame(host, gameId, expectedPlayerCount);
 
         // Add the observer for the host player to the newly created game
-        addObserver(gameId, observer);
+        addObserver(gameManager.getGame(gameId), observer);
 
         // Notify the host player's observer about the game creation so they can update their lobby view
         Game game = gameManager.getGame(gameId);
@@ -206,7 +204,7 @@ public class GamePortal implements IGameModel {
         gameManager.joinGame(gameId, playerToJoin);
 
         // Add the observer for the player to the newly joined game
-        addObserver(gameId, observer);
+        addObserver(gameManager.getGame(gameId), observer);
 
         // Notify the player's observer about the join so they can update their lobby view
         Game game = gameManager.getGame(gameId);
@@ -226,9 +224,10 @@ public class GamePortal implements IGameModel {
         if (playerToLeave == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
+        Game game = gameManager.getGame(gameId);
         gameManager.leaveGame(gameId, playerToLeave);
+        removeObserver(game, observer);
 
-        removeObserver(gameId, observer);
 
     }
 
@@ -422,38 +421,36 @@ public class GamePortal implements IGameModel {
     /**
      * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
      *
-     * @param gameId      the unique identifier of the game to which the virtual view will be added as an observer
+     * @param game        the game to which the virtual view will be added as an observer
      * @param virtualView the virtual view to be added as an observer to the specified game
      */
     @Override
-    public void addObserver(int gameId, IGameObserver virtualView) {
-        if (gameId < 0) {
+    public void addObserver(Game game, IGameObserver virtualView) {
+        if (game == null) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
 
-        Game game = gameManager.getGame(gameId);
         game.getObserverManager().addObserver(virtualView);
     }
 
     /**
      * Removes a virtual view as an observer from the game with the specified id, preventing the virtual view from receiving further updates about the game's state and events.
      *
-     * @param gameId      the unique identifier of the game from which the virtual view will be removed as an observer
+     * @param game        the unique identifier of the game from which the virtual view will be removed as an observer
      * @param virtualView the virtual view to be removed as an observer from the specified game
      */
     @Override
-    public void removeObserver(int gameId, IGameObserver virtualView) {
-        if (gameId < 0) {
+    public void removeObserver(Game game, IGameObserver virtualView) {
+        if (game == null) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
 
-        Game game = gameManager.getGame(gameId);
         game.getObserverManager().removeObserver(virtualView);
     }
 
