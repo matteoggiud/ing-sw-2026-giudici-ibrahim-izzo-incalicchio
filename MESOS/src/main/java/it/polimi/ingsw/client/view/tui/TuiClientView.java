@@ -2,10 +2,9 @@ package it.polimi.ingsw.client.view.tui;
 
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.OfferBoxDTO;
-import it.polimi.ingsw.server.model.observer.dto.TurnOrderSlotDTO;
+import it.polimi.ingsw.server.model.observer.dto.*;
+import java.util.Map;
+
 
 import java.util.List;
 import java.util.Scanner;
@@ -82,6 +81,23 @@ public class TuiClientView implements ClientView {
         System.out.println("Board updated.");
         System.out.println("Era: " + board.currentEra());
 
+        System.out.println("Upper row:");
+        board.upperCharacterCards().forEach(card ->
+                System.out.println("  character #" + card.cardId() + " " + card.name() + " " + card.era()));
+        board.upperEventCards().forEach(card ->
+                System.out.println("  event     #" + card.cardId() + " " + card.name() + " " + card.era()));
+        board.upperBuildingCards().forEach(card ->
+                System.out.println("  building  #" + card.cardId() + " " + card.name() + " " + card.era()));
+
+        System.out.println("Lower row:");
+        board.lowerCharacterCards().forEach(card ->
+                System.out.println("  character #" + card.cardId() + " " + card.name() + " " + card.era()));
+        board.lowerEventCards().forEach(card ->
+                System.out.println("  event     #" + card.cardId() + " " + card.name() + " " + card.era()));
+        board.lowerBuildingCards().forEach(card ->
+                System.out.println("  building  #" + card.cardId() + " " + card.name() + " " + card.era()));
+
+
         System.out.println("Offer track:");
         for (OfferBoxDTO box : board.offerTrackBoxes()) {
             String player = box.placedPlayerNickname() == null ? "-" : box.placedPlayerNickname();
@@ -112,4 +128,52 @@ public class TuiClientView implements ClientView {
             System.out.println("It is your turn. Use the place command when available.");
         }
     }
+
+    @Override
+    public void showResolveActionTurn(String currentPlayerNickname, boolean isMyTurn) {
+        System.out.println("Resolve action turn: " + currentPlayerNickname);
+
+        if (isMyTurn) {
+            System.out.println("It is your turn. Use: draw <upper|lower> <cardId>");
+        }
+    }
+
+    @Override
+    public void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn) {
+        System.out.println("Extra action turn: " + currentPlayerNickname);
+
+        if (isMyTurn) {
+            System.out.println("It is your extra action. Use: draw upper <cardId>");
+        }
+    }
+
+    @Override
+    public void showPlayerResources(String playerNickname, int food, int prestigePoints, boolean isMe) {
+        String prefix = isMe ? "Your resources" : playerNickname + " resources";
+        System.out.println(prefix + ": food=" + food + " pp=" + prestigePoints);
+    }
+
+    @Override
+    public void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe) {
+        String prefix = isMe ? "Your deck" : playerNickname + " deck";
+        System.out.println(prefix + " updated.");
+
+        System.out.println("Characters:");
+        playerDeck.characterCards().forEach(card ->
+                System.out.println("  #" + card.cardId() + " " + card.name() + " " + card.era()));
+
+        System.out.println("Buildings:");
+        playerDeck.buildingCards().forEach(card ->
+                System.out.println("  #" + card.cardId() + " " + card.name() + " " + card.era()));
+    }
+
+    @Override
+    public void showGameEnded(int gameId, Map<String, Integer> finalRanking) {
+        System.out.println("Game " + gameId + " ended.");
+        System.out.println("Final ranking:");
+
+        finalRanking.forEach((player, score) ->
+                System.out.println("  " + player + ": " + score + " pp"));
+    }
+
 }

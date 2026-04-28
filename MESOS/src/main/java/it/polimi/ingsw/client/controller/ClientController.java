@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.controller;
 
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.game.DrawCardMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
@@ -59,8 +60,12 @@ public class ClientController {
         network.sendMessage(new PlaceTotemMessage(offerBoxPosition));
     }
 
-
     public void leftGame() {
         network.sendMessage(new LeftGameMessage());
     }
+
+    public void drawCard(int selectedCardId, boolean fromUpperRow) {
+        network.sendMessage(new DrawCardMessage(selectedCardId, fromUpperRow));
+    }
+
 }

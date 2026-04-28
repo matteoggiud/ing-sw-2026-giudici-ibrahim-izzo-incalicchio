@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.network.socket.messages;
 
 import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.game.DrawCardMessage;
 import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.login.*;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
@@ -18,4 +19,5 @@ public interface ClientMessageVisitor {
     void visit(DisconnectMessage message);
     void visit (LeftGameMessage message);
     void visit(PlaceTotemMessage message);
+    void visit(DrawCardMessage message);
 }

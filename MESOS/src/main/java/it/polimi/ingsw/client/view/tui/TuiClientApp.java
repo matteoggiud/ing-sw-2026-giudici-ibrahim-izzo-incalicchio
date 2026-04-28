@@ -78,6 +78,7 @@ public class TuiClientApp {
 
         put("quit", "quit", "Exit the client", args -> quit());
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
+        put("draw", "draw <upper|lower> <cardId>", "Draw a card during resolve or extra action", this::handleDrawCard);
     }
 
     /**
@@ -167,5 +168,31 @@ public class TuiClientApp {
         }
     }
 
+
+    private void handleDrawCard(String[] parts) {
+        if (parts.length != 3) {
+            System.out.println("Usage: draw <upper|lower> <cardId>");
+            return;
+        }
+
+        String row = parts[1].toLowerCase();
+        boolean fromUpperRow;
+
+        if (row.equals("upper") || row.equals("u")) {
+            fromUpperRow = true;
+        } else if (row.equals("lower") || row.equals("l")) {
+            fromUpperRow = false;
+        } else {
+            System.out.println("Invalid row. Use upper or lower.");
+            return;
+        }
+
+        try {
+            int selectedCardId = Integer.parseInt(parts[2]);
+            controller.drawCard(selectedCardId, fromUpperRow);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid cardId. It must be an integer.");
+        }
+    }
 
 }

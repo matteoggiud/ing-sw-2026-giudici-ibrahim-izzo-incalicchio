@@ -96,24 +96,39 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(ResolveActionTurnChangedMessage message) {
+        boolean isMyTurn = message.getCurrentPlayerNickname().equals(sessionState.getNickname());
+        view.showResolveActionTurn(message.getCurrentPlayerNickname(), isMyTurn);
     }
 
     @Override
     public void visit(ExtraActionTurnChangedMessage message) {
+        boolean isMyTurn = message.getCurrentPlayerNickname().equals(sessionState.getNickname());
+        view.showExtraActionTurn(message.getCurrentPlayerNickname(), isMyTurn);
     }
 
     @Override
     public void visit(PlayerResourcesUpdatedMessage message) {
+        boolean isMe = message.getCurrentPlayerNickname().equals(sessionState.getNickname());
+        view.showPlayerResources(
+                message.getCurrentPlayerNickname(),
+                message.getFood(),
+                message.getPrestigePoints(),
+                isMe
+        );
     }
 
     @Override
     public void visit(PlayerDeckUpdatedMessage message) {
+        boolean isMe = message.getPlayerNickname().equals(sessionState.getNickname());
+        view.showPlayerDeck(message.getPlayerNickname(), message.getPlayerDeck(), isMe);
     }
+
 
     @Override
     public void visit(GameEndedMessage message) {
+        view.showGameEnded(message.getGameId(), message.getFinalRanking());
+        sessionState.setActiveGameId(null);
     }
-
     @Override
     public void visit(GameInfoMessage message) {
         sessionState.setActiveGameId(message.getGameInfo().gameId());
