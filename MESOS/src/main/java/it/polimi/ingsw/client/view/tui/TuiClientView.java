@@ -143,7 +143,7 @@ public class TuiClientView implements ClientView {
         System.out.println("Extra action turn: " + currentPlayerNickname);
 
         if (isMyTurn) {
-            System.out.println("It is your extra action. Use: draw upper <cardId>");
+            System.out.println("It is your extra action. Use: draw-extra <cardId>");
         }
     }
 

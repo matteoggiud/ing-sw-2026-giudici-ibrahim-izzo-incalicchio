@@ -1,8 +1,6 @@
 package it.polimi.ingsw.client.controller;
 
-import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.DrawCardMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
@@ -10,7 +8,6 @@ import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
-import it.polimi.ingsw.client.network.socket.messages.game.PlaceTotemMessage;
 
 public class ClientController {
     private final ClientView view;
@@ -66,6 +63,10 @@ public class ClientController {
 
     public void drawCard(int selectedCardId, boolean fromUpperRow) {
         network.sendMessage(new DrawCardMessage(selectedCardId, fromUpperRow));
+    }
+
+    public void drawExtraCard(int selectedCardId) {
+        network.sendMessage(new ExtraDrawMessage(selectedCardId));
     }
 
 }

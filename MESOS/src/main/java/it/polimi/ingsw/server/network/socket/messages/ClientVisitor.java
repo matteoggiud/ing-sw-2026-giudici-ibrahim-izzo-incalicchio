@@ -1,8 +1,6 @@
 package it.polimi.ingsw.server.network.socket.messages;
 
-import it.polimi.ingsw.client.network.socket.messages.game.CreateGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.DrawCardMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.JoinGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
@@ -19,7 +17,6 @@ import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMess
 import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.PlaceTotemMessage;
 
 import java.util.List;
 
@@ -35,6 +32,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Returns the client session associated with this visitor.
+     *
      * @return the ClientSession instance
      */
     public ClientSession getClientSession() {
@@ -43,6 +41,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Returns the game controller associated with this visitor.
+     *
      * @return the GameController instance
      */
     public GameController getGameController() {
@@ -51,6 +50,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to log in.
+     *
      * @param message the message containing the login credentials
      */
     @Override
@@ -76,6 +76,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to register a new account.
+     *
      * @param message the message containing the registration credentials
      */
     @Override
@@ -101,6 +102,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to create a new game.
+     *
      * @param message the message containing the game creation details
      */
     @Override
@@ -116,6 +118,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to join an existing game.
+     *
      * @param message the message containing the game ID to join
      */
     @Override
@@ -131,6 +134,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to retrieve the list of available games.
+     *
      * @param message the message requesting available games
      */
     @Override
@@ -147,6 +151,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to disconnect from the server.
+     *
      * @param message the disconnect message from the client
      */
     @Override
@@ -164,6 +169,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to leave an active game.
+     *
      * @param message the message indicating the client wants to leave the game
      */
     @Override
@@ -182,6 +188,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to place a totem on the game board.
+     *
      * @param message the message containing the details of the place totem action
      */
     @Override
@@ -201,6 +208,7 @@ public class ClientVisitor implements ClientMessageVisitor {
 
     /**
      * Handles the client's request to draw a card from the game.
+     *
      * @param message the message containing the details of the draw card action
      */
     @Override
@@ -218,5 +226,22 @@ public class ClientVisitor implements ClientMessageVisitor {
         }
     }
 
-
+    /**
+     * Handles the client's request to draw an extra card from the game.
+     * @param message the message containing the details of the extra draw card action
+     */
+    @Override
+    public void visit(ExtraDrawMessage message) {
+        try {
+            gameController.drawCard(clientSession, message.getSelectedCardId(), true);
+        } catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(
+                    new GenericErrorMessage("Failed to draw extra card: " + e.getMessage())
+            );
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(
+                    new GenericErrorMessage("Failed to draw extra card")
+            );
+        }
+    }
 }

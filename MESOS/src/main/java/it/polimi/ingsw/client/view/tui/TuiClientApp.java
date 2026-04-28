@@ -79,7 +79,9 @@ public class TuiClientApp {
         put("quit", "quit", "Exit the client", args -> quit());
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
         put("draw", "draw <upper|lower> <cardId>", "Draw a card during resolve or extra action", this::handleDrawCard);
+        put("draw-extra", "draw-extra <cardId>", "Draw a card during resolve or extra action", this::handleDrawExtraCard);
     }
+
 
     /**
      * Registers a command in the commands map with its name, usage, description, and handler.
@@ -136,8 +138,8 @@ public class TuiClientApp {
     }
 
     private void printWelcome() {
-        System.out.println("MESOS TUI");
-        System.out.println("Type 'help' to show commands.");
+        System.out.println("---MESOS TUI---");
+        System.out.println(commands.get("help").usage);
     }
 
     private void printHelp() {
@@ -156,7 +158,7 @@ public class TuiClientApp {
 
     private void handlePlaceTotem(String[] parts) {
         if (parts.length != 2) {
-            System.out.println("Usage: place <position>");
+            System.out.println(commands.get("place").usage);
             return;
         }
 
@@ -171,7 +173,7 @@ public class TuiClientApp {
 
     private void handleDrawCard(String[] parts) {
         if (parts.length != 3) {
-            System.out.println("Usage: draw <upper|lower> <cardId>");
+            System.out.println(commands.get("draw").usage);
             return;
         }
 
@@ -190,6 +192,19 @@ public class TuiClientApp {
         try {
             int selectedCardId = Integer.parseInt(parts[2]);
             controller.drawCard(selectedCardId, fromUpperRow);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid cardId. It must be an integer.");
+        }
+    }
+
+    private void handleDrawExtraCard(String[] parts) {
+        if (parts.length != 2) {
+            System.out.println(commands.get("draw-extra").usage);
+            return;
+        }
+        try {
+            int selectedCardId = Integer.parseInt(parts[1]);
+            controller.drawExtraCard(selectedCardId);
         } catch (NumberFormatException e) {
             System.out.println("Invalid cardId. It must be an integer.");
         }
