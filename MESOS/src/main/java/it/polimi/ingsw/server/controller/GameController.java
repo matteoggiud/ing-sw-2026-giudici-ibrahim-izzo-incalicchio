@@ -35,11 +35,11 @@ public class GameController {
             model.login(username, password);
             clientSession.setNickname(username);
 
-            Integer activeGameId = model.getActiveGameIdForPlayer(username);
+            /*Integer activeGameId = model.getActiveGameIdForPlayer(username);
             if (activeGameId != null) {
                 clientSession.setActiveGameId(activeGameId);
                 model.addObserver(activeGameId, clientSession.getVirtualView());
-            }
+            }*/
         } catch (SQLException e) {
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
@@ -108,7 +108,6 @@ public class GameController {
         }
 
         model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getVirtualView());
-        //TODO: send a message to the client to notify them that they have left the game and return to the main menu
 
         // update the client session to reflect that they have left the game
         clientSession.clearActiveGameId();

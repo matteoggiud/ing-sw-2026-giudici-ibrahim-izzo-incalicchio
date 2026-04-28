@@ -198,18 +198,18 @@ public interface IGameModel {
     /**
      * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
      *
-     * @param gameId      the unique identifier of the game to which the virtual view will be added as an observer
+     * @param game        the game to which the virtual view will be added as an observer
      * @param virtualView the virtual view to be added as an observer to the specified game
      */
-    void addObserver(int gameId, IGameObserver virtualView);
+    void addObserver(Game game, IGameObserver virtualView);
 
     /**
      * Removes a virtual view as an observer from the game with the specified id, preventing the virtual view from receiving further updates about the game's state and events.
      *
-     * @param gameId      the unique identifier of the game from which the virtual view will be removed as an observer
+     * @param game      the unique identifier of the game from which the virtual view will be removed as an observer
      * @param virtualView the virtual view to be removed as an observer from the specified game
      */
-    void removeObserver(int gameId, IGameObserver virtualView);
+    void removeObserver(Game game, IGameObserver virtualView);
 
     /**
      * Marks a player as disconnected
