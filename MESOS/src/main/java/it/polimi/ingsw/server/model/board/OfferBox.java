@@ -38,7 +38,6 @@ public class OfferBox {
      */
 
     public OfferBox(int foodReward, int upperRowPicks, int lowerRowPicks) throws IllegalArgumentException {
-        if (boxId == null) throw new IllegalArgumentException("boxId cannot be null");
 
         if (foodReward != 0 && foodReward != 3) throw new IllegalArgumentException("Food reward must be either 0 or 3");
 
