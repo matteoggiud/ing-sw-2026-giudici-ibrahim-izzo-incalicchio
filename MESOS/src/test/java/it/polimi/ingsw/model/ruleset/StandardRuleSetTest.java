@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.ruleset;
 
-import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.card.Era;
@@ -165,47 +164,48 @@ class StandardRuleSetTest {
 
     @Test
     void createOfferBoxes() {
-        // Test numPlayers == 2
         List<OfferBox> boxes2 = ruleSet.createOfferBoxes(2);
-        assertEquals(4, boxes2.size()); // B, C, E, F (no A, no D, no G)
-        assertEquals(OFFER_BOX_ID.B, boxes2.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes2.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes2.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes2.get(3).getBoxId());
+        assertEquals(4, boxes2.size());
+        assertOfferBox(boxes2.get(0), 0, 0, 1);
+        assertOfferBox(boxes2.get(1), 0, 1, 0);
+        assertOfferBox(boxes2.get(2), 0, 1, 1);
+        assertOfferBox(boxes2.get(3), 0, 2, 0);
 
-        // Test numPlayers == 3
         List<OfferBox> boxes3 = ruleSet.createOfferBoxes(3);
-        assertEquals(5, boxes3.size()); // B, C, D, E, F (no A, no G)
-        assertEquals(OFFER_BOX_ID.B, boxes3.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes3.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.D, boxes3.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes3.get(3).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes3.get(4).getBoxId());
+        assertEquals(5, boxes3.size());
+        assertOfferBox(boxes3.get(0), 0, 0, 1);
+        assertOfferBox(boxes3.get(1), 0, 1, 0);
+        assertOfferBox(boxes3.get(2), 0, 0, 2);
+        assertOfferBox(boxes3.get(3), 0, 1, 1);
+        assertOfferBox(boxes3.get(4), 0, 2, 0);
 
-        // Test numPlayers == 4
         List<OfferBox> boxes4 = ruleSet.createOfferBoxes(4);
-        assertEquals(6, boxes4.size()); // B, C, D, E, F, G (no A)
-        assertEquals(OFFER_BOX_ID.B, boxes4.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes4.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.D, boxes4.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes4.get(3).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes4.get(4).getBoxId());
-        assertEquals(OFFER_BOX_ID.G, boxes4.get(5).getBoxId());
+        assertEquals(6, boxes4.size());
+        assertOfferBox(boxes4.get(0), 0, 0, 1);
+        assertOfferBox(boxes4.get(1), 0, 1, 0);
+        assertOfferBox(boxes4.get(2), 0, 0, 2);
+        assertOfferBox(boxes4.get(3), 0, 1, 1);
+        assertOfferBox(boxes4.get(4), 0, 2, 0);
+        assertOfferBox(boxes4.get(5), 0, 2, 1);
 
-        // Test numPlayers == 5
         List<OfferBox> boxes5 = ruleSet.createOfferBoxes(5);
-        assertEquals(7, boxes5.size()); // A, B, C, D, E, F, G
-        assertEquals(OFFER_BOX_ID.A, boxes5.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.B, boxes5.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes5.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.D, boxes5.get(3).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes5.get(4).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes5.get(5).getBoxId());
-        assertEquals(OFFER_BOX_ID.G, boxes5.get(6).getBoxId());
+        assertEquals(7, boxes5.size());
+        assertOfferBox(boxes5.get(0), 3, 0, 0);
+        assertOfferBox(boxes5.get(1), 0, 0, 1);
+        assertOfferBox(boxes5.get(2), 0, 1, 0);
+        assertOfferBox(boxes5.get(3), 0, 0, 2);
+        assertOfferBox(boxes5.get(4), 0, 1, 1);
+        assertOfferBox(boxes5.get(5), 0, 2, 0);
+        assertOfferBox(boxes5.get(6), 0, 2, 1);
 
-        // Test numPlayers not valid
         assertThrows(IllegalArgumentException.class, () -> ruleSet.createOfferBoxes(1));
         assertThrows(IllegalArgumentException.class, () -> ruleSet.createOfferBoxes(6));
+    }
+
+    private void assertOfferBox(OfferBox box, int foodReward, int upperRowPicks, int lowerRowPicks) {
+        assertEquals(foodReward, box.getFoodReward());
+        assertEquals(upperRowPicks, box.getUpperRowPicks());
+        assertEquals(lowerRowPicks, box.getLowerRowPicks());
     }
 
 

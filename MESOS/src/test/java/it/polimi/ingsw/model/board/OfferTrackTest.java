@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.board;
 
-import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.OfferTrack;
 import it.polimi.ingsw.server.model.core.Player;
@@ -16,22 +15,22 @@ import static org.junit.jupiter.api.Assertions.*;
 class OfferTrackTest {
 
     private OfferTrack offerTrack;
-    private OfferBox boxA;
-    private OfferBox boxB;
-    private OfferBox boxC;
+    private OfferBox box1;
+    private OfferBox box2;
+    private OfferBox box3;
     private Player player1;
     private Player player2;
 
     @BeforeEach
     void setUp() {
         offerTrack = new OfferTrack();
-        boxA = new OfferBox(OFFER_BOX_ID.A, 3, 2, 1);
-        boxB = new OfferBox(OFFER_BOX_ID.B, 0, 1, 2);
-        boxC = new OfferBox(OFFER_BOX_ID.C, 0, 1, 1);
+        box1 = new OfferBox(3, 0, 0);
+        box2 = new OfferBox(0, 1, 2);
+        box3 = new OfferBox(0, 1, 1);
         player1 = new Player("Player1");
         player2 = new Player("Player2");
 
-        offerTrack.initializeOfferTrack(Arrays.asList(boxA, boxB, boxC));
+        offerTrack.initializeOfferTrack(Arrays.asList(box1, box2, box3));
     }
 
     @Test
@@ -40,26 +39,36 @@ class OfferTrackTest {
 
         assertThrows(IllegalArgumentException.class, () -> track.initializeOfferTrack(null));
         assertThrows(IllegalArgumentException.class, () -> track.initializeOfferTrack(new ArrayList<>()));
-        assertThrows(IllegalArgumentException.class, () -> track.initializeOfferTrack(Arrays.asList(boxA, null)));
+        assertThrows(IllegalArgumentException.class, () -> track.initializeOfferTrack(Arrays.asList(box1, null)));
 
-        List<OfferBox> firstInit = Arrays.asList(boxA, boxB);
+        List<OfferBox> firstInit = Arrays.asList(box1, box2);
         track.initializeOfferTrack(firstInit);
         assertEquals(2, track.getBoxes().size());
 
-        List<OfferBox> secondInit = Arrays.asList(boxC);
+        List<OfferBox> secondInit = Arrays.asList(box3);
         track.initializeOfferTrack(secondInit);
         assertEquals(1, track.getBoxes().size());
-        assertSame(boxC, track.getBoxes().get(0));
+        assertSame(box3, track.getBoxes().get(0));
     }
 
     @Test
     void getBoxByPlayer() {
-        offerTrack.placeTotem(player1, boxB);
+        offerTrack.placeTotem(player1, box2);
 
         OfferBox found = offerTrack.getBoxByPlayer(player1);
-        assertSame(boxB, found);
+        assertSame(box2, found);
 
         assertThrows(IllegalArgumentException.class, () -> offerTrack.getBoxByPlayer(player2));
+    }
+
+    @Test
+    void getBoxByPosition() {
+        assertSame(box1, offerTrack.getBoxByPosition(1));
+        assertSame(box2, offerTrack.getBoxByPosition(2));
+        assertSame(box3, offerTrack.getBoxByPosition(3));
+
+        assertThrows(IllegalArgumentException.class, () -> offerTrack.getBoxByPosition(0));
+        assertThrows(IllegalArgumentException.class, () -> offerTrack.getBoxByPosition(4));
     }
 
     @Test
@@ -67,11 +76,10 @@ class OfferTrackTest {
         ArrayList<OfferBox> boxes = offerTrack.getBoxes();
 
         assertEquals(3, boxes.size());
-        assertTrue(boxes.contains(boxA));
-        assertTrue(boxes.contains(boxB));
-        assertTrue(boxes.contains(boxC));
+        assertTrue(boxes.contains(box1));
+        assertTrue(boxes.contains(box2));
+        assertTrue(boxes.contains(box3));
 
-        // Defensive copy: mutate returned list and verify track is unchanged.
         boxes.clear();
         assertEquals(3, offerTrack.getBoxes().size());
     }
@@ -80,45 +88,42 @@ class OfferTrackTest {
     void getAvailableBoxes() {
         assertEquals(3, offerTrack.getAvailableBoxes().size());
 
-        offerTrack.placeTotem(player1, boxA);
+        offerTrack.placeTotem(player1, box1);
         ArrayList<OfferBox> available = offerTrack.getAvailableBoxes();
 
         assertEquals(2, available.size());
-        assertFalse(available.contains(boxA));
-        assertTrue(available.contains(boxB));
-        assertTrue(available.contains(boxC));
+        assertFalse(available.contains(box1));
+        assertTrue(available.contains(box2));
+        assertTrue(available.contains(box3));
     }
 
     @Test
     void placeTotem() {
-        OfferBox externalBox = new OfferBox(OFFER_BOX_ID.D, 0, 1, 1);
+        OfferBox externalBox = new OfferBox(0, 1, 1);
 
-        assertThrows(IllegalArgumentException.class, () -> offerTrack.placeTotem(null, boxA));
+        assertThrows(IllegalArgumentException.class, () -> offerTrack.placeTotem(null, box1));
         assertThrows(IllegalArgumentException.class, () -> offerTrack.placeTotem(player1, null));
         assertThrows(IllegalArgumentException.class, () -> offerTrack.placeTotem(player1, externalBox));
 
-        offerTrack.placeTotem(player1, boxA);
-        assertSame(player1, boxA.getPlacedPlayer());
+        offerTrack.placeTotem(player1, box1);
+        assertSame(player1, box1.getPlacedPlayer());
 
-        // Same player cannot place twice on the track.
-        assertThrows(IllegalStateException.class, () -> offerTrack.placeTotem(player1, boxB));
-
-        // Occupied box cannot accept another player.
-        assertThrows(IllegalStateException.class, () -> offerTrack.placeTotem(player2, boxA));
+        assertThrows(IllegalStateException.class, () -> offerTrack.placeTotem(player1, box2));
+        assertThrows(IllegalStateException.class, () -> offerTrack.placeTotem(player2, box1));
     }
 
     @Test
     void getCurrentPlayer() {
         OfferTrack emptyTrack = new OfferTrack();
         emptyTrack.initializeOfferTrack(Arrays.asList(
-                new OfferBox(OFFER_BOX_ID.E, 0, 1, 1),
-                new OfferBox(OFFER_BOX_ID.F, 0, 1, 1)
+                new OfferBox(0, 1, 1),
+                new OfferBox(0, 1, 1)
         ));
 
         assertThrows(IllegalStateException.class, emptyTrack::getCurrentPlayer);
 
-        offerTrack.placeTotem(player1, boxB);
-        offerTrack.placeTotem(player2, boxC);
+        offerTrack.placeTotem(player1, box2);
+        offerTrack.placeTotem(player2, box3);
 
         assertSame(player1, offerTrack.getCurrentPlayer());
     }
