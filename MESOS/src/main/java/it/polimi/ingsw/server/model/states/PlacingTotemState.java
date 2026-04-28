@@ -8,14 +8,25 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
 
 public class PlacingTotemState implements IGameState {
 
     @Override
     public void nextState(Game game) {
-        ResolveActionsState resolveActionsState = new ResolveActionsState();
-        game.setGameState(resolveActionsState);
-        resolveActionsState.executePhase(game);
+        game.setGameState(new ResolveActionsState());
+        game.getGameState().executePhase(game);
+    }
+
+    @Override
+    public void executePhase(Game game) {
+        // Notify observers about the initial board state at the start of the placing totem phase.
+        notifyBoardUpdate(game);
+
+        // Notify the first player who must place their totem.
+        notifyCurrentPlacingPlayer(game);
+
+        notifyInitialResources(game);
     }
 
     /**
@@ -95,5 +106,23 @@ public class PlacingTotemState implements IGameState {
         game.getObserverManager().notifyObservers(
                 new PlaceTotemTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
         );
+    }
+
+    /**
+     * Notifies observers about the initial resources of all players.
+     *
+     * @param game the current game context
+     */
+    private void notifyInitialResources(Game game) {
+        for (Player player : game.getPlayers().getPlayers()) {
+            game.getObserverManager().notifyObservers(
+                    new PlayerResourcesUpdatedEvent(
+                            game.getGameId(),
+                            player.getNickname(),
+                            player.getFood(),
+                            player.getPP()
+                    )
+            );
+        }
     }
 }

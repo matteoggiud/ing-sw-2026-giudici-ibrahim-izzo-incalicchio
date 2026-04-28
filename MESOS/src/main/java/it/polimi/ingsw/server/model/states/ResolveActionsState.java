@@ -55,9 +55,8 @@ public class ResolveActionsState implements IGameState {
      */
     @Override
     public void nextState(Game game) {
-        ExtraActionState extraActionState = new ExtraActionState();
-        game.setGameState(extraActionState);
-        extraActionState.executePhase(game);
+        game.setGameState(new EndRoundState());
+        game.getGameState().executePhase(game);
     }
 
     /**

@@ -18,14 +18,16 @@ public class LobbyState implements IGameState {
     @Override
     public void nextState(Game game) {
         game.setGameState(new SetupState());
+        game.getGameState().executePhase(game);
     }
 
     /**
      * Adds a player to the game lobby if the lobby is joinable
-     * @param game the current game context
+     *
+     * @param game   the current game context
      * @param player the player who wants to join
      * @throws IllegalArgumentException if the player is null or already in the game
-     * @throws IllegalStateException if the lobby is full and cannot accept more players
+     * @throws IllegalStateException    if the lobby is full and cannot accept more players
      */
     @Override
     public void addPlayer(Game game, Player player) throws IllegalArgumentException, IllegalStateException {

@@ -1,19 +1,15 @@
 package it.polimi.ingsw.server.model.states;
 
-import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
+
 
 public class SetupState implements IGameState {
 
     @Override
     public void nextState(Game game) {
         game.setGameState(new PlacingTotemState());
+        game.getGameState().executePhase(game);
     }
 
     /**
@@ -35,55 +31,10 @@ public class SetupState implements IGameState {
         // The setup is complete, so the next active phase is placing totems.
         nextState(game);
 
-        // Notify observers about the initial board state.
-        notifyBoardUpdate(game);
-        notifyInitialResources(game);
-        notifyCurrentPlacingPlayer(game);
+
     }
 
-    /**
-     * Notifies observers about the updated board state.
-     *
-     * @param game the current game context
-     */
-    private void notifyBoardUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
-        );
-    }
 
-    /**
-     * Notifies observers about the initial resources of all players.
-     *
-     * @param game the current game context
-     */
-    private void notifyInitialResources(Game game) {
-        for (Player player : game.getPlayers().getPlayers()) {
-            game.getObserverManager().notifyObservers(
-                    new PlayerResourcesUpdatedEvent(
-                            game.getGameId(),
-                            player.getNickname(),
-                            player.getFood(),
-                            player.getPP()
-                    )
-            );
-        }
-    }
 
-    /**
-     * Notifies observers about the player who must place the next totem.
-     *
-     * @param game the current game context
-     */
-    private void notifyCurrentPlacingPlayer(Game game) {
-        Player currentPlayer = game.getBoard().getTurnOrderBox().getSlots().stream()
-                .filter(slot -> !slot.isFree())
-                .map(TurnOrderSlot::getPlacedPlayer)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No player is available to place a totem."));
 
-        game.getObserverManager().notifyObservers(
-                new PlaceTotemTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
-    }
 }

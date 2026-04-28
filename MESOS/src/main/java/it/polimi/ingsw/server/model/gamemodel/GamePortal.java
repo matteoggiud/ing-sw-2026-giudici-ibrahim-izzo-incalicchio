@@ -146,7 +146,6 @@ public class GamePortal implements IGameModel {
 
         if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
             game.getGameState().startGame(game);
-            game.getGameState().executePhase(game);
         }
     }
 
@@ -194,7 +193,6 @@ public class GamePortal implements IGameModel {
         }
 
         game.getGameState().startGame(game);
-        game.getGameState().executePhase(game);
     }
 
 

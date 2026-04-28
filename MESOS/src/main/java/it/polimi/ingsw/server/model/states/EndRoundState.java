@@ -30,14 +30,12 @@ public class EndRoundState implements IGameState {
             throw new IllegalArgumentException("Game cannot be null");
         }
 
-        if (game.isLastRoundTriggered()) {
-            ComputeFinalScoreState computeFinalScoreState = new ComputeFinalScoreState();
-            game.setGameState(computeFinalScoreState);
-            computeFinalScoreState.executePhase(game);
-            return;
-        }
+        if (game.isLastRoundTriggered())
+            game.setGameState(new ComputeFinalScoreState());
+        else
+            game.setGameState(new PlacingTotemState());
 
-        game.setGameState(new PlacingTotemState());
+        game.getGameState().executePhase(game);
     }
 
     /**
@@ -128,7 +126,7 @@ public class EndRoundState implements IGameState {
     /**
      * Handles the transition between eras when a new era is reached.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param newEra the new era that has been reached
      * @return the current era after handling the transition
      */
@@ -209,7 +207,7 @@ public class EndRoundState implements IGameState {
     /**
      * Notifies observers only for players whose resources changed.
      *
-     * @param game the current game context
+     * @param game            the current game context
      * @param resourcesBefore the resources captured before the event resolution
      */
     private void notifyChangedPlayerResources(Game game, Map<String, ResourceSnapshot> resourcesBefore) {
@@ -229,7 +227,7 @@ public class EndRoundState implements IGameState {
     /**
      * Notifies observers about the updated resources of one player.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param player the player whose resources changed
      */
     private void notifyPlayerResourcesUpdate(Game game, Player player) {
@@ -246,7 +244,7 @@ public class EndRoundState implements IGameState {
     /**
      * Immutable snapshot of one player's resources at a specific moment.
      *
-     * @param food the food amount
+     * @param food           the food amount
      * @param prestigePoints the prestige points amount
      */
     private record ResourceSnapshot(int food, int prestigePoints) {
@@ -255,7 +253,7 @@ public class EndRoundState implements IGameState {
     /**
      * Notifies observers that the game reached a new era.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param newEra the new era reached by the game
      */
     private void notifyEraChanged(Game game, Era newEra) {
