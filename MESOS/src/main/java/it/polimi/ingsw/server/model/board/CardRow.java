@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.board;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
+import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
@@ -105,5 +106,38 @@ public class CardRow {
 
         return false;
     }
+
+    /**
+     * Gets a selectable card by its id from this card row.
+     * @param cardId the id of the card to be retrieved
+     * @return the card with the specified id if it is selectable from this card row, otherwise throws an exception
+     * @throws IllegalArgumentException if the card id is not positive, if the card with
+     */
+    public Card getSelectableCardById(int cardId) {
+        if (cardId <= 0) {
+            throw new IllegalArgumentException("Card id must be positive.");
+        }
+
+        for (CharacterCard characterCard : tribeRow.getCharacterCards()) {
+            if (characterCard.getCardId() == cardId) {
+                return characterCard;
+            }
+        }
+
+        for (BuildingCard buildingCard : buildingRow.getBuildingCards()) {
+            if (buildingCard.getCardId() == cardId) {
+                return buildingCard;
+            }
+        }
+
+        for (var eventCard : tribeRow.getEventCards()) {
+            if (eventCard.getCardId() == cardId) {
+                throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
+            }
+        }
+
+        throw new IllegalArgumentException("Selected card is not available in this row: " + cardId);
+    }
+
 
 }

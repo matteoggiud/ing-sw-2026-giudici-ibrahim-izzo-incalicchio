@@ -1,8 +1,7 @@
 package it.polimi.ingsw.server.model.gamemodel;
 
-import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
-import it.polimi.ingsw.server.model.board.OfferBox;
+import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
@@ -37,14 +36,25 @@ public class GamePortal implements IGameModel {
 
     @Override
     public void drawCard(int gameId, String nickname, int selectedCardId, boolean fromUpperRow) {
-        if (gameId < 0 || nickname == null) {
-            throw new IllegalArgumentException("Game, player cannot be null");
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
         }
-        DataDepository db = new DataDepository();
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+
         Game currentGame = gameManager.getGame(gameId);
         Player currentPlayer = playerManager.getPlayer(nickname);
 
-        Card card = db.getCardbyId(selectedCardId);
+        if (currentPlayer == null) {
+            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+        }
+
+        CardRow row = fromUpperRow
+                ? currentGame.getBoard().getUpperRow()
+                : currentGame.getBoard().getLowerRow();
+
+        Card card = row.getSelectableCardById(selectedCardId);
         currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
     }
 

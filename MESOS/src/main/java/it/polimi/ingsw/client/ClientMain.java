@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class ClientMain {
     public static void main(String[] args) {
-        String host = args.length > 0 ? args[0] : "172.20.10.2";
+        String host = args.length > 0 ? args[0] : "172.20.10.3";
         int port = args.length > 1 ? Integer.parseInt(args[1]) : 12345;
 
         // 1. Create the View
