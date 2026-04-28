@@ -73,6 +73,7 @@ public class TuiClientApp {
         put("join", "join <gameId>", "Join an existing game", this::handleJoin);
         put("games", "games", "Show available games", args -> controller.getAvailableGames());
         put("quit", "quit", "Exit the client", args -> quit());
+        put("place", "place <offerBoxId>", "Place your totem on an offer box", this::handlePlaceTotem);
     }
 
     /**
@@ -147,4 +148,14 @@ public class TuiClientApp {
             Consumer<String[]> handler
     ) {
     }
+
+    private void handlePlaceTotem(String[] parts) {
+        if (parts.length != 2) {
+            System.out.println("Usage: place <offerBoxId>");
+            return;
+        }
+
+        controller.placeTotem(parts[1]);
+    }
+
 }

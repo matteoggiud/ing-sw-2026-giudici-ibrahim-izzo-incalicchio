@@ -8,6 +8,7 @@ import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMess
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
+import it.polimi.ingsw.client.network.socket.messages.game.PlaceTotemMessage;
 
 public class ClientController {
     private final ClientView view;
@@ -52,4 +53,9 @@ public class ClientController {
     public void disconnect() {
         network.sendMessage(new DisconnectMessage());
     }
+
+    public void placeTotem(String offerBoxId) {
+        network.sendMessage(new PlaceTotemMessage(offerBoxId));
+    }
+
 }
