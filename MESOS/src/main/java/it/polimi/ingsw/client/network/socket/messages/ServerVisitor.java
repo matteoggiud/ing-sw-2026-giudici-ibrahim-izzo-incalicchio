@@ -11,8 +11,6 @@ import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
-import it.polimi.ingsw.server.model.observer.dto.*;
-
 
 public class ServerVisitor implements ServerMessageVisitor {
 
@@ -30,32 +28,24 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(LoginNeededMessage message) {
-        // This can be handled by the main app loop now
         view.showMessage("Login is required. Please use the 'login' command.");
     }
 
     @Override
     public void visit(UpdatePlayersMessage message) {
-        // view.showPlayers(message.getPlayers()); // Example
+        view.showMessage("Players: " + String.join(", ", message.getPlayerNicknames()));
     }
 
     @Override
     public void visit(GameStartedMessage message) {
         sessionState.setActiveGameId(message.getGameId());
-
-        view.showMessage("Game " + message.getGameId() + " started.");
-        view.showMessage("Players: " + String.join(", ", message.getPlayerNicknames()));
+        view.showGameStarted(message.getGameId(), message.getPlayerNicknames());
     }
-
 
     @Override
     public void visit(BoardUpdatedMessage message) {
-        sessionState.setActiveGameId(message.getGameId());
-
-        view.showMessage("Board updated.");
+        view.showBoardSummary(message.getBoard());
     }
-
-
 
     @Override
     public void visit(LoginFailedMessage message) {
@@ -93,19 +83,14 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(EraChangedMessage message) {
+        view.showMessage("Era changed.");
     }
 
     @Override
     public void visit(PlaceTotemTurnChangedMessage message) {
-        sessionState.setActiveGameId(message.getGameId());
-
-        view.showMessage("Place totem turn: " + message.getCurrentPlayerNickname());
-
-        if (message.getCurrentPlayerNickname().equals(sessionState.getNickname())) {
-            view.showMessage("It is your turn. Use the place command when available.");
-        }
+        boolean isMyTurn = message.getCurrentPlayerNickname().equals(sessionState.getNickname());
+        view.showPlaceTotemTurn(message.getCurrentPlayerNickname(), isMyTurn);
     }
-
 
     @Override
     public void visit(ResolveActionTurnChangedMessage message) {
@@ -129,6 +114,7 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(GameInfoMessage message) {
+        sessionState.setActiveGameId(message.getGameInfo().gameId());
         view.showGameInfo(message.getGameInfo());
     }
 
