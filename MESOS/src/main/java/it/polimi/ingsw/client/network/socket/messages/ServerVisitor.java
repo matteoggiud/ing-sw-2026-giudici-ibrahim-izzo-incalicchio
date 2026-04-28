@@ -30,25 +30,24 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(LoginNeededMessage message) {
-        // This can be handled by the main app loop now
         view.showMessage("Login is required. Please use the 'login' command.");
     }
 
     @Override
     public void visit(UpdatePlayersMessage message) {
-        // view.showPlayers(message.getPlayers()); // Example
+        view.showMessage("Players: " + String.join(", ", message.getPlayerNicknames()));
     }
 
     @Override
     public void visit(GameStartedMessage message) {
-        // view.showGameStarted(message.getBoard()); // Example
+        sessionState.setActiveGameId(message.getGameId());
+        view.showGameStarted(message.getGameId(), message.getPlayerNicknames());
     }
 
     @Override
     public void visit(BoardUpdatedMessage message) {
-        // view.showBoard(message.getBoard()); // Example
+        view.showBoardSummary(message.getBoard());
     }
-
 
     @Override
     public void visit(LoginFailedMessage message) {
@@ -86,10 +85,13 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(EraChangedMessage message) {
+        view.showMessage("Era changed.");
     }
 
     @Override
     public void visit(PlaceTotemTurnChangedMessage message) {
+        boolean isMyTurn = message.getCurrentPlayerNickname().equals(sessionState.getNickname());
+        view.showPlaceTotemTurn(message.getCurrentPlayerNickname(), isMyTurn);
     }
 
     @Override
@@ -114,6 +116,7 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(GameInfoMessage message) {
+        sessionState.setActiveGameId(message.getGameInfo().gameId());
         view.showGameInfo(message.getGameInfo());
     }
 

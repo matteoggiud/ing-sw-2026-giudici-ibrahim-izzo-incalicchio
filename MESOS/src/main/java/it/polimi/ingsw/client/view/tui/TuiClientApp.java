@@ -77,6 +77,7 @@ public class TuiClientApp {
         put("left", "left", "Left the actual game in lobby", args -> controller.leftGame()); // to create
 
         put("quit", "quit", "Exit the client", args -> quit());
+        put("place", "place <offerBoxId>", "Place your totem on an offer box", this::handlePlaceTotem);
     }
 
     /**
@@ -151,4 +152,14 @@ public class TuiClientApp {
             Consumer<String[]> handler
     ) {
     }
+
+    private void handlePlaceTotem(String[] parts) {
+        if (parts.length != 2) {
+            System.out.println("Usage: place <offerBoxId>");
+            return;
+        }
+
+        controller.placeTotem(parts[1]);
+    }
+
 }

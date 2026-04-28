@@ -18,6 +18,7 @@ import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMess
 import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+import it.polimi.ingsw.client.network.socket.messages.game.PlaceTotemMessage;
 
 import java.util.List;
 
@@ -141,4 +142,20 @@ public class ClientVisitor implements ClientMessageVisitor {
             clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to leave game"));
         }
     }
+
+    @Override
+    public void visit(PlaceTotemMessage message) {
+        try {
+            gameController.placing(clientSession, message.getOfferBoxId());
+        } catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(
+                    new GenericErrorMessage("Failed to place totem: " + e.getMessage())
+            );
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(
+                    new GenericErrorMessage("Failed to place totem")
+            );
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view;
 
+import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 
 import java.util.List;
@@ -16,4 +17,10 @@ public interface ClientView {
     void showAvailableGames(List<GameInfoDTO> games);
 
     void showGameInfo(GameInfoDTO gameInfo);
+
+    void showGameStarted(int gameId, List<String> playerNicknames);
+
+    void showBoardSummary(BoardDTO board);
+
+    void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn);
 }

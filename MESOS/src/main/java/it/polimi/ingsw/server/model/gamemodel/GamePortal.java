@@ -57,17 +57,30 @@ public class GamePortal implements IGameModel {
      */
     @Override
     public void placing(int gameId, String nickname, String offerBoxId) {
-        if (gameId < 0 || nickname == null) {
-            throw new IllegalArgumentException("Game, player e offerBox cannot be null");
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
         }
-        DataDepository db = new DataDepository();
+        if (nickname == null || nickname.isBlank()) {
+            throw new IllegalArgumentException("Nickname cannot be null or blank.");
+        }
+        if (offerBoxId == null || offerBoxId.isBlank()) {
+            throw new IllegalArgumentException("Offer box id cannot be null or blank.");
+        }
+
         Game currentGame = gameManager.getGame(gameId);
         Player player = playerManager.getPlayer(nickname);
 
-        OfferBox offerBox = db.getOfferBoxbyId(offerBoxId);
+        if (player == null) {
+            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+        }
 
-        currentGame.getGameState().placeTotem(currentGame, player, offerBox);
+        currentGame.getGameState().placeTotem(
+                currentGame,
+                player,
+                currentGame.getBoard().getOfferTrack().getBoxById(offerBoxId)
+        );
     }
+
 
     /**
      * Creates a new game with the specified host player.
