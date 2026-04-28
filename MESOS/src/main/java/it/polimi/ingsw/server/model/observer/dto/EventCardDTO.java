@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.observer.dto;
 
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 
 import java.io.Serializable;
 

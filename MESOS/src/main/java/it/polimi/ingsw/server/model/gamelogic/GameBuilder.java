@@ -1,22 +1,19 @@
 package it.polimi.ingsw.server.model.gamelogic;
 
 import it.polimi.ingsw.server.database.DataDepository;
-import it.polimi.ingsw.server.model.core.*;
-import it.polimi.ingsw.server.model.card.*;
-import it.polimi.ingsw.server.model.deck.*;
-import it.polimi.ingsw.server.model.board.*;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.core.Totem;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.deck.TribeDeck;
+import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.ruleset.IGameRuleSet;
 
 import java.sql.SQLException;
@@ -51,7 +48,7 @@ public class GameBuilder {
             throw new RuntimeException("Failed to load cards from the database");
         }
 
-        game.setCurrentEra(Era.ERA_1);
+        game.setCurrentEra(new Era1());
 
         // Initialize the tribe deck, building decks, offer track, turn order box, and fill the card rows according to the game rules and the available cards.
         initializeTribeDeck(allTribeCards);
@@ -90,15 +87,7 @@ public class GameBuilder {
 
         // Divide the valid tribe cards into their respective eras and separate final event cards from the rest of era 3 cards.
         for (TribeCard card : validCards) {
-            if (card.getEra() == Era.ERA_3 && card.isFinalEvent()) {
-                finalEvents.add(card);
-            } else {
-                switch (card.getEra()) {
-                    case Era.ERA_1 -> era_I.add(card);
-                    case Era.ERA_2 -> era_II.add(card);
-                    case Era.ERA_3 -> era_III.add(card);
-                }
-            }
+            card.selfSort(era_I, era_II, era_III, finalEvents);
         }
 
         // Shuffle the cards within each era to ensure a random distribution of cards in the tribe deck.

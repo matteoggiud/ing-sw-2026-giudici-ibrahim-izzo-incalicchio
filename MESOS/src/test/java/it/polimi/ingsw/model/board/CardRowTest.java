@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.server.model.board.BuildingRow;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;

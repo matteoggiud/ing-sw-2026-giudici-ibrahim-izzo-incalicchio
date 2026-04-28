@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 
 import java.util.EnumMap;
 import java.util.List;

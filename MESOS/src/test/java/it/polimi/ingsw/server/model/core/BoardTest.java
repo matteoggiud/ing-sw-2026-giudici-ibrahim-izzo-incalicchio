@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.core;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;

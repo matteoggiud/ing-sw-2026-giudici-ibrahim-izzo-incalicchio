@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.CharacterType;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.characters.BuilderCharacterCard;
 import it.polimi.ingsw.server.model.card.characters.GathererCharacterCard;
 import it.polimi.ingsw.server.model.card.characters.InventorCharacterCard;

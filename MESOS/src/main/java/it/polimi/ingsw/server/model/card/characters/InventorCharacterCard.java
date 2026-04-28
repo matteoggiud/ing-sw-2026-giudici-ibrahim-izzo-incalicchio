@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.model.card.characters;
 
 import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.card.CharacterType;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
 
 import java.util.Optional;

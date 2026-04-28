@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.card.characters.BuilderCharacterCard;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.exceptions.IllegalFoodArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

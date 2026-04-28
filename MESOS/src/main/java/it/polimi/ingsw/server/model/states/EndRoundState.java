@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.states;
 
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;

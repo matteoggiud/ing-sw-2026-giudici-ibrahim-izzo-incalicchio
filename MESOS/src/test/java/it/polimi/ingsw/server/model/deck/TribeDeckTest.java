@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.deck;
 
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import org.junit.jupiter.api.BeforeEach;

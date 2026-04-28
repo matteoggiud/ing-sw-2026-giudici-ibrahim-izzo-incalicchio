@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.deck.PlayerDeck;
 import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.event.IEventEffect;
+import it.polimi.ingsw.server.model.era.Era;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

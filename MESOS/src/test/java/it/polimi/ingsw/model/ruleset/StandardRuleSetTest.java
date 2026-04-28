@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.ruleset;
 import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

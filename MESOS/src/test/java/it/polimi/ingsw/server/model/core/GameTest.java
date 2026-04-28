@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.model.core;
 
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.states.EndedState;
 import it.polimi.ingsw.server.model.states.LobbyState;
 import org.junit.jupiter.api.BeforeEach;

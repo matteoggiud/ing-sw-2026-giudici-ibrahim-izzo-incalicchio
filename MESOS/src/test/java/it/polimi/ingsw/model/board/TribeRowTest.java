@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.server.model.board.TribeRow;
 import it.polimi.ingsw.server.model.card.CharacterCard;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import it.polimi.ingsw.server.model.effect.event.SustenanceEventEffect;

@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.card;
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 /**

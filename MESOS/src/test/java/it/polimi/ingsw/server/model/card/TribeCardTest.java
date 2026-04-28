@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.card;
 
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
+import it.polimi.ingsw.server.model.era.Era;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
