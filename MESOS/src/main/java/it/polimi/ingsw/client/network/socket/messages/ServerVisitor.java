@@ -11,6 +11,8 @@ import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+import it.polimi.ingsw.server.model.observer.dto.*;
+
 
 public class ServerVisitor implements ServerMessageVisitor {
 
@@ -39,13 +41,20 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(GameStartedMessage message) {
-        // view.showGameStarted(message.getBoard()); // Example
+        sessionState.setActiveGameId(message.getGameId());
+
+        view.showMessage("Game " + message.getGameId() + " started.");
+        view.showMessage("Players: " + String.join(", ", message.getPlayerNicknames()));
     }
+
 
     @Override
     public void visit(BoardUpdatedMessage message) {
-        // view.showBoard(message.getBoard()); // Example
+        sessionState.setActiveGameId(message.getGameId());
+
+        view.showMessage("Board updated.");
     }
+
 
 
     @Override
@@ -88,7 +97,15 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(PlaceTotemTurnChangedMessage message) {
+        sessionState.setActiveGameId(message.getGameId());
+
+        view.showMessage("Place totem turn: " + message.getCurrentPlayerNickname());
+
+        if (message.getCurrentPlayerNickname().equals(sessionState.getNickname())) {
+            view.showMessage("It is your turn. Use the place command when available.");
+        }
     }
+
 
     @Override
     public void visit(ResolveActionTurnChangedMessage message) {
