@@ -7,10 +7,6 @@ import it.polimi.ingsw.server.model.core.Player;
  * Players can place their totems on an offer box to choose cards / get reward.
  */
 public class OfferBox {
-    /**
-     * Enumeration representing the unique identifiers for the offer boxes on the board.
-     */
-    private final OFFER_BOX_ID boxId;
 
     /**
      * Food reward associated with the offer box (only one box).
@@ -35,34 +31,24 @@ public class OfferBox {
     /**
      * Constructs an OfferBox with the specified attributes.
      *
-     * @param boxId         the unique identifier for the offer box
      * @param foodReward    the amount of food reward associated with this offer box (=3 || =0)
      * @param upperRowPicks the number of picks allowed from the upper row associated with this offer box
      * @param lowerRowPicks the number of picks allowed from the lower row associated with this offer box
      * @throws IllegalArgumentException if boxId is null, if foodReward is not 0 or 3, or if upperRowPicks or lowerRowPicks are negative
      */
 
-    public OfferBox(OFFER_BOX_ID boxId, int foodReward, int upperRowPicks, int lowerRowPicks) throws IllegalArgumentException {
+    public OfferBox(int foodReward, int upperRowPicks, int lowerRowPicks) throws IllegalArgumentException {
         if (boxId == null) throw new IllegalArgumentException("boxId cannot be null");
 
         if (foodReward != 0 && foodReward != 3) throw new IllegalArgumentException("Food reward must be either 0 or 3");
 
         if (upperRowPicks < 0 || lowerRowPicks < 0) throw new IllegalArgumentException("Row's picks must be >= 0");
 
-        this.boxId = boxId;
         this.foodReward = foodReward;
         this.upperRowPicks = upperRowPicks;
         this.lowerRowPicks = lowerRowPicks;
     }
 
-    /**
-     * Gets the box id associated with this offer box.
-     *
-     * @return the unique identifier for this offer box.
-     */
-    public OFFER_BOX_ID getBoxId() {
-        return boxId;
-    }
 
     /**
      * Gets the food reward associated with this offer box.
@@ -89,6 +75,22 @@ public class OfferBox {
      */
     public int getLowerRowPicks() {
         return lowerRowPicks;
+    }
+
+    /**
+     * Checks if this offer box allows picking cards
+     * @return true if this offer box allows picking cards
+     */
+    public boolean hasCardPicks() {
+        return upperRowPicks > 0 || lowerRowPicks > 0;
+    }
+
+    /**
+     * Checks if this offer box is a food-only action
+     * @return true if this offer box provides only food reward
+     */
+    public boolean isFoodOnlyAction() {
+        return foodReward > 0 && !hasCardPicks();
     }
 
     /**

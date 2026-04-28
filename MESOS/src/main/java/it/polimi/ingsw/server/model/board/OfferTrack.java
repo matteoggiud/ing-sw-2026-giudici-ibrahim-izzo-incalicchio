@@ -53,27 +53,17 @@ public class OfferTrack {
     }
 
     /**
-     * Gets the OfferBox with the specified boxId.
-     * @param boxId the id of the OfferBox to retrieve
-     * @return the OfferBox with the specified boxId.
+     * Gets the OfferBox at the specified 1-based position.
+     *
+     * @param position the 1-based position of the OfferBox in the track
+     * @return the OfferBox at the specified position
      */
-    public OfferBox getBoxById(String boxId) {
-        if (boxId == null || boxId.isBlank()) {
-            throw new IllegalArgumentException("Offer box id cannot be null or blank.");
+    public OfferBox getBoxByPosition(int position) {
+        if (position < 1 || position > boxes.size()) {
+            throw new IllegalArgumentException("Invalid offer box position: " + position);
         }
 
-        OFFER_BOX_ID parsedBoxId;
-
-        try {
-            parsedBoxId = OFFER_BOX_ID.valueOf(boxId.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid offer box id: " + boxId, e);
-        }
-
-        return boxes.stream()
-                .filter(box -> box.getBoxId() == parsedBoxId)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Offer box " + parsedBoxId + " is not available in this game."));
+        return boxes.get(position - 1);
     }
 
 

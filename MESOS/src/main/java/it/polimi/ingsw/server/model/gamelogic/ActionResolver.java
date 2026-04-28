@@ -1,7 +1,6 @@
 package it.polimi.ingsw.server.model.gamelogic;
 
 import it.polimi.ingsw.server.model.board.CardRow;
-import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.card.Card;
@@ -100,12 +99,12 @@ public class ActionResolver {
     }
 
     private boolean isFoodOnlyBox(OfferBox box) {
-        return box.getBoxId() == OFFER_BOX_ID.A;
+        return box.isFoodOnlyAction();
     }
 
     private void resolveFoodOnlyAction(Game game, Player player, OfferBox box, Card selectedCard) {
         if (selectedCard != null) {
-            throw new IllegalArgumentException("Offer box A gives only food and does not allow card picks.");
+            throw new IllegalArgumentException("This offer box gives only food and does not allow card picks.");
         }
 
         player.addFood(box.getFoodReward());

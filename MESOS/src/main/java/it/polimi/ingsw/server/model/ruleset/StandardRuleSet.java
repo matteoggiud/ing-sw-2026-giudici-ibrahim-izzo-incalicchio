@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.ruleset;
 
-import it.polimi.ingsw.server.model.board.OFFER_BOX_ID;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.card.Era;
@@ -169,48 +168,38 @@ public class StandardRuleSet implements IGameRuleSet {
         return stack;
     }
 
-    /**
-     * Creates and initializes the list of OfferBoxes for the OfferTrack based on the player count.
-     * The boxes are added in strict alphabetical order (A to G) to represent their position on the track.
-     *
-     * @param numPlayers the current number of players.
-     * @return an ordered list of initialized OfferBox objects.
-     */
     @Override
     public ArrayList<OfferBox> createOfferBoxes(int numPlayers) {
         validatePlayerCount(numPlayers);
 
         ArrayList<OfferBox> boxes = new ArrayList<>();
 
-        // OfferBox A: only 5 players.
+        // Position 1 in 5-player games: food-only action.
         if (numPlayers == 5) {
-            boxes.add(new OfferBox(OFFER_BOX_ID.A, 3, 0, 0));
+            boxes.add(new OfferBox(3, 0, 0));
         }
 
-        // OfferBox B: always present.
-        boxes.add(new OfferBox(OFFER_BOX_ID.B, 0, 0, 1));
+        // Always present.
+        boxes.add(new OfferBox(0, 0, 1));
+        boxes.add(new OfferBox(0, 1, 0));
 
-        // OfferBox C: always present.
-        boxes.add(new OfferBox(OFFER_BOX_ID.C, 0, 1, 0));
-
-        // OfferBox D: only 3+ players.
+        // Present with 3+ players.
         if (numPlayers >= 3) {
-            boxes.add(new OfferBox(OFFER_BOX_ID.D, 0, 0, 2));
+            boxes.add(new OfferBox(0, 0, 2));
         }
 
-        // OfferBox E: always present.
-        boxes.add(new OfferBox(OFFER_BOX_ID.E, 0, 1, 1));
+        // Always present.
+        boxes.add(new OfferBox(0, 1, 1));
+        boxes.add(new OfferBox(0, 2, 0));
 
-        // OfferBox F: always present.
-        boxes.add(new OfferBox(OFFER_BOX_ID.F, 0, 2, 0));
-
-        // OfferBox G: only 4+ players.
+        // Present with 4+ players.
         if (numPlayers >= 4) {
-            boxes.add(new OfferBox(OFFER_BOX_ID.G, 0, 2, 1));
+            boxes.add(new OfferBox(0, 2, 1));
         }
 
         return boxes;
     }
+
 
 
     /**
