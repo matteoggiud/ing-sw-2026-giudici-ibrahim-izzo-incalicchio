@@ -157,6 +157,13 @@ public interface ServerMessageVisitor {
      */
     void visit(LeftGameSuccessMessage message);
 
+    /**
+     * Visits a PlayerInfoChangedMessage, which indicates that a player's information has changed, such as their nickname or avatar. This message is sent to all clients when a player updates their information, and may contain additional information about the player such as their new nickname or avatar.
+     *
+     * @param message the PlayerInfoChangedMessage to visit
+     */
+    void visit(PlayerInfoChangedMessage message);
+
 }
 
 

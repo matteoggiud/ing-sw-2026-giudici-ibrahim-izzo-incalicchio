@@ -85,4 +85,11 @@ public interface IGameObserver {
      * @param event the event containing information about the joined game and the player who joined
      */
     void update(JoinedGameEvent event);
+
+    /**
+     * Called when a player leaves a game.
+     *
+     * @param event the event containing information about the left game and the player who left
+     */
+    void update(PlayerInfoChangedEvent event);
 }

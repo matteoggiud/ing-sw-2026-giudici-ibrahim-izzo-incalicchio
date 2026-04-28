@@ -146,4 +146,9 @@ public class ServerVisitor implements ServerMessageVisitor {
         view.showMessage(message.getMessage());
         sessionState.setActiveGameId(null);
     }
+
+    @Override
+    public void visit(PlayerInfoChangedMessage message) {
+        //TODO
+    }
 }

@@ -180,4 +180,13 @@ public class SocketVirtualView implements VirtualView {
 
         sendMessage(message);
     }
+
+    /**
+     *
+     * @param event the event containing information about the left game and the player who left
+     */
+    @Override
+    public void update(PlayerInfoChangedEvent event) {
+        PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfo());
+    }
 }

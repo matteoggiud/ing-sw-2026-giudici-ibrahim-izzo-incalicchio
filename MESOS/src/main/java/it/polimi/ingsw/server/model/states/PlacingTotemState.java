@@ -20,20 +20,15 @@ public class PlacingTotemState implements IGameState {
 
     @Override
     public void executePhase(Game game) {
-        // Notify observers about the initial board state at the start of the placing totem phase.
-        notifyBoardUpdate(game);
-
         // Notify the first player who must place their totem.
         notifyCurrentPlacingPlayer(game);
-
-        notifyInitialResources(game);
     }
 
     /**
      * Allows a player to place their totem on the offer box during the placing totem phase.
      *
-     * @param game the current game context
-     * @param player the player making the action
+     * @param game     the current game context
+     * @param player   the player making the action
      * @param offerBox the offer box where the player wants to place their totem
      * @throws IllegalStateException if it is not the player's turn or the offer box is occupied
      */
@@ -108,21 +103,5 @@ public class PlacingTotemState implements IGameState {
         );
     }
 
-    /**
-     * Notifies observers about the initial resources of all players.
-     *
-     * @param game the current game context
-     */
-    private void notifyInitialResources(Game game) {
-        for (Player player : game.getPlayers().getPlayers()) {
-            game.getObserverManager().notifyObservers(
-                    new PlayerResourcesUpdatedEvent(
-                            game.getGameId(),
-                            player.getNickname(),
-                            player.getFood(),
-                            player.getPP()
-                    )
-            );
-        }
-    }
+
 }
