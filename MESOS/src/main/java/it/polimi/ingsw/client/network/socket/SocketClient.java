@@ -51,16 +51,4 @@ public class SocketClient {
         clientHandler.sendMessage(message);
     }
 
-    /**
-     * Closes the client connection.
-     */
-    public void disconnect() {
-        if (clientHandler != null) {
-            clientHandler.safeClose();
-        }
-    }
-
-    public boolean isConnected() {
-        return clientHandler != null && clientHandler.isConnected();
-    }
 }

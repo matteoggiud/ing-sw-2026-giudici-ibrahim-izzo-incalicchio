@@ -27,6 +27,10 @@ public class GameController {
      * @param password      the passwordHash of the player attempting to log in
      */
     public void login(ClientSession clientSession, String username, String password) throws RuntimeException {
+        if (clientSession.isLoggedIn()) {
+            throw new RuntimeException("You are already logged in, please logout first.");
+        }
+
         try {
             model.login(username, password);
             clientSession.setNickname(username);
@@ -50,6 +54,10 @@ public class GameController {
      * @param password      the desired passwordHash for the new player account
      */
     public void register(ClientSession clientSession, String username, String password) throws RuntimeException {
+        if (clientSession.isLoggedIn()) {
+            throw new RuntimeException("You are already logged in, please logout first.");
+        }
+
         try {
             model.register(username, password);
 
