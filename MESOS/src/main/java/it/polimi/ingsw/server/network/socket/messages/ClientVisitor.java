@@ -129,7 +129,7 @@ public class ClientVisitor implements ClientMessageVisitor {
     @Override
     public void visit(PlaceTotemMessage message) {
         try {
-            gameController.placing(clientSession, message.getOfferBoxId());
+            gameController.placing(clientSession, message.getOfferBoxPosition());
         } catch (RuntimeException e) {
             clientSession.getVirtualView().sendMessage(
                     new GenericErrorMessage("Failed to place totem: " + e.getMessage())

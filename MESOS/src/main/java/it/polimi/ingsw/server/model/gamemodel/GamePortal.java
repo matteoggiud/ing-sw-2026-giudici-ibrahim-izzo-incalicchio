@@ -51,22 +51,19 @@ public class GamePortal implements IGameModel {
     }
 
     /**
-     * Allows a player to place their totem on a specific offer box on the offer track.
+     * Allows a player to place their totem on a specific offer box position on the offer track.
      *
-     * @param gameId     the unique identifier of the game in which the player is placing their totem
-     * @param nickname   the nickname of the player placing their totem
-     * @param offerBoxId the unique identifier of the offer box on which the player wants to place their totem
+     * @param gameId           the unique identifier of the game in which the player is placing their totem
+     * @param nickname         the nickname of the player placing their totem
+     * @param offerBoxPosition the 1-based position of the offer box on which the player wants to place their totem
      */
     @Override
-    public void placing(int gameId, String nickname, String offerBoxId) {
+    public void placing(int gameId, String nickname, int offerBoxPosition) {
         if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be negative.");
         }
         if (nickname == null || nickname.isBlank()) {
             throw new IllegalArgumentException("Nickname cannot be null or blank.");
-        }
-        if (offerBoxId == null || offerBoxId.isBlank()) {
-            throw new IllegalArgumentException("Offer box id cannot be null or blank.");
         }
 
         Game currentGame = gameManager.getGame(gameId);
@@ -79,9 +76,10 @@ public class GamePortal implements IGameModel {
         currentGame.getGameState().placeTotem(
                 currentGame,
                 player,
-                currentGame.getBoard().getOfferTrack().getBoxById(offerBoxId)
+                currentGame.getBoard().getOfferTrack().getBoxByPosition(offerBoxPosition)
         );
     }
+
 
 
     /**

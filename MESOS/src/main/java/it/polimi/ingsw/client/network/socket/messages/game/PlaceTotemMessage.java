@@ -4,18 +4,18 @@ import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.server.network.socket.messages.ClientMessageVisitor;
 
 public class PlaceTotemMessage extends ClientMessage {
-    private final String offerBoxId;
+    private final int offerBoxPosition;
 
-    public PlaceTotemMessage(String offerBoxId) {
-        if (offerBoxId == null || offerBoxId.isBlank()) {
-            throw new IllegalArgumentException("Offer box id cannot be null or blank.");
+    public PlaceTotemMessage(int offerBoxPosition) {
+        if (offerBoxPosition < 1) {
+            throw new IllegalArgumentException("Offer box position must be positive.");
         }
 
-        this.offerBoxId = offerBoxId.trim().toUpperCase();
+        this.offerBoxPosition = offerBoxPosition;
     }
 
-    public String getOfferBoxId() {
-        return offerBoxId;
+    public int getOfferBoxPosition() {
+        return offerBoxPosition;
     }
 
     @Override

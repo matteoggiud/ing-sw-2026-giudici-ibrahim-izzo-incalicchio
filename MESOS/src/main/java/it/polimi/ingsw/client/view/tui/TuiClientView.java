@@ -86,11 +86,12 @@ public class TuiClientView implements ClientView {
         for (OfferBoxDTO box : board.offerTrackBoxes()) {
             String player = box.placedPlayerNickname() == null ? "-" : box.placedPlayerNickname();
 
-            System.out.println(box.boxId()
-                    + " player=" + player
+            System.out.println(box.position()
+                    + ") player=" + player
                     + " upper=" + box.upperRowPicks()
                     + " lower=" + box.lowerRowPicks()
                     + " food=" + box.foodReward());
+
         }
 
         System.out.println("Turn order:");

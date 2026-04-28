@@ -73,7 +73,7 @@ public class TuiClientApp {
         put("join", "join <gameId>", "Join an existing game", this::handleJoin);
         put("games", "games", "Show available games", args -> controller.getAvailableGames());
         put("quit", "quit", "Exit the client", args -> quit());
-        put("place", "place <offerBoxId>", "Place your totem on an offer box", this::handlePlaceTotem);
+        put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
     }
 
     /**
@@ -151,11 +151,17 @@ public class TuiClientApp {
 
     private void handlePlaceTotem(String[] parts) {
         if (parts.length != 2) {
-            System.out.println("Usage: place <offerBoxId>");
+            System.out.println("Usage: place <position>");
             return;
         }
 
-        controller.placeTotem(parts[1]);
+        try {
+            int offerBoxPosition = Integer.parseInt(parts[1]);
+            controller.placeTotem(offerBoxPosition);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid position. It must be an integer.");
+        }
     }
+
 
 }

@@ -106,17 +106,22 @@ public final class BoardDTOMapper {
      * @return the corresponding offer box DTOs
      */
     private static List<OfferBoxDTO> toOfferBoxDTOs(List<OfferBox> boxes) {
-        return boxes.stream()
-                .map(box -> new OfferBoxDTO(
-                        box.getBoxId().name(),
-                        box.isFree() ? null : box.getPlacedPlayer().getNickname(),
-                        box.getFoodReward(),
-                        box.getUpperRowPicks(),
-                        box.getLowerRowPicks(),
-                        ""
-                ))
+        return IntStream.range(0, boxes.size())
+                .mapToObj(i -> {
+                    OfferBox box = boxes.get(i);
+
+                    return new OfferBoxDTO(
+                            i + 1,
+                            box.isFree() ? null : box.getPlacedPlayer().getNickname(),
+                            box.getFoodReward(),
+                            box.getUpperRowPicks(),
+                            box.getLowerRowPicks(),
+                            ""
+                    );
+                })
                 .toList();
     }
+
 
     /**
      * Maps a list of turn order slots to their DTO representations.

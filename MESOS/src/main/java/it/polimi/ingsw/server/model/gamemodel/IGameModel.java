@@ -79,13 +79,13 @@ public interface IGameModel {
     void drawCard(int gameId, String nickname, int selectedCardId, boolean fromUpperRow);
 
     /**
-     * Allows a player to place their totem on a specific offer box on the offer track.
+     * Allows a player to place their totem on a specific offer box position on the offer track.
      *
      * @param gameId     the current game context
      * @param nickname   the player attempting to place their totem
-     * @param offerBoxId the identifier of the offer box on which the player is placing their totem
+     * @param offerBoxPosition the position (1-based) of the offer box on which the player wants to place their totem
      */
-    void placing(int gameId, String nickname, String offerBoxId);
+    void placing(int gameId, String nickname, int offerBoxPosition);
 
     /**
      * Creates a new game with the specified host player.

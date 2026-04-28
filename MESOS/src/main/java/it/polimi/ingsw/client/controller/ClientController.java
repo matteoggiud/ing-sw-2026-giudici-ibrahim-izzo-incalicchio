@@ -54,8 +54,8 @@ public class ClientController {
         network.sendMessage(new DisconnectMessage());
     }
 
-    public void placeTotem(String offerBoxId) {
-        network.sendMessage(new PlaceTotemMessage(offerBoxId));
+    public void placeTotem(int offerBoxPosition) {
+        network.sendMessage(new PlaceTotemMessage(offerBoxPosition));
     }
 
 }
