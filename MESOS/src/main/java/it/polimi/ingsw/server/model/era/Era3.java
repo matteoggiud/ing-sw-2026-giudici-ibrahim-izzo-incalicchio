@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.era;
 
+import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
@@ -36,8 +37,7 @@ public class Era3 extends Era {
         }
     }
 
-    @Override
-    public int getBuildingLimit(int numPlayers) {
+    public static int getBuildingLimit(int numPlayers) {
         return numPlayersBuildingLimit.get(numPlayers);
     }
 
@@ -66,5 +66,11 @@ public class Era3 extends Era {
         board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
 
         return newEra;
+    }
+
+    @Override
+    public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
+        if(deckCompositionEra3.size() < numPlayersBuildingLimit.get(numPlayers)) {}
+        deckCompositionEra3.add(card);
     }
 }

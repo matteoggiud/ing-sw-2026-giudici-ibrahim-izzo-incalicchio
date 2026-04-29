@@ -42,7 +42,7 @@ public class GameBuilder {
         List<BuildingCard> allBuildingCards;
 
         //We use the try-catch to avoid adding on every method that use these parameter a throw SQLException
-        try{
+        try {
             allTribeCards = db.getAllTribeCards();
             allBuildingCards = db.getBuildingCards();
         } catch (SQLException e) {
@@ -119,10 +119,6 @@ public class GameBuilder {
             throw new IllegalArgumentException("allBuildings and game cannot be null");
         }
 
-        Era era1 = new Era1();
-        Era era2 = new Era2();
-        Era era3 = new Era3();
-
         IGameRuleSet ruleSet = game.getRuleSet();
 
         // Filter buildings by player count.
@@ -132,16 +128,19 @@ public class GameBuilder {
 
         Collections.shuffle(validBuildings);
 
-        // Gets the limit for each era and fills the building decks accordingly, ensuring we don't exceed the limit for any era.
+        List<BuildingCard> deckCompositionEra1 = new ArrayList<>();
+        List<BuildingCard> deckCompositionEra2 = new ArrayList<>();
+        List<BuildingCard> deckCompositionEra3 = new ArrayList<>();
+
+        // Divide the valid building cards into their respective eras according to the rules defined in the game rule set.
+        for (BuildingCard card : validBuildings) {
+            card.getEra().selfAdd(deckCompositionEra1, deckCompositionEra2, deckCompositionEra3, card, game.getNumberOfPlayers());
+        }
+
         List<BuildingCard> deckComposition = new ArrayList<>();
-        int limit1 = era1.getBuildingLimit(game.getNumberOfPlayers());
-        validBuildings.stream().filter(b -> b.getEra().equals(era1)).limit(limit1).forEach(deckComposition::add);
-
-        int limit2 = era2.getBuildingLimit(game.getNumberOfPlayers());
-        validBuildings.stream().filter(b -> b.getEra().equals(era2)).limit(limit2).forEach(deckComposition::add);
-
-        int limit3 = era3.getBuildingLimit(game.getNumberOfPlayers());
-        validBuildings.stream().filter(b -> b.getEra().equals(era3)).limit(limit3).forEach(deckComposition::add);
+        deckComposition.addAll(deckCompositionEra1);
+        deckComposition.addAll(deckCompositionEra2);
+        deckComposition.addAll(deckCompositionEra3);
 
         // Add the selected building cards to the corresponding building decks in the game.
         game.getBuildingDecks().setBuildingDeck(deckComposition);
@@ -205,7 +204,6 @@ public class GameBuilder {
             player.addFood(initialPlayerFood);
         }
     }
-
 
 
     /**

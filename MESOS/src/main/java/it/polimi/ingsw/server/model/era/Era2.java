@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.era;
 
+import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
@@ -10,13 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Era2 extends Era{
+public class Era2 extends Era {
 
     private final static Map<Integer, Integer> numPlayersBuildingLimit = StandardRuleSet.getEra2BuildingLimits();
     private final static int order = 2;
     private final static String name = "Era II";
 
-    public Era2() {}
+    public Era2() {
+    }
 
     @Override
     public String getName() {
@@ -33,9 +35,9 @@ public class Era2 extends Era{
         eraII.add(tribeCard);
     }
 
-    @Override
-    public int getBuildingLimit(int numPlayers) {
-        return  numPlayersBuildingLimit.get(numPlayers);
+
+    public static int getBuildingLimit(int numPlayers) {
+        return numPlayersBuildingLimit.get(numPlayers);
     }
 
     @Override
@@ -63,5 +65,12 @@ public class Era2 extends Era{
         board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
 
         return newEra;
+    }
+
+    @Override
+    public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
+        if (deckCompositionEra2.size() < numPlayersBuildingLimit.get(numPlayers)) {
+        }
+        deckCompositionEra2.add(card);
     }
 }
