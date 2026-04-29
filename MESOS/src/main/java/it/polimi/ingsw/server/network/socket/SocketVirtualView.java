@@ -79,7 +79,7 @@ public class SocketVirtualView implements VirtualView {
     @Override
     public void update(EraChangedEvent event) {
 
-        EraChangedMessage message = new EraChangedMessage();
+        EraChangedMessage message = new EraChangedMessage(event.getGameId(), event.getNewEra());
 
         sendMessage(message);
     }

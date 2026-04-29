@@ -85,7 +85,7 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(EraChangedMessage message) {
-        view.showMessage("Era changed.");
+        view.showMessage("Era changed: " + message.getNewEra());
     }
 
     @Override
@@ -127,6 +127,7 @@ public class ServerVisitor implements ServerMessageVisitor {
         view.showGameEnded(message.getGameId(), message.getFinalRanking());
         sessionState.setActiveGameId(null);
     }
+
     @Override
     public void visit(GameInfoMessage message) {
         sessionState.setActiveGameId(message.getGameInfo().gameId());
@@ -154,6 +155,6 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(ResolvingEventMessage resolvingEventMessage) {
-        //TODO: show something
+        view.showMessage("[Resolving event: " + resolvingEventMessage.getEventCard().name() + "] ...");
     }
 }

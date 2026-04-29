@@ -57,7 +57,6 @@ public class EndRoundState implements IGameState {
         }
 
 
-
         if (game.isLastRoundTriggered()) {
             nextState(game);
             return;
@@ -126,9 +125,11 @@ public class EndRoundState implements IGameState {
      */
     private Era handleEraTransition(Game game, Era newEra) {
 
-        newEra=newEra.eraTransition(game,newEra);
+        newEra = newEra.eraTransition(game, newEra);
 
+        // Notify observers about the era change and the updated board state after the transition
         notifyEraChanged(game, newEra);
+        notifyBoardUpdate(game);
 
         return newEra;
     }
@@ -145,14 +146,6 @@ public class EndRoundState implements IGameState {
         );
     }
 
-    private void notifyPlayersInfoUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new PlayerInfosChangedEvent(
-                        game.getGameId(),
-                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-        ));
-    }
-
     /**
      * Notifies observers about the player who must place the next totem.
      *
@@ -167,23 +160,6 @@ public class EndRoundState implements IGameState {
 
         game.getObserverManager().notifyObservers(
                 new PlaceTotemTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
-    }
-
-    /**
-     * Notifies observers about the updated resources of one player.
-     *
-     * @param game   the current game context
-     * @param player the player whose resources changed
-     */
-    private void notifyPlayerResourcesUpdate(Game game, Player player) {
-        game.getObserverManager().notifyObservers(
-                new PlayerResourcesUpdatedEvent(
-                        game.getGameId(),
-                        player.getNickname(),
-                        player.getFood(),
-                        player.getPP()
-                )
         );
     }
 

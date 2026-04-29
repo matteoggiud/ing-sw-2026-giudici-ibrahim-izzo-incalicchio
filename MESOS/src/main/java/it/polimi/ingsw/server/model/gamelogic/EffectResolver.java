@@ -8,6 +8,8 @@ import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.building.triggers.IEventTrigger;
 import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.EventCardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
 
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class EffectResolver {
         while (!sortedEventCards.isEmpty()) {
             EventCard eventCard = sortedEventCards.pop();
 
+            // Notify observers about the event card being resolved
             game.getObserverManager().notifyObservers(new ResolvingEventUpdate(game.getGameId(), EventCardDTOMapper.toEventCardDTO(eventCard)));
 
             // Generate the base effect of the event card for all players
@@ -65,6 +68,9 @@ public class EffectResolver {
                 eventCard.getEventEffect().postProcessChange(change, eventCard);
             }
 
+            // Notify observers about the resolved event card and the resulting changes to player resources
+            //game.getObserverManager().notifyObservers(new ResolvingEventSuccessUpdate(game.getGameId(), EventCardDTOMapper.toEventCardDTO(eventCard), EventChangesDTOMapper.toEventChangesDTO()));
+            game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
 
             // Finally, apply all the changes to the players' resources based on the log of effect results
             applyAllChanges(changes);
