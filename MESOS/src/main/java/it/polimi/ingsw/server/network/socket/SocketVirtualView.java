@@ -188,5 +188,7 @@ public class SocketVirtualView implements VirtualView {
     @Override
     public void update(PlayerInfoChangedEvent event) {
         PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfo());
+
+        sendMessage(message);
     }
 }

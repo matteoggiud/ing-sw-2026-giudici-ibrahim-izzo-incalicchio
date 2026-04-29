@@ -68,8 +68,8 @@ public class LobbyState implements IGameState {
      */
     @Override
     public void startGame(Game game) {
-        nextState(game);
         notifyGameStarted(game);
+        nextState(game);
     }
 
     /**
