@@ -9,15 +9,11 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.EraChangedEvent;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents the end round phase of the game.
@@ -55,14 +51,12 @@ public class EndRoundState implements IGameState {
             game.setLastRoundTriggered(true);
         }
 
-        Map<String, ResourceSnapshot> resourcesBefore = capturePlayerResources(game);
-
         List<EventCard> eventsToResolve = collectEventsToResolve(game);
         if (!eventsToResolve.isEmpty()) {
             new EffectResolver(game).resolveEvents(eventsToResolve);
         }
 
-        notifyChangedPlayerResources(game, resourcesBefore);
+        notifyPlayersInfoUpdate(game);
 
         if (game.isLastRoundTriggered()) {
             nextState(game);
@@ -168,6 +162,14 @@ public class EndRoundState implements IGameState {
         );
     }
 
+    private void notifyPlayersInfoUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new PlayerInfosChangedEvent(
+                        game.getGameId(),
+                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+        ));
+    }
+
     /**
      * Notifies observers about the player who must place the next totem.
      *
@@ -186,45 +188,6 @@ public class EndRoundState implements IGameState {
     }
 
     /**
-     * Captures the current resources of all players in the game.
-     *
-     * @param game the current game context
-     * @return a map from player nickname to resource snapshot
-     */
-    private Map<String, ResourceSnapshot> capturePlayerResources(Game game) {
-        Map<String, ResourceSnapshot> snapshots = new HashMap<>();
-
-        for (Player currentPlayer : game.getPlayers().getPlayers()) {
-            snapshots.put(
-                    currentPlayer.getNickname(),
-                    new ResourceSnapshot(currentPlayer.getFood(), currentPlayer.getPP())
-            );
-        }
-
-        return snapshots;
-    }
-
-    /**
-     * Notifies observers only for players whose resources changed.
-     *
-     * @param game            the current game context
-     * @param resourcesBefore the resources captured before the event resolution
-     */
-    private void notifyChangedPlayerResources(Game game, Map<String, ResourceSnapshot> resourcesBefore) {
-        for (Player currentPlayer : game.getPlayers().getPlayers()) {
-            ResourceSnapshot before = resourcesBefore.get(currentPlayer.getNickname());
-
-            if (before == null) {
-                continue;
-            }
-
-            if (before.food() != currentPlayer.getFood() || before.prestigePoints() != currentPlayer.getPP()) {
-                notifyPlayerResourcesUpdate(game, currentPlayer);
-            }
-        }
-    }
-
-    /**
      * Notifies observers about the updated resources of one player.
      *
      * @param game   the current game context
@@ -239,15 +202,6 @@ public class EndRoundState implements IGameState {
                         player.getPP()
                 )
         );
-    }
-
-    /**
-     * Immutable snapshot of one player's resources at a specific moment.
-     *
-     * @param food           the food amount
-     * @param prestigePoints the prestige points amount
-     */
-    private record ResourceSnapshot(int food, int prestigePoints) {
     }
 
     /**
