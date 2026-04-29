@@ -3,7 +3,9 @@ package it.polimi.ingsw.client.view;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,5 +37,7 @@ public interface ClientView {
     void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe);
 
     void showGameEnded(int gameId, Map<String, Integer> finalRanking);
+
+    void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname);
 
 }

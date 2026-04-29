@@ -41,6 +41,7 @@ public class ServerVisitor implements ServerMessageVisitor {
     @Override
     public void visit(GameStartedMessage message) {
         sessionState.setActiveGameId(message.getGameId());
+        sessionState.clearPlayersInfo();
         view.showGameStarted(message.getGameId(), message.getPlayerNicknames());
     }
 
@@ -108,13 +109,11 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(PlayerResourcesUpdatedMessage message) {
-        boolean isMe = message.getCurrentPlayerNickname().equals(sessionState.getNickname());
-        view.showPlayerResources(
+        sessionState.updatePlayerResources(
                 message.getCurrentPlayerNickname(),
                 message.getFood(),
-                message.getPrestigePoints(),
-                isMe
-        );
+                message.getPrestigePoints());
+        view.showPlayersInfo(sessionState.getPlayersInfo(), sessionState.getNickname());
     }
 
     @Override
@@ -145,10 +144,12 @@ public class ServerVisitor implements ServerMessageVisitor {
     public void visit(LeftGameSuccessMessage message) {
         view.showMessage(message.getMessage());
         sessionState.setActiveGameId(null);
+        sessionState.clearPlayersInfo();
     }
 
     @Override
     public void visit(PlayerInfoChangedMessage message) {
-        //TODO
+        sessionState.updatePlayerInfo(message.getPlayerInfo());
+        view.showPlayersInfo(sessionState.getPlayersInfo(), sessionState.getNickname());
     }
 }

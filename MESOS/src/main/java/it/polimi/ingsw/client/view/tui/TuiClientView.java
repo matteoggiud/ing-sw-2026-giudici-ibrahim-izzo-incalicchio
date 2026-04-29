@@ -3,10 +3,10 @@ package it.polimi.ingsw.client.view.tui;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
 import it.polimi.ingsw.server.model.observer.dto.*;
-import java.util.Map;
 
-
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class TuiClientView implements ClientView {
@@ -50,130 +50,232 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showAvailableGames(List<GameInfoDTO> games) {
+        printSection("Available games");
+
         if (games == null || games.isEmpty()) {
             System.out.println("No available games.");
             return;
         }
 
-        System.out.println("Available games:");
+        System.out.printf("%-8s %-10s %s%n", "Game", "Players", "Nicknames");
+        printLine(56);
+
         for (GameInfoDTO game : games) {
-            System.out.println("- id: " + game.gameId()
-                    + " players: " + game.numOfPlayers() + "/" + game.expectedPlayerCount()
-                    + " [" + String.join(", ", game.players()) + "]");
+            System.out.printf(
+                    "%-8d %-10s %s%n",
+                    game.gameId(),
+                    game.numOfPlayers() + "/" + game.expectedPlayerCount(),
+                    String.join(", ", game.players())
+            );
         }
     }
 
     @Override
     public void showGameInfo(GameInfoDTO gameInfo) {
-        System.out.println("Game ID: " + gameInfo.gameId());
-        System.out.println("Players [" + gameInfo.numOfPlayers() + "/" + gameInfo.expectedPlayerCount() + "]: "
-                + String.join(", ", gameInfo.players()));
+        printSection("Game");
+        System.out.println("ID: " + gameInfo.gameId());
+        System.out.println("Players: " + gameInfo.numOfPlayers() + "/" + gameInfo.expectedPlayerCount());
+        System.out.println("Nicknames: " + String.join(", ", gameInfo.players()));
     }
 
     @Override
     public void showGameStarted(int gameId, List<String> playerNicknames) {
-        System.out.println("Game " + gameId + " started.");
+        printSection("Game started");
+        System.out.println("Game ID: " + gameId);
         System.out.println("Players: " + String.join(", ", playerNicknames));
     }
 
     @Override
     public void showBoardSummary(BoardDTO board) {
-        System.out.println("Board updated.");
+        printSection("Board");
         System.out.println("Era: " + board.currentEra());
 
-        System.out.println("Upper row:");
-        board.upperCharacterCards().forEach(card ->
-                System.out.println("  character #" + card.cardId() + " " + card.name() + " " + card.era()));
-        board.upperEventCards().forEach(card ->
-                System.out.println("  event     #" + card.cardId() + " " + card.name() + " " + card.era()));
-        board.upperBuildingCards().forEach(card ->
-                System.out.println("  building  #" + card.cardId() + " " + card.name() + " " + card.era()));
+        printCards(
+                "Upper row",
+                board.upperCharacterCards(),
+                board.upperEventCards(),
+                board.upperBuildingCards()
+        );
 
-        System.out.println("Lower row:");
-        board.lowerCharacterCards().forEach(card ->
-                System.out.println("  character #" + card.cardId() + " " + card.name() + " " + card.era()));
-        board.lowerEventCards().forEach(card ->
-                System.out.println("  event     #" + card.cardId() + " " + card.name() + " " + card.era()));
-        board.lowerBuildingCards().forEach(card ->
-                System.out.println("  building  #" + card.cardId() + " " + card.name() + " " + card.era()));
+        printCards(
+                "Lower row",
+                board.lowerCharacterCards(),
+                board.lowerEventCards(),
+                board.lowerBuildingCards()
+        );
 
-
-        System.out.println("Offer track:");
-        for (OfferBoxDTO box : board.offerTrackBoxes()) {
-            String player = box.placedPlayerNickname() == null ? "-" : box.placedPlayerNickname();
-
-            System.out.println(box.position()
-                    + ") player=" + player
-                    + " upper=" + box.upperRowPicks()
-                    + " lower=" + box.lowerRowPicks()
-                    + " food=" + box.foodReward());
-
-        }
-
-        System.out.println("Turn order:");
-        for (TurnOrderSlotDTO slot : board.turnOrderSlots()) {
-            String player = slot.placedPlayerNickname() == null ? "-" : slot.placedPlayerNickname();
-
-            System.out.println("pos " + slot.position()
-                    + " player=" + player
-                    + " foodBonus=" + slot.foodBonus());
-        }
+        printOfferTrack(board.offerTrackBoxes());
+        printTurnOrder(board.turnOrderSlots());
     }
 
     @Override
     public void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn) {
-        System.out.println("Place totem turn: " + currentPlayerNickname);
+        printSection("Place totem");
+        System.out.println("Current player: " + currentPlayerNickname);
 
         if (isMyTurn) {
-            System.out.println("It is your turn. Use the place command when available.");
+            System.out.println("Your turn: use place <position>");
         }
     }
 
     @Override
     public void showResolveActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-        System.out.println("Resolve action turn: " + currentPlayerNickname);
+        printSection("Resolve action");
+        System.out.println("Current player: " + currentPlayerNickname);
 
         if (isMyTurn) {
-            System.out.println("It is your turn. Use: draw <upper|lower> <cardId>");
+            System.out.println("Your turn: use draw <upper|lower> <cardId>");
         }
     }
 
     @Override
     public void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-        System.out.println("Extra action turn: " + currentPlayerNickname);
+        printSection("Extra action");
+        System.out.println("Current player: " + currentPlayerNickname);
 
         if (isMyTurn) {
-            System.out.println("It is your extra action. Use: draw-extra <cardId>");
+            System.out.println("Your extra action: use draw-extra <cardId>");
         }
     }
 
     @Override
     public void showPlayerResources(String playerNickname, int food, int prestigePoints, boolean isMe) {
-        String prefix = isMe ? "Your resources" : playerNickname + " resources";
-        System.out.println(prefix + ": food=" + food + " pp=" + prestigePoints);
+        String owner = isMe ? "You" : playerNickname;
+        System.out.printf("%s: food=%d, pp=%d%n", owner, food, prestigePoints);
     }
 
     @Override
+    public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
+        if (playersInfo == null || playersInfo.isEmpty()) {
+            return;
+        }
+
+        printSection("Players resources");
+        System.out.printf("%-18s %-8s %-8s%n", "Player", "Food", "PP");
+        printLine(36);
+
+        for (PlayerInfoDTO playerInfo : playersInfo) {
+            String name = playerInfo.nickname();
+
+            if (name != null && name.equals(myNickname)) {
+                name = name + " (you)";
+            }
+
+            System.out.printf(
+                    "%-18s %-8d %-8d%n",
+                    name,
+                    playerInfo.food(),
+                    playerInfo.pp()
+            );
+        }
+    }
+
+
+    @Override
     public void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe) {
-        String prefix = isMe ? "Your deck" : playerNickname + " deck";
-        System.out.println(prefix + " updated.");
+        printSection(isMe ? "Your deck" : playerNickname + " deck");
 
         System.out.println("Characters:");
-        playerDeck.characterCards().forEach(card ->
-                System.out.println("  #" + card.cardId() + " " + card.name() + " " + card.era()));
+        if (playerDeck.characterCards().isEmpty()) {
+            System.out.println("  none");
+        } else {
+            playerDeck.characterCards().forEach(card ->
+                    printCardLine("character", card.cardId(), card.name(), card.era()));
+        }
 
         System.out.println("Buildings:");
-        playerDeck.buildingCards().forEach(card ->
-                System.out.println("  #" + card.cardId() + " " + card.name() + " " + card.era()));
+        if (playerDeck.buildingCards().isEmpty()) {
+            System.out.println("  none");
+        } else {
+            playerDeck.buildingCards().forEach(card ->
+                    printCardLine("building", card.cardId(), card.name(), card.era()));
+        }
     }
 
     @Override
     public void showGameEnded(int gameId, Map<String, Integer> finalRanking) {
-        System.out.println("Game " + gameId + " ended.");
+        printSection("Game ended");
+        System.out.println("Game ID: " + gameId);
         System.out.println("Final ranking:");
 
         finalRanking.forEach((player, score) ->
-                System.out.println("  " + player + ": " + score + " pp"));
+                System.out.printf("  %-20s %d pp%n", player, score));
     }
 
+    private void printCards(
+            String title,
+            List<CharacterCardDTO> characters,
+            List<EventCardDTO> events,
+            List<BuildingCardDTO> buildings
+    ) {
+        System.out.println();
+        System.out.println(title + ":");
+
+        if (characters.isEmpty() && events.isEmpty() && buildings.isEmpty()) {
+            System.out.println("  empty");
+            return;
+        }
+
+        characters.forEach(card ->
+                printCardLine("character", card.cardId(), card.name(), card.era()));
+
+        events.forEach(card ->
+                printCardLine("event", card.cardId(), card.name(), card.era()));
+
+        buildings.forEach(card ->
+                printCardLine("building", card.cardId(), card.name(), card.era()));
+    }
+
+    private void printOfferTrack(List<OfferBoxDTO> boxes) {
+        System.out.println();
+        System.out.println("Offer track:");
+        System.out.printf("%-5s %-16s %-7s %-7s %-5s%n", "Pos", "Player", "Upper", "Lower", "Food");
+        printLine(48);
+
+        for (OfferBoxDTO box : boxes) {
+            String player = box.placedPlayerNickname() == null ? "-" : box.placedPlayerNickname();
+
+            System.out.printf(
+                    "%-5d %-16s %-7d %-7d %-5d%n",
+                    box.position(),
+                    player,
+                    box.upperRowPicks(),
+                    box.lowerRowPicks(),
+                    box.foodReward()
+            );
+        }
+    }
+
+    private void printTurnOrder(List<TurnOrderSlotDTO> slots) {
+        System.out.println();
+        System.out.println("Turn order:");
+        System.out.printf("%-5s %-16s %-9s%n", "Pos", "Player", "Food");
+        printLine(34);
+
+        for (TurnOrderSlotDTO slot : slots) {
+            String player = slot.placedPlayerNickname() == null ? "-" : slot.placedPlayerNickname();
+
+            System.out.printf(
+                    "%-5d %-16s %-9d%n",
+                    slot.position(),
+                    player,
+                    slot.foodBonus()
+            );
+        }
+    }
+
+    private void printCardLine(String type, int cardId, String name, String era) {
+        System.out.printf("  %-9s #%03d  %-28s %s%n", type, cardId, name, era);
+    }
+
+    private void printSection(String title) {
+        System.out.println();
+        printLine(56);
+        System.out.println(title);
+        printLine(56);
+    }
+
+    private void printLine(int length) {
+        System.out.println("-".repeat(length));
+    }
 }

@@ -1,14 +1,22 @@
 package it.polimi.ingsw.client.network.socket;
 
+import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class ClientSessionState {
     private boolean connected;
     private String nickname;
     private Integer activeGameId;
+    private final Map<String, PlayerInfoDTO> playersInfo;
 
     public ClientSessionState(String nickname, Integer activeGameId) {
         this.nickname = nickname;
         this.activeGameId = activeGameId;
-        connected = true;
+        this.connected = true;
+        this.playersInfo = new LinkedHashMap<>();
     }
 
     public String getNickname() {
@@ -31,9 +39,42 @@ public class ClientSessionState {
         return connected;
     }
 
+    /**
+     * Adds or updates the PlayerInfoDTO for the given player. The key is the player's nickname.
+     * @param playerInfo the PlayerInfoDTO to add or update. If null or if the nickname is null, it will be ignored.
+     */
+    public void updatePlayerInfo(PlayerInfoDTO playerInfo) {
+        if (playerInfo != null && playerInfo.nickname() != null) {
+            playersInfo.put(playerInfo.nickname(), playerInfo);
+        }
+    }
+
+    public void updatePlayerResources(String nickname, int food, int pp) {
+        PlayerInfoDTO oldInfo = playersInfo.get(nickname);
+
+        PlayerInfoDTO updatedInfo = new PlayerInfoDTO(
+                nickname,
+                food,
+                pp,
+                oldInfo == null ? null : oldInfo.totem(),
+                oldInfo == null ? null : oldInfo.deck()
+        );
+
+        playersInfo.put(nickname, updatedInfo);
+    }
+
+    public Collection<PlayerInfoDTO> getPlayersInfo() {
+        return playersInfo.values();
+    }
+
+    public void clearPlayersInfo() {
+        playersInfo.clear();
+    }
+
     public void disconnect() {
         this.nickname = null;
         this.activeGameId = null;
+        this.playersInfo.clear();
         this.connected = false;
     }
 }
