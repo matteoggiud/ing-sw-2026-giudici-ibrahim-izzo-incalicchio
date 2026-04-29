@@ -5,10 +5,10 @@ import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.era.Era2;
 import it.polimi.ingsw.server.model.era.Era3;
+import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,9 +17,9 @@ class BuildingDecksTest {
 
     private BuildingDecks buildingDecks;
     private int nextCardId;
-    private Era1 era1;
-    private Era2 era2;
-    private Era3 era3;
+    private Era era1;
+    private Era era2;
+    private Era era3;
 
     @BeforeEach
     void setUp() {
@@ -31,7 +31,7 @@ class BuildingDecksTest {
     }
 
     @Test
-    void getBuildingDeck() {
+    void getBuildingDeckReturnsOneDeckForEachEra() {
         BuildingDeck era1Deck = buildingDecks.getBuildingDeck(era1);
         BuildingDeck era2Deck = buildingDecks.getBuildingDeck(era2);
         BuildingDeck era3Deck = buildingDecks.getBuildingDeck(era3);
@@ -39,61 +39,96 @@ class BuildingDecksTest {
         assertNotNull(era1Deck);
         assertNotNull(era2Deck);
         assertNotNull(era3Deck);
-        assertTrue(era1Deck.getBuildingCards().isEmpty());
-        assertTrue(era2Deck.getBuildingCards().isEmpty());
-        assertTrue(era3Deck.getBuildingCards().isEmpty());
-        assertSame(era1Deck, buildingDecks.getBuildingDeck(era1));
+
+        assertNotSame(era1Deck, era2Deck);
+        assertNotSame(era1Deck, era3Deck);
+        assertNotSame(era2Deck, era3Deck);
+
+        assertSame(era1Deck, buildingDecks.getBuildingDeck(new Era1()));
+        assertSame(era2Deck, buildingDecks.getBuildingDeck(new Era2()));
+        assertSame(era3Deck, buildingDecks.getBuildingDeck(new Era3()));
     }
 
     @Test
-    void addBuildingCards() {
+    void getBuildingDeckRejectsNullEra() {
+        assertThrows(IllegalArgumentException.class, () -> buildingDecks.getBuildingDeck(null));
+    }
+
+    @Test
+    void addBuildingCardsAddsEachListToTheCorrectEraDeck() {
         BuildingCard era1a = newBuilding(era1, 3);
         BuildingCard era1b = newBuilding(era1, 4);
-        BuildingCard era2Card = newBuilding(era2, 5);
-        BuildingCard era3Card = newBuilding(era3, 6);
+        BuildingCard era2a = newBuilding(era2, 5);
+        BuildingCard era3a = newBuilding(era3, 6);
 
-        List<BuildingCard> cards = List.of(era1a, era1b, era2Card, era3Card);
-        buildingDecks.addBuildingCards(cards);
+        buildingDecks.addBuildingCards(
+                List.of(era1a, era1b),
+                List.of(era2a),
+                List.of(era3a)
+        );
 
-        assertEquals(2, buildingDecks.getBuildingDeck(era1).getBuildingCards().size());
-        assertEquals(1, buildingDecks.getBuildingDeck(era2).getBuildingCards().size());
-        assertEquals(1, buildingDecks.getBuildingDeck(era3).getBuildingCards().size());
-        assertTrue(buildingDecks.getBuildingDeck(era1).getBuildingCards().contains(era1a));
-        assertTrue(buildingDecks.getBuildingDeck(era1).getBuildingCards().contains(era1b));
-        assertTrue(buildingDecks.getBuildingDeck(era2).getBuildingCards().contains(era2Card));
-        assertTrue(buildingDecks.getBuildingDeck(era3).getBuildingCards().contains(era3Card));
-
-        assertThrows(IllegalArgumentException.class, () -> buildingDecks.addBuildingCards(null));
+        assertEquals(List.of(era1a, era1b), buildingDecks.getBuildingDeck(era1).getBuildingCards());
+        assertEquals(List.of(era2a), buildingDecks.getBuildingDeck(era2).getBuildingCards());
+        assertEquals(List.of(era3a), buildingDecks.getBuildingDeck(era3).getBuildingCards());
     }
 
     @Test
-    void setBuildingDeck() {
-        BuildingCard oldEra1 = newBuilding(era1, 3);
-        BuildingCard oldEra2 = newBuilding(era2, 4);
-        buildingDecks.addBuildingCards(List.of(oldEra1, oldEra2));
+    void addBuildingCardsRejectsNullLists() {
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.addBuildingCards(null, List.of(), List.of()));
 
-        BuildingCard newEra1 = newBuilding(era1, 5);
-        BuildingCard newEra3a = newBuilding(era3, 6);
-        BuildingCard newEra3b = newBuilding(era3, 7);
-        ArrayList<BuildingCard> replacement = new ArrayList<>(List.of(newEra1, newEra3a, newEra3b));
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.addBuildingCards(List.of(), null, List.of()));
 
-        buildingDecks.setBuildingDeck(replacement);
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.addBuildingCards(List.of(), List.of(), null));
+    }
 
-        assertEquals(1, buildingDecks.getBuildingDeck(era1).getBuildingCards().size());
-        assertEquals(0, buildingDecks.getBuildingDeck(era2).getBuildingCards().size());
-        assertEquals(2, buildingDecks.getBuildingDeck(era3).getBuildingCards().size());
-        assertTrue(buildingDecks.getBuildingDeck(era1).getBuildingCards().contains(newEra1));
-        assertTrue(buildingDecks.getBuildingDeck(era3).getBuildingCards().contains(newEra3a));
-        assertTrue(buildingDecks.getBuildingDeck(era3).getBuildingCards().contains(newEra3b));
-        assertFalse(buildingDecks.getBuildingDeck(era1).getBuildingCards().contains(oldEra1));
-        assertFalse(buildingDecks.getBuildingDeck(era2).getBuildingCards().contains(oldEra2));
+    @Test
+    void setBuildingDeckSetsTheThreeEraDecks() {
+        BuildingCard era1a = newBuilding(era1, 3);
+        BuildingCard era2a = newBuilding(era2, 4);
+        BuildingCard era3a = newBuilding(era3, 5);
+        BuildingCard era3b = newBuilding(era3, 6);
 
-        assertThrows(IllegalArgumentException.class, () -> buildingDecks.setBuildingDeck(null));
-        assertThrows(IllegalArgumentException.class, () -> buildingDecks.setBuildingDeck(List.of()));
+        buildingDecks.setBuildingDeck(
+                List.of(era1a),
+                List.of(era2a),
+                List.of(era3a, era3b)
+        );
+
+        assertEquals(List.of(era1a), buildingDecks.getBuildingDeck(era1).getBuildingCards());
+        assertEquals(List.of(era2a), buildingDecks.getBuildingDeck(era2).getBuildingCards());
+        assertEquals(List.of(era3a, era3b), buildingDecks.getBuildingDeck(era3).getBuildingCards());
+    }
+
+    @Test
+    void setBuildingDeckRejectsNullOrEmptyLists() {
+        BuildingCard era1a = newBuilding(era1, 3);
+        BuildingCard era2a = newBuilding(era2, 4);
+        BuildingCard era3a = newBuilding(era3, 5);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.setBuildingDeck(null, List.of(era2a), List.of(era3a)));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.setBuildingDeck(List.of(era1a), null, List.of(era3a)));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.setBuildingDeck(List.of(era1a), List.of(era2a), null));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.setBuildingDeck(List.of(), List.of(era2a), List.of(era3a)));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.setBuildingDeck(List.of(era1a), List.of(), List.of(era3a)));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> buildingDecks.setBuildingDeck(List.of(era1a), List.of(era2a), List.of()));
     }
 
     private BuildingCard newBuilding(Era era, int foodCost) {
-        it.polimi.ingsw.server.model.effect.building.IBuildingEffect effect = new it.polimi.ingsw.server.model.effect.building.IBuildingEffect() {
+        IBuildingEffect effect = new IBuildingEffect() {
         };
         return new BuildingCard(nextCardId++, "Building" + nextCardId, era, 2, foodCost, 2, effect, "");
     }

@@ -107,33 +107,29 @@ class StandardRuleSetTest {
     }
 
     @Test
-    void getBuildingLimit() {
-        // Test numPlayers == 2
-        assertEquals(1, era1.getBuildingLimit(2));
-        assertEquals(2, era2.getBuildingLimit(2));
-        assertEquals(3, era3.getBuildingLimit(2));
+    void buildingLimitMapsContainExpectedValues() {
+        assertEquals(1, StandardRuleSet.getEra1BuildingLimits().get(2));
+        assertEquals(2, StandardRuleSet.getEra2BuildingLimits().get(2));
+        assertEquals(3, StandardRuleSet.getEra3BuildingLimits().get(2));
 
-        // Test numPlayers == 3
-        assertEquals(2, era1.getBuildingLimit(3));
-        assertEquals(2, era2.getBuildingLimit(3));
-        assertEquals(4, era3.getBuildingLimit(3));
+        assertEquals(2, StandardRuleSet.getEra1BuildingLimits().get(3));
+        assertEquals(2, StandardRuleSet.getEra2BuildingLimits().get(3));
+        assertEquals(4, StandardRuleSet.getEra3BuildingLimits().get(3));
 
-        // Test numPlayers == 4
-        assertEquals(2, era1.getBuildingLimit(4));
-        assertEquals(3, era2.getBuildingLimit(4));
-        assertEquals(4, era3.getBuildingLimit(4));
+        assertEquals(2, StandardRuleSet.getEra1BuildingLimits().get(4));
+        assertEquals(3, StandardRuleSet.getEra2BuildingLimits().get(4));
+        assertEquals(4, StandardRuleSet.getEra3BuildingLimits().get(4));
 
-        // Test numPlayers == 5
-        assertEquals(2, era1.getBuildingLimit(5));
-        assertEquals(3, era2.getBuildingLimit(5));
-        assertEquals(5, era3.getBuildingLimit(5));
+        assertEquals(2, StandardRuleSet.getEra1BuildingLimits().get(5));
+        assertEquals(3, StandardRuleSet.getEra2BuildingLimits().get(5));
+        assertEquals(5, StandardRuleSet.getEra3BuildingLimits().get(5));
 
-        // Test numPlayers not valid
-        assertThrows(NullPointerException.class, () -> era1.getBuildingLimit(1));
-        assertThrows(NullPointerException.class, () -> era1.getBuildingLimit(6));
+        assertNull(StandardRuleSet.getEra1BuildingLimits().get(1));
+        assertNull(StandardRuleSet.getEra1BuildingLimits().get(6));
     }
 
- //   @Test
+
+    //   @Test
 //    void sortEventCards() {
 //        // Create effect dummy
 //        IEventEffect dummyEffect = new IEventEffect() {
