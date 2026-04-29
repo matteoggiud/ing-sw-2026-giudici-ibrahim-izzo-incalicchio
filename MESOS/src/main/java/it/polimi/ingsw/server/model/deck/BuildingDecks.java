@@ -28,7 +28,9 @@ public class BuildingDecks {
         Era era1 = new Era1();
         Era era2 = new Era2();
         Era era3 = new Era3();
-        buildingDecks = era1.createBuildingDeck(buildingDecks);
+        buildingDecks = era1.createBuildingDeck(buildingDecks); //TODO: see if causes bugs
+        buildingDecks = era2.createBuildingDeck(buildingDecks);
+        buildingDecks = era3.createBuildingDeck(buildingDecks);
     }
 
     /**
