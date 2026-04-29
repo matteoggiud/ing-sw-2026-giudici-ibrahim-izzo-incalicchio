@@ -62,16 +62,5 @@ public interface IGameRuleSet {
      */
     int getInitialFood(int turnOrderIndex);
 
-    /**
-     * Returns the number of building cards to select for the given era
-     * based on the current player count.
-     *
-     * @param era the era for which the limit is requested.
-     * @param numPlayers the current number of players.
-     * @return the maximum number of building cards for that era.
-     * @throws IllegalArgumentException if era is null or player count is invalid.
-     */
-    int getBuildingLimit(Era era, int numPlayers);
-
     Stack<EventCard> sortEventCards(List<EventCard> eventCards);
 }

@@ -284,7 +284,7 @@ public class GameBuilder {
             upperRow.addCard(tribeDeck.drawCard());
         }
 
-        BuildingDeck initialBuildingDeck = game.getBuildingDecks().getBuildingDeck(Era.ERA_1);
+        BuildingDeck initialBuildingDeck = game.getBuildingDecks().getBuildingDeck(new Era1());
         upperRow.addBuildingRowFrom(initialBuildingDeck);
     }
 

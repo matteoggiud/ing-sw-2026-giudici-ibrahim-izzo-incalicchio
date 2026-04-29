@@ -45,7 +45,7 @@ public final class PlayerDeckDTOMapper {
                 .map(card -> new CharacterCardDTO(
                         card.getCardId(),
                         card.getName(),
-                        card.getEra().name(),
+                        card.getEra().getName(),
                         ""
                 ))
                 .toList();
@@ -62,7 +62,7 @@ public final class PlayerDeckDTOMapper {
                 .map(card -> new BuildingCardDTO(
                         card.getCardId(),
                         card.getName(),
-                        card.getEra().name(),
+                        card.getEra().getName(),
                         ""
                 ))
                 .toList();

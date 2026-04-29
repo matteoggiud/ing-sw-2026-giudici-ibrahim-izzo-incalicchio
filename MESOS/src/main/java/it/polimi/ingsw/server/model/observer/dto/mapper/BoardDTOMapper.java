@@ -36,7 +36,7 @@ public final class BoardDTOMapper {
         }
 
         return new BoardDTO(
-                game.getCurrentEra().name(),
+                game.getCurrentEra().getName(),
                 toCharacterCardDTOs(game.getBoard().getUpperRow().getTribeRow().getCharacterCards()),
                 toEventCardDTOs(game.getBoard().getUpperRow().getTribeRow().getEventCards()),
                 toBuildingCardDTOs(game.getBoard().getUpperRow().getBuildingRow().getBuildingCards()),
@@ -59,7 +59,7 @@ public final class BoardDTOMapper {
                 .map(card -> new CharacterCardDTO(
                         card.getCardId(),
                         card.getName(),
-                        card.getEra().name(),
+                        card.getEra().getName(),
                         ""
                 ))
                 .toList();
@@ -76,7 +76,7 @@ public final class BoardDTOMapper {
                 .map(card -> new EventCardDTO(
                         card.getCardId(),
                         card.getName(),
-                        card.getEra().name(),
+                        card.getEra().getName(),
                         ""
                 ))
                 .toList();
@@ -93,7 +93,7 @@ public final class BoardDTOMapper {
                 .map(card -> new BuildingCardDTO(
                         card.getCardId(),
                         card.getName(),
-                        card.getEra().name(),
+                        card.getEra().getName(),
                         ""
                 ))
                 .toList();

@@ -119,7 +119,7 @@ public class EndRoundState implements IGameState {
             TribeCard drawnCard = game.getTribeDeck().drawCard();
             board.getUpperRow().addCard(drawnCard);
 
-            if (drawnCard.getEra().ordinal() > currentEra.ordinal()) {
+            if (drawnCard.getEra().getOrder() > currentEra.getOrder()) {
                 currentEra = handleEraTransition(game, drawnCard.getEra());
             }
         }
@@ -133,25 +133,8 @@ public class EndRoundState implements IGameState {
      * @return the current era after handling the transition
      */
     private Era handleEraTransition(Game game, Era newEra) {
-        if (newEra == null) {
-            throw new IllegalArgumentException("New era cannot be null");
-        }
 
-        Era currentEra = game.getCurrentEra();
-
-        if (newEra.ordinal() <= currentEra.ordinal()) {
-            return currentEra;
-        }
-
-        Board board = game.getBoard();
-        game.setCurrentEra(newEra);
-
-        if (newEra == Era.ERA_3) {
-            board.clearLowerBuildingRow();
-        }
-
-        board.transferUpperBuildingToLower();
-        board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
+        newEra=newEra.eraTransition(game,newEra);
 
         notifyEraChanged(game, newEra);
 
@@ -260,7 +243,7 @@ public class EndRoundState implements IGameState {
      */
     private void notifyEraChanged(Game game, Era newEra) {
         game.getObserverManager().notifyObservers(
-                new EraChangedEvent(game.getGameId(), newEra.name())
+                new EraChangedEvent(game.getGameId(), newEra.getName())
         );
     }
 

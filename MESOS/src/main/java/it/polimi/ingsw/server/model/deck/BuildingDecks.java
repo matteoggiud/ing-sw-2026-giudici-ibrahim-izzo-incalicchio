@@ -2,6 +2,9 @@ package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
+import it.polimi.ingsw.server.model.era.Era3;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -15,16 +18,17 @@ public class BuildingDecks {
     /**
      * The building decks is a map that associate every era with the corresponding building deck.
      */
-    private final HashMap<Era, BuildingDeck> buildingDecks;
+    private HashMap<Era, BuildingDeck> buildingDecks;
 
     /**
      * Constructs a new BuildingDecks object, initializing the building decks map as an empty EnumMap of Era to BuildingDeck.
      */
     public BuildingDecks() {
         this.buildingDecks = new HashMap<>();
-        for (Era era : Era.values()) {
-            buildingDecks.put(era, new BuildingDeck());
-        }
+        Era era1 = new Era1();
+        Era era2 = new Era2();
+        Era era3 = new Era3();
+        buildingDecks = era1.createBuildingDeck(buildingDecks);
     }
 
     /**
@@ -63,10 +67,14 @@ public class BuildingDecks {
             throw new IllegalArgumentException("Cards cannot be null or empty");
         }
 
+        Era era1 = new Era1();
+        Era era2 = new Era2();
+        Era era3 = new Era3();
+
         this.buildingDecks.clear();
-        for (Era era : Era.values()) {
-            buildingDecks.put(era, new BuildingDeck());
-        }
+        this.buildingDecks = era1.createBuildingDeck(this.buildingDecks);
+        this.buildingDecks = era2.createBuildingDeck(this.buildingDecks);
+        this.buildingDecks = era3.createBuildingDeck(this.buildingDecks);
 
         for (BuildingCard card : deckComposition) {
             buildingDecks.get(card.getEra()).addBuildingCard(card);

@@ -111,40 +111,6 @@ public class StandardRuleSet implements IGameRuleSet {
     }
 
     /**
-     * Determines the maximum number of buildings a player can have on the board
-     * based on the current era and player count.
-     *
-     * @param era        the era for which the limit is requested.
-     * @param numPlayers the current number of players.
-     * @return the maximum number of buildings a player can have on the board for the given era and player count.
-     */
-    @Override
-    public int getBuildingLimit(Era era, int numPlayers) {
-        if (era == null) {
-            throw new IllegalArgumentException("Era cannot be null");
-        }
-        validatePlayerCount(numPlayers);
-
-        if (numPlayers == 2) {
-            if (era == Era.ERA_1) return 1;
-            if (era == Era.ERA_2) return 2;
-            return 3;
-        } else if (numPlayers == 3) {
-            if (era == Era.ERA_1) return 2;
-            if (era == Era.ERA_2) return 2;
-            return 4;
-        } else if (numPlayers == 4) {
-            if (era == Era.ERA_1) return 2;
-            if (era == Era.ERA_2) return 3;
-            return 4;
-        } else {
-            if (era == Era.ERA_1) return 2;
-            if (era == Era.ERA_2) return 3;
-            return 5;
-        }
-    }
-
-    /**
      * Sorts the provided ordered list of event cards into a stack, where sustenance are on top of stack
      *
      * @param eventCards the list of event cards to be sorted into a stack for the game.
