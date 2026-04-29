@@ -68,12 +68,12 @@ public class EffectResolver {
                 eventCard.getEventEffect().postProcessChange(change, eventCard);
             }
 
+            // Finally, apply all the changes to the players' resources based on the log of effect results
+            applyAllChanges(changes);
+
             // Notify observers about the resolved event card and the resulting changes to player resources
             //game.getObserverManager().notifyObservers(new ResolvingEventSuccessUpdate(game.getGameId(), EventCardDTOMapper.toEventCardDTO(eventCard), EventChangesDTOMapper.toEventChangesDTO()));
             game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
-
-            // Finally, apply all the changes to the players' resources based on the log of effect results
-            applyAllChanges(changes);
         }
     }
 
