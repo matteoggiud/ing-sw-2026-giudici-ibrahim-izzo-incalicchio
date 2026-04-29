@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.era.Era;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,13 +15,13 @@ public class BuildingDecks {
     /**
      * The building decks is a map that associate every era with the corresponding building deck.
      */
-    private final EnumMap<Era, BuildingDeck> buildingDecks;
+    private final HashMap<Era, BuildingDeck> buildingDecks;
 
     /**
      * Constructs a new BuildingDecks object, initializing the building decks map as an empty EnumMap of Era to BuildingDeck.
      */
     public BuildingDecks() {
-        this.buildingDecks = new EnumMap<>(Era.class);
+        this.buildingDecks = new HashMap<>();
         for (Era era : Era.values()) {
             buildingDecks.put(era, new BuildingDeck());
         }

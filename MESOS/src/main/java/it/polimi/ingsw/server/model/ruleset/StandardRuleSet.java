@@ -6,10 +6,7 @@ import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Defines the configuration and dynamic rules for a standard game of Mesos.
@@ -225,5 +222,32 @@ public class StandardRuleSet implements IGameRuleSet {
                     "Player count must be between " + MIN_PLAYERS + " and " + MAX_PLAYERS + ". Provided: " + numPlayers
             );
         }
+    }
+
+    public static HashMap<Integer, Integer> getEra1BuildingLimits() {
+        HashMap<Integer, Integer> limits = new HashMap<>();
+        limits.put(2, 1);
+        limits.put(3, 2);
+        limits.put(4, 2);
+        limits.put(5, 2);
+        return limits;
+    }
+
+    public static HashMap<Integer, Integer> getEra2BuildingLimits() {
+        HashMap<Integer, Integer> limits = new HashMap<>();
+        limits.put(2, 2);
+        limits.put(3, 2);
+        limits.put(4, 3);
+        limits.put(5, 3);
+        return limits;
+    }
+
+    public static HashMap<Integer, Integer> getEra3BuildingLimits() {
+        HashMap<Integer, Integer> limits = new HashMap<>();
+        limits.put(2, 3);
+        limits.put(3, 4);
+        limits.put(4, 4);
+        limits.put(5, 5);
+        return limits;
     }
 }

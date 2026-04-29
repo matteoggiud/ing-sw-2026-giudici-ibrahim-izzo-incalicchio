@@ -9,5 +9,6 @@ import java.util.List;
  */
 public abstract class Era {
     public abstract void selfSortbyEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents);
+    public abstract int getBuildingLimit(int numPlayers);
 }
 

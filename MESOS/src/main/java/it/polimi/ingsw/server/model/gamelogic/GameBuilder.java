@@ -14,6 +14,8 @@ import it.polimi.ingsw.server.model.core.Totem;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.deck.TribeDeck;
 import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
+import it.polimi.ingsw.server.model.era.Era3;
 import it.polimi.ingsw.server.model.ruleset.IGameRuleSet;
 
 import java.sql.SQLException;
@@ -117,6 +119,10 @@ public class GameBuilder {
             throw new IllegalArgumentException("allBuildings and game cannot be null");
         }
 
+        Era era1 = new Era1();
+        Era era2 = new Era2();
+        Era era3 = new Era3();
+
         IGameRuleSet ruleSet = game.getRuleSet();
 
         // Filter buildings by player count.
@@ -128,10 +134,14 @@ public class GameBuilder {
 
         // Gets the limit for each era and fills the building decks accordingly, ensuring we don't exceed the limit for any era.
         List<BuildingCard> deckComposition = new ArrayList<>();
-        for (Era era : Era.values()) {
-            int limit = ruleSet.getBuildingLimit(era, game.getNumberOfPlayers());
-            validBuildings.stream().filter(b -> b.getEra().equals(era)).limit(limit).forEach(deckComposition::add);
-        }
+        int limit1 = era1.getBuildingLimit(game.getNumberOfPlayers());
+        validBuildings.stream().filter(b -> b.getEra().equals(era1)).limit(limit1).forEach(deckComposition::add);
+
+        int limit2 = era2.getBuildingLimit(game.getNumberOfPlayers());
+        validBuildings.stream().filter(b -> b.getEra().equals(era2)).limit(limit2).forEach(deckComposition::add);
+
+        int limit3 = era3.getBuildingLimit(game.getNumberOfPlayers());
+        validBuildings.stream().filter(b -> b.getEra().equals(era3)).limit(limit3).forEach(deckComposition::add);
 
         // Add the selected building cards to the corresponding building decks in the game.
         game.getBuildingDecks().setBuildingDeck(deckComposition);
