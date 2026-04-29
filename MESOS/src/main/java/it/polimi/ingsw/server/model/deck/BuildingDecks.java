@@ -2,12 +2,7 @@ package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.era.Era;
-import it.polimi.ingsw.server.model.era.Era1;
-import it.polimi.ingsw.server.model.era.Era2;
-import it.polimi.ingsw.server.model.era.Era3;
 
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,22 +10,17 @@ import java.util.List;
  */
 public class BuildingDecks {
 
-    /**
-     * The building decks is a map that associate every era with the corresponding building deck.
-     */
-    private HashMap<Era, BuildingDeck> buildingDecks;
+    private final BuildingDeck buildingDecksEra1;
+    private final BuildingDeck buildingDecksEra2;
+    private final BuildingDeck buildingDecksEra3;
 
     /**
      * Constructs a new BuildingDecks object, initializing the building decks map as an empty EnumMap of Era to BuildingDeck.
      */
     public BuildingDecks() {
-        this.buildingDecks = new HashMap<>();
-        Era era1 = new Era1();
-        Era era2 = new Era2();
-        Era era3 = new Era3();
-        buildingDecks = era1.createBuildingDeck(buildingDecks); //TODO: see if causes bugs
-        buildingDecks = era2.createBuildingDeck(buildingDecks);
-        buildingDecks = era3.createBuildingDeck(buildingDecks);
+        this.buildingDecksEra1 = new BuildingDeck();
+        this.buildingDecksEra2 = new BuildingDeck();
+        this.buildingDecksEra3 = new BuildingDeck();
     }
 
     /**
@@ -40,46 +30,40 @@ public class BuildingDecks {
      * @return the building deck corresponding to the specified era.
      */
     public BuildingDeck getBuildingDeck(Era era) {
-        return buildingDecks.get(era);
+        if (era == null)
+            throw new IllegalArgumentException("Era cannot be null");
+
+        return era.selectBuildingDeck(buildingDecksEra1, buildingDecksEra2, buildingDecksEra3);
     }
 
     /**
      * This method allows to add a building card to the corresponding building deck based on the era of the card.
      *
-     * @param cards The collection of building cards to be added to the corresponding building decks.
      * @throws IllegalArgumentException if the cards parameter is null.
      */
-    public void addBuildingCards(List<BuildingCard> cards) throws IllegalArgumentException {
-        if (cards == null) {
+    public void addBuildingCards(List<BuildingCard> cardsEra1, List<BuildingCard> cardsEra2, List<BuildingCard> cardsEra3) throws IllegalArgumentException {
+        if (cardsEra1 == null || cardsEra2 == null || cardsEra3 == null) {
             throw new IllegalArgumentException("Cards cannot be null");
         }
 
-        for (BuildingCard card : cards) {
-            buildingDecks.get(card.getEra()).addBuildingCard(card);
-        }
+        this.buildingDecksEra1.addBuildingCards(cardsEra1);
+        this.buildingDecksEra1.addBuildingCards(cardsEra2);
+        this.buildingDecksEra1.addBuildingCards(cardsEra3);
     }
 
     /**
      * This method allows to set the building decks with a new composition of building cards
-     * @param deckComposition the new composition of building cards to be set in the building decks
+     *
      * @throws IllegalArgumentException if the deckComposition parameter is null or empty
      */
-    public void setBuildingDeck(List<BuildingCard> deckComposition) {
-        if (deckComposition == null || deckComposition.isEmpty()) {
-            throw new IllegalArgumentException("Cards cannot be null or empty");
+    public void setBuildingDeck(List<BuildingCard> cardsEra1, List<BuildingCard> cardsEra2, List<BuildingCard> cardsEra3) {
+        if (cardsEra1 == null || cardsEra2 == null || cardsEra3 == null || cardsEra1.isEmpty() || cardsEra2.isEmpty() || cardsEra3.isEmpty()) {
+            throw new IllegalArgumentException("Deck composition cannot be null or empty");
         }
 
-        Era era1 = new Era1();
-        Era era2 = new Era2();
-        Era era3 = new Era3();
+        this.buildingDecksEra1.addBuildingCards(cardsEra1);
+        this.buildingDecksEra2.addBuildingCards(cardsEra2);
+        this.buildingDecksEra3.addBuildingCards(cardsEra3);
 
-        this.buildingDecks.clear();
-        this.buildingDecks = era1.createBuildingDeck(this.buildingDecks);
-        this.buildingDecks = era2.createBuildingDeck(this.buildingDecks);
-        this.buildingDecks = era3.createBuildingDeck(this.buildingDecks);
-
-        for (BuildingCard card : deckComposition) {
-            buildingDecks.get(card.getEra()).addBuildingCard(card);
-        }
     }
 }

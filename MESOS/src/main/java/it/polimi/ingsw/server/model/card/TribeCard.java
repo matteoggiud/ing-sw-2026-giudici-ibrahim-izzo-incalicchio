@@ -43,6 +43,6 @@ public abstract class TribeCard extends Card{
 
 
     public void selfSort(List<TribeCard> eraI, List<TribeCard> eraIi, List<TribeCard> eraIii, List<TribeCard> finalEvents) {
-        getEra().selfSortbyEra(this, eraI, eraIi, eraIii, finalEvents);
+        getEra().selfSortByEra(this, eraI, eraIi, eraIii, finalEvents);
     }
 }

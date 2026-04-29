@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.deck;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import it.polimi.ingsw.server.model.card.*;
 import it.polimi.ingsw.server.model.card.BuildingCard;
@@ -13,7 +14,7 @@ public class BuildingDeck {
     /**
      * The building deck contains some building cards
      */
-    private final ArrayList<BuildingCard> buildingDeck;
+    private final List<BuildingCard> buildingDeck;
 
     /**
      * Constructor for the BuildingDeck class, it initializes the building deck with an empty map of eras and building cards.
@@ -27,7 +28,7 @@ public class BuildingDeck {
      *
      * @return the building deck.
      */
-    public ArrayList<BuildingCard> getBuildingCards() {
+    public List<BuildingCard> getBuildingCards() {
         return buildingDeck;
     }
 
@@ -45,7 +46,7 @@ public class BuildingDeck {
      *
      * @param cards The collection of building cards to be added to the building deck.
      */
-    public void addBuildingCards(ArrayList<BuildingCard> cards) {
+    public void addBuildingCards(List<BuildingCard> cards) {
         this.buildingDeck.addAll(cards);
     }
 

@@ -16,7 +16,8 @@ public class Era3 extends Era {
     private final static int order = 3;
     private final static String name = "Era III";
 
-    public Era3() {}
+    public Era3() {
+    }
 
     @Override
     public String getName() {
@@ -29,10 +30,10 @@ public class Era3 extends Era {
     }
 
     @Override
-    public void selfSortbyEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
-        if(tribeCard.isFinalEvent()){
+    public void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
+        if (tribeCard.isFinalEvent()) {
             finalEvents.add(tribeCard);
-        }else{
+        } else {
             eraIII.add(tribeCard);
         }
     }
@@ -70,7 +71,13 @@ public class Era3 extends Era {
 
     @Override
     public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
-        if(deckCompositionEra3.size() < numPlayersBuildingLimit.get(numPlayers)) {}
+        if (deckCompositionEra3.size() < numPlayersBuildingLimit.get(numPlayers)) {
+        }
         deckCompositionEra3.add(card);
+    }
+
+    @Override
+    public BuildingDeck selectBuildingDeck(BuildingDeck buildingDecksEra1, BuildingDeck buildingDecksEra2, BuildingDeck buildingDecksEra3) {
+        return buildingDecksEra3;
     }
 }

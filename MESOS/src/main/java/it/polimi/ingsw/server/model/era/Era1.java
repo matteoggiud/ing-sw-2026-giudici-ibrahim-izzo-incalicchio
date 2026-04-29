@@ -30,7 +30,7 @@ public class Era1 extends Era{
     }
 
     @Override
-    public void selfSortbyEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
+    public void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
         eraI.add(tribeCard);
     }
 
@@ -65,5 +65,10 @@ public class Era1 extends Era{
     public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
         if(deckCompositionEra1.size() < numPlayersBuildingLimit.get(numPlayers)) {}
         deckCompositionEra1.add(card);
+    }
+
+    @Override
+    public BuildingDeck selectBuildingDeck(BuildingDeck buildingDecksEra1, BuildingDeck buildingDecksEra2, BuildingDeck buildingDecksEra3) {
+        return buildingDecksEra1;
     }
 }

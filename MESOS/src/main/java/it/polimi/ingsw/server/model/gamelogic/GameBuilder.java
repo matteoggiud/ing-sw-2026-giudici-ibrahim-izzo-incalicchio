@@ -136,14 +136,10 @@ public class GameBuilder {
         for (BuildingCard card : validBuildings) {
             card.getEra().selfAdd(deckCompositionEra1, deckCompositionEra2, deckCompositionEra3, card, game.getNumberOfPlayers());
         }
-
-        List<BuildingCard> deckComposition = new ArrayList<>();
-        deckComposition.addAll(deckCompositionEra1);
-        deckComposition.addAll(deckCompositionEra2);
-        deckComposition.addAll(deckCompositionEra3);
+        
 
         // Add the selected building cards to the corresponding building decks in the game.
-        game.getBuildingDecks().setBuildingDeck(deckComposition);
+        game.getBuildingDecks().setBuildingDeck(deckCompositionEra1, deckCompositionEra2, deckCompositionEra3);
 
     }
 
