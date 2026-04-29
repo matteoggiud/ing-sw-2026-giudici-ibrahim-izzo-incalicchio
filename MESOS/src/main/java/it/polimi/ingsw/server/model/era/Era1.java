@@ -63,8 +63,9 @@ public class Era1 extends Era{
 
     @Override
     public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
-        if(deckCompositionEra1.size() < numPlayersBuildingLimit.get(numPlayers)) {}
-        deckCompositionEra1.add(card);
+        if(deckCompositionEra1.size() < numPlayersBuildingLimit.get(numPlayers)) {
+            deckCompositionEra1.add(card);
+        }
     }
 
     @Override

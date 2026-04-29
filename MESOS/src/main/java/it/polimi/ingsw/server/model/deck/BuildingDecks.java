@@ -47,8 +47,8 @@ public class BuildingDecks {
         }
 
         this.buildingDecksEra1.addBuildingCards(cardsEra1);
-        this.buildingDecksEra1.addBuildingCards(cardsEra2);
-        this.buildingDecksEra1.addBuildingCards(cardsEra3);
+        this.buildingDecksEra2.addBuildingCards(cardsEra2);
+        this.buildingDecksEra3.addBuildingCards(cardsEra3);
     }
 
     /**

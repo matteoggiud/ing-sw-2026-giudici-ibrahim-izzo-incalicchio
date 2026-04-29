@@ -38,9 +38,6 @@ public class Era3 extends Era {
         }
     }
 
-    public static int getBuildingLimit(int numPlayers) {
-        return numPlayersBuildingLimit.get(numPlayers);
-    }
 
     @Override
     public HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks) {
@@ -72,8 +69,8 @@ public class Era3 extends Era {
     @Override
     public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
         if (deckCompositionEra3.size() < numPlayersBuildingLimit.get(numPlayers)) {
+            deckCompositionEra3.add(card);
         }
-        deckCompositionEra3.add(card);
     }
 
     @Override
