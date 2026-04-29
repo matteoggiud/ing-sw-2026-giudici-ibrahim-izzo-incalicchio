@@ -2,9 +2,7 @@ package it.polimi.ingsw.server.network.socket;
 
 import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
@@ -186,8 +184,8 @@ public class SocketVirtualView implements VirtualView {
      * @param event the event containing information about the left game and the player who left
      */
     @Override
-    public void update(PlayerInfoChangedEvent event) {
-        PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfo());
+    public void update(PlayerInfosChangedEvent event) {
+        PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfos());
 
         sendMessage(message);
     }

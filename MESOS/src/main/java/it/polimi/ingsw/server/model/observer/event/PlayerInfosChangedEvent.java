@@ -3,17 +3,19 @@ package it.polimi.ingsw.server.model.observer.event;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 
-public class PlayerInfoChangedEvent implements IGameEvent {
-    private final int gameId;
-    private final PlayerInfoDTO playerInfo;
+import java.util.List;
 
-    public PlayerInfoChangedEvent(int gameId, PlayerInfoDTO playerInfo) {
+public class PlayerInfosChangedEvent implements IGameEvent {
+    private final int gameId;
+    private final List<PlayerInfoDTO> playerInfos;
+
+    public PlayerInfosChangedEvent(int gameId, List<PlayerInfoDTO> playerInfos) {
         this.gameId = gameId;
-        this.playerInfo = playerInfo;
+        this.playerInfos = playerInfos;
     }
 
-    public PlayerInfoDTO getPlayerInfo() {
-        return playerInfo;
+    public List<PlayerInfoDTO> getPlayerInfos() {
+        return playerInfos;
     }
 
     public int getGameId() {

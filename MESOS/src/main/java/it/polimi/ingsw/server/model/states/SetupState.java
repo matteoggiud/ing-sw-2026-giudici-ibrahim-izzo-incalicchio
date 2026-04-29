@@ -4,11 +4,9 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerDeckDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfoDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerInfoChangedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 
 
 public class SetupState implements IGameState {
@@ -47,10 +45,10 @@ public class SetupState implements IGameState {
      * @param game the current game context
      */
     private void notifyAll(Game game) {
-        for (Player player : game.getPlayers().getShuffledPlayers()) {
-            game.getObserverManager().notifyObservers(new PlayerInfoChangedEvent(game.getGameId(), PlayerInfoDTOMapper.toPlayerInfoDTO(player)));
-        }
+        // Notify observers about the updated player resources
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
 
+        // Notify observers about the updated board state
         game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 

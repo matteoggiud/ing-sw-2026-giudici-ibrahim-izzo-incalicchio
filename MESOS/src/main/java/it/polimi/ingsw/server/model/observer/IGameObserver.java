@@ -91,5 +91,5 @@ public interface IGameObserver {
      *
      * @param event the event containing information about the left game and the player who left
      */
-    void update(PlayerInfoChangedEvent event);
+    void update(PlayerInfosChangedEvent event);
 }

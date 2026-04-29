@@ -4,17 +4,19 @@ import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
+import java.util.List;
+
 public class PlayerInfoChangedMessage extends ServerMessage {
     private final int gameId;
-    private final PlayerInfoDTO playerInfo;
+    private final List<PlayerInfoDTO> playerInfos;
 
-    public PlayerInfoChangedMessage(int gameId, PlayerInfoDTO playerInfo) {
+    public PlayerInfoChangedMessage(int gameId, List<PlayerInfoDTO> playerInfos) {
         this.gameId = gameId;
-        this.playerInfo = playerInfo;
+        this.playerInfos = playerInfos;
     }
 
-    public PlayerInfoDTO getPlayerInfo() {
-        return playerInfo;
+    public List<PlayerInfoDTO> getPlayerInfos() {
+        return playerInfos;
     }
 
     public int getGameId() {

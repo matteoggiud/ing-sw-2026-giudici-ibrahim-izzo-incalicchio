@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ClientSessionState {
@@ -41,11 +42,13 @@ public class ClientSessionState {
 
     /**
      * Adds or updates the PlayerInfoDTO for the given player. The key is the player's nickname.
-     * @param playerInfo the PlayerInfoDTO to add or update. If null or if the nickname is null, it will be ignored.
+     * @param playerInfos the List of PlayerInfoDTO to add or update. If null or if the nickname is null, it will be ignored.
      */
-    public void updatePlayerInfo(PlayerInfoDTO playerInfo) {
-        if (playerInfo != null && playerInfo.nickname() != null) {
-            playersInfo.put(playerInfo.nickname(), playerInfo);
+    public void updatePlayersInfo(List<PlayerInfoDTO> playerInfos) {
+        for (PlayerInfoDTO playerInfo : playerInfos) {
+            if (playerInfo != null && playerInfo.nickname() != null) {
+                playersInfo.put(playerInfo.nickname(), playerInfo);
+            }
         }
     }
 
