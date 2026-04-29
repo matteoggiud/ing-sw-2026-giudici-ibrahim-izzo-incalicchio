@@ -35,9 +35,8 @@ public class ExtraActionState implements IGameState {
      */
     @Override
     public void nextState(Game game) {
-        EndRoundState endRoundState = new EndRoundState();
-        game.setGameState(endRoundState);
-        endRoundState.executePhase(game);
+        game.setGameState(new EndRoundState());
+        game.getGameState().executePhase(game);
     }
 
     /**
