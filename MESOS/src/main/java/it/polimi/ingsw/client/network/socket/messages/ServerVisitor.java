@@ -151,4 +151,9 @@ public class ServerVisitor implements ServerMessageVisitor {
         sessionState.updatePlayersInfo(message.getPlayerInfos());
         view.showPlayersInfo(sessionState.getPlayersInfo(), sessionState.getNickname());
     }
+
+    @Override
+    public void visit(ResolvingEventMessage resolvingEventMessage) {
+        //TODO: show something
+    }
 }

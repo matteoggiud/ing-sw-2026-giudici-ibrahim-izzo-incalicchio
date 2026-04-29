@@ -164,6 +164,12 @@ public interface ServerMessageVisitor {
      */
     void visit(PlayerInfoChangedMessage message);
 
+    /**
+     * Visits a LeftGameMessage, which indicates that a player has left the game. This message is sent to all clients when a player leaves the game, and may contain additional information about the player who left such as their nickname or the reason for leaving.
+     *
+     * @param resolvingEventMessage the LeftGameMessage to visit
+     */
+    void visit(ResolvingEventMessage resolvingEventMessage);
 }
 
 

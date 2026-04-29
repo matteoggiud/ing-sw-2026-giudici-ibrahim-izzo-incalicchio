@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.observer;
 
 import it.polimi.ingsw.server.model.observer.event.*;
+import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
 
 /**
  * Observer interface implemented by remote or local views.
@@ -92,4 +93,11 @@ public interface IGameObserver {
      * @param event the event containing information about the left game and the player who left
      */
     void update(PlayerInfosChangedEvent event);
+
+    /**
+     * Called when the effects of an event card are being resolved, providing updates about the resolution process.
+     *
+     * @param resolvingEventUpdate the event containing information about the event card being resolved and the current state of the resolution process
+     */
+    void update(ResolvingEventUpdate resolvingEventUpdate);
 }

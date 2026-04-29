@@ -189,4 +189,15 @@ public class SocketVirtualView implements VirtualView {
 
         sendMessage(message);
     }
+
+    /**
+     *
+     * @param resolvingEventUpdate the event containing information about the event card being resolved and the current state of the resolution process
+     */
+    @Override
+    public void update(ResolvingEventUpdate resolvingEventUpdate) {
+        ResolvingEventMessage message = new ResolvingEventMessage(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
+
+        sendMessage(message);
+    }
 }

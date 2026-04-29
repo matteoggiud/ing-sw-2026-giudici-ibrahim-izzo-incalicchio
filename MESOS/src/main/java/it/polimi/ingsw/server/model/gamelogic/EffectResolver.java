@@ -6,6 +6,9 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.building.triggers.IEventTrigger;
+import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.EventCardDTOMapper;
+import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +38,15 @@ public class EffectResolver {
      * @param eventCards a list of EventCard objects representing the event cards to be resolved.
      */
     public void resolveEvents(List<EventCard> eventCards) {
+
         // Sort the event cards based on the game rules
         Stack<EventCard> sortedEventCards = game.getRuleSet().sortEventCards(eventCards);
 
         // Apply each event card in the sorted order
         while (!sortedEventCards.isEmpty()) {
             EventCard eventCard = sortedEventCards.pop();
+
+            game.getObserverManager().notifyObservers(new ResolvingEventUpdate(game.getGameId(), EventCardDTOMapper.toEventCardDTO(eventCard)));
 
             // Generate the base effect of the event card for all players
             List<EffectEventResult> changes = eventCard.getEventEffect().calculateBaseEffect(game, eventCard);
@@ -58,6 +64,7 @@ public class EffectResolver {
                 // Allow the event effect to post-process the change (e.g., Sustenance handling food deficits)
                 eventCard.getEventEffect().postProcessChange(change, eventCard);
             }
+
 
             // Finally, apply all the changes to the players' resources based on the log of effect results
             applyAllChanges(changes);

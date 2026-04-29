@@ -56,7 +56,7 @@ public class EndRoundState implements IGameState {
             new EffectResolver(game).resolveEvents(eventsToResolve);
         }
 
-        notifyPlayersInfoUpdate(game);
+
 
         if (game.isLastRoundTriggered()) {
             nextState(game);
