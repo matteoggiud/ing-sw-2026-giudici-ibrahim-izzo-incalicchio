@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,11 +15,13 @@ class TribeDeckTest {
 
     private TribeDeck tribeDeck;
     private int nextCardId;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         tribeDeck = new TribeDeck();
         nextCardId = 1;
+        era1 = new Era1();
     }
 
     @Test
@@ -89,6 +92,6 @@ class TribeDeckTest {
     }
 
     private HunterCharacterCard newHunter() {
-        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false, "");
+        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, era1, 2, false, "");
     }
 }

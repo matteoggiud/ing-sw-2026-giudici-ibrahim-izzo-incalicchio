@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 
 import java.util.ArrayList;
 
@@ -9,11 +10,13 @@ class BuildingDeckTest {
 
     private BuildingDeck buildingDeck;
     private int nextCardId;
+    private Era1 era1;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         buildingDeck = new BuildingDeck();
         nextCardId = 1;
+        era1 = new Era1();
     }
 
     @org.junit.jupiter.api.Test
@@ -63,6 +66,6 @@ class BuildingDeckTest {
     private BuildingCard newBuilding(int foodCost) {
         it.polimi.ingsw.server.model.effect.building.IBuildingEffect effect = new it.polimi.ingsw.server.model.effect.building.IBuildingEffect() {
         };
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect, "");
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, era1, 2, foodCost, 2, effect, "");
     }
 }

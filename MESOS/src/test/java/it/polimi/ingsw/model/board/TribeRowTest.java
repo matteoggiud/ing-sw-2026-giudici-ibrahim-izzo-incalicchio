@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.server.model.board.TribeRow;
 import it.polimi.ingsw.server.model.card.CharacterCard;
-import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import it.polimi.ingsw.server.model.effect.event.SustenanceEventEffect;
@@ -17,11 +17,13 @@ class TribeRowTest {
 
     private TribeRow tribeRow;
     private int nextCardId;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         tribeRow = new TribeRow();
         nextCardId = 1;
+        era1 = new Era1();
     }
 
     @Test
@@ -192,14 +194,14 @@ class TribeRowTest {
     }
 
     private HunterCharacterCard newHunter() {
-        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false, "");
+        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, era1, 2, false, "");
     }
 
     private EventCard newEvent(boolean finalEvent) {
         return new EventCard(
                 nextCardId++,
                 "Event" + nextCardId,
-                Era.ERA_1,
+                era1,
                 2,
                 finalEvent,
                 new SustenanceEventEffect(),
