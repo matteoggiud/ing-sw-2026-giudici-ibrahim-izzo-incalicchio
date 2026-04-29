@@ -7,6 +7,9 @@ import it.polimi.ingsw.server.model.deck.PlayerDeck;
 import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.event.IEventEffect;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,13 +24,17 @@ class EventCardTest {
     private IEventEffect effect;
     private EventCard eventCard;
     private EventCard finalEventCard;
+    private Era1 era1;
+    private Era2 era2;
 
     @BeforeEach
     void setUp() {
         nextCardId = 1;
         effect = new DummyEventEffect();
-        eventCard = new EventCard(nextCardId++, "EventA", Era.ERA_1, 2, false, effect, 3, 1, 2, 1, 4, "");
-        finalEventCard = new EventCard(nextCardId++, "FinalEvent", Era.ERA_2, 3, true, effect, 0, 2, 1, 3, 5, "");
+        era1 = new Era1();
+        era2 = new Era2();
+        eventCard = new EventCard(nextCardId++, "EventA", era1, 2, false, effect, 3, 1, 2, 1, 4, "");
+        finalEventCard = new EventCard(nextCardId++, "FinalEvent", era2, 3, true, effect, 0, 2, 1, 3, 5, "");
     }
 
     @Test
@@ -112,22 +119,22 @@ class EventCardTest {
     @Test
     void constructorValidation() {
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, null, 0, 0, 0, 0, 0,""));
+                () -> new EventCard(99, "E", era1, 2, false, null, 0, 0, 0, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, -1, 0, 0, 0, 0,""));
+                () -> new EventCard(99, "E", era1, 2, false, effect, -1, 0, 0, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, -1, 0, 0, 0,""));
+                () -> new EventCard(99, "E", era1, 2, false, effect, 0, -1, 0, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, -1, 0, 0,""));
+                () -> new EventCard(99, "E", era1, 2, false, effect, 0, 0, -1, 0, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, 0, -1, 0,""));
+                () -> new EventCard(99, "E", era1, 2, false, effect, 0, 0, 0, -1, 0,""));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new EventCard(99, "E", Era.ERA_1, 2, false, effect, 0, 0, 0, 0, -1,""));
+                () -> new EventCard(99, "E", era1, 2, false, effect, 0, 0, 0, 0, -1,""));
     }
 
     private static final class DummyEventEffect implements IEventEffect {

@@ -2,7 +2,8 @@ package it.polimi.ingsw.server.model.deck;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.CharacterType;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.card.characters.BuilderCharacterCard;
 import it.polimi.ingsw.server.model.card.characters.GathererCharacterCard;
 import it.polimi.ingsw.server.model.card.characters.InventorCharacterCard;
@@ -27,11 +28,13 @@ class PlayerDeckTest {
 
     private PlayerDeck playerDeck;
     private int nextCardId;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         playerDeck = new PlayerDeck();
         nextCardId = 1;
+        era1 = new Era1();
     }
 
     @Test
@@ -39,7 +42,7 @@ class PlayerDeckTest {
         assertNotNull(playerDeck.getCharacters());
         assertTrue(playerDeck.getCharacters().isEmpty());
 
-        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "Gatherer", Era.ERA_1, 2, ""));
+        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "Gatherer", era1, 2, ""));
         assertEquals(1, playerDeck.getCharacters().size());
     }
 
@@ -56,9 +59,9 @@ class PlayerDeckTest {
     void countCharactersByType() {
         assertEquals(0, playerDeck.countCharactersByType(CharacterType.GATHERER));
 
-        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G1", Era.ERA_1, 2, ""));
-        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G2", Era.ERA_1, 2, ""));
-        playerDeck.addCharacterCard(new BuilderCharacterCard(nextCardId++, "B1", Era.ERA_1, 2, 0, 1, ""));
+        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G1", era1, 2, ""));
+        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G2", era1, 2, ""));
+        playerDeck.addCharacterCard(new BuilderCharacterCard(nextCardId++, "B1", era1, 2, 0, 1, ""));
 
         assertEquals(2, playerDeck.countCharactersByType(CharacterType.GATHERER));
         assertEquals(1, playerDeck.countCharactersByType(CharacterType.BUILDER));
@@ -87,7 +90,7 @@ class PlayerDeckTest {
 
     @Test
     void addCharacterCard() {
-        GathererCharacterCard gatherer = new GathererCharacterCard(nextCardId++, "Gatherer", Era.ERA_1, 2, "");
+        GathererCharacterCard gatherer = new GathererCharacterCard(nextCardId++, "Gatherer", era1, 2, "");
 
         playerDeck.addCharacterCard(gatherer);
 
@@ -99,7 +102,7 @@ class PlayerDeckTest {
     @Test
     void addCard() {
         BuildingCard buildingCard = newBuilding(new EmptyEffect());
-        BuilderCharacterCard builder = new BuilderCharacterCard(nextCardId++, "Builder", Era.ERA_1, 2, 0, 2, "");
+        BuilderCharacterCard builder = new BuilderCharacterCard(nextCardId++, "Builder", era1, 2, 0, 2, "");
 
         playerDeck.addCard(buildingCard);
         playerDeck.addCard(builder);
@@ -115,8 +118,8 @@ class PlayerDeckTest {
     void getTotalBuilderDiscount() {
         assertEquals(0, playerDeck.getTotalBuilderDiscount());
 
-        playerDeck.addCharacterCard(new BuilderCharacterCard(nextCardId++, "B1", Era.ERA_1, 2, 0, 2, ""));
-        playerDeck.addCharacterCard(new BuilderCharacterCard(nextCardId++, "B2", Era.ERA_1, 2, 0, 3, ""));
+        playerDeck.addCharacterCard(new BuilderCharacterCard(nextCardId++, "B1", era1, 2, 0, 2, ""));
+        playerDeck.addCharacterCard(new BuilderCharacterCard(nextCardId++, "B2", era1, 2, 0, 3, ""));
 
         assertEquals(5, playerDeck.getTotalBuilderDiscount());
     }
@@ -125,16 +128,16 @@ class PlayerDeckTest {
     void getTotalGathererDiscount() {
         assertEquals(0, playerDeck.getTotalGathererDiscount());
 
-        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G1", Era.ERA_1, 2, ""));
-        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G2", Era.ERA_1, 2, ""));
+        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G1", era1, 2, ""));
+        playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "G2", era1, 2, ""));
 
         assertEquals(6, playerDeck.getTotalGathererDiscount());
     }
 
     @Test
     void getTotalShamanStars() {
-        playerDeck.addCharacterCard(new ShamanCharacterCard(nextCardId++, "S1", Era.ERA_1, 2, 2, ""));
-        playerDeck.addCharacterCard(new ShamanCharacterCard(nextCardId++, "S2", Era.ERA_1, 2, 3, ""));
+        playerDeck.addCharacterCard(new ShamanCharacterCard(nextCardId++, "S1", era1, 2, 2, ""));
+        playerDeck.addCharacterCard(new ShamanCharacterCard(nextCardId++, "S2", era1, 2, 3, ""));
         playerDeck.addBuildingCard(newBuilding(new ShamanStarsEffect(4)));
 
         assertEquals(9, playerDeck.getTotalShamanStars());
@@ -144,9 +147,9 @@ class PlayerDeckTest {
     void getDifferentInventorItem() {
         assertEquals(0, playerDeck.getDifferentInventorItem());
 
-        playerDeck.addCharacterCard(new InventorCharacterCard(nextCardId++, "I1", Era.ERA_1, 2, InventorType.BOAT, ""));
-        playerDeck.addCharacterCard(new InventorCharacterCard(nextCardId++, "I2", Era.ERA_1, 2, InventorType.BOAT, ""));
-        playerDeck.addCharacterCard(new InventorCharacterCard(nextCardId++, "I3", Era.ERA_1, 2, InventorType.ARROW, ""));
+        playerDeck.addCharacterCard(new InventorCharacterCard(nextCardId++, "I1", era1, 2, InventorType.BOAT, ""));
+        playerDeck.addCharacterCard(new InventorCharacterCard(nextCardId++, "I2", era1, 2, InventorType.BOAT, ""));
+        playerDeck.addCharacterCard(new InventorCharacterCard(nextCardId++, "I3", era1, 2, InventorType.ARROW, ""));
 
         assertEquals(2, playerDeck.getDifferentInventorItem());
     }
@@ -200,7 +203,7 @@ class PlayerDeckTest {
     }
 
     private BuildingCard newBuilding(IBuildingEffect effect) {
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, 3, 2, effect, "");
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, era1, 2, 5, 2, effect, "");
     }
 
     private static final class EmptyEffect implements IBuildingEffect {

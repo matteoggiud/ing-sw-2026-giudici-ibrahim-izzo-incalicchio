@@ -2,9 +2,9 @@ package it.polimi.ingsw.model.board;
 
 import it.polimi.ingsw.server.model.board.BuildingRow;
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.Era;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
+import it.polimi.ingsw.server.model.era.Era1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,11 +16,13 @@ class BuildingRowTest {
 
     private BuildingRow buildingRow;
     private int nextCardId;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         buildingRow = new BuildingRow();
         nextCardId = 1;
+        era1 = new Era1();
     }
 
     @Test
@@ -202,6 +204,6 @@ class BuildingRowTest {
     private BuildingCard newBuilding(int foodCost) {
         IBuildingEffect effect = new IBuildingEffect() {
         };
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect,"");
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, era1, 2, foodCost, 2, effect,"");
     }
 }

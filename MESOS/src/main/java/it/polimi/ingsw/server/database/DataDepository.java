@@ -5,26 +5,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.*;
 import it.polimi.ingsw.server.model.card.characters.*;
-import it.polimi.ingsw.server.model.card.*;
-import it.polimi.ingsw.server.model.card.characters.*;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
-import it.polimi.ingsw.server.model.effect.building.endgame.*;
 import it.polimi.ingsw.server.model.effect.building.endgame.DoubleBuilderBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.endgame.EndPpCardsSetBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.endgame.FlatPrestigePointBuildingCard;
 import it.polimi.ingsw.server.model.effect.building.endgame.PpPerCharacterBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.extraction.ExtraCardBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.modifiers.*;
-import it.polimi.ingsw.server.model.effect.building.modifiers.*;
 import it.polimi.ingsw.server.model.effect.building.shamanicstars.ShamanicStarsBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.triggers.TotemBonusBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.triggers.TriggerCardsSetBuildingEffect;
 import it.polimi.ingsw.server.model.effect.building.triggers.TriggerInventorsCoupleBuildingEffect;
-import it.polimi.ingsw.server.model.effect.event.*;
 import it.polimi.ingsw.server.model.effect.event.HuntEventEffect;
 import it.polimi.ingsw.server.model.effect.event.RockPaintingEventEffect;
 import it.polimi.ingsw.server.model.effect.event.ShamanicRitualEventEffect;
 import it.polimi.ingsw.server.model.effect.event.SustenanceEventEffect;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
+import it.polimi.ingsw.server.model.era.Era3;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -77,7 +76,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
@@ -100,7 +99,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
@@ -123,7 +122,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
@@ -146,7 +145,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
@@ -169,7 +168,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
@@ -192,7 +191,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
@@ -217,7 +216,7 @@ public class DataDepository {
     public List<EventCard> getHunterEventCards() throws SQLException {
         String sql = "SELECT id, name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold, image_key FROM event_card JOIN card ON event_card_id=card_id WHERE event_type = 'HUNT'";
 
-        List<EventCard> allHunterEventCard = new ArrayList<>();
+        List<EventCard> allHuntEventCard = new ArrayList<>();
 
         try (Connection c = DatabaseManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
@@ -226,7 +225,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 boolean isFinalEvent = rs.getBoolean("is_final_event");
                 int gainedFood = rs.getInt("gained_food");
@@ -236,10 +235,10 @@ public class DataDepository {
                 int threshold = rs.getInt("threshold");
                 String imageKey = rs.getString("image_key");
 
-                allHunterEventCard.add(new EventCard(cardId, name, era, minNumPlayers, isFinalEvent, new HuntEventEffect(), gainedFood, malusFood, gainedPp, malusPp, threshold, imageKey));
+                allHuntEventCard.add(new EventCard(cardId, name, era, minNumPlayers, isFinalEvent, new HuntEventEffect(), gainedFood, malusFood, gainedPp, malusPp, threshold, imageKey));
             }
         }
-        return allHunterEventCard;
+        return allHuntEventCard;
     }
 
     public List<EventCard> getRockPaintingEventCards() throws SQLException {
@@ -254,7 +253,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 boolean isFinalEvent = rs.getBoolean("is_final_event");
                 int gainedFood = rs.getInt("gained_food");
@@ -282,7 +281,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 boolean isFinalEvent = rs.getBoolean("is_final_event");
                 int gainedFood = rs.getInt("gained_food");
@@ -310,7 +309,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 boolean isFinalEvent = rs.getBoolean("is_final_event");
                 int gainedFood = rs.getInt("gained_food");
@@ -353,7 +352,7 @@ public class DataDepository {
             while (rs.next()) {
                 int cardId = rs.getInt("id");
                 String name = rs.getString("name");
-                Era era = Era.valueOf(rs.getString("era"));
+                Era era = createEra(rs.getString("era"));
                 int minNumPlayers = rs.getInt("min_num_players");
                 int foodCost = rs.getInt("food_cost");
                 int endGamePp = rs.getInt("end_game_pp");
@@ -427,7 +426,7 @@ public class DataDepository {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     String name = rs.getString("name");
-                    Era era = Era.valueOf(rs.getString("era"));
+                    Era era = createEra(rs.getString("era"));
                     int minNumPlayers = rs.getInt("min_num_players");
                     CharacterType characterType = CharacterType.valueOf(rs.getString("character_type"));
                     JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
@@ -465,7 +464,7 @@ public class DataDepository {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     String name = rs.getString("name");
-                    Era era = Era.valueOf(rs.getString("era"));
+                    Era era = createEra(rs.getString("era"));
                     int minNumPlayers = rs.getInt("min_num_players");
                     int foodCost = rs.getInt("food_cost");
                     int endGamePp = rs.getInt("end_game_pp");
@@ -496,7 +495,7 @@ public class DataDepository {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     String name = rs.getString("name");
-                    Era era = Era.valueOf(rs.getString("era"));
+                    Era era = createEra(rs.getString("era"));
                     int minNumPlayers = rs.getInt("min_num_players");
                     boolean isFinalEvent = rs.getBoolean("is_final_event");
                     String eventTypeStr = rs.getString("event_type");
@@ -554,5 +553,20 @@ public class DataDepository {
             e.printStackTrace();
         }
         return offerBox;
+    }
+    
+    private Era createEra(String era){
+        switch (era) {
+            case "ERA_1" -> {
+                return new Era1();
+            }
+            case "ERA_2" -> {
+                return new Era2();
+            }
+            case "ERA_3" -> {
+                return new Era3();
+            }
+            default -> throw new IllegalArgumentException("Invalid Era: " + era);
+        }
     }
 }

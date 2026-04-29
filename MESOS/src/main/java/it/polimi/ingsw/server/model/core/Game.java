@@ -1,12 +1,9 @@
 package it.polimi.ingsw.server.model.core;
 
-import it.polimi.ingsw.server.model.card.Era;
-import it.polimi.ingsw.server.model.deck.*;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.deck.BuildingDecks;
 import it.polimi.ingsw.server.model.deck.TribeDeck;
 import it.polimi.ingsw.server.model.observer.ObserverManager;
-import it.polimi.ingsw.server.model.ruleset.*;
-import it.polimi.ingsw.server.model.states.*;
 import it.polimi.ingsw.server.model.ruleset.IGameRuleSet;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 import it.polimi.ingsw.server.model.states.EndedState;
@@ -14,10 +11,6 @@ import it.polimi.ingsw.server.model.states.IGameState;
 import it.polimi.ingsw.server.model.states.LobbyState;
 
 import java.util.Map;
-
-
-
-import java.util.UUID;
 
 /**
  * This class represents the game instance

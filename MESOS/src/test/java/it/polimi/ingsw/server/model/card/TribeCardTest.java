@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.model.card;
 
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,11 +14,13 @@ class TribeCardTest {
 
     private int nextCardId;
     private TestTribeCard tribeCard;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         nextCardId = 1;
-        tribeCard = new TestTribeCard(nextCardId++, "TribeA", Era.ERA_1, 2);
+        era1 = new Era1();
+        tribeCard = new TestTribeCard(nextCardId++, "TribeA", era1, 2);
     }
 
     @Test
@@ -32,7 +36,7 @@ class TribeCardTest {
     @Test
     void addToCharacterList() {
         ArrayList<CharacterCard> characters = new ArrayList<>();
-        characters.add(new TestCharacterCard(nextCardId++, "CharacterX", Era.ERA_1, 2));
+        characters.add(new TestCharacterCard(nextCardId++, "CharacterX", era1, 2));
 
         tribeCard.addToCharacterList(characters);
 
@@ -43,7 +47,7 @@ class TribeCardTest {
     @Test
     void addToEventList() {
         ArrayList<EventCard> events = new ArrayList<>();
-        events.add(new EventCard(nextCardId++, "EventX", Era.ERA_1, 2, false, new DummyEventEffect(), 1, 0, 1, 0, 1,""));
+        events.add(new EventCard(nextCardId++, "EventX", era1, 2, false, new DummyEventEffect(), 1, 0, 1, 0, 1,""));
 
         tribeCard.addToEventList(events);
 

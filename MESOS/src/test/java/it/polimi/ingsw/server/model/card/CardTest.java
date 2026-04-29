@@ -3,6 +3,9 @@ package it.polimi.ingsw.server.model.card;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.deck.PlayerDeck;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,11 +15,15 @@ class CardTest {
 
     private TestCard cardWithId;
     private TestCard cardWithoutId;
+    private Era1 era1;
+    private Era2 era2;
 
     @BeforeEach
     void setUp() {
-        cardWithId = new TestCard(10, "CardA", Era.ERA_1, 3);
-        cardWithoutId = new TestCard("CardB", Era.ERA_2, 2);
+        era1 = new Era1();
+        era2 = new Era2();
+        cardWithId = new TestCard(10, "CardA", era1, 3);
+        cardWithoutId = new TestCard("CardB", era2, 2);
     }
 
     @Test
@@ -33,8 +40,8 @@ class CardTest {
 
     @Test
     void getEra() {
-        assertEquals(Era.ERA_1, cardWithId.getEra());
-        assertEquals(Era.ERA_2, cardWithoutId.getEra());
+        assertSame(era1, cardWithId.getEra());
+        assertSame(era2, cardWithoutId.getEra());
     }
 
     @Test
@@ -42,8 +49,8 @@ class CardTest {
         assertEquals(3, cardWithId.getMinNumPlayers());
         assertEquals(2, cardWithoutId.getMinNumPlayers());
 
-        assertThrows(IllegalArgumentException.class, () -> new TestCard(1, "X", Era.ERA_1, 1));
-        assertThrows(IllegalArgumentException.class, () -> new TestCard(1, "X", Era.ERA_1, 6));
+        assertThrows(IllegalArgumentException.class, () -> new TestCard(1, "X", era1, 1));
+        assertThrows(IllegalArgumentException.class, () -> new TestCard(1, "X", era1, 6));
     }
 
     @Test
@@ -91,9 +98,9 @@ class CardTest {
 
     @Test
     void constructorValidation() {
-        assertThrows(IllegalArgumentException.class, () -> new TestCard(1, null, Era.ERA_1, 2));
+        assertThrows(IllegalArgumentException.class, () -> new TestCard(1, null, era1, 2));
         assertThrows(IllegalArgumentException.class, () -> new TestCard(1, "X", null, 2));
-        assertThrows(IllegalArgumentException.class, () -> new TestCard(null, Era.ERA_1, 2));
+        assertThrows(IllegalArgumentException.class, () -> new TestCard(null, era1, 2));
         assertThrows(IllegalArgumentException.class, () -> new TestCard("X", null, 2));
     }
 

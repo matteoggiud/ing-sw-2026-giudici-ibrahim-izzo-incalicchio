@@ -2,7 +2,10 @@ package it.polimi.ingsw.model.ruleset;
 
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
+import it.polimi.ingsw.server.model.era.Era3;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,10 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class StandardRuleSetTest {
 
     private StandardRuleSet ruleSet;
+    private Era1 era1;
+    private Era2 era2;
+    private Era3 era3;
 
     @BeforeEach
     void setUp() {
         ruleSet = new StandardRuleSet();
+        era1 = new Era1();
+        era2 = new Era2();
+        era3 = new Era3();
     }
 
     @Test
@@ -100,31 +109,28 @@ class StandardRuleSetTest {
     @Test
     void getBuildingLimit() {
         // Test numPlayers == 2
-        assertEquals(1, ruleSet.getBuildingLimit(Era.ERA_1, 2));
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_2, 2));
-        assertEquals(3, ruleSet.getBuildingLimit(Era.ERA_3, 2));
+        assertEquals(1, era1.getBuildingLimit(2));
+        assertEquals(2, era2.getBuildingLimit(2));
+        assertEquals(3, era3.getBuildingLimit(2));
 
         // Test numPlayers == 3
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_1, 3));
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_2, 3));
-        assertEquals(4, ruleSet.getBuildingLimit(Era.ERA_3, 3));
+        assertEquals(2, era1.getBuildingLimit(3));
+        assertEquals(2, era2.getBuildingLimit(3));
+        assertEquals(4, era3.getBuildingLimit(3));
 
         // Test numPlayers == 4
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_1, 4));
-        assertEquals(3, ruleSet.getBuildingLimit(Era.ERA_2, 4));
-        assertEquals(4, ruleSet.getBuildingLimit(Era.ERA_3, 4));
+        assertEquals(2, era1.getBuildingLimit(4));
+        assertEquals(3, era2.getBuildingLimit(4));
+        assertEquals(4, era3.getBuildingLimit(4));
 
         // Test numPlayers == 5
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_1, 5));
-        assertEquals(3, ruleSet.getBuildingLimit(Era.ERA_2, 5));
-        assertEquals(5, ruleSet.getBuildingLimit(Era.ERA_3, 5));
-
-        // Test era null
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(null, 2));
+        assertEquals(2, era1.getBuildingLimit(5));
+        assertEquals(3, era2.getBuildingLimit(5));
+        assertEquals(5, era3.getBuildingLimit(5));
 
         // Test numPlayers not valid
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(Era.ERA_1, 1));
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(Era.ERA_1, 6));
+        assertThrows(NullPointerException.class, () -> era1.getBuildingLimit(1));
+        assertThrows(NullPointerException.class, () -> era1.getBuildingLimit(6));
     }
 
  //   @Test

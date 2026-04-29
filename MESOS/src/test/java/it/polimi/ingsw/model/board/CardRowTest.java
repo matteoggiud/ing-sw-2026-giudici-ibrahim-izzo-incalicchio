@@ -3,12 +3,12 @@ package it.polimi.ingsw.model.board;
 import it.polimi.ingsw.server.model.board.BuildingRow;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.Era;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 import it.polimi.ingsw.server.model.board.TribeRow;
+import it.polimi.ingsw.server.model.era.Era1;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,11 +18,13 @@ class CardRowTest {
 
     private CardRow cardRow;
     private int nextCardId;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         cardRow = new CardRow();
         nextCardId = 1;
+        era1 = new Era1();
     }
 
     @Test
@@ -139,12 +141,12 @@ class CardRowTest {
     }
 
     private HunterCharacterCard newHunter() {
-        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, Era.ERA_1, 2, false,"");
+        return new HunterCharacterCard(nextCardId++, "Hunter" + nextCardId, era1, 2, false,"");
     }
 
     private BuildingCard newBuilding(int foodCost) {
         IBuildingEffect effect = new IBuildingEffect() {
         };
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect,"");
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, era1, 2, foodCost, 2, effect,"");
     }
 }

@@ -2,7 +2,8 @@ package it.polimi.ingsw.server.model.core;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.Card;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.card.characters.BuilderCharacterCard;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
@@ -19,6 +20,7 @@ class PlayerTest {
     private Player player;
     private int nextCardId;
     private IBuildingEffect effect;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
@@ -26,6 +28,7 @@ class PlayerTest {
         nextCardId = 1;
         effect = new IBuildingEffect() {
         };
+        era1 = new Era1();
     }
 
     @Test
@@ -97,7 +100,7 @@ class PlayerTest {
     @Test
     void canBuyBuildingCardWithDiscount() {
         BuildingCard building = newBuilding(2);
-        BuilderCharacterCard builder = new BuilderCharacterCard(nextCardId++, "Builder", Era.ERA_1, 2, 0, 4, "");
+        BuilderCharacterCard builder = new BuilderCharacterCard(nextCardId++, "Builder", era1, 2, 0, 4, "");
 
         player.getPlayerDeck().addCard(builder);
         player.canBuyBuildingCard(building);
@@ -122,7 +125,7 @@ class PlayerTest {
     void addCardsInDeck() {
         ArrayList<Card> cards = new ArrayList<>();
         BuildingCard building = newBuilding(3);
-        HunterCharacterCard hunter = new HunterCharacterCard(nextCardId++, "Hunter", Era.ERA_1, 2, false, "");
+        HunterCharacterCard hunter = new HunterCharacterCard(nextCardId++, "Hunter", era1, 2, false, "");
 
         cards.add(building);
         cards.add(hunter);
@@ -145,7 +148,7 @@ class PlayerTest {
     }
 
     private BuildingCard newBuilding(int foodCost) {
-        return new BuildingCard(nextCardId++, "Building" + nextCardId, Era.ERA_1, 2, foodCost, 2, effect, "");
+        return new BuildingCard(nextCardId++, "Building" + nextCardId, era1, 2, foodCost, 2, effect, "");
     }
 }
 

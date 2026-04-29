@@ -1,5 +1,7 @@
 package it.polimi.ingsw.server.model.card;
 
+import it.polimi.ingsw.server.model.era.Era;
+
 import java.util.List;
 
 /**
@@ -40,4 +42,7 @@ public abstract class TribeCard extends Card{
     }
 
 
+    public void selfSort(List<TribeCard> eraI, List<TribeCard> eraIi, List<TribeCard> eraIii, List<TribeCard> finalEvents) {
+        getEra().selfSortbyEra(this, eraI, eraIi, eraIii, finalEvents);
+    }
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.model.core;
 
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.states.EndedState;
 import it.polimi.ingsw.server.model.states.LobbyState;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +13,14 @@ class GameTest {
 
     private Player hostPlayer;
     private Game game;
+    private Era1 era1;
 
     @BeforeEach
     void setUp() {
         hostPlayer = new Player("host");
         int gameId = 1;
         game = new Game(hostPlayer,  gameId);
+        era1 = new Era1();
     }
 
     @Test
@@ -66,8 +69,8 @@ class GameTest {
     void getCurrentEra() {
         assertThrows(IllegalStateException.class, () -> game.getCurrentEra());
 
-        game.setCurrentEra(Era.ERA_1);
-        assertEquals(Era.ERA_1, game.getCurrentEra());
+        game.setCurrentEra(era1);
+        assertSame(era1, game.getCurrentEra());
     }
 
     @Test

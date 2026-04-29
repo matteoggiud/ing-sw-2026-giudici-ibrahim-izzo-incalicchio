@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.model.ruleset;
 
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
-import it.polimi.ingsw.server.model.card.Era;
+import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 
 import java.util.ArrayList;
@@ -61,17 +61,6 @@ public interface IGameRuleSet {
      * @throws IllegalArgumentException if the turn order index is out of bounds.
      */
     int getInitialFood(int turnOrderIndex);
-
-    /**
-     * Returns the number of building cards to select for the given era
-     * based on the current player count.
-     *
-     * @param era the era for which the limit is requested.
-     * @param numPlayers the current number of players.
-     * @return the maximum number of building cards for that era.
-     * @throws IllegalArgumentException if era is null or player count is invalid.
-     */
-    int getBuildingLimit(Era era, int numPlayers);
 
     Stack<EventCard> sortEventCards(List<EventCard> eventCards);
 }
