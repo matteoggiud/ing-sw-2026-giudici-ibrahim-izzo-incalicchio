@@ -124,8 +124,9 @@ public class TuiClientView implements ClientView {
         renderer.render();
     }
 
-
-
+    public void showMyDeck() {
+        renderer.renderMyDeck();
+    }
 
 
     @Override

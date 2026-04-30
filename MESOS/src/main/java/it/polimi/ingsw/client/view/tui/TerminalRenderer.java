@@ -247,6 +247,50 @@ public class TerminalRenderer {
         }
     }
 
+    public void renderMyDeck() {
+        clearTerminal();
+
+        printHeader();
+
+        PlayerInfoDTO myInfo = null;
+        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
+            if (playerInfo.nickname() != null && playerInfo.nickname().equals(state.getNickname())) {
+                myInfo = playerInfo;
+                break;
+            }
+        }
+
+        printSection("Your deck");
+
+        if (myInfo == null || myInfo.deck() == null) {
+            System.out.println("Your deck is not available yet.");
+            printPromptHelp();
+            return;
+        }
+
+        PlayerDeckDTO deck = myInfo.deck();
+
+        System.out.println("Characters:");
+        if (deck.characterCards().isEmpty()) {
+            System.out.println("  none");
+        } else {
+            deck.characterCards().forEach(card ->
+                    printCardLine("character", card.cardId(), card.name(), card.era()));
+        }
+
+        System.out.println();
+        System.out.println("Buildings:");
+        if (deck.buildingCards().isEmpty()) {
+            System.out.println("  none");
+        } else {
+            deck.buildingCards().forEach(card ->
+                    printCardLine("building", card.cardId(), card.name(), card.era()));
+        }
+
+        printPromptHelp();
+    }
+
+
     private void printCurrentTurn() {
         String currentPlayer = state.getCurrentPlayerNickname();
 
