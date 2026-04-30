@@ -123,12 +123,14 @@ CREATE TABLE player
 CREATE TABLE game (
     game_id    SERIAL PRIMARY KEY,
     num_player INTEGER,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    finished_at TIMESTAMP DEFAULT NULL
 );
 
 CREATE TABLE game_player (
     game_id   INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
+    game_ranking INTEGER DEFAULT NULL,
     PRIMARY KEY (game_id, player_id),
     FOREIGN KEY (game_id) REFERENCES game (game_id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES player (player_id) ON DELETE CASCADE
