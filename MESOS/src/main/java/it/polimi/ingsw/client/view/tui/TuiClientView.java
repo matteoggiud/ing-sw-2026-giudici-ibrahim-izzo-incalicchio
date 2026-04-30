@@ -150,25 +150,78 @@ public class TuiClientView implements ClientView {
             return;
         }
 
-        printSection("Players resources");
-        System.out.printf("%-18s %-8s %-8s%n", "Player", "Food", "PP");
-        printLine(36);
+        printSection("Players statistics");
+
+        System.out.printf(
+                "%-18s %-5s %-6s %-7s %-10s %-10s %-10s %-10s%n",
+                "Player",
+                "PP",
+                "Food",
+                "Cards",
+                "SustDisc",
+                "ShamStars",
+                "BuildDisc",
+                "InvIcons"
+        );
+        printLine(86);
 
         for (PlayerInfoDTO playerInfo : playersInfo) {
-            String name = playerInfo.nickname();
+            PlayerStatsDTO stats = playerInfo.stats();
 
+            String name = playerInfo.nickname();
             if (name != null && name.equals(myNickname)) {
                 name = name + " (you)";
             }
 
             System.out.printf(
-                    "%-18s %-8d %-8d%n",
+                    "%-18s %-5d %-6d %-7d %-10d %-10d %-10d %-10d%n",
                     name,
-                    playerInfo.food(),
-                    playerInfo.pp()
+                    stats.pp(),
+                    stats.food(),
+                    stats.characterCount(),
+                    stats.sustenanceDiscount(),
+                    stats.shamanStars(),
+                    stats.builderDiscount(),
+                    stats.differentInventorIcons()
+            );
+        }
+
+        System.out.println();
+        System.out.println("Tribe character counts:");
+        System.out.printf(
+                "%-18s %-10s %-10s %-10s %-10s %-10s %-10s%n",
+                "Player",
+                "Gatherers",
+                "Hunters",
+                "Builders",
+                "Shamans",
+                "Artists",
+                "Inventors"
+        );
+        printLine(84);
+
+        for (PlayerInfoDTO playerInfo : playersInfo) {
+            PlayerStatsDTO stats = playerInfo.stats();
+
+            String name = playerInfo.nickname();
+            if (name != null && name.equals(myNickname)) {
+                name = name + " (you)";
+            }
+
+            System.out.printf(
+                    "%-18s %-10d %-10d %-10d %-10d %-10d %-10d%n",
+                    name,
+                    stats.gathererCount(),
+                    stats.hunterCount(),
+                    stats.builderCount(),
+                    stats.shamanCount(),
+                    stats.artistCount(),
+                    stats.inventorCount()
             );
         }
     }
+
+
 
 
     @Override

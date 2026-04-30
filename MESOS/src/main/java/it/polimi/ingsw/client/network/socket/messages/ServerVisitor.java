@@ -108,12 +108,9 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(PlayerResourcesUpdatedMessage message) {
-        sessionState.updatePlayerResources(
-                message.getCurrentPlayerNickname(),
-                message.getFood(),
-                message.getPrestigePoints());
-        view.showPlayersInfo(sessionState.getPlayersInfo(), sessionState.getNickname());
+        // Deprecated for the TUI: player stats are shown from PlayerInfoChangedMessage snapshots.
     }
+
 
     @Override
     public void visit(PlayerDeckUpdatedMessage message) {
@@ -142,10 +139,11 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(LeftGameSuccessMessage message) {
+        sessionState.clearGameState();
+        sessionState.setStatusMessage(message.getMessage());
         view.showMessage(message.getMessage());
-        sessionState.setActiveGameId(null);
-        sessionState.clearPlayersInfo();
     }
+
 
     @Override
     public void visit(PlayerInfoChangedMessage message) {
