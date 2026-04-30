@@ -242,7 +242,7 @@ public class DataDepository {
     }
 
     public List<EventCard> getRockPaintingEventCards() throws SQLException {
-        String sql = "SELECT id, name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold, image_key FROM event_card JOIN card ON event_card_id=card_id WHERE event_type = 'ROCK_PAINTING'";
+        String sql = "SELECT id, name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold, image_key FROM event_card JOIN card ON event_card_id=card_id WHERE event_type = 'ROCK_PAINTINGS'";
 
         List<EventCard> allRockPaintingEventCard = new ArrayList<>();
 
