@@ -152,7 +152,7 @@ INSERT INTO event_card (name, era, min_num_players, is_final_event, event_type, 
                         malus_pp, threshold)
 VALUES ('Hunt III', 'ERA_3', 2, false, 'HUNT', 1, 0, 3, 0, 0),
        ('Rock Paintings III', 'ERA_3', 2, false, 'ROCK_PAINTINGS', 0, 0, 3, 2, 3),
-       ('Sustenance III', 'ERA_3', 2, false, 'SUSTENANCE', 0, 1, 0, 3, 0),
+       ('Sustenance III', 'ERA_3', 2, true, 'SUSTENANCE', 0, 1, 0, 3, 0),
        ('Ritual Event III', 'ERA_3', 2, true, 'SHAMANIC_RITUAL', 0, 0, 15, 7, 0);
 
 -- Building cards Era 1

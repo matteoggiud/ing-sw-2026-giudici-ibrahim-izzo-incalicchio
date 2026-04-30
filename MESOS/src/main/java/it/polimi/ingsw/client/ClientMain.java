@@ -20,13 +20,13 @@ public class ClientMain {
         TuiClientView view = new TuiClientView(new Scanner(System.in));
 
         // 2. Create the Session State
-        ClientSessionState sessionState = new ClientSessionState(null, null);
+        ClientSessionState sessionState = new ClientSessionState();
 
         // 3. Create the Message Visitor (it only needs the View now, not the Controller)
         ServerMessageVisitor visitor = new ServerVisitor(sessionState, view);
 
         // 4. Create the Socket Client
-        SocketClient socketClient = new SocketClient(host, port, visitor);
+        SocketClient socketClient = new SocketClient(host, port, visitor, sessionState, view);
 
         // 5. Create the Virtual Server
         SocketVirtualServer network = new SocketVirtualServer(socketClient);

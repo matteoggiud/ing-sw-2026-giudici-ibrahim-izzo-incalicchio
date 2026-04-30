@@ -2,10 +2,7 @@ package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClientSessionState {
     private boolean connected;
@@ -17,6 +14,13 @@ public class ClientSessionState {
         this.nickname = nickname;
         this.activeGameId = activeGameId;
         this.connected = true;
+        this.playersInfo = new LinkedHashMap<>();
+    }
+
+    public ClientSessionState() {
+        this.nickname = null;
+        this.activeGameId = null;
+        this.connected = false;
         this.playersInfo = new LinkedHashMap<>();
     }
 
@@ -42,6 +46,7 @@ public class ClientSessionState {
 
     /**
      * Adds or updates the PlayerInfoDTO for the given player. The key is the player's nickname.
+     *
      * @param playerInfos the List of PlayerInfoDTO to add or update. If null or if the nickname is null, it will be ignored.
      */
     public void updatePlayersInfo(List<PlayerInfoDTO> playerInfos) {
@@ -79,5 +84,12 @@ public class ClientSessionState {
         this.activeGameId = null;
         this.playersInfo.clear();
         this.connected = false;
+    }
+
+    public void connect() {
+        this.nickname = null;
+        this.activeGameId = null;
+        this.playersInfo.clear();
+        this.connected = true;
     }
 }

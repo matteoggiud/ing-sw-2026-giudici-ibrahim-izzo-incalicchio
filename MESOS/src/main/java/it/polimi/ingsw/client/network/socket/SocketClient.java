@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
+import it.polimi.ingsw.client.view.ClientView;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +13,8 @@ public class SocketClient {
     private final String host;
     private final int port;
     private final ServerMessageVisitor serverVisitor;
+    private final ClientSessionState clientSessionState;
+    private final ClientView clientView;
 
     private Socket socket;
     private ObjectInputStream inputStream;
@@ -19,14 +22,16 @@ public class SocketClient {
     private SocketClientHandler clientHandler;
     private Thread clientHandlerThread;
 
-    public SocketClient(String host, int port, ServerMessageVisitor serverVisitor) {
+    public SocketClient(String host, int port, ServerMessageVisitor serverVisitor, ClientSessionState clientSessionState, ClientView clientView) {
         this.host = host;
         this.port = port;
         this.serverVisitor = serverVisitor;
+        this.clientSessionState = clientSessionState;
+        this.clientView = clientView;
     }
 
     /**
-     * Opens the socket connection and starts the client handler thread.
+     * Opens the socket connection and starts the server receiver handler thread.
      */
     public void connect() throws IOException {
         socket = new Socket(host, port);
@@ -36,7 +41,8 @@ public class SocketClient {
         outputStream.flush();
         inputStream = new ObjectInputStream(socket.getInputStream());
 
-        clientHandler = new SocketClientHandler(socket, inputStream, outputStream, serverVisitor);
+        clientSessionState.connect();
+        clientHandler = new SocketClientHandler(socket, inputStream, outputStream, serverVisitor, clientSessionState, clientView);
         clientHandlerThread = new Thread(clientHandler, "socket-client-handler");
         clientHandlerThread.start();
     }
