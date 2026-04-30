@@ -19,8 +19,8 @@ public class ActionResolver {
      * Resolves an extra action granted by a building effect.
      * Extra actions can only draw one card from the upper row.
      *
-     * @param game the current game context
-     * @param player the player resolving the extra action
+     * @param game         the current game context
+     * @param player       the player resolving the extra action
      * @param selectedCard the selected upper-row card
      * @param fromUpperRow true if the selected card is from the upper row
      * @throws IllegalArgumentException if any argument is invalid
@@ -41,6 +41,8 @@ public class ActionResolver {
         CardRow upperRow = game.getBoard().getUpperRow();
         selectedCard.validateSelectableFrom(upperRow);
         selectedCard.resolveFromOfferRow(player, upperRow);
+
+        new EffectResolver(game).resolveTrigger(player);
     }
 
 
@@ -203,7 +205,7 @@ public class ActionResolver {
      * Extra actions can only draw from the upper row, so the player must have
      * at least one selectable card in the upper row.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param player the player to check
      * @return true if the player can draw at least one card from the upper row
      * @throws IllegalArgumentException if game or player is null
@@ -215,7 +217,6 @@ public class ActionResolver {
 
         return game.getBoard().getUpperRow().hasSelectableCardFor(player);
     }
-
 
 
     public void resolveAutomaticSkips(Game game) {
@@ -267,7 +268,6 @@ public class ActionResolver {
 
         } while (progressed);
     }
-
 
 
 }
