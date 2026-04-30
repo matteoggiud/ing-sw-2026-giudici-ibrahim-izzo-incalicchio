@@ -41,11 +41,15 @@ public class ServerVisitor implements ServerMessageVisitor {
     public void visit(GameStartedMessage message) {
         sessionState.setActiveGameId(message.getGameId());
         sessionState.clearPlayersInfo();
+        sessionState.setCurrentPhase("STARTED");
+        sessionState.setStatusMessage("Game started.");
         view.showGameStarted(message.getGameId(), message.getPlayerNicknames());
     }
 
+
     @Override
     public void visit(BoardUpdatedMessage message) {
+        sessionState.setBoard(message.getBoard());
         view.showBoardSummary(message.getBoard());
     }
 
@@ -57,12 +61,17 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(LoginSuccessMessage message) {
-        view.showMessage(message.getMessage());
         sessionState.setNickname(message.getUsername());
+        sessionState.setCurrentPhase("MENU");
+        sessionState.setStatusMessage(message.getMessage());
+        view.showMessage(message.getMessage());
     }
+
 
     @Override
     public void visit(AvailableGamesMessage message) {
+        sessionState.setAvailableGames(message.getGames());
+        sessionState.setCurrentPhase("MENU");
         view.showAvailableGames(message.getGames());
     }
 
@@ -80,11 +89,13 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(GenericErrorMessage message) {
+        sessionState.setErrorMessage(message.getMessage());
         view.showError(message.getMessage());
     }
 
     @Override
     public void visit(EraChangedMessage message) {
+        sessionState.setStatusMessage("Era changed: " + message.getNewEra());
         view.showMessage("Era changed: " + message.getNewEra());
     }
 
@@ -111,25 +122,32 @@ public class ServerVisitor implements ServerMessageVisitor {
         // Deprecated for the TUI: player stats are shown from PlayerInfoChangedMessage snapshots.
     }
 
-
     @Override
     public void visit(PlayerDeckUpdatedMessage message) {
-        boolean isMe = message.getPlayerNickname().equals(sessionState.getNickname());
-        view.showPlayerDeck(message.getPlayerNickname(), message.getPlayerDeck(), isMe);
+        view.showPlayerDeck(
+                message.getPlayerNickname(),
+                message.getPlayerDeck(),
+                message.getPlayerNickname().equals(sessionState.getNickname())
+        );
     }
-
 
     @Override
     public void visit(GameEndedMessage message) {
-        view.showGameEnded(message.getGameId(), message.getFinalRanking());
         sessionState.setActiveGameId(null);
+        sessionState.setCurrentPhase("GAME_ENDED");
+        sessionState.setFinalRanking(message.getFinalRanking());
+        view.showGameEnded(message.getGameId(), message.getFinalRanking());
     }
+
 
     @Override
     public void visit(GameInfoMessage message) {
         sessionState.setActiveGameId(message.getGameInfo().gameId());
+        sessionState.setCurrentGameInfo(message.getGameInfo());
+        sessionState.setCurrentPhase("LOBBY");
         view.showGameInfo(message.getGameInfo());
     }
+
 
     @Override
     public void visit(DisconnectSuccessMessage message) {
@@ -151,8 +169,11 @@ public class ServerVisitor implements ServerMessageVisitor {
         view.showPlayersInfo(sessionState.getPlayersInfo(), sessionState.getNickname());
     }
 
+
     @Override
     public void visit(ResolvingEventMessage resolvingEventMessage) {
-        view.showMessage("[Resolving event: " + resolvingEventMessage.getEventCard().name() + "] ...");
+        sessionState.setResolvingEventName(resolvingEventMessage.getEventCard().name());
+        view.showMessage("Resolving event: " + resolvingEventMessage.getEventCard().name());
     }
+
 }

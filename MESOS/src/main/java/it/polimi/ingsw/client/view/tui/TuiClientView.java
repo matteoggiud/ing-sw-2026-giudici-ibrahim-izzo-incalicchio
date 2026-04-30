@@ -115,9 +115,9 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showPlayerResources(String playerNickname, int food, int prestigePoints, boolean isMe) {
-        String owner = isMe ? "You" : playerNickname;
-        System.out.printf("%s: food=%d, pp=%d%n", owner, food, prestigePoints);
+        // Deprecated for the renderer-based TUI.
     }
+
 
     @Override
     public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
