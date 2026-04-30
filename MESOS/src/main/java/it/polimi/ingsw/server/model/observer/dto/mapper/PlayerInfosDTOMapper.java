@@ -1,7 +1,10 @@
 package it.polimi.ingsw.server.model.observer.dto.mapper;
 
+import it.polimi.ingsw.server.model.card.CharacterType;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.deck.PlayerDeck;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerStatsDTO;
 
 import java.util.List;
 
@@ -16,14 +19,33 @@ public class PlayerInfosDTOMapper {
      * @return a PlayerInfoDTO containing the player's information
      */
     public static PlayerInfoDTO toPlayerInfoDTO(Player player) {
+        PlayerDeck deck = player.getPlayerDeck();
+        PlayerStatsDTO stats = new PlayerStatsDTO(
+                player.getPP(),
+                player.getFood(),
+                deck.getCharacters().size(),
+                deck.getTotalGathererDiscount(),
+                deck.getTotalShamanStars(),
+                deck.getTotalBuilderDiscount(),
+                deck.getDifferentInventorItem(),
+                deck.countCharactersByType(CharacterType.GATHERER),
+                deck.countCharactersByType(CharacterType.HUNTER),
+                deck.countCharactersByType(CharacterType.BUILDER),
+                deck.countCharactersByType(CharacterType.SHAMAN),
+                deck.countCharactersByType(CharacterType.ARTIST),
+                deck.countCharactersByType(CharacterType.INVENTOR)
+        );
         return new PlayerInfoDTO(
                 player.getNickname(),
                 player.getFood(),
                 player.getPP(),
                 player.getTotem().toString(),
-                PlayerDeckDTOMapper.toPlayerDeckDTO(player)
+                PlayerDeckDTOMapper.toPlayerDeckDTO(player),
+                stats
         );
     }
+
+
 
     /**
      * Converts a list of Player objects to a list of PlayerInfoDTO
