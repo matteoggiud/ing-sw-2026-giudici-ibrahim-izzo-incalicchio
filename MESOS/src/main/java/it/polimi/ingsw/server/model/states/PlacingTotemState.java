@@ -8,7 +8,6 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
 
 public class PlacingTotemState implements IGameState {
 
