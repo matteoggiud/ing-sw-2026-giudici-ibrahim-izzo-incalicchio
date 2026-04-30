@@ -78,6 +78,7 @@ public class GameController {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to join a game.");
         }
+        refreshActiveGameIdFromModel(clientSession);
         if (clientSession.isInGame()) {
             throw new IllegalStateException("Player is already in a game and cannot join another.");
         }
@@ -139,6 +140,7 @@ public class GameController {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to create a game.");
         }
+        refreshActiveGameIdFromModel(clientSession);
         if (clientSession.isInGame()) {
             throw new IllegalStateException("Player is currently in a game and cannot create another.");
         }
@@ -229,5 +231,33 @@ public class GameController {
         }
 
     }
+
+    /**
+     * Refreshes the active game ID for a client session by comparing the current active game ID in the session with the actual active game ID from the model.
+     * @param clientSession the client session for which to refresh the active game ID
+     */
+    private void refreshActiveGameIdFromModel(ClientSession clientSession) {
+        if (!clientSession.isLoggedIn()) {
+            return;
+        }
+
+        Integer actualActiveGameId = model.getActiveGameIdForPlayer(clientSession.getNickname());
+        Integer sessionActiveGameId = clientSession.getActiveGameId();
+
+        if (actualActiveGameId == null) {
+            if (sessionActiveGameId != null) {
+                clientSession.clearActiveGameId();
+            }
+            return;
+        }
+
+        if (!actualActiveGameId.equals(sessionActiveGameId)) {
+            if (sessionActiveGameId != null) {
+                clientSession.clearActiveGameId();
+            }
+            clientSession.setActiveGameId(actualActiveGameId);
+        }
+    }
+
 
 }
