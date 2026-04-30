@@ -13,28 +13,65 @@ import java.util.Scanner;
 
 public class ClientMain {
     public static void main(String[] args) {
-        String host = args.length > 0 ? args[0] : "localhost";
-        int port = args.length > 1 ? Integer.parseInt(args[1]) : 12345;
+        final String defaultHost = "localhost";
+        final int defaultPort = 12345;
 
-        // 1. Create the View
-        TuiClientView view = new TuiClientView(new Scanner(System.in));
+        // Shared Scanner for user input (passed to view and app)
+        Scanner scanner = new Scanner(System.in);
 
-        // 2. Create the Session State
+        // Parse host and port from command-line arguments or prompt the user
+        String host;
+        int port;
+
+        if (args.length >= 1) {
+            host = args[0];
+        } else {
+            System.out.print("Server host [" + defaultHost + "]: ");
+            String line = scanner.nextLine().trim();
+            host = line.isEmpty() ? defaultHost : line;
+        }
+
+        if (args.length >= 2) {
+            try {
+                port = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("Port argument not a number, using default " + defaultPort);
+                port = defaultPort;
+            }
+        } else {
+            System.out.print("Server port [" + defaultPort + "]: ");
+            String portLine = scanner.nextLine().trim();
+            if (portLine.isEmpty()) {
+                port = defaultPort;
+            } else {
+                try {
+                    port = Integer.parseInt(portLine);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid port input, using default " + defaultPort);
+                    port = defaultPort;
+                }
+            }
+        }
+
+        // Create the View (Scanner passed to view for user input)
+        TuiClientView view = new TuiClientView(scanner);
+
+        // Create the Session State
         ClientSessionState sessionState = new ClientSessionState();
 
-        // 3. Create the Message Visitor (it only needs the View now, not the Controller)
+        // Create the Message Visitor
         ServerMessageVisitor visitor = new ServerVisitor(sessionState, view);
 
-        // 4. Create the Socket Client
+        // Create the Socket Client
         SocketClient socketClient = new SocketClient(host, port, visitor, sessionState, view);
 
-        // 5. Create the Virtual Server
+        // Create the Virtual Server
         SocketVirtualServer network = new SocketVirtualServer(socketClient);
 
-        // 6. Create the Controller
+        // Create the Controller
         ClientController controller = new ClientController(view, network);
 
-        // 7. Start the connection
+        // Start the connection
         try {
             socketClient.connect();
         } catch (Exception e) {
@@ -42,8 +79,9 @@ public class ClientMain {
             return;
         }
 
-        // 8. Start the Application
-        TuiClientApp app = new TuiClientApp(controller, sessionState);
+        // Start the Application
+        TuiClientApp app = new TuiClientApp(controller, sessionState, scanner);
         app.run();
+
     }
 }
