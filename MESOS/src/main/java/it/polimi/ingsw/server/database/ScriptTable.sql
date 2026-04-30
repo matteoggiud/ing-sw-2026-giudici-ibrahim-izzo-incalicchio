@@ -122,7 +122,8 @@ CREATE TABLE player
 
 CREATE TABLE game (
     game_id    SERIAL PRIMARY KEY,
-    num_player INTEGER,
+    expected_players INTEGER NOT NULL CHECK (expected_players BETWEEN 2 AND 5),
+    host_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE SET NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     finished_at TIMESTAMP DEFAULT NULL
 );
