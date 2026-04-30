@@ -13,14 +13,15 @@ import java.util.Scanner;
 
 public class ClientMain {
     public static void main(String[] args) {
-        String host = args.length > 0 ? args[0] : "localhost";
+        String host = args.length > 0 ? args[0] : "172.20.10.4";
         int port = args.length > 1 ? Integer.parseInt(args[1]) : 12345;
 
-        // 1. Create the View
-        TuiClientView view = new TuiClientView(new Scanner(System.in));
-
-        // 2. Create the Session State
+        // 1. Create the Session State
         ClientSessionState sessionState = new ClientSessionState(null, null);
+
+        // 2. Create the View
+        TuiClientView view = new TuiClientView(new Scanner(System.in), sessionState);
+
 
         // 3. Create the Message Visitor (it only needs the View now, not the Controller)
         ServerMessageVisitor visitor = new ServerVisitor(sessionState, view);
