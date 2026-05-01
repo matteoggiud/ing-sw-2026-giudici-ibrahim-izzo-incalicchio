@@ -123,7 +123,7 @@ public class GamePortal implements IGameModel {
             throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
         }
 
-        int gameId = dw.addNewGame(hostNickname); //TODO: add also expected player count
+        int gameId = dw.addNewGame(hostNickname,expectedPlayerCount); //TODO: add also expected player count
         gameManager.createGame(host, gameId, expectedPlayerCount);
 
         // Add the observer for the host player to the newly created game

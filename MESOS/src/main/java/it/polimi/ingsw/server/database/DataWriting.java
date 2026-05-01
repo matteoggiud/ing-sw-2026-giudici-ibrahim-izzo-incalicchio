@@ -15,10 +15,11 @@ public class DataWriting {
      * @param hostNickname the nickname of the player who will host the new game
      * @return the unique identifier of the newly created game
      */
-    public int addNewGame(String hostNickname) {
+    public int addNewGame(String hostNickname, int expectedPlayerCount) {
         String insertGameSql = "INSERT INTO game DEFAULT VALUES";
         String insertHostLinkSql = "INSERT INTO game_player (game_id, player_id) " +
                 "VALUES (?, (SELECT player_id FROM player WHERE nickname = ?))";
+        String updateGameSql = "UPDATE game SET expected_players = ? WHERE game_id = ?";
 
         try (Connection c = DatabaseManager.getConnection()) {
             c.setAutoCommit(false); // create transaction
@@ -41,6 +42,21 @@ public class DataWriting {
                     }
                     generatedGameId = rs.getInt(1);
                 }
+            }
+
+            try (Connection connection = DatabaseManager.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(updateGameSql)) {
+
+                ps.setInt(1, expectedPlayerCount);
+                ps.setInt(2, generatedGameId);
+
+                int rowsAffected = ps.executeUpdate();
+                if (rowsAffected == 0) {
+                    throw new SQLException("Game with ID " + generatedGameId + " not found.");
+                }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
 
 
