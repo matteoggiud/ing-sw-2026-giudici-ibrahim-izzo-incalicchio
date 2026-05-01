@@ -238,16 +238,17 @@ public class GamePortal implements IGameModel {
      * @param player the player attempting to leave the game
      */
     @Override
-    public void leaveGame(int gameId, String player, IGameObserver observer) {
+    public List<String> leaveGame(int gameId, String player, IGameObserver observer) {
         Player playerToLeave = playerManager.getPlayer(player);
         if (playerToLeave == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
         Game game = gameManager.getGame(gameId);
+        List<String> players = game.getPlayers().getPlayerNicknames();
         gameManager.leaveGame(gameId, playerToLeave);
         removeObserver(game, observer);
 
-
+        return players;
     }
 
     /**

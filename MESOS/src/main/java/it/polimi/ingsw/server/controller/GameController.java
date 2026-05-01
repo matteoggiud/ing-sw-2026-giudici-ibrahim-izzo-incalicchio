@@ -2,7 +2,8 @@ package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.network.socket.ClientSession;
+import it.polimi.ingsw.server.network.ClientSession;
+import it.polimi.ingsw.server.network.SessionRegistry;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -35,11 +36,9 @@ public class GameController {
             model.login(username, password);
             clientSession.setNickname(username);
 
-            /*Integer activeGameId = model.getActiveGameIdForPlayer(username);
-            if (activeGameId != null) {
-                clientSession.setActiveGameId(activeGameId);
-                model.addObserver(activeGameId, clientSession.getVirtualView());
-            }*/
+            // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
+            SessionRegistry.getInstance().registerSession(clientSession);
+
         } catch (SQLException e) {
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
@@ -63,6 +62,8 @@ public class GameController {
 
             // Automatically log in the player after successful registration
             clientSession.setNickname(username);
+            // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
+            SessionRegistry.getInstance().registerSession(clientSession);
         } catch (SQLException e) {
             throw new RuntimeException("Register failed: " + e.getMessage(), e);
         }
@@ -78,7 +79,7 @@ public class GameController {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to join a game.");
         }
-        refreshActiveGameIdFromModel(clientSession);
+        // refreshActiveGameIdFromModel(clientSession);
         if (clientSession.isInGame()) {
             throw new IllegalStateException("Player is already in a game and cannot join another.");
         }
@@ -102,16 +103,17 @@ public class GameController {
      */
     public void leaveGame(ClientSession clientSession) {
         if (!clientSession.isLoggedIn()) {
-            throw new IllegalStateException("Player must be logged in to join a game.");
+            throw new IllegalStateException("Player must be logged in to leave a game.");
         }
         if (!clientSession.isInGame()) {
-            throw new IllegalStateException("Player is not currently in a game and cannot leave.");
+            throw new IllegalStateException("Player is not currently in a game and cannot leave it.");
         }
 
-        model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getVirtualView());
-
-        // update the client session to reflect that they have left the game
-        clientSession.clearActiveGameId();
+        // Update the client session to reflect that the player has left the game
+        List<String> remainingPlayers = model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getVirtualView());
+        for (String player : remainingPlayers) {
+            SessionRegistry.getInstance().getSession(player).clearActiveGameId();
+        }
     }
 
     /**
@@ -127,6 +129,8 @@ public class GameController {
             throw new IllegalStateException("Player is currently in a game and cannot logout.");
         }
 
+        // Unregister the client session from the session registry to ensure proper cleanup and prevent memory leaks
+        SessionRegistry.getInstance().unregisterSession(clientSession);
         model.logout(clientSession.getNickname());
     }
 
@@ -140,7 +144,7 @@ public class GameController {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to create a game.");
         }
-        refreshActiveGameIdFromModel(clientSession);
+        // refreshActiveGameIdFromModel(clientSession);
         if (clientSession.isInGame()) {
             throw new IllegalStateException("Player is currently in a game and cannot create another.");
         }
@@ -215,7 +219,7 @@ public class GameController {
             int gameId = clientSession.getActiveGameId();
 
             try {
-                model.leaveGame(gameId, nickname, clientSession.getVirtualView());
+                leaveGame(clientSession);
             } catch (RuntimeException ignored) {
                 // The observer may already have been removed.
             }
@@ -226,6 +230,8 @@ public class GameController {
 
         try {
             model.logout(nickname);
+            // Unregister the client session from the session registry to ensure proper cleanup and prevent memory leaks
+            SessionRegistry.getInstance().unregisterSession(clientSession);
         } catch (RuntimeException ignored) {
             // The player may already have been removed.
         }
@@ -234,6 +240,7 @@ public class GameController {
 
     /**
      * Refreshes the active game ID for a client session by comparing the current active game ID in the session with the actual active game ID from the model.
+     *
      * @param clientSession the client session for which to refresh the active game ID
      */
     private void refreshActiveGameIdFromModel(ClientSession clientSession) {

@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.view.tui;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.network.socket.ClientSessionState;
-import it.polimi.ingsw.server.network.socket.ClientSession;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
