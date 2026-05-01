@@ -8,10 +8,8 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerDeckDTOMapper;
-import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerDeckUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayerResourcesUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.ResolveActionTurnChangedEvent;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,23 +60,29 @@ public class ResolveActionsState implements IGameState {
     /**
      * Resolves the current player's action and updates the board, resources, deck and turn if needed.
      *
-     * @param game the current game context
-     * @param player the player resolving the action
+     * @param game         the current game context
+     * @param player       the player resolving the action
      * @param selectedCard the selected card
      * @param fromUpperRow true if the card comes from the upper row, false otherwise
      */
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        Map<String, ResourceSnapshot> resourcesBefore = capturePlayerResources(game);
-        DeckSnapshot deckBefore = capturePlayerDeck(player);
+        // Map<String, ResourceSnapshot> resourcesBefore = capturePlayerResources(game);
+        // DeckSnapshot deckBefore = capturePlayerDeck(player);
 
         actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
 
-        notifyChangedPlayerResources(game, resourcesBefore);
-        notifyPlayerDeckUpdateIfChanged(game, player, deckBefore);
+        // notifyChangedPlayerResources(game, resourcesBefore);
+        // notifyPlayerDeckUpdateIfChanged(game, player, deckBefore);
+
+        // After resolving the action, we notify observers about the updated player info, which includes resources and deck changes.
+        game.getObserverManager().notifyObservers(
+                new PlayerInfosChangedEvent(game.getGameId(), List.of(PlayerInfosDTOMapper.toPlayerInfoDTO(player)))
+        );
 
         executePhase(game);
     }
+
 
     /**
      * Notifies observers about the updated board state.
@@ -125,7 +129,7 @@ public class ResolveActionsState implements IGameState {
     /**
      * Notifies observers only for players whose resources changed.
      *
-     * @param game the current game context
+     * @param game            the current game context
      * @param resourcesBefore the resources captured before the action
      */
     private void notifyChangedPlayerResources(Game game, Map<String, ResourceSnapshot> resourcesBefore) {
@@ -145,7 +149,7 @@ public class ResolveActionsState implements IGameState {
     /**
      * Notifies observers about the updated resources of one player.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param player the player whose resources changed
      */
     private void notifyPlayerResourcesUpdate(Game game, Player player) {
@@ -179,8 +183,8 @@ public class ResolveActionsState implements IGameState {
     /**
      * Notifies observers if the player's deck changed after the action.
      *
-     * @param game the current game context
-     * @param player the player whose deck may have changed
+     * @param game       the current game context
+     * @param player     the player whose deck may have changed
      * @param deckBefore the deck snapshot captured before the action
      */
     private void notifyPlayerDeckUpdateIfChanged(Game game, Player player, DeckSnapshot deckBefore) {
@@ -194,7 +198,7 @@ public class ResolveActionsState implements IGameState {
     /**
      * Notifies observers about the updated personal deck of one player.
      *
-     * @param game the current game context
+     * @param game   the current game context
      * @param player the player whose deck changed
      */
     private void notifyPlayerDeckUpdate(Game game, Player player) {
@@ -210,7 +214,7 @@ public class ResolveActionsState implements IGameState {
     /**
      * Immutable snapshot of one player's resources at a specific moment.
      *
-     * @param food the food amount
+     * @param food           the food amount
      * @param prestigePoints the prestige points amount
      */
     private record ResourceSnapshot(int food, int prestigePoints) {
@@ -220,7 +224,7 @@ public class ResolveActionsState implements IGameState {
      * Immutable snapshot of one player's deck at a specific moment.
      *
      * @param characterCardIds the ids of the character cards currently in the deck
-     * @param buildingCardIds the ids of the building cards currently in the deck
+     * @param buildingCardIds  the ids of the building cards currently in the deck
      */
     private record DeckSnapshot(List<Integer> characterCardIds, List<Integer> buildingCardIds) {
     }

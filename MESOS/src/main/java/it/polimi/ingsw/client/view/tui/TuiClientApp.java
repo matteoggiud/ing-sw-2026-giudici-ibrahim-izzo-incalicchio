@@ -22,9 +22,9 @@ public class TuiClientApp {
     private final Map<String, CommandDefinition> commands;
     private final ClientSessionState sessionState;
 
-    public TuiClientApp(ClientController controller, ClientSessionState sessionState) {
+    public TuiClientApp(ClientController controller, ClientSessionState sessionState, Scanner scanner) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in);
+        this.scanner = scanner;
         this.commands = new LinkedHashMap<>();
         this.sessionState = sessionState;
 
