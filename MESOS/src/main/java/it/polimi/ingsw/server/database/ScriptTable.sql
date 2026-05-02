@@ -128,10 +128,12 @@ CREATE TABLE game (
     finished_at TIMESTAMP DEFAULT NULL
 );
 
+--Explicity asked to save the final score in the database
 CREATE TABLE game_player (
     game_id   INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
     game_ranking INTEGER DEFAULT NULL,
+    final_score INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (game_id, player_id),
     FOREIGN KEY (game_id) REFERENCES game (game_id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES player (player_id) ON DELETE CASCADE

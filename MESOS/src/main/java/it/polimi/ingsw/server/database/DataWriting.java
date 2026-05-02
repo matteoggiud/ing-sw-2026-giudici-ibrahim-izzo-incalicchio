@@ -1,12 +1,16 @@
 package it.polimi.ingsw.server.database;
 
 import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataWriting {
 
@@ -110,6 +114,43 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void rankingsUpdate(Game game) {
+        String updateGameSql = "UPDATE game SET finished_at = CURRENT_TIMESTAMP WHERE game_id = ?";
+        String updateGamePlayerSql = "UPDATE game_player SET final_score = ?, game_ranking = ? WHERE game_id = ? AND player_id = (SELECT player_id FROM player WHERE nickname = ?)";
+
+        try (Connection c = DatabaseManager.getConnection()) {
+            c.setAutoCommit(false);
+
+            try (PreparedStatement psUpdateGame = c.prepareStatement(updateGameSql)) {
+                psUpdateGame.setInt(1, game.getGameId());
+                psUpdateGame.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            Map<Player, Integer> rankings = ScoreCalculator.rankPlayer(game);
+
+            int position = 1;
+
+            for(Player player : rankings.keySet()) {
+                int final_score =  rankings.get(player);
+                try(PreparedStatement psUpdateRank = c.prepareStatement(updateGamePlayerSql)) {
+                    psUpdateRank.setInt(1, final_score);
+                    psUpdateRank.setInt(2, position);
+                    psUpdateRank.setInt(3, game.getGameId());
+                    psUpdateRank.setString(4, player.getNickname());
+                    psUpdateRank.executeUpdate();
+                    position++;
+                }catch (SQLException e) {
+                    c.rollback();
+                    throw new SQLException("Updating player ranking failed for player: " + player.getNickname(), e);
+                }
+            }
+            c.commit();
+        }catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
