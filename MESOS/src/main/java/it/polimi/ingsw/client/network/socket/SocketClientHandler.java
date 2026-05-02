@@ -45,11 +45,12 @@ public class SocketClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            while (!socket.isClosed()) {
+            while (!socket.isClosed() && clientSession.isConnected()) {
                 ServerMessage serverMessage = (ServerMessage) inputStream.readObject();
                 serverMessage.dispatch(serverVisitor);
             }
         } catch (EOFException | SocketException e) {
+
             handleServerDisconnected("Connection lost: server disconnected.");
         } catch (Exception e) {
             handleServerDisconnected("Connection lost: unexpected communication error.");
@@ -78,8 +79,10 @@ public class SocketClientHandler implements Runnable {
     }
 
     private void handleServerDisconnected(String message) {
-        clientView.showError(message);
-        clientSession.disconnect();
+        if (clientSession.isConnected()) {
+            clientView.showError(message);
+            clientSession.disconnect();
+        }
     }
 
 }

@@ -278,4 +278,5 @@ public class TuiClientView implements ClientView {
     private void printLine(int length) {
         System.out.println("-".repeat(length));
     }
+
 }
