@@ -138,3 +138,16 @@ CREATE TABLE game_player (
     FOREIGN KEY (game_id) REFERENCES game (game_id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES player (player_id) ON DELETE CASCADE
 );
+
+CREATE VIEW player_leaderboard_simple AS
+SELECT
+    g.expected_players AS num_players,
+    p.player_id,
+    p.nickname,
+    COUNT(gp.game_id) AS games_played,
+    SUM(gp.final_score) AS total_score
+FROM player p
+         INNER JOIN game_player gp ON p.player_id = gp.player_id
+         INNER JOIN game g ON gp.game_id = g.game_id
+WHERE g.finished_at IS NOT NULL
+GROUP BY g.expected_players, p.player_id, p.nickname;

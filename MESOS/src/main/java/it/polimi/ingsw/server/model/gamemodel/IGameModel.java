@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 
 import java.util.Map;
 
@@ -227,5 +228,7 @@ public interface IGameModel {
      * @return the unique identifier of the game in which the player is participating
      */
     Integer getActiveGameIdForPlayer(String nickname);
+
+    List<LeadBoardDTO> getRanking(int numPlayer);
 
 }

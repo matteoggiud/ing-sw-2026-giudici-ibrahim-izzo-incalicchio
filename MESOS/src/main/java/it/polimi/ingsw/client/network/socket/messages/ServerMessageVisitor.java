@@ -9,6 +9,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -170,6 +171,13 @@ public interface ServerMessageVisitor {
      * @param resolvingEventMessage the LeftGameMessage to visit
      */
     void visit(ResolvingEventMessage resolvingEventMessage);
+
+    /**
+     * Visits a RankingsMessage, which contains the current rankings of the players in the game. This message is sent to all clients when the rankings are updated, and may contain additional information about the players such as their scores or positions in the rankings.
+     *
+     * @param message the RankingsMessage to visit
+     */
+    void visit(RankingsMessage message);
 }
 
 

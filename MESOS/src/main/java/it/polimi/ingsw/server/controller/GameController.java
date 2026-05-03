@@ -2,6 +2,7 @@ package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.network.ClientSession;
 import it.polimi.ingsw.server.network.SessionRegistry;
 
@@ -266,5 +267,17 @@ public class GameController {
         }
     }
 
+    /**
+     * Retrieves the rankings of players based on their final scores, limited to a specified number of top players.
+     * @param clientSession the client session of the player requesting the rankings
+     * @param numPlayers the number of top players to include in the rankings
+     * @return a list of LeadBoardDTO objects representing the rankings of players
+     */
+    public List<LeadBoardDTO> getRankings(ClientSession clientSession, int numPlayers) {
+        if (!clientSession.isLoggedIn()) {
+            throw new IllegalStateException("Player must be logged in to get rankings");
+        }
+        return model.getRanking(numPlayers);
+    }
 
 }

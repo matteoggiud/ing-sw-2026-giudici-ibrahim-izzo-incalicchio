@@ -279,4 +279,23 @@ public class TuiClientView implements ClientView {
         System.out.println("-".repeat(length));
     }
 
+    @Override
+    public void showRankings(List<LeadBoardDTO> rankings) {
+        printSection("Rankings");
+        if (rankings == null || rankings.isEmpty()) {
+            System.out.println("No rankings available.");
+            return;
+        }
+
+        System.out.printf("%-4s %-18s %-8s %-20s%n", "Pos", "Player", "Score", "Finished at");
+        printLine(56);
+
+        for (LeadBoardDTO dto : rankings) {
+            String nickname = dto.nickname() == null ? "-" : dto.nickname();
+            int score = dto.finalScore();
+            int pos = dto.position();
+            String finishedAt = dto.finished_at() == null ? "-" : dto.finished_at();
+            System.out.printf("%-4d %-18s %-8d %-20s%n", pos, nickname, score, finishedAt);
+        }
+    }
 }

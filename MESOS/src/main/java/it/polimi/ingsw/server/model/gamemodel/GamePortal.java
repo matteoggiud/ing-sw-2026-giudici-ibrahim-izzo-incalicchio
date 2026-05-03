@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.model.gamemodel;
 
+import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
+import it.polimi.ingsw.server.database.DatabaseManager;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
@@ -9,6 +11,7 @@ import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
@@ -515,4 +518,12 @@ public class GamePortal implements IGameModel {
         return gameId.orElse(null);
     }
 
+    @Override
+    public List<LeadBoardDTO> getRanking(int numPlayer) {
+        if(numPlayer < 2 || numPlayer > 5){
+            throw new IllegalArgumentException("Number of players must be between 2 and 5.");
+        }
+        DataDepository db = new DataDepository();
+        return db.getLeadBoard(numPlayer);
+    }
 }

@@ -10,6 +10,7 @@ import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -156,5 +157,10 @@ public class ServerVisitor implements ServerMessageVisitor {
     @Override
     public void visit(ResolvingEventMessage resolvingEventMessage) {
         view.showMessage("[Resolving event: " + resolvingEventMessage.getEventCard().name() + "] ...");
+    }
+
+    @Override
+    public void visit(RankingsMessage message) {
+        view.showRankings(message.getRankings());
     }
 }
