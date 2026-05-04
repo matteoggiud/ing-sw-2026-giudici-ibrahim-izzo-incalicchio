@@ -31,6 +31,8 @@ public class ClientMain {
             host = line.isEmpty() ? defaultHost : line;
         }
 
+        // 1. Create the Session State
+        ClientSessionState sessionState = new ClientSessionState(null, null);
         if (args.length >= 2) {
             try {
                 port = Integer.parseInt(args[1]);
@@ -53,13 +55,12 @@ public class ClientMain {
             }
         }
 
-        // Create the View (Scanner passed to view for user input)
-        TuiClientView view = new TuiClientView(scanner);
 
-        // Create the Session State
-        ClientSessionState sessionState = new ClientSessionState();
+        // 2. Create the View
+        TuiClientView view = new TuiClientView(scanner, sessionState);
 
-        // Create the Message Visitor
+
+        // 3. Create the Message Visitor (it only needs the View now, not the Controller)
         ServerMessageVisitor visitor = new ServerVisitor(sessionState, view);
 
         // Create the Socket Client
@@ -80,8 +81,8 @@ public class ClientMain {
         }
 
         // Start the Application
-        TuiClientApp app = new TuiClientApp(controller, sessionState, scanner);
+        TuiClientApp app = new TuiClientApp(controller, sessionState, scanner, view);
+        // 8. Start the Application
         app.run();
-
     }
 }

@@ -1,21 +1,22 @@
 package it.polimi.ingsw.server.model.states;
 
-import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.Card;
-import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
+
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerDeckDTOMapper;
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents the phase where players with a specific building effect
@@ -63,10 +64,7 @@ public class ExtraActionState implements IGameState {
             return;
         }
 
-        // We notify observers about the updated board for rendundance if a player need to do extra action
-        // notifyBoardUpdate(game);
-
-        // Notify observers about the updated board state and the first player who must resolve their extra action
+        notifyBoardUpdate(game);
         notifyCurrentExtraActionPlayer(game);
     }
 
@@ -109,13 +107,12 @@ public class ExtraActionState implements IGameState {
         ActionResolver resolver = new ActionResolver();
         resolver.resolveExtraAction(game, player, selectedCard, fromUpperRow);
 
-        game.getObserverManager().notifyObservers(
-                new PlayerInfosChangedEvent(game.getGameId(), List.of(PlayerInfosDTOMapper.toPlayerInfoDTO(player)))
-        );
+        notifyPlayerInfosUpdate(game);
 
         pendingPlayers.remove(player);
         executePhase(game);
     }
+
 
     /**
      * Automatically removes pending players that cannot resolve their extra action.
@@ -176,4 +173,16 @@ public class ExtraActionState implements IGameState {
                 new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
         );
     }
+
+
+
+    private void notifyPlayerInfosUpdate(Game game) {
+        game.getObserverManager().notifyObservers(
+                new PlayerInfosChangedEvent(
+                        game.getGameId(),
+                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+                )
+        );
+    }
+
 }

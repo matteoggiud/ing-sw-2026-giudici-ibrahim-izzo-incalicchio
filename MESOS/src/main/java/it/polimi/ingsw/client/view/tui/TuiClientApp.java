@@ -20,9 +20,11 @@ public class TuiClientApp {
     private final Scanner scanner;
     private final Map<String, CommandDefinition> commands;
     private final ClientSessionState sessionState;
+    private final TuiClientView view;
 
-    public TuiClientApp(ClientController controller, ClientSessionState sessionState, Scanner scanner) {
+    public TuiClientApp(ClientController controller, ClientSessionState sessionState, Scanner scanner, TuiClientView view) {
         this.controller = controller;
+        this.view = view;
         this.scanner = scanner;
         this.commands = new LinkedHashMap<>();
         this.sessionState = sessionState;
@@ -79,6 +81,7 @@ public class TuiClientApp {
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
         put("draw", "draw <upper|lower> <cardId>", "Draw a card during resolve or extra action", this::handleDrawCard);
         put("draw-extra", "draw-extra <cardId>", "Draw a card during resolve or extra action", this::handleDrawExtraCard);
+        put("deck", "deck", "Show your deck", args -> view.showMyDeck());
         put("rankings", "rankings <numPlayers>", "Show the top numPlayers rankings", this::handleRankings);
     }
 

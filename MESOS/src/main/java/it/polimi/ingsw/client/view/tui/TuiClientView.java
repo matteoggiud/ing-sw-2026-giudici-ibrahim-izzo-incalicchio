@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.view.tui;
 
+import it.polimi.ingsw.client.network.socket.ClientSessionState;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
 import it.polimi.ingsw.server.model.observer.dto.*;
@@ -11,20 +12,27 @@ import java.util.Scanner;
 
 public class TuiClientView implements ClientView {
     private final Scanner scanner;
+    private final ClientSessionState sessionState;
+    private final TerminalRenderer renderer;
 
-    public TuiClientView(Scanner scanner) {
+    public TuiClientView(Scanner scanner, ClientSessionState sessionState) {
         this.scanner = scanner;
+        this.sessionState = sessionState;
+        this.renderer = new TerminalRenderer(sessionState);
     }
 
     @Override
     public void showMessage(String message) {
-        System.out.println(message);
+        sessionState.setStatusMessage(message);
+        renderer.render();
     }
 
     @Override
     public void showError(String message) {
-        System.err.println("[ERROR] " + message);
+        sessionState.setErrorMessage(message);
+        renderer.render();
     }
+
 
     @Override
     public Credentials requestLoginCredentials() {
@@ -50,157 +58,90 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showAvailableGames(List<GameInfoDTO> games) {
-        printSection("Available games");
-
-        if (games == null || games.isEmpty()) {
-            System.out.println("No available games.");
-            return;
-        }
-
-        System.out.printf("%-8s %-10s %s%n", "Game", "Players", "Nicknames");
-        printLine(56);
-
-        for (GameInfoDTO game : games) {
-            System.out.printf(
-                    "%-8d %-10s %s%n",
-                    game.gameId(),
-                    game.numOfPlayers() + "/" + game.expectedPlayerCount(),
-                    String.join(", ", game.players())
-            );
-        }
+        sessionState.setAvailableGames(games);
+        sessionState.setCurrentPhase("MENU");
+        renderer.render();
     }
+
 
     @Override
     public void showGameInfo(GameInfoDTO gameInfo) {
-        printSection("Game");
-        System.out.println("ID: " + gameInfo.gameId());
-        System.out.println("Players: " + gameInfo.numOfPlayers() + "/" + gameInfo.expectedPlayerCount());
-        System.out.println("Nicknames: " + String.join(", ", gameInfo.players()));
+        sessionState.setCurrentGameInfo(gameInfo);
+        sessionState.setActiveGameId(gameInfo.gameId());
+        sessionState.setCurrentPhase("LOBBY");
+        renderer.render();
     }
+
 
     @Override
     public void showGameStarted(int gameId, List<String> playerNicknames) {
-        printSection("Game started");
-        System.out.println("Game ID: " + gameId);
-        System.out.println("Players: " + String.join(", ", playerNicknames));
+        sessionState.setActiveGameId(gameId);
+        sessionState.setStatusMessage("Game started.");
+        sessionState.setCurrentPhase("STARTED");
+        renderer.render();
     }
+
 
     @Override
     public void showBoardSummary(BoardDTO board) {
-        printSection("Board");
-        System.out.println("Era: " + board.currentEra());
-
-        printCards(
-                "Upper row",
-                board.upperCharacterCards(),
-                board.upperEventCards(),
-                board.upperBuildingCards()
-        );
-
-        printCards(
-                "Lower row",
-                board.lowerCharacterCards(),
-                board.lowerEventCards(),
-                board.lowerBuildingCards()
-        );
-
-        printOfferTrack(board.offerTrackBoxes());
-        printTurnOrder(board.turnOrderSlots());
+        sessionState.setBoard(board);
+        renderer.render();
     }
+
 
     @Override
     public void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn) {
-        printSection("Place totem");
-        System.out.println("Current player: " + currentPlayerNickname);
-
-        if (isMyTurn) {
-            System.out.println("Your turn: use place <position>");
-        }
+        sessionState.setCurrentPhase("PLACE_TOTEM");
+        sessionState.setCurrentPlayerNickname(currentPlayerNickname);
+        renderer.render();
     }
+
 
     @Override
     public void showResolveActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-        printSection("Resolve action");
-        System.out.println("Current player: " + currentPlayerNickname);
-
-        if (isMyTurn) {
-            System.out.println("Your turn: use draw <upper|lower> <cardId>");
-        }
+        sessionState.setCurrentPhase("RESOLVE_ACTION");
+        sessionState.setCurrentPlayerNickname(currentPlayerNickname);
+        renderer.render();
     }
+
 
     @Override
     public void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-        printSection("Extra action");
-        System.out.println("Current player: " + currentPlayerNickname);
-
-        if (isMyTurn) {
-            System.out.println("Your extra action: use draw-extra <cardId>");
-        }
+        sessionState.setCurrentPhase("EXTRA_ACTION");
+        sessionState.setCurrentPlayerNickname(currentPlayerNickname);
+        renderer.render();
     }
+
 
     @Override
     public void showPlayerResources(String playerNickname, int food, int prestigePoints, boolean isMe) {
-        String owner = isMe ? "You" : playerNickname;
-        System.out.printf("%s: food=%d, pp=%d%n", owner, food, prestigePoints);
+        // Deprecated for the renderer-based TUI.
     }
+
 
     @Override
     public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
-        if (playersInfo == null || playersInfo.isEmpty()) {
-            return;
-        }
+        renderer.render();
+    }
 
-        printSection("Players resources");
-        System.out.printf("%-18s %-8s %-8s%n", "Player", "Food", "PP");
-        printLine(36);
-
-        for (PlayerInfoDTO playerInfo : playersInfo) {
-            String name = playerInfo.nickname();
-
-            if (name != null && name.equals(myNickname)) {
-                name = name + " (you)";
-            }
-
-            System.out.printf(
-                    "%-18s %-8d %-8d%n",
-                    name,
-                    playerInfo.food(),
-                    playerInfo.pp()
-            );
-        }
+    public void showMyDeck() {
+        renderer.renderMyDeck();
     }
 
 
     @Override
     public void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe) {
-        printSection(isMe ? "Your deck" : playerNickname + " deck");
-
-        System.out.println("Characters:");
-        if (playerDeck.characterCards().isEmpty()) {
-            System.out.println("  none");
-        } else {
-            playerDeck.characterCards().forEach(card ->
-                    printCardLine("character", card.cardId(), card.name(), card.era()));
-        }
-
-        System.out.println("Buildings:");
-        if (playerDeck.buildingCards().isEmpty()) {
-            System.out.println("  none");
-        } else {
-            playerDeck.buildingCards().forEach(card ->
-                    printCardLine("building", card.cardId(), card.name(), card.era()));
-        }
+        renderer.render();
     }
+
 
     @Override
     public void showGameEnded(int gameId, Map<String, Integer> finalRanking) {
-        printSection("Game ended");
-        System.out.println("Game ID: " + gameId);
-        System.out.println("Final ranking:");
-
-        finalRanking.forEach((player, score) ->
-                System.out.printf("  %-20s %d pp%n", player, score));
+        sessionState.setCurrentPhase("GAME_ENDED");
+        sessionState.setFinalRanking(finalRanking);
+        renderer.render();
     }
+
 
     private void printCards(
             String title,
