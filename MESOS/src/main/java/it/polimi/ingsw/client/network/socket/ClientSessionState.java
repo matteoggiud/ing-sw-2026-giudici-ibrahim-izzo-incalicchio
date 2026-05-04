@@ -3,6 +3,8 @@ package it.polimi.ingsw.client.network.socket;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+
 
 import java.util.*;
 
@@ -21,6 +23,7 @@ public class ClientSessionState {
     private String errorMessage;
     private String resolvingEventName;
     private Map<String, Integer> finalRanking;
+    private List<LeadBoardDTO> historicalRankings;
 
     private final Map<String, PlayerInfoDTO> playersInfo;
 
@@ -32,6 +35,7 @@ public class ClientSessionState {
         this.currentPhase = "MENU";
         this.playersInfo = new LinkedHashMap<>();
         this.finalRanking = Map.of();
+        this.historicalRankings = List.of();
     }
 
     public ClientSessionState() {
@@ -164,6 +168,7 @@ public class ClientSessionState {
         resolvingEventName = null;
         finalRanking = Map.of();
         playersInfo.clear();
+        historicalRankings = List.of();
     }
 
     public void disconnect() {
@@ -173,9 +178,18 @@ public class ClientSessionState {
     }
 
     public void connect() {
+        clearGameState();
         this.nickname = null;
-        this.activeGameId = null;
-        this.playersInfo.clear();
         this.connected = true;
     }
+
+    public List<LeadBoardDTO> getHistoricalRankings() {
+        return historicalRankings;
+    }
+
+    public void setHistoricalRankings(List<LeadBoardDTO> historicalRankings) {
+        this.historicalRankings = historicalRankings == null ? List.of() : List.copyOf(historicalRankings);
+    }
+
+
 }

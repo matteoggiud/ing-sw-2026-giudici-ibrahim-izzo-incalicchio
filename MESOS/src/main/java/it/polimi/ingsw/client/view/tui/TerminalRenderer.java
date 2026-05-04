@@ -29,6 +29,12 @@ public class TerminalRenderer {
             return;
         }
 
+        if (!state.getHistoricalRankings().isEmpty()) {
+            printHistoricalRankings(state.getHistoricalRankings());
+            printPromptHelp();
+            return;
+        }
+
         if (state.getActiveGameId() == null) {
             printAvailableGames(state.getAvailableGames());
             printPromptHelp();
@@ -324,6 +330,27 @@ public class TerminalRenderer {
         finalRanking.forEach((player, score) ->
                 System.out.printf("  %-20s %d pp%n", player, score));
     }
+
+    private void printHistoricalRankings(List<LeadBoardDTO> rankings) {
+        printSection("Historical leaderboard");
+
+        System.out.printf("%-4s %-18s %-8s %-20s%n", "Pos", "Player", "Score", "Finished at");
+        printLine(56);
+
+        for (LeadBoardDTO dto : rankings) {
+            String nickname = dto.nickname() == null ? "-" : dto.nickname();
+            String finishedAt = dto.finished_at() == null ? "-" : dto.finished_at();
+
+            System.out.printf(
+                    "%-4d %-18s %-8d %-20s%n",
+                    dto.position(),
+                    nickname,
+                    dto.finalScore(),
+                    finishedAt
+            );
+        }
+    }
+
 
     private void printPromptHelp() {
         System.out.println();

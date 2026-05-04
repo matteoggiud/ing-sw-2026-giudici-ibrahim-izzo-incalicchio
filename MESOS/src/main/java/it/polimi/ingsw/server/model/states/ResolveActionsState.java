@@ -5,12 +5,11 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
-import it.polimi.ingsw.server.model.observer.event.ResolveActionTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
-import it.polimi.ingsw.server.model.observer.event.*;
-
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
+import it.polimi.ingsw.server.model.observer.event.ResolveActionTurnChangedEvent;
+
 
 /**
  * Represents the state of the game where players resolve their actions

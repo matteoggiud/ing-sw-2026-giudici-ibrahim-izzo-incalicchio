@@ -58,6 +58,7 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showAvailableGames(List<GameInfoDTO> games) {
+        sessionState.setFinalRanking(Map.of());
         sessionState.setAvailableGames(games);
         sessionState.setCurrentPhase("MENU");
         renderer.render();
@@ -66,6 +67,7 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showGameInfo(GameInfoDTO gameInfo) {
+        sessionState.setFinalRanking(Map.of());
         sessionState.setCurrentGameInfo(gameInfo);
         sessionState.setActiveGameId(gameInfo.gameId());
         sessionState.setCurrentPhase("LOBBY");
@@ -75,6 +77,7 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showGameStarted(int gameId, List<String> playerNicknames) {
+        sessionState.setFinalRanking(Map.of());
         sessionState.setActiveGameId(gameId);
         sessionState.setStatusMessage("Game started.");
         sessionState.setCurrentPhase("STARTED");
@@ -143,100 +146,12 @@ public class TuiClientView implements ClientView {
     }
 
 
-    private void printCards(
-            String title,
-            List<CharacterCardDTO> characters,
-            List<EventCardDTO> events,
-            List<BuildingCardDTO> buildings
-    ) {
-        System.out.println();
-        System.out.println(title + ":");
-
-        if (characters.isEmpty() && events.isEmpty() && buildings.isEmpty()) {
-            System.out.println("  empty");
-            return;
-        }
-
-        characters.forEach(card ->
-                printCardLine("character", card.cardId(), card.name(), card.era()));
-
-        events.forEach(card ->
-                printCardLine("event", card.cardId(), card.name(), card.era()));
-
-        buildings.forEach(card ->
-                printCardLine("building", card.cardId(), card.name(), card.era()));
-    }
-
-    private void printOfferTrack(List<OfferBoxDTO> boxes) {
-        System.out.println();
-        System.out.println("Offer track:");
-        System.out.printf("%-5s %-16s %-7s %-7s %-5s%n", "Pos", "Player", "Upper", "Lower", "Food");
-        printLine(48);
-
-        for (OfferBoxDTO box : boxes) {
-            String player = box.placedPlayerNickname() == null ? "-" : box.placedPlayerNickname();
-
-            System.out.printf(
-                    "%-5d %-16s %-7d %-7d %-5d%n",
-                    box.position(),
-                    player,
-                    box.upperRowPicks(),
-                    box.lowerRowPicks(),
-                    box.foodReward()
-            );
-        }
-    }
-
-    private void printTurnOrder(List<TurnOrderSlotDTO> slots) {
-        System.out.println();
-        System.out.println("Turn order:");
-        System.out.printf("%-5s %-16s %-9s%n", "Pos", "Player", "Food");
-        printLine(34);
-
-        for (TurnOrderSlotDTO slot : slots) {
-            String player = slot.placedPlayerNickname() == null ? "-" : slot.placedPlayerNickname();
-
-            System.out.printf(
-                    "%-5d %-16s %-9d%n",
-                    slot.position(),
-                    player,
-                    slot.foodBonus()
-            );
-        }
-    }
-
-    private void printCardLine(String type, int cardId, String name, String era) {
-        System.out.printf("  %-9s #%03d  %-28s %s%n", type, cardId, name, era);
-    }
-
-    private void printSection(String title) {
-        System.out.println();
-        printLine(56);
-        System.out.println(title);
-        printLine(56);
-    }
-
-    private void printLine(int length) {
-        System.out.println("-".repeat(length));
-    }
 
     @Override
     public void showRankings(List<LeadBoardDTO> rankings) {
-        printSection("Rankings");
-        if (rankings == null || rankings.isEmpty()) {
-            System.out.println("No rankings available.");
-            return;
-        }
-
-        System.out.printf("%-4s %-18s %-8s %-20s%n", "Pos", "Player", "Score", "Finished at");
-        printLine(56);
-
-        for (LeadBoardDTO dto : rankings) {
-            String nickname = dto.nickname() == null ? "-" : dto.nickname();
-            int score = dto.finalScore();
-            int pos = dto.position();
-            String finishedAt = dto.finished_at() == null ? "-" : dto.finished_at();
-            System.out.printf("%-4d %-18s %-8d %-20s%n", pos, nickname, score, finishedAt);
-        }
+        sessionState.setHistoricalRankings(rankings);
+        sessionState.setCurrentPhase("LEADERBOARD");
+        renderer.render();
     }
+
 }
