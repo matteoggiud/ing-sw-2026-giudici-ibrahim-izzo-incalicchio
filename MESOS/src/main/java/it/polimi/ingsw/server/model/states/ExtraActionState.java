@@ -11,8 +11,6 @@ import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerDeckDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
