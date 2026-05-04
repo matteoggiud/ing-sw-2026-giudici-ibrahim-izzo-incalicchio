@@ -21,6 +21,15 @@ public final class SessionRegistry {
         loggedSessions.put(session.getNickname(), session);
     }
 
+    public synchronized void clearActiveGameIdForGame(int gameId) {
+        for (ClientSession session : loggedSessions.values()) {
+            if (session.getActiveGameId() != null && session.getActiveGameId() == gameId) {
+                session.clearActiveGameId();
+            }
+        }
+    }
+
+
     public synchronized void unregisterSession(ClientSession session) {
         if(session == null || session.getNickname() == null) {
             throw new IllegalArgumentException("Session and session nickname cannot be null");

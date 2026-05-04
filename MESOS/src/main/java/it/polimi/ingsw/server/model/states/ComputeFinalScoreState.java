@@ -45,6 +45,7 @@ public class ComputeFinalScoreState implements IGameState {
 
         notifyGameEnded(game);
         finalRankingNotified = true;
+        nextState(game);
     }
 
     /**

@@ -78,10 +78,10 @@ public class TuiClientView implements ClientView {
     @Override
     public void showGameStarted(int gameId, List<String> playerNicknames) {
         sessionState.setFinalRanking(Map.of());
+        sessionState.setHistoricalRankings(List.of());
         sessionState.setActiveGameId(gameId);
         sessionState.setStatusMessage("Game started.");
         sessionState.setCurrentPhase("STARTED");
-        renderer.render();
     }
 
 
