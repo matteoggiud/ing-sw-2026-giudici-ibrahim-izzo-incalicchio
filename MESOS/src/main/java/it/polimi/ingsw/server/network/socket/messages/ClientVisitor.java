@@ -4,17 +4,19 @@ import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.network.socket.ClientSession;
-import it.polimi.ingsw.server.network.socket.messages.game.GameInfoMessage;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.server.network.ClientSession;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
 import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
+import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
@@ -243,5 +245,23 @@ public class ClientVisitor implements ClientMessageVisitor {
                     new GenericErrorMessage("Failed to draw extra card")
             );
         }
+    }
+
+    @Override
+    public void visit(GetRankingsMessage message) {
+        try {
+            System.out.println("DEBUG rankings request numPlayers = " + message.getNumPlayers());
+            List<LeadBoardDTO> rankings = gameController.getRankings(clientSession, message.getNumPlayers());
+            clientSession.getVirtualView().sendMessage(new RankingsMessage(rankings));
+        } catch (RuntimeException e) {
+            clientSession.getVirtualView().sendMessage(
+                    new GenericErrorMessage("Failed to get rankings: " + e.getMessage())
+            );
+        } catch (Exception e) {
+            clientSession.getVirtualView().sendMessage(
+                    new GenericErrorMessage("Failed to get rankings")
+            );
+        }
+        System.out.println("DEBUG SERVER: received GetRankingsMessage with numPlayers = " + message.getNumPlayers());
     }
 }

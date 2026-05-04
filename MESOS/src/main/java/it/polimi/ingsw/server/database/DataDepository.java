@@ -24,6 +24,7 @@ import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.era.Era2;
 import it.polimi.ingsw.server.model.era.Era3;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -242,7 +243,7 @@ public class DataDepository {
     }
 
     public List<EventCard> getRockPaintingEventCards() throws SQLException {
-        String sql = "SELECT id, name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold, image_key FROM event_card JOIN card ON event_card_id=card_id WHERE event_type = 'ROCK_PAINTING'";
+        String sql = "SELECT id, name, era, min_num_players, is_final_event, event_type, gained_food, malus_food, gained_pp, malus_pp, threshold, image_key FROM event_card JOIN card ON event_card_id=card_id WHERE event_type = 'ROCK_PAINTINGS'";
 
         List<EventCard> allRockPaintingEventCard = new ArrayList<>();
 
@@ -569,4 +570,45 @@ public class DataDepository {
             default -> throw new IllegalArgumentException("Invalid Era: " + era);
         }
     }
+
+    public List<LeadBoardDTO> getLeadBoard(int numPlayers) {
+        String rankings = """
+        SELECT
+            p.nickname,
+            SUM(gp.final_score) AS total_score,
+            MAX(g.finished_at) AS finished_at
+        FROM player p
+        INNER JOIN game_player gp ON p.player_id = gp.player_id
+        INNER JOIN game g ON gp.game_id = g.game_id
+        WHERE g.finished_at IS NOT NULL
+          AND g.expected_players = ?
+        GROUP BY p.nickname
+        ORDER BY total_score DESC, p.nickname ASC;
+        """;
+
+        List<LeadBoardDTO> leadBoardDTO = new ArrayList<>();
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(rankings)) {
+
+            ps.setInt(1, numPlayers);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                int position = 1;
+
+                while (rs.next()) {
+                    String nickname = rs.getString("nickname");
+                    int finalScore = rs.getInt("total_score");
+                    String finishedAt = rs.getString("finished_at");
+
+                    leadBoardDTO.add(new LeadBoardDTO(nickname, finalScore, position++, finishedAt));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return leadBoardDTO;
+    }
+
 }

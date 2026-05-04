@@ -122,14 +122,32 @@ CREATE TABLE player
 
 CREATE TABLE game (
     game_id    SERIAL PRIMARY KEY,
-    num_player INTEGER,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    expected_players INTEGER NOT NULL CHECK (expected_players BETWEEN 2 AND 5),
+    host_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE SET NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    finished_at TIMESTAMP DEFAULT NULL
 );
 
+--Explicity asked to save the final score in the database
 CREATE TABLE game_player (
     game_id   INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
+    game_ranking INTEGER DEFAULT NULL,
+    final_score INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (game_id, player_id),
     FOREIGN KEY (game_id) REFERENCES game (game_id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES player (player_id) ON DELETE CASCADE
 );
+
+CREATE VIEW player_leaderboard_simple AS
+SELECT
+    g.expected_players AS num_players,
+    p.player_id,
+    p.nickname,
+    COUNT(gp.game_id) AS games_played,
+    SUM(gp.final_score) AS total_score
+FROM player p
+         INNER JOIN game_player gp ON p.player_id = gp.player_id
+         INNER JOIN game g ON gp.game_id = g.game_id
+WHERE g.finished_at IS NOT NULL
+GROUP BY g.expected_players, p.player_id, p.nickname;

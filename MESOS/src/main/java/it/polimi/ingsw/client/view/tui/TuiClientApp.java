@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.view.tui;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.network.socket.ClientSessionState;
-import it.polimi.ingsw.server.network.socket.ClientSession;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -22,9 +21,9 @@ public class TuiClientApp {
     private final Map<String, CommandDefinition> commands;
     private final ClientSessionState sessionState;
 
-    public TuiClientApp(ClientController controller, ClientSessionState sessionState) {
+    public TuiClientApp(ClientController controller, ClientSessionState sessionState, Scanner scanner) {
         this.controller = controller;
-        this.scanner = new Scanner(System.in);
+        this.scanner = scanner;
         this.commands = new LinkedHashMap<>();
         this.sessionState = sessionState;
 
@@ -80,6 +79,7 @@ public class TuiClientApp {
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
         put("draw", "draw <upper|lower> <cardId>", "Draw a card during resolve or extra action", this::handleDrawCard);
         put("draw-extra", "draw-extra <cardId>", "Draw a card during resolve or extra action", this::handleDrawExtraCard);
+        put("rankings", "rankings <numPlayers>", "Show the top numPlayers rankings", this::handleRankings);
     }
 
 
@@ -207,6 +207,21 @@ public class TuiClientApp {
             controller.drawExtraCard(selectedCardId);
         } catch (NumberFormatException e) {
             System.out.println("Invalid cardId. It must be an integer.");
+        }
+    }
+
+    private void handleRankings(String[] parts){
+        if (parts.length != 2) {
+            System.out.println(commands.get("rankings").usage);
+            return;
+        }
+
+        try {
+            int numPlayers = Integer.parseInt(parts[1]);
+            controller.getRankings(numPlayers);
+            System.out.println("DEBUG CLIENT: handleRankings called with " + numPlayers);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid numPlayers. It must be an integer.");
         }
     }
 

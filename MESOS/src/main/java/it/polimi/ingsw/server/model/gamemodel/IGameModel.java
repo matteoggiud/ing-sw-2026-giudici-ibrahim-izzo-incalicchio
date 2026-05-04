@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 
 import java.util.Map;
 
@@ -159,8 +160,9 @@ public interface IGameModel {
      * @param gameId   the unique identifier of the game the player wants to leave
      * @param player   the player attempting to leave the game
      * @param observer the observer associated with the player, which will be removed from the game's observers list
+     * @return a list of remaining players in the game after the player has left
      */
-    void leaveGame(int gameId, String player, IGameObserver observer);
+    List<String> leaveGame(int gameId, String player, IGameObserver observer);
 
     /**
      * Retrieves the final ranking of a game when the game has reached
@@ -226,5 +228,7 @@ public interface IGameModel {
      * @return the unique identifier of the game in which the player is participating
      */
     Integer getActiveGameIdForPlayer(String nickname);
+
+    List<LeadBoardDTO> getRanking(int numPlayer);
 
 }

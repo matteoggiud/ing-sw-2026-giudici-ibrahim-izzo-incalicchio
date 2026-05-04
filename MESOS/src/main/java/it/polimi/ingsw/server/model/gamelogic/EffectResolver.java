@@ -71,9 +71,6 @@ public class EffectResolver {
             // Finally, apply all the changes to the players' resources based on the log of effect results
             applyAllChanges(changes);
 
-            // Notify observers about the resolved event card and the resulting changes to player resources
-            //game.getObserverManager().notifyObservers(new ResolvingEventSuccessUpdate(game.getGameId(), EventCardDTOMapper.toEventCardDTO(eventCard), EventChangesDTOMapper.toEventChangesDTO()));
-            game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
         }
     }
 
@@ -83,15 +80,16 @@ public class EffectResolver {
      * @param player the player for whom the triggers are to be resolved.
      */
     public void resolveTrigger(Player player) {
-                List<EffectEventResult> changes = new ArrayList<>();
-                //Cycle to apply eventual character and building effect given be the event
-                List<IEventTrigger> activeBuildingTriggers = player.getPlayerDeck().getActiveBuildingEventTriggers();
-                for (IEventTrigger buildingModifier : activeBuildingTriggers) {
-                    changes.add(new EffectEventResult(buildingModifier.getTrigger(player, game), 0, player));
-                }
-                // Finally, apply all the changes to the players' resources based on the log of effect results
-                applyAllChanges(changes);
-            }
+        List<EffectEventResult> changes = new ArrayList<>();
+        //Cycle to apply eventual character and building effect given be the event
+        List<IEventTrigger> activeBuildingTriggers = player.getPlayerDeck().getActiveBuildingEventTriggers();
+        for (IEventTrigger buildingModifier : activeBuildingTriggers) {
+            changes.add(new EffectEventResult(buildingModifier.getTrigger(player, game), 0, player));
+        }
+        // Finally, apply all the changes to the players' resources based on the log of effect results
+        applyAllChanges(changes);
+
+    }
 
 
     /**
@@ -104,6 +102,10 @@ public class EffectResolver {
             change.getTargetPlayer().addFood(change.getFoodChange());
             change.getTargetPlayer().addPP(change.getPpChange());
         }
+
+        // Notify observers about the resolved triggers and the resulting changes to player resources
+        // game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
+
     }
 
 }

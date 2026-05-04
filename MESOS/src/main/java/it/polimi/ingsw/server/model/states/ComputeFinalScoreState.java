@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
@@ -68,11 +69,13 @@ public class ComputeFinalScoreState implements IGameState {
      */
     private void notifyGameEnded(Game game) {
         Map<String, Integer> rankingByNickname = new LinkedHashMap<>();
+        DataWriting dw = new DataWriting();
 
         for (Map.Entry<Player, Integer> entry : getFinalRanking(game).entrySet()) {
             rankingByNickname.put(entry.getKey().getNickname(), entry.getValue());
         }
 
+        dw.rankingsUpdate(game);
         game.getObserverManager().notifyObservers(
                 new GameEndedEvent(game.getGameId(), rankingByNickname)
         );

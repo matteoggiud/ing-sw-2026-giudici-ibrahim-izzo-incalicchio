@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
+import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
 import java.io.EOFException;
@@ -16,11 +17,16 @@ public class SocketClientHandler implements Runnable {
     private final ObjectOutputStream outputStream;
     private final ServerMessageVisitor serverVisitor;
 
-    public SocketClientHandler(Socket socket, ObjectInputStream inputStream, ObjectOutputStream outputStream, ServerMessageVisitor serverVisitor) {
+    private final ClientSessionState clientSession;
+    private final ClientView clientView;
+
+    public SocketClientHandler(Socket socket, ObjectInputStream inputStream, ObjectOutputStream outputStream, ServerMessageVisitor serverVisitor, ClientSessionState clientSession, ClientView clientView) {
         this.socket = socket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
         this.serverVisitor = serverVisitor;
+        this.clientSession = clientSession;
+        this.clientView = clientView;
     }
 
 
@@ -39,15 +45,15 @@ public class SocketClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            while (!socket.isClosed()) {
+            while (!socket.isClosed() && clientSession.isConnected()) {
                 ServerMessage serverMessage = (ServerMessage) inputStream.readObject();
                 serverMessage.dispatch(serverVisitor);
             }
         } catch (EOFException | SocketException e) {
-            // Normal disconnection from server
+
+            handleServerDisconnected("Connection lost: server disconnected.");
         } catch (Exception e) {
-            // Unexpected communication error
-            e.printStackTrace();
+            handleServerDisconnected("Connection lost: unexpected communication error.");
         } finally {
             safeClose();
         }
@@ -69,9 +75,14 @@ public class SocketClientHandler implements Runnable {
             socket.close();
         } catch (Exception ignored) {
         }
+        clientSession.disconnect();
     }
 
-    public boolean isConnected() {
-        return socket != null && socket.isConnected() && !socket.isClosed();
+    private void handleServerDisconnected(String message) {
+        if (clientSession.isConnected()) {
+            clientView.showError(message);
+            clientSession.disconnect();
+        }
     }
+
 }

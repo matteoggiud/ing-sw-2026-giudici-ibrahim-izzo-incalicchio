@@ -67,7 +67,7 @@ class DataWritingGamePortalTest {
         insertPlayer(hostNickname);
 
         DataWriting dataWriting = new DataWriting();
-        int gameId = dataWriting.addNewGame(hostNickname);
+        int gameId = dataWriting.addNewGame(hostNickname,3);
 
         assertTrue(gameId > 0, "addNewGame deve restituire il game_id generato dal DB.");
         createdGameIds.add(gameId);
