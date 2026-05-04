@@ -11,7 +11,7 @@ public class GameServerImpl implements IGameServerRMI {
     }
 
     @Override
-    public void login(ClientSession clientSession, String nickname, String password) {
-            controller.login(clientSession, nickname, password);
+    public void login(IGameClientRMI gameClientRMI, String nickname, String password) {
+            controller.login(gameClientRMI, nickname, password);
     }
 }
