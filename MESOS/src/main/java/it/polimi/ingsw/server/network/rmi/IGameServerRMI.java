@@ -8,5 +8,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface IGameServerRMI extends Remote {
-    void login(ClientSession clientSession, String nickname, String password) throws RemoteException;
+    void login(IGameClientRMI clientCallback, String nickname, String password) throws RemoteException;
 }
