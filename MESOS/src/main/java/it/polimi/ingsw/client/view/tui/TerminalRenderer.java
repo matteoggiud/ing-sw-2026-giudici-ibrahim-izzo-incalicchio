@@ -328,7 +328,7 @@ public class TerminalRenderer {
     private void printPromptHelp() {
         System.out.println();
         printLine(96);
-        System.out.println("Commands: help | login | register | games | create <players> | join <gameId> | left | place <pos> | draw <upper|lower> <cardId> | quit");
+        System.out.println("help | login | register | games | create <players> | join <gameId> | left | place <pos> | draw <upper|lower> <cardId> | draw-extra <cardId> | deck | rankings <numPlayers> | quit F/n\n");
     }
 
     private String playerName(String nickname, String myNickname) {
