@@ -24,7 +24,7 @@ public class ComputeFinalScoreState implements IGameState {
      */
     @Override
     public void nextState(Game game) {
-        game.setGameState(new EndedState());
+        game.setGameState(new EndedState(getFinalRanking(game)));
     }
 
     /**

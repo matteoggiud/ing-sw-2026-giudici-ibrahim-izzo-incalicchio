@@ -265,9 +265,10 @@ public class Game {
      *
      * @return true if the game has ended, false otherwise
      */
-    /*public boolean isEnded() {
+    public boolean isEnded() {
         return gameState instanceof EndedState;
-    }*/
+    }
+
 
     public void transferUpperTribeToLower() { // da portare nel game state
         board.transferUpperTribeToLower();
@@ -333,8 +334,8 @@ public class Game {
      * This method is used to end the game, it changes the game state to the ended state.
      * The rest will be managed by the state pattern.
      */
-    public void endGame() {
-        this.gameState = new EndedState();
+    public void endGame(Map<Player, Integer> finalRanking) {
+        this.gameState = new EndedState(finalRanking);
     }
 
     /**
