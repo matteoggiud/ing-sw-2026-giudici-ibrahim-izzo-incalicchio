@@ -250,7 +250,6 @@ public class ClientVisitor implements ClientMessageVisitor {
     @Override
     public void visit(GetRankingsMessage message) {
         try {
-            System.out.println("DEBUG rankings request numPlayers = " + message.getNumPlayers());
             List<LeadBoardDTO> rankings = gameController.getRankings(clientSession, message.getNumPlayers());
             clientSession.getVirtualView().sendMessage(new RankingsMessage(rankings));
         } catch (RuntimeException e) {
@@ -262,6 +261,5 @@ public class ClientVisitor implements ClientMessageVisitor {
                     new GenericErrorMessage("Failed to get rankings")
             );
         }
-        System.out.println("DEBUG SERVER: received GetRankingsMessage with numPlayers = " + message.getNumPlayers());
     }
 }

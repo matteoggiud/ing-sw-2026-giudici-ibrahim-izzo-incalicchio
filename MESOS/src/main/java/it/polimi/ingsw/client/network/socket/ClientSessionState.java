@@ -35,11 +35,10 @@ public class ClientSessionState {
     }
 
     public ClientSessionState() {
-        this.nickname = null;
-        this.activeGameId = null;
+        this(null, null);
         this.connected = false;
-        this.playersInfo = new LinkedHashMap<>();
     }
+
 
     public String getNickname() {
         return nickname;

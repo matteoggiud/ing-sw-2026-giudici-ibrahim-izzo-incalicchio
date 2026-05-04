@@ -222,7 +222,6 @@ public class TuiClientApp {
         try {
             int numPlayers = Integer.parseInt(parts[1]);
             controller.getRankings(numPlayers);
-            System.out.println("DEBUG CLIENT: handleRankings called with " + numPlayers);
         } catch (NumberFormatException e) {
             System.out.println("Invalid numPlayers. It must be an integer.");
         }
