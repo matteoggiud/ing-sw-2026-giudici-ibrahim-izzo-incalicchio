@@ -3,6 +3,8 @@ package it.polimi.ingsw.server.network.socket;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;
+import it.polimi.ingsw.server.network.EventHandler;
+import it.polimi.ingsw.server.network.GenericVirtualView;
 import it.polimi.ingsw.server.network.socket.messages.ClientVisitor;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 
@@ -21,17 +23,17 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
-    private final SocketVirtualView socketVirtualView;
+    private final EventHandler eventHandler;
     private final ClientVisitor clientVisitor;
     private final SocketAcceptor socketAcceptor;
 
 
-    public ClientHandler(Socket clientSocket, GameController controller, ObjectInputStream inputStream, ObjectOutputStream outputStream, SocketAcceptor socketAcceptor) {
+    public ClientHandler(Socket clientSocket, GameController controller, ObjectInputStream inputStream, ObjectOutputStream outputStream, SocketAcceptor socketAcceptor, EventHandler eventHandler) {
         this.clientSocket = clientSocket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
-        this.socketVirtualView = new SocketVirtualView(outputStream);
-        this.clientVisitor = new ClientVisitor(controller, new ClientSession(clientSocket, this.socketVirtualView));
+        this.eventHandler = eventHandler;
+        this.clientVisitor = new ClientVisitor(controller, new ClientSession(clientSocket, eventHandler));
         this.socketAcceptor = socketAcceptor;
     }
 
@@ -61,9 +63,11 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    //TODO: fix it!! :/
     private void sendWelcome() {
-        LoginNeededMessage welcomeMessage = new LoginNeededMessage("Welcome! Please log in or register to continue.");
-        socketVirtualView.sendMessage(welcomeMessage);
+        //eventHandler.getView().onWelcome();
+        // LoginNeededMessage welcomeMessage = new LoginNeededMessage("Welcome! Please log in or register to continue.");
+        //eventHandler.getView().sendMessage(welcomeMessage);
     }
 
     private void safeClose() {

@@ -62,17 +62,17 @@ public class ClientVisitor implements ClientMessageVisitor {
             gameController.login(clientSession, message.getUsername(), message.getPasswordHash());
 
             // If login is successful, send a LoginSuccessMessage to the client
-            clientSession.getVirtualView().sendMessage(new LoginSuccessMessage("Login successful, welcome " + message.getUsername(), message.getUsername()));
+            clientSession.getEventHandler().getView().onLoginSuccess(message.getUsername(), "Login successful, welcome " + message.getUsername());
 
             // After a successful login, send the list of available games to the client
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
-            clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
+            clientSession.getEventHandler().getView().onAvailableGames(games);
         } catch (RuntimeException e) {
             // If login fails, send a LoginFailedMessage to the client with the error message
-            clientSession.getVirtualView().sendMessage(new LoginFailedMessage("Login failed", message.getUsername()));
+            clientSession.getEventHandler().getView().onLoginFailed("Login failed: " + e.getMessage(), message.getUsername());
         } catch (Exception e) {
             // If login fails due to any other exception, send a GenericErrorMessage to the client with the error message
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Login failed"));
+            clientSession.getEventHandler().getView().onGenericError("Login failed");
         }
     }
 
@@ -88,17 +88,17 @@ public class ClientVisitor implements ClientMessageVisitor {
             gameController.register(clientSession, message.getUsername(), message.getPassword());
 
             // If registration is successful, send a RegisterSuccessMessage to the client
-            clientSession.getVirtualView().sendMessage(new RegisterSuccessMessage("Registration successful, welcome " + message.getUsername(), message.getUsername()));
+            clientSession.getEventHandler().getView().onRegisterSuccess(message.getUsername(), "Registration successful, welcome " + message.getUsername());
 
             // After a successful login, send the list of available games to the client
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
-            clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
+            clientSession.getEventHandler().getView().onAvailableGames(games);
         } catch (RuntimeException e) {
             // If registration fails, send a LoginFailedMessage to the client with the error message
-            clientSession.getVirtualView().sendMessage(new RegisterFailedMessage("Registration failed", message.getUsername()));
+            clientSession.getEventHandler().getView().onRegisterFailed("Registration failed: " + e.getMessage(), message.getUsername());
         } catch (Exception e) {
             // If registration fails due to any other exception, send a GenericErrorMessage to the client with the error message
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Registration failed"));
+            clientSession.getEventHandler().getView().onGenericError("Registration failed");
         }
     }
 
@@ -112,9 +112,9 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             gameController.createGame(clientSession, message.getExpectedNumOfPlayers());
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to create game: " + e.getMessage()));
+            clientSession.getEventHandler().getView().onGenericError("Failed to create game: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to create game"));
+            clientSession.getEventHandler().getView().onGenericError("Failed to create game");
         }
     }
 
@@ -128,9 +128,9 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             gameController.joinGame(clientSession, message.getGameId());
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to join game: " + e.getMessage()));
+            clientSession.getEventHandler().getView().onGenericError("Failed to join game: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to join game"));
+            clientSession.getEventHandler().getView().onGenericError("Failed to join game");
         }
     }
 
@@ -143,11 +143,11 @@ public class ClientVisitor implements ClientMessageVisitor {
     public void visit(GetAvailableGamesMessage message) {
         try {
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
-            clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(games));
+            clientSession.getEventHandler().getView().onAvailableGames(games);
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to retrieve available games: " + e.getMessage()));
+            clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to retrieve available games"));
+            clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games");
         }
     }
 
@@ -160,9 +160,9 @@ public class ClientVisitor implements ClientMessageVisitor {
     public void visit(DisconnectMessage message) {
         try {
             String nickname = clientSession.isLoggedIn() ? clientSession.getNickname() : "";
-            clientSession.getVirtualView().sendMessage(new DisconnectSuccessMessage("Disconnected from server, see you " + nickname));
+            clientSession.getEventHandler().getView().onDisconnectionSuccess("Goodbye " + nickname);
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to disconnect"));
+            clientSession.getEventHandler().getView().onGenericError("Failed to disconnect");
         } finally {
             gameController.handleDisconnect(clientSession);
             clientSession.disconnectSession();
@@ -178,13 +178,13 @@ public class ClientVisitor implements ClientMessageVisitor {
     public void visit(LeftGameMessage message) {
         try {
             gameController.leaveGame(clientSession);
-            clientSession.getVirtualView().sendMessage(new LeftGameSuccessMessage("Left game successfully"));
+            clientSession.getEventHandler().getView().onLeftGameSuccess("You have left the game");
 
-            clientSession.getVirtualView().sendMessage(new AvailableGamesMessage(gameController.getAvailableGames(clientSession)));
+            clientSession.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(clientSession));
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to leave game: " + e.getMessage()));
+            clientSession.getEventHandler().getView().onGenericError("Failed to leave game: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(new GenericErrorMessage("Failed to leave game"));
+            clientSession.getEventHandler().getView().onGenericError("Failed to leave game");
         }
     }
 
@@ -198,13 +198,9 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             gameController.placing(clientSession, message.getOfferBoxPosition());
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to place totem: " + e.getMessage())
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to place totem: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to place totem")
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to place totem");
         }
     }
 
@@ -218,18 +214,15 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             gameController.drawCard(clientSession, message.getSelectedCardId(), message.isFromUpperRow());
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to draw card: " + e.getMessage())
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to draw card: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to draw card")
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to draw card");
         }
     }
 
     /**
      * Handles the client's request to draw an extra card from the game.
+     *
      * @param message the message containing the details of the extra draw card action
      */
     @Override
@@ -237,13 +230,9 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             gameController.drawCard(clientSession, message.getSelectedCardId(), true);
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to draw extra card: " + e.getMessage())
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to draw card: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to draw extra card")
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to draw card");
         }
     }
 
@@ -252,15 +241,11 @@ public class ClientVisitor implements ClientMessageVisitor {
         try {
             System.out.println("DEBUG rankings request numPlayers = " + message.getNumPlayers());
             List<LeadBoardDTO> rankings = gameController.getRankings(clientSession, message.getNumPlayers());
-            clientSession.getVirtualView().sendMessage(new RankingsMessage(rankings));
+            clientSession.getEventHandler().getView().onRankingsReceived(rankings);
         } catch (RuntimeException e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to get rankings: " + e.getMessage())
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to get rankings: " + e.getMessage());
         } catch (Exception e) {
-            clientSession.getVirtualView().sendMessage(
-                    new GenericErrorMessage("Failed to get rankings")
-            );
+            clientSession.getEventHandler().getView().onGenericError("Failed to get rankings");
         }
         System.out.println("DEBUG SERVER: received GetRankingsMessage with numPlayers = " + message.getNumPlayers());
     }

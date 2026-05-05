@@ -1,7 +1,5 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.server.network.socket.VirtualView;
-
 import java.net.Socket;
 
 /**
@@ -16,7 +14,7 @@ public class ClientSession {
     /**
      * The virtual view associated with this client session, used to send updates and messages to the client.
      */
-    private final VirtualView virtualView;
+    private final EventHandler eventHandler;
 
     /**
      * The nickname of the client associated with this session.
@@ -35,22 +33,22 @@ public class ClientSession {
      * Creates a new client session with the specified socket connection and virtual view.
      *
      * @param clientSocket the socket connection to the client
-     * @param virtualView  the virtual view associated with this client session
+     * @param eventHandler the event handler to be used for sending updates and messages to the client
      */
-    public ClientSession(Socket clientSocket, VirtualView virtualView) {
+    public ClientSession(Socket clientSocket, EventHandler eventHandler) {
         this.clientSocket = clientSocket;
-        this.virtualView = virtualView;
+        this.eventHandler = eventHandler;
         this.nickname = null;
         this.activeGameId = null;
     }
 
     /**
-     * Gets the virtual view associated with this client session.
+     * Gets the virtual view associated with this client session, which is used to send updates and messages to the client.
      *
      * @return the virtual view associated with this client session
      */
-    public VirtualView getVirtualView() {
-        return virtualView;
+    public EventHandler getEventHandler() {
+        return eventHandler;
     }
 
     /**

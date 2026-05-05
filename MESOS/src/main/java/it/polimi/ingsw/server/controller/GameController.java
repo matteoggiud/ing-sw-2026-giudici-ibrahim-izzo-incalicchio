@@ -85,7 +85,7 @@ public class GameController {
             throw new IllegalStateException("Player is already in a game and cannot join another.");
         }
 
-        model.joinGame(gameId, clientSession.getNickname(), clientSession.getVirtualView());
+        model.joinGame(gameId, clientSession.getNickname(), clientSession.getEventHandler());
 
 
         // update the client session to reflect the game they have joined
@@ -111,7 +111,7 @@ public class GameController {
         }
 
         // Update the client session to reflect that the player has left the game
-        List<String> remainingPlayers = model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getVirtualView());
+        List<String> remainingPlayers = model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getEventHandler());
         for (String player : remainingPlayers) {
             SessionRegistry.getInstance().getSession(player).clearActiveGameId();
         }
@@ -150,7 +150,7 @@ public class GameController {
             throw new IllegalStateException("Player is currently in a game and cannot create another.");
         }
 
-        int gameId = model.createGame(clientSession.getNickname(), expectedPlayerCount, clientSession.getVirtualView());
+        int gameId = model.createGame(clientSession.getNickname(), expectedPlayerCount, clientSession.getEventHandler());
         clientSession.setActiveGameId(gameId);
 
     }
