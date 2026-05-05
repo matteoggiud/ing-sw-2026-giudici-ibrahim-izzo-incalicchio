@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.network.socket;
 
 import it.polimi.ingsw.server.controller.GameController;
+import it.polimi.ingsw.server.network.EventHandler;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,7 +37,7 @@ public class SocketAcceptor {
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
 
-            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this);
+            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this, new EventHandler(new SocketGenericVirtualView(outputStream)));
             clients.add(client);
             new Thread(client).start();
         }

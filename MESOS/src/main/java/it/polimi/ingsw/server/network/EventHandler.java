@@ -1,10 +1,11 @@
-package it.polimi.ingsw.server.network.socket;
+package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
 import it.polimi.ingsw.server.network.SessionRegistry;
-import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
 
 
@@ -12,27 +13,20 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
-public class SocketVirtualView implements VirtualView {
+/**
+ * The EventHandler class implements the IGameObserver interface and serves as a bridge between the game model and the virtual view.
+ * It listens for various game events and updates the virtual view accordingly by sending appropriate messages to the clients.
+ */
+public class EventHandler implements IGameObserver {
 
-    private final ObjectOutputStream outputStream;
+    private final GenericVirtualView view;
 
-    public SocketVirtualView(ObjectOutputStream outputStream) {
-        this.outputStream = outputStream;
+    public EventHandler(GenericVirtualView view) {
+        this.view = view;
     }
 
-    /**
-     * Sends a message to the client through the socket connection.
-     *
-     * @param message the message to be sent to the client
-     */
-    @Override
-    public void sendMessage(ServerMessage message) throws RuntimeException {
-        try {
-            outputStream.writeObject(message);
-            outputStream.flush();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to send message to client: " + e.getMessage(), e);
-        }
+    public GenericVirtualView getView() {
+        return view;
     }
 
     /**
@@ -43,9 +37,7 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
         List<String> playerNicknames = event.getPlayerNicknames();
 
-        GameStartedMessage message = new GameStartedMessage(gameId, playerNicknames);
-
-        sendMessage(message);
+        view.onGameStarted(gameId, playerNicknames);
     }
 
     /**
@@ -55,9 +47,7 @@ public class SocketVirtualView implements VirtualView {
     public void update(PlayersChangedEvent event) {
         List<String> playerNicknames = event.getPlayerNicknames();
 
-        UpdatePlayersMessage message = new UpdatePlayersMessage(playerNicknames);
-
-        sendMessage(message);
+        view.onPlayerChanged(playerNicknames);
     }
 
     /**
@@ -68,9 +58,7 @@ public class SocketVirtualView implements VirtualView {
         BoardDTO board = event.getBoard();
         int gameId = event.getGameId();
 
-        BoardUpdatedMessage message = new BoardUpdatedMessage(gameId, board);
-
-        sendMessage(message);
+        view.onBoardChanged(gameId, board);
     }
 
     /**
@@ -81,7 +69,7 @@ public class SocketVirtualView implements VirtualView {
 
         EraChangedMessage message = new EraChangedMessage(event.getGameId(), event.getNewEra());
 
-        sendMessage(message);
+        view.onEraChanged(event.getGameId(), event.getNewEra());
     }
 
     /**
@@ -92,10 +80,7 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
         String currentPlayerNickname = event.getCurrentPlayerNickname();
 
-        PlaceTotemTurnChangedMessage message = new PlaceTotemTurnChangedMessage(gameId, currentPlayerNickname);
-
-        sendMessage(message);
-
+        view.onPlaceTotemTurnChanged(gameId, currentPlayerNickname);
     }
 
     /**
@@ -106,10 +91,7 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
         String currentPlayerNickname = event.getCurrentPlayerNickname();
 
-        ResolveActionTurnChangedMessage message = new ResolveActionTurnChangedMessage(gameId, currentPlayerNickname);
-
-        sendMessage(message);
-
+        view.onResolveActionTurnChanged(gameId, currentPlayerNickname);
     }
 
     /**
@@ -120,9 +102,7 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
         String currentPlayerNickname = event.getCurrentPlayerNickname();
 
-        ExtraActionTurnChangedMessage message = new ExtraActionTurnChangedMessage(gameId, currentPlayerNickname);
-
-        sendMessage(message);
+        view.onExtraActionTurnChanged(gameId, currentPlayerNickname);
     }
 
     /**
@@ -130,14 +110,12 @@ public class SocketVirtualView implements VirtualView {
      */
     @Override
     public void update(PlayerResourcesUpdatedEvent event) {
-        int gameId = event.getGameId();
+        /*int gameId = event.getGameId();
         String playerNickname = event.getPlayerNickname();
         int food = event.getFood();
         int prestigePoints = event.getPrestigePoints();
 
-        PlayerResourcesUpdatedMessage message = new PlayerResourcesUpdatedMessage(gameId, playerNickname, food, prestigePoints);
-
-        sendMessage(message);
+        view.onPlayerInfosChanged(gameId, List.of(new PlayerInfoDTO(playerNickname, food, prestigePoints, null, null)));*/
     }
 
     /**
@@ -149,9 +127,7 @@ public class SocketVirtualView implements VirtualView {
         String playerNickname = event.getPlayerNickname();
         PlayerDeckDTO playerDeck = event.getPlayerDeck();
 
-        PlayerDeckUpdatedMessage message = new PlayerDeckUpdatedMessage(gameId, playerNickname, playerDeck);
-
-        sendMessage(message);
+        view.onPlayerDeckUpdated(gameId, playerNickname, playerDeck);
     }
 
     /**
@@ -162,7 +138,8 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
         Map<String, Integer> finalRanking = event.getFinalRanking();
 
-        GameEndedMessage message = new GameEndedMessage(
+        view.onGameEnded(gameId, finalRanking);
+        /*GameEndedMessage message = new GameEndedMessage(
                 gameId,
                 finalRanking,
                 event.getNumPlayers(),
@@ -171,9 +148,8 @@ public class SocketVirtualView implements VirtualView {
 
 
         sendMessage(message);
-        SessionRegistry.getInstance().clearActiveGameIdForGame(gameId);
+        SessionRegistry.getInstance().clearActiveGameIdForGame(gameId);*/
     }
-
 
     /**
      *
@@ -183,7 +159,7 @@ public class SocketVirtualView implements VirtualView {
     public void update(JoinedGameEvent event) {
         GameInfoMessage message = new GameInfoMessage(event.getGameInfo());
 
-        sendMessage(message);
+        view.onJoinedGame(event.getGameInfo());
     }
 
     /**
@@ -194,7 +170,7 @@ public class SocketVirtualView implements VirtualView {
     public void update(PlayerInfosChangedEvent event) {
         PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfos());
 
-        sendMessage(message);
+        view.onPlayerInfosChanged(event.getGameId(), event.getPlayerInfos());
     }
 
     /**
@@ -205,6 +181,6 @@ public class SocketVirtualView implements VirtualView {
     public void update(ResolvingEventUpdate resolvingEventUpdate) {
         ResolvingEventMessage message = new ResolvingEventMessage(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
 
-        sendMessage(message);
+        view.onResolvingEvent(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
     }
 }
