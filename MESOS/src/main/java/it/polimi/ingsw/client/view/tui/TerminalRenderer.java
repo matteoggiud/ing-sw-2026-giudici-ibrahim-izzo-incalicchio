@@ -51,6 +51,11 @@ public class TerminalRenderer {
 
     private void clearTerminal() {
         System.out.print("\033[H\033[2J");
+        System.out.print("\u001b[3J");
+
+        for (int i = 0; i < 60; i++) {
+            System.out.println();
+        }
         System.out.flush();
     }
 
@@ -156,7 +161,7 @@ public class TerminalRenderer {
             return;
         }
 
-        characters.forEach(card -> printCardLine("character", card.cardId(), card.name(), card.era()));
+        characters.forEach(this::printCharacterCardLine);
         events.forEach(card -> printCardLine("event", card.cardId(), card.name(), card.era()));
         buildings.forEach(card -> printCardLine("building", card.cardId(), card.name(), card.era()));
     }
@@ -281,8 +286,7 @@ public class TerminalRenderer {
         if (deck.characterCards().isEmpty()) {
             System.out.println("  none");
         } else {
-            deck.characterCards().forEach(card ->
-                    printCardLine("character", card.cardId(), card.name(), card.era()));
+            deck.characterCards().forEach(this::printCharacterCardLine);
         }
 
         System.out.println();
@@ -371,9 +375,45 @@ public class TerminalRenderer {
         return nickname == null ? "-" : nickname;
     }
 
+    private void printCharacterCardLine(CharacterCardDTO card) {
+        System.out.printf(
+                "  %-9s #%03d  %-28s %-12s %s%n",
+                "character",
+                card.cardId(),
+                card.name(),
+                card.era(),
+                characterDetails(card)
+        );
+    }
+
+    private String characterDetails(CharacterCardDTO card) {
+        StringBuilder details = new StringBuilder();
+
+        if (card.shamanStars() > 0) {
+            details.append(card.shamanStars()).append("*");
+        }
+
+        if (card.foodIcon()) {
+            if (!details.isEmpty()) {
+                details.append(" ");
+            }
+            details.append("[food]");
+        }
+
+        if (card.inventorType() != null && !card.inventorType().isBlank()) {
+            if (!details.isEmpty()) {
+                details.append(" ");
+            }
+            details.append(card.inventorType());
+        }
+
+        return details.toString();
+    }
+
     private void printCardLine(String type, int cardId, String name, String era) {
         System.out.printf("  %-9s #%03d  %-28s %s%n", type, cardId, name, era);
     }
+
 
     private void printSection(String title) {
         System.out.println();
