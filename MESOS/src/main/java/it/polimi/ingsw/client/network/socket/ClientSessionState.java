@@ -134,7 +134,7 @@ public class ClientSessionState {
     }
 
     public void setFinalRanking(Map<String, Integer> finalRanking) {
-        this.finalRanking = finalRanking == null ? Map.of() : Map.copyOf(finalRanking);
+        this.finalRanking = finalRanking == null ? Map.of() : new LinkedHashMap<>(finalRanking);
     }
 
     public void updatePlayersInfo(List<PlayerInfoDTO> playerInfos) {

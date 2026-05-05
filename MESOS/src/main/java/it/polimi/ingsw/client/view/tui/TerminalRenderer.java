@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class TerminalRenderer {
     private final ClientSessionState state;
+    private boolean promptHelpPrinted = false;
 
     public TerminalRenderer(ClientSessionState state) {
         if (state == null) {
@@ -353,6 +354,11 @@ public class TerminalRenderer {
 
 
     private void printPromptHelp() {
+        if(promptHelpPrinted){
+            return;
+        }
+        promptHelpPrinted = true;
+
         System.out.println();
         printLine(96);
         System.out.println("help | login | register | games | create <players> | join <gameId> | left | place <pos> | draw <upper|lower> <cardId> | draw-extra <cardId> | deck | rankings <numPlayers> | quit F/n\n");
