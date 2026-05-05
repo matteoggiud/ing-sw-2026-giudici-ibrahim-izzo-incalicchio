@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.tui;
 
-import it.polimi.ingsw.client.network.socket.ClientSessionState;
+import it.polimi.ingsw.client.network.socket.ClientState;
 import it.polimi.ingsw.server.model.observer.dto.*;
 
 import java.util.Collection;
@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 public class TerminalRenderer {
-    private final ClientSessionState state;
+    private final ClientState state;
     private boolean promptHelpPrinted = false;
 
-    public TerminalRenderer(ClientSessionState state) {
+    public TerminalRenderer(ClientState state) {
         if (state == null) {
             throw new IllegalArgumentException("Client session state cannot be null");
         }

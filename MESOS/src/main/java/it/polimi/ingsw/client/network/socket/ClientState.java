@@ -8,7 +8,7 @@ import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 
 import java.util.*;
 
-public class ClientSessionState {
+public class ClientState {
     private boolean connected;
     private String nickname;
     private Integer activeGameId;
@@ -27,7 +27,7 @@ public class ClientSessionState {
 
     private final Map<String, PlayerInfoDTO> playersInfo;
 
-    public ClientSessionState(String nickname, Integer activeGameId) {
+    public ClientState(String nickname, Integer activeGameId) {
         this.nickname = nickname;
         this.activeGameId = activeGameId;
         this.connected = true;
@@ -38,11 +38,10 @@ public class ClientSessionState {
         this.historicalRankings = List.of();
     }
 
-    public ClientSessionState() {
+    public ClientState() {
         this(null, null);
         this.connected = false;
     }
-
 
     public String getNickname() {
         return nickname;

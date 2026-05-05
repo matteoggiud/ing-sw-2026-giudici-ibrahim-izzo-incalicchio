@@ -6,10 +6,10 @@ import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 
 public class SocketVirtualServer implements VirtualServer {
 
-    private final SocketClient socketClient;
+    private final SocketServerConnection socketServerConnection;
 
-    public SocketVirtualServer(SocketClient socketClient) {
-        this.socketClient = socketClient;
+    public SocketVirtualServer(SocketServerConnection socketServerConnection) {
+        this.socketServerConnection = socketServerConnection;
     }
 
 
@@ -18,7 +18,7 @@ public class SocketVirtualServer implements VirtualServer {
      */
     @Override
     public void sendMessage(ClientMessage message) {
-        socketClient.sendMessage(message);
+        socketServerConnection.sendMessage(message);
     }
 
 }
