@@ -1,8 +1,5 @@
 package it.polimi.ingsw.server.model.gamemodel;
 
-import it.polimi.ingsw.server.controller.VirtualView;
-import it.polimi.ingsw.server.model.board.OfferBox;
-import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
@@ -13,7 +10,6 @@ import java.util.Map;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * The IGameModel interface defines the core functionalities of the game model,

@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.network.socket;
 
-import it.polimi.ingsw.server.controller.VirtualView;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.*;

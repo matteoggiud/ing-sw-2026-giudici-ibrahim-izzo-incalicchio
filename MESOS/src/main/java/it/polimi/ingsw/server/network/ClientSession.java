@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.server.controller.VirtualView;
+import it.polimi.ingsw.server.network.socket.VirtualView;
 
 import java.net.Socket;
 
