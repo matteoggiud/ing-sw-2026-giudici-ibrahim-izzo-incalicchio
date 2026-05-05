@@ -9,24 +9,24 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class SocketClient {
+public class SocketServerConnection {
     private final String host;
     private final int port;
     private final ServerMessageVisitor serverVisitor;
-    private final ClientSessionState clientSessionState;
+    private final ClientState clientState;
     private final ClientView clientView;
 
     private Socket socket;
     private ObjectInputStream inputStream;
     private ObjectOutputStream outputStream;
-    private SocketClientHandler clientHandler;
+    private SocketServerListener clientHandler;
     private Thread clientHandlerThread;
 
-    public SocketClient(String host, int port, ServerMessageVisitor serverVisitor, ClientSessionState clientSessionState, ClientView clientView) {
+    public SocketServerConnection(String host, int port, ServerMessageVisitor serverVisitor, ClientState clientState, ClientView clientView) {
         this.host = host;
         this.port = port;
         this.serverVisitor = serverVisitor;
-        this.clientSessionState = clientSessionState;
+        this.clientState = clientState;
         this.clientView = clientView;
     }
 
@@ -41,8 +41,8 @@ public class SocketClient {
         outputStream.flush();
         inputStream = new ObjectInputStream(socket.getInputStream());
 
-        clientSessionState.connect();
-        clientHandler = new SocketClientHandler(socket, inputStream, outputStream, serverVisitor, clientSessionState, clientView);
+        clientState.connect();
+        clientHandler = new SocketServerListener(socket, inputStream, outputStream, serverVisitor, clientState, clientView);
         clientHandlerThread = new Thread(clientHandler, "socket-client-handler");
         clientHandlerThread.start();
     }

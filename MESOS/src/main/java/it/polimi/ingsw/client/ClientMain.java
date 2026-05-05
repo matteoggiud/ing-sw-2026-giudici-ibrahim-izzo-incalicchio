@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.network.socket.ClientSessionState;
-import it.polimi.ingsw.client.network.socket.SocketClient;
+import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.network.socket.SocketServerConnection;
 import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
@@ -32,7 +32,7 @@ public class ClientMain {
         }
 
         // 1. Create the Session State
-        ClientSessionState sessionState = new ClientSessionState(null, null);
+        ClientState sessionState = new ClientState(null, null);
         if (args.length >= 2) {
             try {
                 port = Integer.parseInt(args[1]);
@@ -64,17 +64,17 @@ public class ClientMain {
         ServerMessageVisitor visitor = new ServerVisitor(sessionState, view);
 
         // Create the Socket Client
-        SocketClient socketClient = new SocketClient(host, port, visitor, sessionState, view);
+        SocketServerConnection socketServerConnection = new SocketServerConnection(host, port, visitor, sessionState, view);
 
         // Create the Virtual Server
-        SocketVirtualServer network = new SocketVirtualServer(socketClient);
+        SocketVirtualServer network = new SocketVirtualServer(socketServerConnection);
 
         // Create the Controller
         ClientController controller = new ClientController(view, network);
 
         // Start the connection
         try {
-            socketClient.connect();
+            socketServerConnection.connect();
         } catch (Exception e) {
             System.err.println("Could not connect to the server: " + e.getMessage());
             return;

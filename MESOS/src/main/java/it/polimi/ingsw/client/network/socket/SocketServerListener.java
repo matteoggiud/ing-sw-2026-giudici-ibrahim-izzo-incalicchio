@@ -11,16 +11,16 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class SocketClientHandler implements Runnable {
+public class SocketServerListener implements Runnable {
     private final Socket socket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
     private final ServerMessageVisitor serverVisitor;
 
-    private final ClientSessionState clientSession;
+    private final ClientState clientSession;
     private final ClientView clientView;
 
-    public SocketClientHandler(Socket socket, ObjectInputStream inputStream, ObjectOutputStream outputStream, ServerMessageVisitor serverVisitor, ClientSessionState clientSession, ClientView clientView) {
+    public SocketServerListener(Socket socket, ObjectInputStream inputStream, ObjectOutputStream outputStream, ServerMessageVisitor serverVisitor, ClientState clientSession, ClientView clientView) {
         this.socket = socket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;

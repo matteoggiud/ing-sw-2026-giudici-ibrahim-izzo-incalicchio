@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.tui;
 
-import it.polimi.ingsw.client.network.socket.ClientSessionState;
+import it.polimi.ingsw.client.network.socket.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
 import it.polimi.ingsw.server.model.observer.dto.*;
@@ -12,10 +12,10 @@ import java.util.Scanner;
 
 public class TuiClientView implements ClientView {
     private final Scanner scanner;
-    private final ClientSessionState sessionState;
+    private final ClientState sessionState;
     private final TerminalRenderer renderer;
 
-    public TuiClientView(Scanner scanner, ClientSessionState sessionState) {
+    public TuiClientView(Scanner scanner, ClientState sessionState) {
         this.scanner = scanner;
         this.sessionState = sessionState;
         this.renderer = new TerminalRenderer(sessionState);

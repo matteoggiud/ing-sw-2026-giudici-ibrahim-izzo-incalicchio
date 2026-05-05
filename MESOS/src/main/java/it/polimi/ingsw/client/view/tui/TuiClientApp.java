@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.tui;
 
 import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.network.socket.ClientSessionState;
+import it.polimi.ingsw.client.network.socket.ClientState;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,10 +19,10 @@ public class TuiClientApp {
     private final ClientController controller;
     private final Scanner scanner;
     private final Map<String, CommandDefinition> commands;
-    private final ClientSessionState sessionState;
+    private final ClientState sessionState;
     private final TuiClientView view;
 
-    public TuiClientApp(ClientController controller, ClientSessionState sessionState, Scanner scanner, TuiClientView view) {
+    public TuiClientApp(ClientController controller, ClientState sessionState, Scanner scanner, TuiClientView view) {
         this.controller = controller;
         this.view = view;
         this.scanner = scanner;
