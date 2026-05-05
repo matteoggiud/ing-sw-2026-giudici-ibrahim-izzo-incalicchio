@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.controller;
+package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 

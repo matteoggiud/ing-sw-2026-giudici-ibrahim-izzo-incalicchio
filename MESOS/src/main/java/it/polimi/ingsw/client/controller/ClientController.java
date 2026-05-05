@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.controller;
 
+import it.polimi.ingsw.client.network.socket.VirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
