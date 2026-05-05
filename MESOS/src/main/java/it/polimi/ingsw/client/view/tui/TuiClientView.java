@@ -35,28 +35,6 @@ public class TuiClientView implements ClientView {
 
 
     @Override
-    public Credentials requestLoginCredentials() {
-        System.out.print("Username: ");
-        String username = scanner.nextLine().trim();
-
-        System.out.print("Password: ");
-        String password = scanner.nextLine().trim();
-
-        return new Credentials(username, password);
-    }
-
-    @Override
-    public Credentials requestRegisterCredentials() {
-        System.out.print("Choose a username: ");
-        String username = scanner.nextLine().trim();
-
-        System.out.print("Choose a password: ");
-        String password = scanner.nextLine().trim();
-
-        return new Credentials(username, password);
-    }
-
-    @Override
     public void showAvailableGames(List<GameInfoDTO> games) {
         sessionState.setAvailableGames(games);
         sessionState.setCurrentPhase("MENU");

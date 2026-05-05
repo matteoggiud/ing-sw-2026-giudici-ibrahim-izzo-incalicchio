@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.tui;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.view.Credentials;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -69,8 +70,8 @@ public class TuiClientApp {
     private void registerCommands() {
         put("help", "help", "Show this help menu", args -> printHelp());
 
-        put("login", "login", "Login with username and password", args -> controller.login());
-        put("register", "register", "Create a new account", args -> controller.register());
+        put("login", "login <nickname> <password>", "Login with username and password", this::handleLogin);
+        put("register", "register <nickname> <password>", "Create a new account", this::handleRegistration);
 
         put("games", "games", "Show available games", args -> controller.getAvailableGames());
         put("create", "create <expectedNumOfPlayers>", "Create a new game", this::handleCreateGame);
@@ -99,13 +100,53 @@ public class TuiClientApp {
     }
 
     /**
+     * Handles the "register" command, which allows the user to create a new account by providing a nickname and password.
+     *
+     * @param parts an array of strings representing the command and its arguments, where parts[0] is the command name ("register"), parts[1] is the nickname, and parts[2] is the password.
+     */
+    private void handleRegistration(String[] parts) {
+        if (parts.length != 3) {
+            System.out.println(commands.get("register").usage);
+            return;
+        }
+
+        try {
+            String username = parts[1].trim();
+            String password = parts[2].trim();
+            controller.submitRegistration(new Credentials(username, password));
+        } catch (Exception e) {
+            System.out.println("Invalid parameters");
+        }
+    }
+
+    /**
+     * Handles the "login" command, which allows the user to log in to their account by providing a nickname and password.
+     *
+     * @param parts an array of strings representing the command and its arguments, where parts[0] is the command name ("login"), parts[1] is the nickname, and parts[2] is the password.
+     */
+    private void handleLogin(String[] parts) {
+        if (parts.length != 3) {
+            System.out.println(commands.get("login").usage);
+            return;
+        }
+
+        try {
+            String username = parts[1].trim();
+            String password = parts[2].trim();
+            controller.submitLogin(new Credentials(username, password));
+        } catch (Exception e) {
+            System.out.println("Invalid parameters");
+        }
+    }
+
+    /**
      * Handles the "join" command, which allows the user to join an existing game by providing the game ID.
      *
      * @param parts an array of strings representing the command and its arguments.
      */
     private void handleJoin(String[] parts) {
         if (parts.length != 2) {
-            System.out.println("Usage: join <gameId>");
+            System.out.println(commands.get("join").usage);
             return;
         }
 
@@ -124,7 +165,7 @@ public class TuiClientApp {
      */
     private void handleCreateGame(String[] parts) {
         if (parts.length != 2) {
-            System.out.println("Usage: create <expectedNumOfPlayers>");
+            System.out.println(commands.get("create").usage);
             return;
         }
 
@@ -141,8 +182,8 @@ public class TuiClientApp {
     }
 
     private void printWelcome() {
-        System.out.println("---MESOS TUI---");
-        System.out.println(commands.get("help").usage);
+        //System.out.println("---MESOS TUI---");
+        //System.out.println(commands.get("help").usage);
     }
 
     private void printHelp() {
@@ -213,7 +254,7 @@ public class TuiClientApp {
         }
     }
 
-    private void handleRankings(String[] parts){
+    private void handleRankings(String[] parts) {
         if (parts.length != 2) {
             System.out.println(commands.get("rankings").usage);
             return;
