@@ -33,7 +33,7 @@ public interface ClientView {
 
     void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe);
 
-    void showGameEnded(int gameId, Map<String, Integer> finalRanking);
+    void showGameEnded(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard);
 
     void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname);
 

@@ -333,6 +333,7 @@ public class TerminalRenderer {
 
         finalRanking.forEach((player, score) ->
                 System.out.printf("  %-20s %d pp%n", player, score));
+        printMyHistoricalPosition();
     }
 
     private void printHistoricalRankings(List<LeadBoardDTO> rankings) {
@@ -424,7 +425,23 @@ public class TerminalRenderer {
         );
     }
 
+    private void printMyHistoricalPosition() {
+        if (state.getNickname() == null || state.getHistoricalRankings().isEmpty()) {
+            return;
+        }
 
+        for (LeadBoardDTO dto : state.getHistoricalRankings()) {
+            if (state.getNickname().equals(dto.nickname())) {
+                System.out.println();
+                System.out.printf(
+                        "Your historical leaderboard position: #%d with %d total pp%n",
+                        dto.position(),
+                        dto.finalScore()
+                );
+                return;
+            }
+        }
+    }
 
     private void printSection(String title) {
         System.out.println();

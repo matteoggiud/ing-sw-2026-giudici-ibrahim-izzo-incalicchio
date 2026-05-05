@@ -7,6 +7,8 @@ import it.polimi.ingsw.server.model.states.LobbyState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
@@ -97,13 +99,14 @@ class GameTest {
 
     @Test
     void setGameState() {
-        EndedState endedState = new EndedState();
+        EndedState endedState = new EndedState(Map.of(hostPlayer, 0));
 
         game.setGameState(endedState);
         assertSame(endedState, game.getGameState());
 
         assertThrows(IllegalArgumentException.class, () -> game.setGameState(null));
     }
+
 
     @Test
     void setLastRoundTriggered() {

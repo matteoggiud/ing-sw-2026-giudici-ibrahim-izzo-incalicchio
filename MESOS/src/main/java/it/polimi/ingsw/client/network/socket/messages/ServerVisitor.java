@@ -137,7 +137,12 @@ public class ServerVisitor implements ServerMessageVisitor {
         sessionState.setActiveGameId(null);
         sessionState.setCurrentPhase("GAME_ENDED");
         sessionState.setFinalRanking(message.getFinalRanking());
-        view.showGameEnded(message.getGameId(), message.getFinalRanking());
+        view.showGameEnded(
+                message.getGameId(),
+                message.getFinalRanking(),
+                message.getNumPlayers(),
+                message.getHistoricalLeaderboard()
+        );
     }
 
 

@@ -5,6 +5,9 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
 import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
+import it.polimi.ingsw.server.database.DataDepository;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import java.util.List;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -77,8 +80,10 @@ public class ComputeFinalScoreState implements IGameState {
         }
 
         dw.rankingsUpdate(game);
+        DataDepository dataDepository = new DataDepository();
+        List<LeadBoardDTO> historicalLeaderboard = dataDepository.getLeadBoard(game.getExpectedPlayerCount());
         game.getObserverManager().notifyObservers(
-                new GameEndedEvent(game.getGameId(), rankingByNickname)
+                new GameEndedEvent(game.getGameId(), rankingByNickname, game.getExpectedPlayerCount(), historicalLeaderboard)
         );
     }
 

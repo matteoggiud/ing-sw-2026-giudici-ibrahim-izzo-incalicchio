@@ -163,7 +163,13 @@ public class SocketVirtualView implements VirtualView {
         int gameId = event.getGameId();
         Map<String, Integer> finalRanking = event.getFinalRanking();
 
-        GameEndedMessage message = new GameEndedMessage(gameId, finalRanking);
+        GameEndedMessage message = new GameEndedMessage(
+                gameId,
+                finalRanking,
+                event.getNumPlayers(),
+                event.getHistoricalLeaderboard()
+        );
+
 
         sendMessage(message);
         SessionRegistry.getInstance().clearActiveGameIdForGame(gameId);
