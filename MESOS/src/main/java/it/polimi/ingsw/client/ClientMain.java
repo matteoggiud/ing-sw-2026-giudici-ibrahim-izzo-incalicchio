@@ -57,9 +57,8 @@ public class ClientMain {
         }
 
 
-
         // 2. Create the View
-        TuiClientView view = new TuiClientView(scanner, sessionState);
+        TuiClientView view = new TuiClientView(sessionState);
 
         ViewController viewController = new ViewController(sessionState, view);
 
@@ -74,7 +73,7 @@ public class ClientMain {
         SocketVirtualServer network = new SocketVirtualServer(socketServerConnection);
 
         // Create the Controller
-        ClientController controller = new ClientController(view, network);
+        ClientController controller = new ClientController(network);
 
         // Start the connection
         try {

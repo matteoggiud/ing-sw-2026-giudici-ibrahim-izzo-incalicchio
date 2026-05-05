@@ -11,12 +11,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class TuiClientView implements ClientView {
-    private final Scanner scanner;
     private final ClientState sessionState;
     private final TerminalRenderer renderer;
 
-    public TuiClientView(Scanner scanner, ClientState sessionState) {
-        this.scanner = scanner;
+    public TuiClientView(ClientState sessionState) {
         this.sessionState = sessionState;
         this.renderer = new TerminalRenderer(sessionState);
     }
