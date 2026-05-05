@@ -25,11 +25,6 @@ public class Era3 extends Era {
     }
 
     @Override
-    public int getOrder() {
-        return order;
-    }
-
-    @Override
     public void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
         if (tribeCard.isFinalEvent()) {
             finalEvents.add(tribeCard);
@@ -45,26 +40,6 @@ public class Era3 extends Era {
         return buildingDecks;
     }
 
-    @Override
-    public Era eraTransition(Game game, Era newEra) {
-        if (newEra == null) {
-            throw new IllegalArgumentException("New era cannot be null");
-        }
-
-        Era currentEra = game.getCurrentEra();
-
-        if (newEra.getOrder() <= currentEra.getOrder()) {
-            return currentEra;
-        }
-
-        Board board = game.getBoard();
-        game.setCurrentEra(newEra);
-        board.clearLowerBuildingRow();
-        board.transferUpperBuildingToLower();
-        board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
-
-        return newEra;
-    }
 
     @Override
     public void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers) {
@@ -77,4 +52,28 @@ public class Era3 extends Era {
     public BuildingDeck selectBuildingDeck(BuildingDeck buildingDecksEra1, BuildingDeck buildingDecksEra2, BuildingDeck buildingDecksEra3) {
         return buildingDecksEra3;
     }
+
+    @Override
+    public Era handleDrawnEra(Game game, Era drawnEra) {
+        if (drawnEra == null) {
+            throw new IllegalArgumentException("Drawn era cannot be null.");
+        }
+        return drawnEra.acceptTransition(game, this);
+    }
+
+    @Override
+    protected Era acceptTransition(Game game, Era1 currentEra) {
+        return moveGameToThisEra(game);
+    }
+
+    @Override
+    protected Era acceptTransition(Game game, Era2 currentEra) {
+        return stayIn(currentEra);
+    }
+
+    @Override
+    protected Era acceptTransition(Game game, Era3 currentEra) {
+        return stayIn(currentEra);
+    }
+
 }

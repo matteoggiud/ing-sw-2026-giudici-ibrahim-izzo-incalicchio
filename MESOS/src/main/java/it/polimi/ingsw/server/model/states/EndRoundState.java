@@ -92,11 +92,6 @@ public class EndRoundState implements IGameState {
         board.getLowerRow().getTribeRow().clear();
     }
 
-    /**
-     * Refills the upper row of the board with new tribe cards drawn from the tribe deck.
-     *
-     * @param game the current game context
-     */
     private void refillUpperRow(Game game) {
         Board board = game.getBoard();
         int targetUpperRowSize = game.getRuleSet().getUpperRowSize(game.getNumberOfPlayers());
@@ -106,28 +101,14 @@ public class EndRoundState implements IGameState {
             TribeCard drawnCard = game.getTribeDeck().drawCard();
             board.getUpperRow().addCard(drawnCard);
 
-            if (drawnCard.getEra().getOrder() > currentEra.getOrder()) {
-                currentEra = handleEraTransition(game, drawnCard.getEra());
+            Era nextEra = currentEra.handleDrawnEra(game, drawnCard.getEra());
+
+            if (nextEra != currentEra) {
+                currentEra = nextEra;
+                notifyEraChanged(game, currentEra);
+                notifyBoardUpdate(game);
             }
         }
-    }
-
-    /**
-     * Handles the transition between eras when a new era is reached.
-     *
-     * @param game   the current game context
-     * @param newEra the new era that has been reached
-     * @return the current era after handling the transition
-     */
-    private Era handleEraTransition(Game game, Era newEra) {
-
-        newEra = newEra.eraTransition(game, newEra);
-
-        // Notify observers about the era change and the updated board state after the transition
-        notifyEraChanged(game, newEra);
-        notifyBoardUpdate(game);
-
-        return newEra;
     }
 
 
