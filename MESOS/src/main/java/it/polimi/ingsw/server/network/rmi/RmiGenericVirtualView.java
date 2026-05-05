@@ -40,7 +40,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onAuthenticationNeeded(String message) {
-
+        try {
+            clientView.onAuthenticationNeeded(message);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
