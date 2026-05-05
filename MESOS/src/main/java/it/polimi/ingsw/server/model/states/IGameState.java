@@ -93,5 +93,5 @@ public interface IGameState {
     default void startGame(Game game) {
         throw new IllegalStateException("You cannot start this phase of the game.");
     }
-
+    boolean isEnded();
 }

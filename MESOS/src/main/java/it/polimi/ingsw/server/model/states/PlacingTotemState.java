@@ -102,5 +102,8 @@ public class PlacingTotemState implements IGameState {
         );
     }
 
-
+    @Override
+    public boolean isEnded() {
+        return false;
+    }
 }

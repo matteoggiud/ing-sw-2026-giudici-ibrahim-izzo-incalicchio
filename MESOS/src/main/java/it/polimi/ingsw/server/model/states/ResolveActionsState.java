@@ -102,4 +102,9 @@ public class ResolveActionsState implements IGameState {
         );
     }
 
+    @Override
+    public boolean isEnded() {
+        return false;
+    }
+
 }

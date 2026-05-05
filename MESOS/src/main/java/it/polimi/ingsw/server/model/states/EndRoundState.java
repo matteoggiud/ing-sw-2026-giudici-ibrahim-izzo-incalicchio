@@ -155,4 +155,9 @@ public class EndRoundState implements IGameState {
         );
     }
 
+    @Override
+    public boolean isEnded() {
+        return false;
+    }
+
 }

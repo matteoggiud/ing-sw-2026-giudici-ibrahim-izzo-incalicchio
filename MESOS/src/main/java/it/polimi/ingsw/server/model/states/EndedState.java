@@ -26,4 +26,9 @@ public class EndedState implements IGameState {
     public Map<Player, Integer> getFinalRanking(Game game) {
         return new LinkedHashMap<>(finalRanking);
     }
+
+    @Override
+    public boolean isEnded() {
+        return true;
+    }
 }

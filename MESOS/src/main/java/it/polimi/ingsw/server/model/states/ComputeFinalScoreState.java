@@ -81,4 +81,9 @@ public class ComputeFinalScoreState implements IGameState {
                 new GameEndedEvent(game.getGameId(), rankingByNickname)
         );
     }
+
+    @Override
+    public boolean isEnded() {
+        return false;
+    }
 }

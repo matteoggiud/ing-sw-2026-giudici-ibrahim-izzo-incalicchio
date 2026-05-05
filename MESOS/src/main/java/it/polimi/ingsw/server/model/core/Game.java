@@ -266,7 +266,7 @@ public class Game {
      * @return true if the game has ended, false otherwise
      */
     public boolean isEnded() {
-        return gameState instanceof EndedState;
+        return gameState.isEnded();
     }
 
 
