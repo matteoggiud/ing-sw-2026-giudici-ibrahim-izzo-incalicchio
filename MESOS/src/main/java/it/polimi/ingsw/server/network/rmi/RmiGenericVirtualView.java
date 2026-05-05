@@ -264,4 +264,14 @@ public class RmiGenericVirtualView implements GenericVirtualView {
     public void onRankingsReceived(List<LeadBoardDTO> rankings) {
 
     }
+
+    /**
+     * Called when a client start his journey :)
+     */
+    @Override
+    public void onWelcome(String message) {
+
+    }
+
+
 }
