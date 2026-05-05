@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.network.socket;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;
+import it.polimi.ingsw.server.network.SessionRegistry;
 import it.polimi.ingsw.server.network.socket.messages.ClientVisitor;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
 
@@ -79,6 +80,7 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
         } catch (Exception ignored) {
         }
+        SessionRegistry.getInstance().unregisterSession(clientVisitor.getClientSession());
     }
 
 

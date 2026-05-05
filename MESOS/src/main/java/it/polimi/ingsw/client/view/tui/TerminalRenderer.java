@@ -163,7 +163,7 @@ public class TerminalRenderer {
 
         characters.forEach(this::printCharacterCardLine);
         events.forEach(card -> printCardLine("event", card.cardId(), card.name(), card.era()));
-        buildings.forEach(card -> printCardLine("building", card.cardId(), card.name(), card.era()));
+        buildings.forEach(this::printBuildingCardLine);
     }
 
     private void printOfferTrack(List<OfferBoxDTO> boxes) {
@@ -294,8 +294,7 @@ public class TerminalRenderer {
         if (deck.buildingCards().isEmpty()) {
             System.out.println("  none");
         } else {
-            deck.buildingCards().forEach(card ->
-                    printCardLine("building", card.cardId(), card.name(), card.era()));
+            deck.buildingCards().forEach(this::printBuildingCardLine);
         }
 
         printPromptHelp();
@@ -390,14 +389,14 @@ public class TerminalRenderer {
         StringBuilder details = new StringBuilder();
 
         if (card.shamanStars() > 0) {
-            details.append(card.shamanStars()).append("*");
+            details.append(card.shamanStars()).append("⭐");
         }
 
         if (card.foodIcon()) {
             if (!details.isEmpty()) {
                 details.append(" ");
             }
-            details.append("[food]");
+            details.append("\uD83C\uDF57");
         }
 
         if (card.inventorType() != null && !card.inventorType().isBlank()) {
@@ -413,6 +412,18 @@ public class TerminalRenderer {
     private void printCardLine(String type, int cardId, String name, String era) {
         System.out.printf("  %-9s #%03d  %-28s %s%n", type, cardId, name, era);
     }
+
+    private void printBuildingCardLine(BuildingCardDTO card) {
+        System.out.printf(
+                "  %-9s #%03d  %-28s %-12s cost=%d%n",
+                "building",
+                card.cardId(),
+                card.name(),
+                card.era(),
+                card.foodCost()
+        );
+    }
+
 
 
     private void printSection(String title) {

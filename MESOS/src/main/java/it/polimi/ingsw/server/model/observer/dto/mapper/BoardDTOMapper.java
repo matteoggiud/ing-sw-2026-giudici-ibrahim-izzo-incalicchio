@@ -98,9 +98,9 @@ public final class BoardDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        ""
-                ))
-                .toList();
+                        "",
+                        card.getFoodCost()
+                )).toList();
     }
 
     /**

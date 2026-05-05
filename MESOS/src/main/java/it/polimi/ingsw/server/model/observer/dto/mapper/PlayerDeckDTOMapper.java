@@ -67,8 +67,8 @@ public final class PlayerDeckDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        ""
-                ))
-                .toList();
+                        "",
+                        card.getFoodCost()
+                )).toList();
     }
 }
