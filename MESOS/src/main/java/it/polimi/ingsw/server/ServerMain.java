@@ -4,6 +4,7 @@ import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
 
+import java.net.InetAddress;
 import java.net.ServerSocket;
 
 public class ServerMain {
@@ -17,7 +18,8 @@ public class ServerMain {
             GameController controller = new GameController(gamePortal);
             SocketAcceptor socketServer = new SocketAcceptor(serverSocket, controller);
 
-            System.out.println("[SERVER] Listening on port " + port + "...");
+            InetAddress ip = InetAddress.getLocalHost();
+            System.out.println("[SERVER] Server started at " + ip.getHostAddress() + ":" + port);
             socketServer.run();
         } catch (Exception e) {
             e.printStackTrace();
