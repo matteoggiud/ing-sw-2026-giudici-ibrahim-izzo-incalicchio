@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.network.rmi;
 
 import it.polimi.ingsw.server.model.observer.dto.*;
 import it.polimi.ingsw.server.network.GenericVirtualView;
-import it.polimi.ingsw.server.network.socket.messages.game.GameInfoMessage;
 
 import java.rmi.RemoteException;
 import java.util.List;

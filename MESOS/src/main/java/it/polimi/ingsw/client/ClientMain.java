@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.ClientController;
+import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.socket.ClientState;
 import it.polimi.ingsw.client.network.socket.SocketServerConnection;
 import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
@@ -56,12 +57,15 @@ public class ClientMain {
         }
 
 
+
         // 2. Create the View
         TuiClientView view = new TuiClientView(scanner, sessionState);
 
+        ViewController viewController = new ViewController(sessionState, view);
+
 
         // 3. Create the Message Visitor (it only needs the View now, not the Controller)
-        ServerMessageVisitor visitor = new ServerVisitor(sessionState, view);
+        ServerMessageVisitor visitor = new ServerVisitor(viewController);
 
         // Create the Socket Client
         SocketServerConnection socketServerConnection = new SocketServerConnection(host, port, visitor, sessionState, view);
