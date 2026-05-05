@@ -327,4 +327,14 @@ public class SocketGenericVirtualView implements GenericVirtualView {
 
         sendMessage(serverMessage);
     }
+
+    /**
+     * Called when a client start his journey :)
+     */
+    @Override
+    public void onWelcome(String message) {
+        ServerMessage serverMessage = new LoginNeededMessage(message);
+
+        sendMessage(serverMessage);
+    }
 }

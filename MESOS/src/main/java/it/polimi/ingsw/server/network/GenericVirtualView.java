@@ -179,4 +179,9 @@ public interface GenericVirtualView {
      * @param rankings the list of LeadBoardDTO objects representing the rankings of players in the game, which can be used to inform the client about the current standings of players in the game and allow them to update their view accordingly (e.g., displaying the rankings on a leaderboard, etc.).
      */
     void onRankingsReceived(List<LeadBoardDTO> rankings);
+
+    /**
+     * Called when a client start his journey :)
+     */
+    void onWelcome(String message);
 }
