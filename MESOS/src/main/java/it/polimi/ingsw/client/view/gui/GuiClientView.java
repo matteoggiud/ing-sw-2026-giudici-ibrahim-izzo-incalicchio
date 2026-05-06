@@ -143,4 +143,9 @@ public class GuiClientView implements ClientView {
     public void showRankings(List<LeadBoardDTO> rankings) {
 
     }
+
+    @Override
+    public void showAuthenticator(String message) {
+
+    }
 }
