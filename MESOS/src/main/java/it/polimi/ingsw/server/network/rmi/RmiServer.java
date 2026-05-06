@@ -19,55 +19,56 @@ public class RmiServer implements RemoteServer {
 
     @Override
     public void loginRequest(String username, String password) throws RemoteException {
+        gameController.login(clientSession, username, password);
     }
 
     @Override
     public void onRegisterMessage(String username, String password) throws RemoteException {
-
+        gameController.register(clientSession, username, password);
     }
 
     @Override
     public void onCreateGameMessage(int numPlayers) throws RemoteException {
-
+        gameController.createGame(clientSession, numPlayers);
     }
 
     @Override
     public void onJoinGameMessage(int gameId) throws RemoteException {
-
+        gameController.joinGame(clientSession, gameId);
     }
 
     @Override
     public void onGetAvailableGamesMessage() throws RemoteException {
-
+        gameController.getAvailableGames(clientSession);
     }
 
     @Override
     public void onDisconnectMessage() throws RemoteException {
-
+        gameController.handleDisconnect(clientSession);
     }
 
     @Override
     public void onPlaceTotemMessage(int offerBoxPosition) throws RemoteException {
-
+        gameController.placing(clientSession, offerBoxPosition);
     }
 
     @Override
     public void onLeftGameMessage() throws RemoteException {
-
+        gameController.leaveGame(clientSession);
     }
 
     @Override
     public void onDrawCardMessage(int cardId, boolean fromUpperRow) throws RemoteException {
-
+        gameController.drawCard(clientSession, cardId, fromUpperRow);
     }
 
     @Override
     public void onDrawExtraCardMessage(int cardId) throws RemoteException {
-
+        gameController.drawCard(clientSession, cardId, true);
     }
 
     @Override
     public void onGetRankings(int numPlayers) throws RemoteException {
-
+        gameController.getRankings(clientSession, numPlayers);
     }
 }
