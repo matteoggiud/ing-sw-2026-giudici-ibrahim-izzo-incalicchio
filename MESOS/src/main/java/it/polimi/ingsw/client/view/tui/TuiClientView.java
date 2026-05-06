@@ -124,11 +124,7 @@ public class TuiClientView implements ClientView {
 
 
     @Override
-    public void showGameEnded(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
-        sessionState.setCurrentPhase("GAME_ENDED");
-        sessionState.setFinalRanking(finalRanking);
-        sessionState.setHistoricalRankings(historicalLeaderboard);
-        sessionState.setStatusMessage("Game ended. Historical leaderboard for " + numPlayers + " players updated.");
+    public void showGameEnded() {
         renderer.render();
     }
 

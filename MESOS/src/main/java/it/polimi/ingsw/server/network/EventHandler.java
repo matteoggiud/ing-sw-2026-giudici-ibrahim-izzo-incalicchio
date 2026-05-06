@@ -138,17 +138,9 @@ public class EventHandler implements IGameObserver {
         int gameId = event.getGameId();
         Map<String, Integer> finalRanking = event.getFinalRanking();
 
-        view.onGameEnded(gameId, finalRanking);
-        /*GameEndedMessage message = new GameEndedMessage(
-                gameId,
-                finalRanking,
-                event.getNumPlayers(),
-                event.getHistoricalLeaderboard()
-        );
+        view.onGameEnded(gameId, finalRanking, event.getNumPlayers(), event.getHistoricalLeaderboard());
 
-
-        sendMessage(message);
-        SessionRegistry.getInstance().clearActiveGameIdForGame(gameId);*/
+        SessionRegistry.getInstance().clearActiveGameIdForGame(gameId);
     }
 
     /**

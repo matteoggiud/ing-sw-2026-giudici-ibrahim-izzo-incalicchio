@@ -114,16 +114,7 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(GameEndedMessage message) {
-        /*sessionState.setActiveGameId(null);
-        sessionState.setCurrentPhase("GAME_ENDED");
-        sessionState.setFinalRanking(message.getFinalRanking());
-        view.showGameEnded(
-                message.getGameId(),
-                message.getFinalRanking(),
-                message.getNumPlayers(),
-                message.getHistoricalLeaderboard()
-        );*/
-        viewController.onGameEnded(message.getGameId(), message.getFinalRanking());
+        viewController.onGameEnded(message.getGameId(), message.getFinalRanking(), message.getNumPlayers(), message.getHistoricalLeaderboard());
     }
 
 

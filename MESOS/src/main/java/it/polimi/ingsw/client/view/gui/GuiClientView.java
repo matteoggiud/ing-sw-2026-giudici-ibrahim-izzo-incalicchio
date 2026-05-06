@@ -119,13 +119,13 @@ public class GuiClientView implements ClientView {
     }
 
     /**
-     * @param gameId
-     * @param finalRanking
+     *
      */
     @Override
-    public void showGameEnded(int gameId, Map<String, Integer> finalRanking) {
+    public void showGameEnded() {
 
     }
+
 
     /**
      * @param playersInfo

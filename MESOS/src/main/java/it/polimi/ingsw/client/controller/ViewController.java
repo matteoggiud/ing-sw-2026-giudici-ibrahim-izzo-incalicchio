@@ -233,12 +233,14 @@ public class ViewController {
      * @param gameId       the unique identifier of the game
      * @param finalRanking a map containing the final ranking of players in the game, where the key is the player's nickname and the value is their final score or position in the ranking. This information can be used to inform the client about the outcome of the game and display the final results to the players.
      */
-    public void onGameEnded(int gameId, Map<String, Integer> finalRanking) {
+    public void onGameEnded(int gameId, Map<String, Integer> finalRanking,  int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
         clientState.setActiveGameId(null);
         clientState.setCurrentPhase("GAME_ENDED");
         clientState.setFinalRanking(finalRanking);
+        clientState.setHistoricalRankings(historicalLeaderboard);
+        clientState.setStatusMessage("Game ended. Historical leaderboard for " + numPlayers + " players updated.");
 
-        view.showGameEnded(gameId, finalRanking);
+        view.showGameEnded();
     }
 
     /**

@@ -152,7 +152,7 @@ public interface RemoteClientView extends Remote {
      * @param gameId       the unique identifier of the game
      * @param finalRanking a map containing the final ranking of players in the game, where the key is the player's nickname and the value is their final score or position in the ranking. This information can be used to inform the client about the outcome of the game and display the final results to the players.
      */
-    void onGameEnded(int gameId, Map<String, Integer> finalRanking) throws RemoteException;
+    void onGameEnded(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) throws RemoteException;
 
     /**
      * Called when a player successfully joins a game
