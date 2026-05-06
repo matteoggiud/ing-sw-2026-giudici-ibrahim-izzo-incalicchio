@@ -4,6 +4,14 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 public class GuiClientApp extends Application {
+
+
+    @Override
+    public void init() throws Exception {
+        //initialize all the necessary components for the application
+        super.init();
+    }
+
     /**
      * The main entry point for all JavaFX applications.
      * The start method is called after the init method has returned,
