@@ -178,6 +178,12 @@ public interface ServerMessageVisitor {
      * @param message the RankingsMessage to visit
      */
     void visit(RankingsMessage message);
+
+    /**
+     * Visits a GameCrashedMessage, which indicates that the game has crashed due to an unexpected error. This message is sent to all clients when the game crashes, and may contain additional information about the error such as an error code or a detailed error message.
+     * @param gameCrashedMessage the GameCrashedMessage to visit
+     */
+    void visit(GameCrashedMessage gameCrashedMessage);
 }
 
 

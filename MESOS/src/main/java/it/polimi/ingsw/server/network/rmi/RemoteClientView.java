@@ -185,4 +185,10 @@ public interface RemoteClientView extends Remote {
     void onRankingsReceived(List<LeadBoardDTO> rankings) throws RemoteException;
 
 
+    /**
+     * Called when the game crashes, providing the reason for the crash. This information can be used to inform the client about the issue and allow them to handle the situation accordingly (e.g., displaying an error message, returning to the main menu, etc.).
+     *
+     * @param reason the reason for the game crash
+     */
+    void onGameCrashed(String reason) throws RemoteException;
 }

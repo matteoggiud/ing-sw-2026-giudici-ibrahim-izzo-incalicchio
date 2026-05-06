@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.network.ClientSession;
 import it.polimi.ingsw.server.network.SessionRegistry;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameController {
@@ -100,9 +101,10 @@ public class GameController {
      * It also disconnects the player's virtual view from the game they have left and updates the client session
      *
      * @param clientSession the client session of the player
+     * @return a list of remaining player nicknames in the game after the player has left, which can be used to update the views of the remaining players and inform them about the change in the game state
      * @throws IllegalStateException if the player is not logged in or not currently in a game
      */
-    public void leaveGame(ClientSession clientSession) {
+    public List<ClientSession> leaveGame(ClientSession clientSession) {
         if (!clientSession.isLoggedIn()) {
             throw new IllegalStateException("Player must be logged in to leave a game.");
         }
@@ -111,10 +113,22 @@ public class GameController {
         }
 
         // Update the client session to reflect that the player has left the game
-        List<String> remainingPlayers = model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname(), clientSession.getEventHandler());
-        for (String player : remainingPlayers) {
-            SessionRegistry.getInstance().getSession(player).clearActiveGameId();
+        List<String> remainingPlayerNicknames = model.leaveGame(clientSession.getActiveGameId(), clientSession.getNickname());
+
+        clientSession.clearActiveGameId();
+
+        List<ClientSession> remainingPlayerSessions = new ArrayList<>();
+        for (String player : remainingPlayerNicknames) {
+            ClientSession playerSession = SessionRegistry.getInstance().getSession(player);
+            if (playerSession == null)
+                throw new IllegalStateException("Player " + player + " is not found.");
+
+            remainingPlayerSessions.add(playerSession);
+            // The game is ended so we need to clear the active game id for all the remaining players in the game as well
+            playerSession.clearActiveGameId();
         }
+
+        return remainingPlayerSessions;
     }
 
     /**
@@ -209,31 +223,33 @@ public class GameController {
      *
      * @param clientSession the client session that has been disconnected
      */
-    public void handleDisconnect(ClientSession clientSession) {
-        String nickname;
-        Integer gameId = clientSession.getActiveGameId();
+    public List<ClientSession> handleDisconnect(ClientSession clientSession) {
+        List<ClientSession> playersInterested = new ArrayList<>();
 
-        if (!clientSession.isLoggedIn()) {
+        String nickname;
+        try {
+            nickname = clientSession.getNickname();
+        } catch (Exception e) {
             clientSession.disconnectSession();
-            return;
+            return playersInterested;
         }
 
-        nickname = clientSession.getNickname();
 
         try {
             if (clientSession.isInGame()) {
-                leaveGame(clientSession);
-                model.markPlayerDisconnected(gameId, nickname);
-            } else {
-                model.logout(nickname);
-                SessionRegistry.getInstance().unregisterSession(clientSession);
+                // If the player was in a game, we need to first leave the game and notify all the player about the game ended
+                playersInterested.addAll(leaveGame(clientSession));
+                //model.markPlayerDisconnected(gameId, nickname);
             }
-        } catch (RuntimeException ignored) {
-            // il player potrebbe essere già stato rimosso
+            // Removes player from the logged players
+            model.logout(nickname);
         } finally {
+            // Ensure that the client session is properly disconnected and unregistered from the session registry
             clientSession.disconnectSession();
             SessionRegistry.getInstance().unregisterSession(clientSession);
         }
+
+        return playersInterested;
     }
 
     /**

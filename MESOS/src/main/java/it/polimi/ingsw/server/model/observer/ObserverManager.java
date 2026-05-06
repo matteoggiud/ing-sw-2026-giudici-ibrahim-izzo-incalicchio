@@ -24,4 +24,8 @@ public class ObserverManager {
         for (IGameObserver observer : observers)
             event.dispatch(observer);
     }
+
+    public void clearObservers() {
+        observers.clear();
+    }
 }

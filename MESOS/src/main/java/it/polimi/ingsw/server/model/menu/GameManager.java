@@ -121,5 +121,8 @@ public class GameManager {
     }
 
 
-
+    public void removeGame(int gameId) {
+        getGame(gameId).getObserverManager().clearObservers();
+        activeGames.remove(gameId);
+    }
 }

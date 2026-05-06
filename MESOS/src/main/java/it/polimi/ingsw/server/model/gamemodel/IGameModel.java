@@ -155,10 +155,9 @@ public interface IGameModel {
      *
      * @param gameId   the unique identifier of the game the player wants to leave
      * @param player   the player attempting to leave the game
-     * @param observer the observer associated with the player, which will be removed from the game's observers list
      * @return a list of remaining players in the game after the player has left
      */
-    List<String> leaveGame(int gameId, String player, IGameObserver observer);
+    List<String> leaveGame(int gameId, String player);
 
     /**
      * Retrieves the final ranking of a game when the game has reached

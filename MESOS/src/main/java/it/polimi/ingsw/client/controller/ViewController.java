@@ -115,8 +115,8 @@ public class ViewController {
      * @param message the message indicating the successful disconnection
      */
     public void onDisconnectionSuccess(String message) {
-        view.showMessage(message);
         clientState.disconnect();
+        view.showMessage(message);
     }
 
     /**
@@ -233,7 +233,7 @@ public class ViewController {
      * @param gameId       the unique identifier of the game
      * @param finalRanking a map containing the final ranking of players in the game, where the key is the player's nickname and the value is their final score or position in the ranking. This information can be used to inform the client about the outcome of the game and display the final results to the players.
      */
-    public void onGameEnded(int gameId, Map<String, Integer> finalRanking,  int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
+    public void onGameEnded(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
         clientState.setActiveGameId(null);
         clientState.setCurrentPhase("GAME_ENDED");
         clientState.setFinalRanking(finalRanking);
@@ -272,5 +272,16 @@ public class ViewController {
      */
     public void onRankingsReceived(List<LeadBoardDTO> rankings) {
         view.showRankings(rankings);
+    }
+
+    /**
+     * Called when a game crashes, providing the reason for the crash. This information can be used to inform the client about the issue and allow them to update their view accordingly (e.g., displaying an error message, returning to the main menu, etc.).
+     *
+     * @param reason the reason for the game crash
+     */
+    public void onGameCrashed(String reason) {
+        clientState.clearGameState();
+        clientState.setStatusMessage("Game crashed: " + reason);
+        view.showError("Game crashed: " + reason);
     }
 }

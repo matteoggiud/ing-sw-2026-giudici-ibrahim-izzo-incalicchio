@@ -370,5 +370,19 @@ public class RmiGenericVirtualView implements GenericVirtualView {
 
     }
 
+    /**
+     * Called when a game crashes, providing the reason for the crash. This information can be used to inform the client about the issue and allow them to handle the situation accordingly (e.g., displaying an error message, returning to the main menu, etc.).
+     *
+     * @param reason the reason for the game crash, which can be used to inform the client about the issue and allow them to handle the situation accordingly (e.g., displaying an error message, returning to the main menu, etc.).
+     */
+    @Override
+    public void onGameCrashed(String reason) {
+        try{
+            clientView.onGameCrashed(reason);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

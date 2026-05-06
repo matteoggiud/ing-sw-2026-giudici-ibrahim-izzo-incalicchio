@@ -150,4 +150,9 @@ public class ServerVisitor implements ServerMessageVisitor {
     public void visit(RankingsMessage message) {
         viewController.onRankingsReceived(message.getRankings());
     }
+
+    @Override
+    public void visit(GameCrashedMessage gameCrashedMessage) {
+        viewController.onGameCrashed(gameCrashedMessage.getMessage());
+    }
 }

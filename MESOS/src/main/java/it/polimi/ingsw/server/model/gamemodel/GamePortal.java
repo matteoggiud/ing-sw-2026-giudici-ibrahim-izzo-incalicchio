@@ -92,7 +92,6 @@ public class GamePortal implements IGameModel {
     }
 
 
-
     /**
      * Creates a new game with the specified host player.
      *
@@ -126,7 +125,7 @@ public class GamePortal implements IGameModel {
             throw new IllegalStateException("Host player with nickname " + hostNickname + " does not exist.");
         }
 
-        int gameId = dw.addNewGame(hostNickname,expectedPlayerCount); //TODO: add also expected player count
+        int gameId = dw.addNewGame(hostNickname, expectedPlayerCount);
         gameManager.createGame(host, gameId, expectedPlayerCount);
 
         // Add the observer for the host player to the newly created game
@@ -241,17 +240,27 @@ public class GamePortal implements IGameModel {
      * @param player the player attempting to leave the game
      */
     @Override
-    public List<String> leaveGame(int gameId, String player, IGameObserver observer) {
-        Player playerToLeave = playerManager.getPlayer(player);
-        if (playerToLeave == null) {
+    public List<String> leaveGame(int gameId, String player) {
+        if (playerManager.getPlayer(player) == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
-        Game game = gameManager.getGame(gameId);
-        List<String> players = game.getPlayers().getPlayerNicknames();
-        gameManager.leaveGame(gameId, playerToLeave);
-        removeObserver(game, observer);
 
-        return players;
+        // We first retrieve the game
+        Game game = gameManager.getGame(gameId);
+
+        // We save the players remaining in the game after the player leaves
+        List<String> playerNames = game.getPlayers().getPlayerNicknames();
+        playerNames = game.getPlayers().getPlayerNicknames().stream().filter(p -> !p.equals(player)).toList();
+
+
+
+        // We then execute the remove game logic, which deletes the game
+        gameManager.removeGame(gameId);
+
+        //TODO: update db
+
+
+        return playerNames;
     }
 
     /**
@@ -520,7 +529,7 @@ public class GamePortal implements IGameModel {
 
     @Override
     public List<LeadBoardDTO> getRanking(int numPlayer) {
-        if(numPlayer < 2 || numPlayer > 5){
+        if (numPlayer < 2 || numPlayer > 5) {
             throw new IllegalArgumentException("Number of players must be between 2 and 5.");
         }
         DataDepository db = new DataDepository();

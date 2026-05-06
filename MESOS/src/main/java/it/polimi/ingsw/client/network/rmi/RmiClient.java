@@ -263,5 +263,15 @@ public class RmiClient implements RemoteClientView {
         viewController.onRankingsReceived(rankings);
     }
 
+    /**
+     * Called when the game crashes, providing the reason for the crash. This information can be used to inform the client about the issue and allow them to handle the situation accordingly (e.g., displaying an error message, returning to the main menu, etc.).
+     *
+     * @param reason the reason for the game crash
+     */
+    @Override
+    public void onGameCrashed(String reason) {
+        viewController.onGameCrashed(reason);
+    }
+
 
 }
