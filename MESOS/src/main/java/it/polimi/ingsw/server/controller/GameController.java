@@ -210,33 +210,30 @@ public class GameController {
      * @param clientSession the client session that has been disconnected
      */
     public void handleDisconnect(ClientSession clientSession) {
+        String nickname;
+        Integer gameId = clientSession.getActiveGameId();
+
         if (!clientSession.isLoggedIn()) {
+            clientSession.disconnectSession();
             return;
         }
 
-        String nickname = clientSession.getNickname();
-
-        if (clientSession.isInGame()) {
-            int gameId = clientSession.getActiveGameId();
-
-            try {
-                leaveGame(clientSession);
-            } catch (RuntimeException ignored) {
-                // The observer may already have been removed.
-            }
-
-            model.markPlayerDisconnected(gameId, nickname);
-            return;
-        }
+        nickname = clientSession.getNickname();
 
         try {
-            model.logout(nickname);
-            // Unregister the client session from the session registry to ensure proper cleanup and prevent memory leaks
-            SessionRegistry.getInstance().unregisterSession(clientSession);
+            if (clientSession.isInGame()) {
+                leaveGame(clientSession);
+                model.markPlayerDisconnected(gameId, nickname);
+            } else {
+                model.logout(nickname);
+                SessionRegistry.getInstance().unregisterSession(clientSession);
+            }
         } catch (RuntimeException ignored) {
-            // The player may already have been removed.
+            // il player potrebbe essere già stato rimosso
+        } finally {
+            clientSession.disconnectSession();
+            SessionRegistry.getInstance().unregisterSession(clientSession);
         }
-
     }
 
     /**
@@ -269,8 +266,9 @@ public class GameController {
 
     /**
      * Retrieves the rankings of players based on their final scores, limited to a specified number of top players.
+     *
      * @param clientSession the client session of the player requesting the rankings
-     * @param numPlayers the number of top players to include in the rankings
+     * @param numPlayers    the number of top players to include in the rankings
      * @return a list of LeadBoardDTO objects representing the rankings of players
      */
     public List<LeadBoardDTO> getRankings(ClientSession clientSession, int numPlayers) {
