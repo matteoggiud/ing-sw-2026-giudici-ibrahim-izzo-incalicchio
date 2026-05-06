@@ -24,28 +24,13 @@ public class SocketVirtualServer implements GenericVirtualServer {
     }
 
     @Override
-    public void onLoginMessage(String username, String password) {
+    public void onLoginRequest(String username, String password) {
         sendMessage(new LoginSubmitMessage(username, password));
-    }
-
-    @Override
-    public void onLogoutMessage(String username, String password) {
-
     }
 
     @Override
     public void onRegisterMessage(String username, String password) {
         sendMessage(new RegisterSubmitMessage(username, password));
-    }
-
-    @Override
-    public void showErrorMessage(String message) {
-        //TODO: See the view in the controller
-    }
-
-    @Override
-    public void showMessage(String message) {
-
     }
 
     @Override

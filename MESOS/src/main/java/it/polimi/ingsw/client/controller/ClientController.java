@@ -1,14 +1,6 @@
 package it.polimi.ingsw.client.controller;
 
 import it.polimi.ingsw.client.GenericVirtualServer;
-import it.polimi.ingsw.client.network.socket.VirtualServer;
-import it.polimi.ingsw.client.network.socket.messages.game.*;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.client.view.Credentials;
 
 public class ClientController {
@@ -20,7 +12,7 @@ public class ClientController {
     }
 
     public void submitLogin(Credentials credentials) {
-        virtualServer.onLoginMessage(credentials.nickname(), credentials.passwordHash());
+        virtualServer.onLoginRequest(credentials.nickname(), credentials.passwordHash());
     }
 
     public void submitRegistration(Credentials credentials) {
