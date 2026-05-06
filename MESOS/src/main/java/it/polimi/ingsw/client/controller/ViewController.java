@@ -270,4 +270,9 @@ public class ViewController {
     public void onRankingsReceived(List<LeadBoardDTO> rankings) {
         view.showRankings(rankings);
     }
+
+    public void onWelcome(String message){
+        view.showMessage(message);
+        clientState.setCurrentPhase("LOGIN");
+    }
 }
