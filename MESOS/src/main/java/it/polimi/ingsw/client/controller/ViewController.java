@@ -38,7 +38,8 @@ public class ViewController {
      * @param message the message indicating that authentication is needed, which can be used to inform the client about the requirement for authentication and prompt them to provide their credentials (e.g., "Please enter your nickname and password to log in.").
      */
     public void onAuthenticationNeeded(String message) {
-        view.showMessage(message);
+        clientState.setStatusMessage(message);
+        view.showAuthenticator(message);
     }
 
     /**

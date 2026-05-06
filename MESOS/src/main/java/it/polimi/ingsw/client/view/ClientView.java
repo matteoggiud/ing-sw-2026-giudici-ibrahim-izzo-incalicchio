@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.view;
 
 import it.polimi.ingsw.server.model.observer.dto.*;
 
-import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,4 +36,5 @@ public interface ClientView {
 
     void showRankings(List<LeadBoardDTO> rankings);
 
+    void showAuthenticator(String message);
 }
