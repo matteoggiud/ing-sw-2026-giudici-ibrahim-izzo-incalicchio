@@ -260,27 +260,66 @@ public class TerminalRenderer {
     }
 
     public void renderMyDeck() {
-        clearTerminal();
+        renderDeck(state.getNickname());
+    }
 
+    public void renderDecks() {
+        clearTerminal();
         printHeader();
 
-        PlayerInfoDTO myInfo = null;
-        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
-            if (playerInfo.nickname() != null && playerInfo.nickname().equals(state.getNickname())) {
-                myInfo = playerInfo;
-                break;
-            }
-        }
+        printSection("Players decks");
 
-        printSection("Your deck");
-
-        if (myInfo == null || myInfo.deck() == null) {
-            System.out.println("Your deck is not available yet.");
+        if (state.getPlayersInfo().isEmpty()) {
+            System.out.println("Decks are not available yet.");
             printPromptHelp();
             return;
         }
 
-        PlayerDeckDTO deck = myInfo.deck();
+        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
+            printPlayerDeck(playerInfo);
+        }
+
+        printPromptHelp();
+    }
+
+    public void renderDeck(String nickname) {
+        clearTerminal();
+        printHeader();
+
+        if (nickname == null || nickname.isBlank()) {
+            System.out.println("Invalid nickname.");
+            printPromptHelp();
+            return;
+        }
+
+        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
+            if (nickname.equals(playerInfo.nickname())) {
+                printPlayerDeck(playerInfo);
+                printPromptHelp();
+                return;
+            }
+        }
+
+        printSection("Deck");
+        System.out.println("No deck found for player: " + nickname);
+        printPromptHelp();
+    }
+
+    private void printPlayerDeck(PlayerInfoDTO playerInfo) {
+        String title = playerInfo.nickname();
+
+        if (playerInfo.nickname() != null && playerInfo.nickname().equals(state.getNickname())) {
+            title += " (you)";
+        }
+
+        printSection(title + " deck");
+
+        if (playerInfo.deck() == null) {
+            System.out.println("Deck is not available yet.");
+            return;
+        }
+
+        PlayerDeckDTO deck = playerInfo.deck();
 
         System.out.println("Characters:");
         if (deck.characterCards().isEmpty()) {
@@ -296,10 +335,7 @@ public class TerminalRenderer {
         } else {
             deck.buildingCards().forEach(this::printBuildingCardLine);
         }
-
-        printPromptHelp();
     }
-
 
     private void printCurrentTurn() {
         String currentPlayer = state.getCurrentPlayerNickname();

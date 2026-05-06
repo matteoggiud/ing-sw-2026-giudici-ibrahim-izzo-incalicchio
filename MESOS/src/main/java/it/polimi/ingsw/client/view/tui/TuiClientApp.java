@@ -81,7 +81,7 @@ public class TuiClientApp {
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
         put("draw", "draw <upper|lower> <cardId>", "Draw a card during resolve or extra action", this::handleDrawCard);
         put("draw-extra", "draw-extra <cardId>", "Draw a card during resolve or extra action", this::handleDrawExtraCard);
-        put("deck", "deck", "Show your deck", args -> view.showMyDeck());
+        put("deck", "deck [nickname]", "Show all decks or one player's deck", this::handleDeck);
         put("rankings", "rankings <numPlayers>", "Show the top numPlayers rankings", this::handleRankings);
     }
 
@@ -226,5 +226,20 @@ public class TuiClientApp {
             System.out.println("Invalid numPlayers. It must be an integer.");
         }
     }
+
+    private void handleDeck(String[] parts) {
+        if (parts.length == 1) {
+            view.showDecks();
+            return;
+        }
+
+        if (parts.length == 2) {
+            view.showDeck(parts[1]);
+            return;
+        }
+
+        System.out.println(commands.get("deck").usage);
+    }
+
 
 }

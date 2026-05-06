@@ -131,6 +131,15 @@ public class TuiClientView implements ClientView {
         renderer.renderMyDeck();
     }
 
+    public void showDecks() {
+        renderer.renderDecks();
+    }
+
+    public void showDeck(String nickname) {
+        renderer.renderDeck(nickname);
+    }
+
+
 
     @Override
     public void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe) {
@@ -156,5 +165,6 @@ public class TuiClientView implements ClientView {
         sessionState.setCurrentPhase("LEADERBOARD");
         renderer.render();
     }
+
 
 }
