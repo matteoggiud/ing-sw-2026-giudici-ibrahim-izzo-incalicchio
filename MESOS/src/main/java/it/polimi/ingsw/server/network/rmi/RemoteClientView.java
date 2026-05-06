@@ -183,4 +183,11 @@ public interface RemoteClientView extends Remote {
      * @param rankings the list of LeadBoardDTO objects representing the rankings of players in the game, which can be used to inform the client about the current standings of players in the game and allow them to update their view accordingly (e.g., displaying the rankings on a leaderboard, etc.).
      */
     void onRankingsReceived(List<LeadBoardDTO> rankings) throws RemoteException;
+
+    /**
+     * Called when a welcome message needs to be sent to the client, providing the message that can be used to inform the client about the successful connection to the server and welcome them to the game (e.g., "Welcome to the game! Please log in or register to continue.").
+     *
+     * @param message the welcome message that can be used to inform the client about the successful connection to the server and welcome them to the game, which can be displayed in the client's view as a greeting and prompt for further actions (e.g., logging in, registering, etc.).
+     */
+    void onWelcome(String message) throws RemoteException;
 }
