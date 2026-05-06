@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.controller;
 
+import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.network.socket.VirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
@@ -13,22 +14,22 @@ import it.polimi.ingsw.client.view.Credentials;
 
 public class ClientController {
     private final ClientView view;
-    private final VirtualServer network;
+    private final GenericVirtualServer virtualServer;
 
 
-    public ClientController(ClientView view, VirtualServer network) {
+    public ClientController(ClientView view, GenericVirtualServer virtualServer) {
         this.view = view;
-        this.network = network;
+        this.virtualServer = virtualServer;
     }
 
     public void login() {
         Credentials credentials = view.requestLoginCredentials();
-        network.sendMessage(new LoginSubmitMessage(credentials.nickname(), credentials.passwordHash()));
+        virtualServer.onLoginMessage(credentials.nickname(), credentials.passwordHash());
     }
 
     public void register() {
         Credentials credentials = view.requestRegisterCredentials();
-        network.sendMessage(new RegisterSubmitMessage(credentials.nickname(), credentials.passwordHash()));
+        virtualServer.onRegisterMessage(credentials.nickname(), credentials.passwordHash());
     }
 
     public void showError(String message) {
@@ -40,38 +41,38 @@ public class ClientController {
     }
 
     public void createGame(int expectedNumOfPlayers) {
-        network.sendMessage(new CreateGameMessage(expectedNumOfPlayers));
+        virtualServer.onCreateGameMessage(expectedNumOfPlayers);
     }
 
     public void joinGame(int gameId) {
-        network.sendMessage(new JoinGameMessage(gameId));
+        virtualServer.onJoinGameMessage(gameId);
     }
 
     public void getAvailableGames() {
-        network.sendMessage(new GetAvailableGamesMessage());
+        virtualServer.onGetAvailableGamesMessage();
     }
 
     public void disconnect() {
-        network.sendMessage(new DisconnectMessage());
+        virtualServer.onDisconnectMessage();
     }
 
     public void placeTotem(int offerBoxPosition) {
-        network.sendMessage(new PlaceTotemMessage(offerBoxPosition));
+        virtualServer.onPlaceTotemMessage(offerBoxPosition);
     }
 
     public void leftGame() {
-        network.sendMessage(new LeftGameMessage());
+        virtualServer.onLeftGameMessage();
     }
 
     public void drawCard(int selectedCardId, boolean fromUpperRow) {
-        network.sendMessage(new DrawCardMessage(selectedCardId, fromUpperRow));
+        virtualServer.onDrawCardMessage(selectedCardId, fromUpperRow);
     }
 
     public void drawExtraCard(int selectedCardId) {
-        network.sendMessage(new ExtraDrawMessage(selectedCardId));
+        virtualServer.onDrawExtraCardMessage(selectedCardId);
     }
 
     public void getRankings(int numPlayers){
-        network.sendMessage(new GetRankingsMessage(numPlayers));
+        virtualServer.onGetRankings(numPlayers);
     }
 }
