@@ -55,6 +55,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onLoginSuccess(String nickname, String message) {
+        try{
+            clientView.onLoginSuccess(nickname, message);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -65,6 +70,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onLoginFailed(String reason, String nickname) {
+        try{
+            clientView.onLoginFailed(reason, nickname);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -75,6 +85,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onAvailableGames(List<GameInfoDTO> games) {
+        try{
+            clientView.onAvailableGames(games);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -85,6 +100,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onGenericError(String reason) {
+        try{
+            clientView.onGenericError(reason);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -106,6 +126,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onRegisterFailed(String reason, String nickname) {
+        try{
+            clientView.onRegisterFailed(reason, nickname);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -116,6 +141,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onDisconnectionSuccess(String message) {
+        try{
+            clientView.onDisconnectionSuccess(message);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -126,6 +156,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onLeftGameSuccess(String message) {
+        try{
+            clientView.onLeftGameSuccess(message);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -136,6 +171,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onGenericInfo(String info) {
+        try{
+            clientView.onGenericInfo(info);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -146,6 +186,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onPlayerChanged(List<String> playerNicknames) {
+        try{
+            clientView.onPlayerChanged(playerNicknames);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -157,6 +202,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onBoardChanged(int gameId, BoardDTO board) {
+        try{
+            clientView.onBoardChanged(gameId, board);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -168,6 +218,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onEraChanged(int gameId, String era) {
+        try{
+            clientView.onEraChanged(gameId, era);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -179,6 +234,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onPlaceTotemTurnChanged(int gameId, String currentPlayerNickname) {
+        try{
+            clientView.onPlaceTotemTurnChanged(gameId, currentPlayerNickname);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -190,6 +250,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onResolveActionTurnChanged(int gameId, String currentPlayerNickname) {
+        try{
+            clientView.onResolveActionTurnChanged(gameId, currentPlayerNickname);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -201,6 +266,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onExtraActionTurnChanged(int gameId, String currentPlayerNickname) {
+        try{
+            clientView.onExtraActionTurnChanged(gameId, currentPlayerNickname);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -213,6 +283,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onPlayerDeckUpdated(int gameId, String nickname, PlayerDeckDTO playerDeck) {
+        try{
+            clientView.onPlayerDeckUpdated(gameId, nickname, playerDeck);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -224,6 +299,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onGameEnded(int gameId, Map<String, Integer> finalRanking) {
+        try{
+            clientView.onGameEnded(gameId, finalRanking);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -234,6 +314,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onJoinedGame(GameInfoDTO gameInfo) {
+        try{
+            clientView.onJoinedGame(gameInfo);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -245,6 +330,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onPlayerInfosChanged(int gameId, List<PlayerInfoDTO> playerInfos) {
+        try{
+            clientView.onPlayerInfosChanged(gameId, playerInfos);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -256,6 +346,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onResolvingEvent(int gameId, EventCardDTO eventCard) {
+        try{
+            clientView.onResolvingEvent(gameId, eventCard);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -266,14 +361,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onRankingsReceived(List<LeadBoardDTO> rankings) {
-
-    }
-
-    /**
-     * Called when a client start his journey :)
-     */
-    @Override
-    public void onWelcome(String message) {
+        try{
+            clientView.onRankingsReceived(rankings);
+        }catch (RemoteException e){
+            throw new RuntimeException(e);
+        }
 
     }
 
