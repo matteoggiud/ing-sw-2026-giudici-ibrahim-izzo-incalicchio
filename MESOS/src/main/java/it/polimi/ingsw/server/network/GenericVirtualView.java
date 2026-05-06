@@ -180,8 +180,5 @@ public interface GenericVirtualView {
      */
     void onRankingsReceived(List<LeadBoardDTO> rankings);
 
-    /**
-     * Called when a client start his journey :)
-     */
-    void onWelcome(String message);
+
 }
