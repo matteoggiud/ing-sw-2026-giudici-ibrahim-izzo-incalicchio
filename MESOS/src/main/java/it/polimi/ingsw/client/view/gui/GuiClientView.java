@@ -2,8 +2,8 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.network.socket.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.client.view.Credentials;
 import it.polimi.ingsw.server.model.observer.dto.*;
+import javafx.application.Platform;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +21,12 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showMessage(String message) {
-
+        Platform.runLater(() -> {
+            // Tutto il codice qui dentro viene eseguito in sicurezza sul Thread di JavaFX
+            // Esempio:
+            // myAlertBox.setText(message);
+            // myAlertBox.show();
+        });
     }
 
     /**
