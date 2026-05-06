@@ -369,18 +369,5 @@ public class RmiGenericVirtualView implements GenericVirtualView {
 
     }
 
-    /**
-     * Called when a client start his journey :)
-     */
-    @Override
-    public void onWelcome(String message) {
-        try{
-            clientView.onWelcome(message);
-        }catch (RemoteException e){
-            throw new RuntimeException(e);
-        }
-
-    }
-
 
 }

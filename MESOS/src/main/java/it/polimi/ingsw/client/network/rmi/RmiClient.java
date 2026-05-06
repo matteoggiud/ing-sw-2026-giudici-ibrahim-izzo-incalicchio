@@ -265,8 +265,5 @@ public class RmiClient implements RemoteClientView {
         viewController.onRankingsReceived(rankings);
     }
 
-    @Override
-    public void onWelcome(String message) throws RemoteException {
-        viewController.onWelcome(message);
-    }
+
 }

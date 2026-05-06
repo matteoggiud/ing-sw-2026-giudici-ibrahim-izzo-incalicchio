@@ -65,7 +65,7 @@ public class ClientHandler implements Runnable {
 
     //TODO: fix it!! :/
     private void sendWelcome() {
-        eventHandler.getView().onWelcome("Welcome! Please log in or register to continue.");
+        eventHandler.getView().onAuthenticationNeeded("Welcome! Please log in or register to continue.");
     }
 
     private void safeClose() {
