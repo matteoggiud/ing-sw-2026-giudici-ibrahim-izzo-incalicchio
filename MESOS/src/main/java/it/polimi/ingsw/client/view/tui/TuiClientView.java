@@ -118,6 +118,11 @@ public class TuiClientView implements ClientView {
         renderer.render();
     }
 
+    @Override
+    public void showAuthenticator(String message) {
+
+        renderer.render();
+    }
 
     private void printCards(
             String title,
