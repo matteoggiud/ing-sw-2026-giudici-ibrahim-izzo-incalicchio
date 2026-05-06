@@ -130,15 +130,9 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showAuthenticator(String message) {
-
         renderer.render();
     }
 
-    @Override
-    public void showAuthenticator(String message) {
-
-        renderer.render();
-    }
 
 
     @Override

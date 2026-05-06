@@ -24,7 +24,7 @@ public class ClientController {
     }
 
     public void submitRegistration(Credentials credentials) {
-        virtualServer.onRegisterMessage(credentials.nickname(), credentials.passwordHash())
+        virtualServer.onRegisterMessage(credentials.nickname(), credentials.passwordHash());
     }
 
 
