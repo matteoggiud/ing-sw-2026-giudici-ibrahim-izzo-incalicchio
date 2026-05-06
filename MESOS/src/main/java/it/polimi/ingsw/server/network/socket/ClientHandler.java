@@ -63,7 +63,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    //TODO: fix it!! :/
+
     private void sendWelcome() {
         eventHandler.getView().onAuthenticationNeeded("Welcome! Please log in or register to continue.");
     }
