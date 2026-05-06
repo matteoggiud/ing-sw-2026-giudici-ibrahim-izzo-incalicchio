@@ -11,10 +11,6 @@ public interface ClientView {
 
     void showError(String message);
 
-    Credentials requestLoginCredentials();
-
-    Credentials requestRegisterCredentials();
-
     void showAvailableGames(List<GameInfoDTO> games);
 
     void showGameInfo(GameInfoDTO gameInfo);
@@ -29,14 +25,16 @@ public interface ClientView {
 
     void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn);
 
+    @Deprecated
     void showPlayerResources(String playerNickname, int food, int prestigePoints, boolean isMe);
 
     void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe);
 
-    void showGameEnded(int gameId, Map<String, Integer> finalRanking);
+    void showGameEnded();
 
     void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname);
 
     void showRankings(List<LeadBoardDTO> rankings);
 
+    void showAuthenticator(String message);
 }

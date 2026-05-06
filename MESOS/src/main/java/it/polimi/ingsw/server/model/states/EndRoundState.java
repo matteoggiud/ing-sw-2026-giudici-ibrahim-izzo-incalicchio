@@ -1,15 +1,12 @@
 package it.polimi.ingsw.server.model.states;
 
-import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
@@ -66,9 +63,8 @@ public class EndRoundState implements IGameState {
         game.getBoard().transferUpperTribeToLower();
         refillUpperRow(game);
 
-        nextState(game);
         notifyBoardUpdate(game);
-        notifyCurrentPlacingPlayer(game);
+        nextState(game);
     }
 
     /**
@@ -146,22 +142,6 @@ public class EndRoundState implements IGameState {
         );
     }
 
-    /**
-     * Notifies observers about the player who must place the next totem.
-     *
-     * @param game the current game context
-     */
-    private void notifyCurrentPlacingPlayer(Game game) {
-        Player currentPlayer = game.getBoard().getTurnOrderBox().getSlots().stream()
-                .filter(slot -> !slot.isFree())
-                .map(TurnOrderSlot::getPlacedPlayer)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No player is available to place a totem."));
-
-        game.getObserverManager().notifyObservers(
-                new PlaceTotemTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
-    }
 
     /**
      * Notifies observers that the game reached a new era.
@@ -173,6 +153,11 @@ public class EndRoundState implements IGameState {
         game.getObserverManager().notifyObservers(
                 new EraChangedEvent(game.getGameId(), newEra.getName())
         );
+    }
+
+    @Override
+    public boolean isEnded() {
+        return false;
     }
 
 }

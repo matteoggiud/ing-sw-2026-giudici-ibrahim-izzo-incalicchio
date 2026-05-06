@@ -1,8 +1,10 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -14,6 +16,9 @@ public class GameEndedEvent implements IGameEvent {
 
     private final int gameId;
     private final Map<String, Integer> finalRanking;
+    private final int numPlayers;
+    private final List<LeadBoardDTO> historicalLeaderboard;
+
 
     /**
      * Constructs a new game ended event.
@@ -21,16 +26,21 @@ public class GameEndedEvent implements IGameEvent {
      * @param gameId the unique identifier of the game
      * @param finalRanking the final ranking using player nicknames as keys
      */
-    public GameEndedEvent(int gameId, Map<String, Integer> finalRanking) {
+    public GameEndedEvent(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
         if (gameId < 0) {
             throw new IllegalArgumentException("Game id cannot be null.");
         }
         if (finalRanking == null) {
             throw new IllegalArgumentException("Final ranking cannot be null.");
         }
+        if (historicalLeaderboard == null) {
+            throw new IllegalArgumentException("Historical leaderboard cannot be null.");
+        }
 
         this.gameId = gameId;
         this.finalRanking = new LinkedHashMap<>(finalRanking);
+        this.numPlayers = numPlayers;
+        this.historicalLeaderboard = List.copyOf(historicalLeaderboard);
     }
 
     /**
@@ -51,7 +61,15 @@ public class GameEndedEvent implements IGameEvent {
         return new LinkedHashMap<>(finalRanking);
     }
 
-    /**
+    public int getNumPlayers() {
+        return numPlayers;
+    }
+
+    public List<LeadBoardDTO> getHistoricalLeaderboard() {
+        return historicalLeaderboard;
+    }
+
+/**
      * Dispatches this event to the observer.
      *
      * @param observer the observer to notify
@@ -60,4 +78,5 @@ public class GameEndedEvent implements IGameEvent {
     public void dispatch(IGameObserver observer) {
         observer.update(this);
     }
+
 }

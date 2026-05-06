@@ -52,4 +52,9 @@ public class SetupState implements IGameState {
         game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 
+    @Override
+    public boolean isEnded() {
+        return false;
+    }
+
 }

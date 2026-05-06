@@ -18,9 +18,8 @@ public class ServerMain {
             GameController controller = new GameController(gamePortal);
             SocketAcceptor socketServer = new SocketAcceptor(serverSocket, controller);
 
-            InetAddress inetAddress = InetAddress.getLocalHost();
-            System.out.println("[SERVER] Starting server on " + inetAddress.getHostAddress() + ":" + port);
-
+            InetAddress ip = InetAddress.getLocalHost();
+            System.out.println("[SERVER] Server started at " + ip.getHostAddress() + ":" + port);
             socketServer.run();
         } catch (Exception e) {
             e.printStackTrace();

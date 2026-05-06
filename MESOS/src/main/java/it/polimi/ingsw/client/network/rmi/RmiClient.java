@@ -1,8 +1,6 @@
 package it.polimi.ingsw.client.network.rmi;
 
 import it.polimi.ingsw.client.controller.ViewController;
-import it.polimi.ingsw.client.network.socket.ClientState;
-import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import it.polimi.ingsw.server.network.rmi.RemoteClientView;
 
@@ -219,8 +217,8 @@ public class RmiClient implements RemoteClientView {
      * @param finalRanking a map containing the final ranking of players in the game, where the key is the player's nickname and the value is their final score or position in the ranking. This information can be used to inform the client about the outcome of the game and display the final results to the players.
      */
     @Override
-    public void onGameEnded(int gameId, Map<String, Integer> finalRanking) {
-        viewController.onGameEnded(gameId, finalRanking);
+    public void onGameEnded(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
+        viewController.onGameEnded(gameId, finalRanking, numPlayers, historicalLeaderboard);
     }
 
     /**

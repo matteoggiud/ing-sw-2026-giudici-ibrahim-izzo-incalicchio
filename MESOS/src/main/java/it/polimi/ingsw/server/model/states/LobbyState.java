@@ -93,4 +93,9 @@ public class LobbyState implements IGameState {
                 new GameStartedEvent(game.getPlayers().getPlayerNicknames(), game.getGameId())
         );
     }
+
+    @Override
+    public boolean isEnded() {
+        return false;
+    }
 }

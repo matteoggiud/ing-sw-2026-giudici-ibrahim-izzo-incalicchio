@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class TerminalRenderer {
     private final ClientState state;
+    private boolean promptHelpPrinted = false;
 
     public TerminalRenderer(ClientState state) {
         if (state == null) {
@@ -29,6 +30,12 @@ public class TerminalRenderer {
             return;
         }
 
+        if (!state.getHistoricalRankings().isEmpty()) {
+            printHistoricalRankings(state.getHistoricalRankings());
+            printPromptHelp();
+            return;
+        }
+
         if (state.getActiveGameId() == null) {
             printAvailableGames(state.getAvailableGames());
             printPromptHelp();
@@ -44,6 +51,11 @@ public class TerminalRenderer {
 
     private void clearTerminal() {
         System.out.print("\033[H\033[2J");
+        System.out.print("\u001b[3J");
+
+        for (int i = 0; i < 60; i++) {
+            System.out.println();
+        }
         System.out.flush();
     }
 
@@ -149,9 +161,9 @@ public class TerminalRenderer {
             return;
         }
 
-        characters.forEach(card -> printCardLine("character", card.cardId(), card.name(), card.era()));
+        characters.forEach(this::printCharacterCardLine);
         events.forEach(card -> printCardLine("event", card.cardId(), card.name(), card.era()));
-        buildings.forEach(card -> printCardLine("building", card.cardId(), card.name(), card.era()));
+        buildings.forEach(this::printBuildingCardLine);
     }
 
     private void printOfferTrack(List<OfferBoxDTO> boxes) {
@@ -248,34 +260,72 @@ public class TerminalRenderer {
     }
 
     public void renderMyDeck() {
-        clearTerminal();
+        renderDeck(state.getNickname());
+    }
 
+    public void renderDecks() {
+        clearTerminal();
         printHeader();
 
-        PlayerInfoDTO myInfo = null;
-        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
-            if (playerInfo.nickname() != null && playerInfo.nickname().equals(state.getNickname())) {
-                myInfo = playerInfo;
-                break;
-            }
-        }
+        printSection("Players decks");
 
-        printSection("Your deck");
-
-        if (myInfo == null || myInfo.deck() == null) {
-            System.out.println("Your deck is not available yet.");
+        if (state.getPlayersInfo().isEmpty()) {
+            System.out.println("Decks are not available yet.");
             printPromptHelp();
             return;
         }
 
-        PlayerDeckDTO deck = myInfo.deck();
+        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
+            printPlayerDeck(playerInfo);
+        }
+
+        printPromptHelp();
+    }
+
+    public void renderDeck(String nickname) {
+        clearTerminal();
+        printHeader();
+
+        if (nickname == null || nickname.isBlank()) {
+            System.out.println("Invalid nickname.");
+            printPromptHelp();
+            return;
+        }
+
+        for (PlayerInfoDTO playerInfo : state.getPlayersInfo()) {
+            if (nickname.equals(playerInfo.nickname())) {
+                printPlayerDeck(playerInfo);
+                printPromptHelp();
+                return;
+            }
+        }
+
+        printSection("Deck");
+        System.out.println("No deck found for player: " + nickname);
+        printPromptHelp();
+    }
+
+    private void printPlayerDeck(PlayerInfoDTO playerInfo) {
+        String title = playerInfo.nickname();
+
+        if (playerInfo.nickname() != null && playerInfo.nickname().equals(state.getNickname())) {
+            title += " (you)";
+        }
+
+        printSection(title + " deck");
+
+        if (playerInfo.deck() == null) {
+            System.out.println("Deck is not available yet.");
+            return;
+        }
+
+        PlayerDeckDTO deck = playerInfo.deck();
 
         System.out.println("Characters:");
         if (deck.characterCards().isEmpty()) {
             System.out.println("  none");
         } else {
-            deck.characterCards().forEach(card ->
-                    printCardLine("character", card.cardId(), card.name(), card.era()));
+            deck.characterCards().forEach(this::printCharacterCardLine);
         }
 
         System.out.println();
@@ -283,13 +333,9 @@ public class TerminalRenderer {
         if (deck.buildingCards().isEmpty()) {
             System.out.println("  none");
         } else {
-            deck.buildingCards().forEach(card ->
-                    printCardLine("building", card.cardId(), card.name(), card.era()));
+            deck.buildingCards().forEach(this::printBuildingCardLine);
         }
-
-        printPromptHelp();
     }
-
 
     private void printCurrentTurn() {
         String currentPlayer = state.getCurrentPlayerNickname();
@@ -323,12 +369,39 @@ public class TerminalRenderer {
 
         finalRanking.forEach((player, score) ->
                 System.out.printf("  %-20s %d pp%n", player, score));
+        printMyHistoricalPosition();
     }
 
+    private void printHistoricalRankings(List<LeadBoardDTO> rankings) {
+        printSection("Historical leaderboard");
+
+        System.out.printf("%-4s %-18s %-8s %-20s%n", "Pos", "Player", "Score", "Finished at");
+        printLine(56);
+
+        for (LeadBoardDTO dto : rankings) {
+            String nickname = dto.nickname() == null ? "-" : dto.nickname();
+            String finishedAt = dto.finished_at() == null ? "-" : dto.finished_at();
+
+            System.out.printf(
+                    "%-4d %-18s %-8d %-20s%n",
+                    dto.position(),
+                    nickname,
+                    dto.finalScore(),
+                    finishedAt
+            );
+        }
+    }
+
+
     private void printPromptHelp() {
+        if(promptHelpPrinted){
+            return;
+        }
+        promptHelpPrinted = true;
+
         System.out.println();
         printLine(96);
-        System.out.println("Commands: help | login | register | games | create <players> | join <gameId> | left | place <pos> | draw <upper|lower> <cardId> | quit");
+        System.out.println("help | login | register | games | create <players> | join <gameId> | left | place <pos> | draw <upper|lower> <cardId> | draw-extra <cardId> | deck | rankings <numPlayers> | quit F/n\n");
     }
 
     private String playerName(String nickname, String myNickname) {
@@ -338,8 +411,72 @@ public class TerminalRenderer {
         return nickname == null ? "-" : nickname;
     }
 
+    private void printCharacterCardLine(CharacterCardDTO card) {
+        System.out.printf(
+                "  %-9s #%03d  %-28s %-12s %s%n",
+                "character",
+                card.cardId(),
+                card.name(),
+                card.era(),
+                characterDetails(card)
+        );
+    }
+
+    private String characterDetails(CharacterCardDTO card) {
+        StringBuilder details = new StringBuilder();
+
+        if (card.shamanStars() > 0) {
+            details.append(card.shamanStars()).append("⭐");
+        }
+
+        if (card.foodIcon()) {
+            if (!details.isEmpty()) {
+                details.append(" ");
+            }
+            details.append("\uD83C\uDF57");
+        }
+
+        if (card.inventorType() != null && !card.inventorType().isBlank()) {
+            if (!details.isEmpty()) {
+                details.append(" ");
+            }
+            details.append(card.inventorType());
+        }
+
+        return details.toString();
+    }
+
     private void printCardLine(String type, int cardId, String name, String era) {
         System.out.printf("  %-9s #%03d  %-28s %s%n", type, cardId, name, era);
+    }
+
+    private void printBuildingCardLine(BuildingCardDTO card) {
+        System.out.printf(
+                "  %-9s #%03d  %-28s %-12s cost=%d%n",
+                "building",
+                card.cardId(),
+                card.name(),
+                card.era(),
+                card.foodCost()
+        );
+    }
+
+    private void printMyHistoricalPosition() {
+        if (state.getNickname() == null || state.getHistoricalRankings().isEmpty()) {
+            return;
+        }
+
+        for (LeadBoardDTO dto : state.getHistoricalRankings()) {
+            if (state.getNickname().equals(dto.nickname())) {
+                System.out.println();
+                System.out.printf(
+                        "Your historical leaderboard position: #%d with %d total pp%n",
+                        dto.position(),
+                        dto.finalScore()
+                );
+                return;
+            }
+        }
     }
 
     private void printSection(String title) {

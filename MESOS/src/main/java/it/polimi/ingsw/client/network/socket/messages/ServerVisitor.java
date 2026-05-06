@@ -114,7 +114,7 @@ public class ServerVisitor implements ServerMessageVisitor {
 
     @Override
     public void visit(GameEndedMessage message) {
-        viewController.onGameEnded(message.getGameId(), message.getFinalRanking());
+        viewController.onGameEnded(message.getGameId(), message.getFinalRanking(), message.getNumPlayers(), message.getHistoricalLeaderboard());
     }
 
 

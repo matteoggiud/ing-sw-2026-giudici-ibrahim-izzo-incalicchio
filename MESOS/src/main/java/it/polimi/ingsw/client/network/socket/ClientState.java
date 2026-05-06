@@ -3,6 +3,8 @@ package it.polimi.ingsw.client.network.socket;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+
 
 import java.util.*;
 
@@ -21,6 +23,7 @@ public class ClientState {
     private String errorMessage;
     private String resolvingEventName;
     private Map<String, Integer> finalRanking;
+    private List<LeadBoardDTO> historicalRankings;
 
     private final Map<String, PlayerInfoDTO> playersInfo;
 
@@ -32,13 +35,12 @@ public class ClientState {
         this.currentPhase = "MENU";
         this.playersInfo = new LinkedHashMap<>();
         this.finalRanking = Map.of();
+        this.historicalRankings = List.of();
     }
 
     public ClientState() {
-        this.nickname = null;
-        this.activeGameId = null;
+        this(null, null);
         this.connected = false;
-        this.playersInfo = new LinkedHashMap<>();
     }
 
     public String getNickname() {
@@ -131,7 +133,7 @@ public class ClientState {
     }
 
     public void setFinalRanking(Map<String, Integer> finalRanking) {
-        this.finalRanking = finalRanking == null ? Map.of() : Map.copyOf(finalRanking);
+        this.finalRanking = finalRanking == null ? Map.of() : new LinkedHashMap<>(finalRanking);
     }
 
     public void updatePlayersInfo(List<PlayerInfoDTO> playerInfos) {
@@ -165,6 +167,7 @@ public class ClientState {
         resolvingEventName = null;
         finalRanking = Map.of();
         playersInfo.clear();
+        historicalRankings = List.of();
     }
 
     public void disconnect() {
@@ -174,9 +177,18 @@ public class ClientState {
     }
 
     public void connect() {
+        clearGameState();
         this.nickname = null;
-        this.activeGameId = null;
-        this.playersInfo.clear();
         this.connected = true;
     }
+
+    public List<LeadBoardDTO> getHistoricalRankings() {
+        return historicalRankings;
+    }
+
+    public void setHistoricalRankings(List<LeadBoardDTO> historicalRankings) {
+        this.historicalRankings = historicalRankings == null ? List.of() : List.copyOf(historicalRankings);
+    }
+
+
 }

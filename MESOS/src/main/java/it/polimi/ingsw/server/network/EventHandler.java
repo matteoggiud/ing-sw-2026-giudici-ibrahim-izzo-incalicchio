@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
+import it.polimi.ingsw.server.network.SessionRegistry;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
 
 
@@ -137,7 +138,9 @@ public class EventHandler implements IGameObserver {
         int gameId = event.getGameId();
         Map<String, Integer> finalRanking = event.getFinalRanking();
 
-        view.onGameEnded(gameId, finalRanking);
+        view.onGameEnded(gameId, finalRanking, event.getNumPlayers(), event.getHistoricalLeaderboard());
+
+        SessionRegistry.getInstance().clearActiveGameIdForGame(gameId);
     }
 
     /**

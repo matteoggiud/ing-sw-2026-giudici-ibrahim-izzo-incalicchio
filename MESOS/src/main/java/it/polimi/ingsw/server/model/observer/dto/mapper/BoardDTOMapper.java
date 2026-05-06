@@ -60,9 +60,13 @@ public final class BoardDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        ""
-                ))
-                .toList();
+                        "",
+                        card.getShamanStars(),
+                        card.hasFoodIcon(),
+                        card.getInventorType()
+                                .map(Enum::name)
+                                .orElse("")
+                )).toList();
     }
 
     /**
@@ -94,9 +98,9 @@ public final class BoardDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        ""
-                ))
-                .toList();
+                        "",
+                        card.getFoodCost()
+                )).toList();
     }
 
     /**

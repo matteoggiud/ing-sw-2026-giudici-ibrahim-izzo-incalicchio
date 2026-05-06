@@ -9,36 +9,24 @@ import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMess
 import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
-import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.Credentials;
 
 public class ClientController {
-    private final ClientView view;
     private final GenericVirtualServer virtualServer;
 
 
-    public ClientController(ClientView view, GenericVirtualServer virtualServer) {
-        this.view = view;
+    public ClientController(GenericVirtualServer virtualServer) {
         this.virtualServer = virtualServer;
     }
 
-    public void login() {
-        Credentials credentials = view.requestLoginCredentials();
+    public void submitLogin(Credentials credentials) {
         virtualServer.onLoginMessage(credentials.nickname(), credentials.passwordHash());
     }
 
-    public void register() {
-        Credentials credentials = view.requestRegisterCredentials();
-        virtualServer.onRegisterMessage(credentials.nickname(), credentials.passwordHash());
+    public void submitRegistration(Credentials credentials) {
+        virtualServer.onRegisterMessage(credentials.nickname(), credentials.passwordHash())
     }
 
-    public void showError(String message) {
-        view.showError(message);
-    }
-
-    public void showMessage(String message) {
-        view.showMessage(message);
-    }
 
     public void createGame(int expectedNumOfPlayers) {
         virtualServer.onCreateGameMessage(expectedNumOfPlayers);
