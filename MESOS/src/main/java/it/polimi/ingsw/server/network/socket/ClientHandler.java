@@ -34,7 +34,7 @@ public class ClientHandler implements Runnable {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
         this.eventHandler = eventHandler;
-        this.clientVisitor = new ClientVisitor(controller, new ClientSession(clientSocket, eventHandler));
+        this.clientVisitor = new ClientVisitor(controller, new ClientSession(eventHandler));
         this.socketAcceptor = socketAcceptor;
     }
 
@@ -43,7 +43,7 @@ public class ClientHandler implements Runnable {
         try {
             sendWelcome();
 
-            while (!clientSocket.isClosed()) {
+            while (!clientSocket.isClosed() && !clientVisitor.getClientSession().isRequestedDisconnection()) {
                 // Read a message from the client
                 ClientMessage message = (ClientMessage) inputStream.readObject();
 
@@ -56,10 +56,8 @@ public class ClientHandler implements Runnable {
             //Unexpected error during communication with the client
             e.printStackTrace();
         } finally {
-            clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());
-
             safeClose();
-
+            clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());
             socketAcceptor.removeClientHandler(this);
         }
     }
@@ -82,7 +80,6 @@ public class ClientHandler implements Runnable {
             clientSocket.close();
         } catch (Exception ignored) {
         }
-        SessionRegistry.getInstance().unregisterSession(clientVisitor.getClientSession());
     }
 
 

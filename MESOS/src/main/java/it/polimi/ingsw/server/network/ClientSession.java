@@ -7,11 +7,6 @@ import java.net.Socket;
  */
 public class ClientSession {
     /**
-     * The socket connection to the client, used for communication between the server and the client.
-     */
-    private final Socket clientSocket;
-
-    /**
      * The virtual view associated with this client session, used to send updates and messages to the client.
      */
     private final EventHandler eventHandler;
@@ -28,18 +23,22 @@ public class ClientSession {
      */
     private Integer activeGameId;
 
+    /**
+     * Flag indicating whether the client has requested disconnection.
+     */
+    private boolean isRequestedDisconnection;
+
 
     /**
      * Creates a new client session with the specified socket connection and virtual view.
      *
-     * @param clientSocket the socket connection to the client
      * @param eventHandler the event handler to be used for sending updates and messages to the client
      */
-    public ClientSession(Socket clientSocket, EventHandler eventHandler) {
-        this.clientSocket = clientSocket;
+    public ClientSession(EventHandler eventHandler) {
         this.eventHandler = eventHandler;
         this.nickname = null;
         this.activeGameId = null;
+        this.isRequestedDisconnection = false;
     }
 
     /**
@@ -52,15 +51,6 @@ public class ClientSession {
     }
 
     /**
-     * Gets the socket connection to the client associated with this session.
-     *
-     * @return the socket connection to the client associated with this session
-     */
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
-
-    /**
      * Gets the nickname of the client associated with this session.
      *
      * @return the nickname of the client associated with this session
@@ -70,6 +60,10 @@ public class ClientSession {
             throw new IllegalStateException("Nickname is not set for this client session.");
         }
         return nickname;
+    }
+
+    public boolean isRequestedDisconnection() {
+        return isRequestedDisconnection;
     }
 
     /**
@@ -144,12 +138,7 @@ public class ClientSession {
      * Disconnects the client session by closing the socket connection and clearing the nickname and active game ID.
      */
     public void disconnectSession() {
-        try {
-            clientSocket.close();
-        } catch (Exception e) {
-            // Log the exception or handle it as needed
-            System.err.println("Error while closing client socket: " + e.getMessage());
-        }
+        this.isRequestedDisconnection = true;
         this.clearNickname();
         this.clearActiveGameId();
     }

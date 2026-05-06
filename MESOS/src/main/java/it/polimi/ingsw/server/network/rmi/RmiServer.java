@@ -9,10 +9,12 @@ import java.rmi.RemoteException;
 
 public class RmiServer implements RemoteServer {
 
-    GameController gameController;
+    private final GameController gameController;
+    private final ClientSession clientSession;
 
-    public RmiServer(GameController gameController) {
+    public RmiServer(GameController gameController, ClientSession clientSession) {
         this.gameController = gameController;
+        this.clientSession = clientSession;
     }
 
     @Override
