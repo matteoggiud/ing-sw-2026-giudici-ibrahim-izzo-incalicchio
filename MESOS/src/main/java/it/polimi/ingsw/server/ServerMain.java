@@ -9,17 +9,17 @@ import java.net.ServerSocket;
 
 public class ServerMain {
     public static void main(String[] args) {
-        int port = args.length > 0 ? Integer.parseInt(args[0]) : 12345;
+        int socketPort = args.length > 0 ? Integer.parseInt(args[0]) : 12345;
 
         try {
-            ServerSocket serverSocket = new ServerSocket(port);
+            ServerSocket serverSocket = new ServerSocket(socketPort);
 
             GamePortal gamePortal = new GamePortal();
             GameController controller = new GameController(gamePortal);
             SocketAcceptor socketServer = new SocketAcceptor(serverSocket, controller);
 
             InetAddress ip = InetAddress.getLocalHost();
-            System.out.println("[SERVER] Server started at " + ip.getHostAddress() + ":" + port);
+            System.out.println("[SERVER] Server started at " + ip.getHostAddress() + ":" + socketPort);
             socketServer.run();
         } catch (Exception e) {
             e.printStackTrace();
