@@ -96,7 +96,7 @@ public class ClientMain {
             network = socketNetwork;
         }
 
-        if(port == rmiPort){
+        else if(port == rmiPort){
             try {
                 RmiClient rmiClient = new RmiClient(viewController);
                 RemoteClientView clientStub =
