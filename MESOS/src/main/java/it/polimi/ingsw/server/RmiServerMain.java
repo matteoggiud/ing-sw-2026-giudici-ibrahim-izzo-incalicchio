@@ -19,6 +19,7 @@ public class RmiServerMain {
         String defaultServerIp;
         String serverIp;
         Scanner scanner = new Scanner(System.in);
+        final int bootStrapPort = 1235;
 
         try {
             defaultServerIp = InetAddress.getLocalHost().getHostAddress();
@@ -46,9 +47,13 @@ public class RmiServerMain {
             GameController gameController = new GameController(gamePortal);
 
             RmiBootstrap bootstrap = new RmiBootstrapServer(gameController);
-            RmiBootstrap stub = (RmiBootstrap) UnicastRemoteObject.exportObject(bootstrap, 0);
+
+            //We create a remote bootstrap object
+            RmiBootstrap stub = (RmiBootstrap) UnicastRemoteObject.exportObject(bootstrap, 1235);
 
             Registry registry = LocateRegistry.createRegistry(rmiPort);
+
+            //After we created the registry with the port, we bind to it the server name and the remote bootstrap
             registry.rebind(rmiName, stub);
 
             System.out.println("Rmi server listening on port " + rmiPort);

@@ -14,6 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class RmiBootstrapServer implements RmiBootstrap {
 
     private final GameController gameController;
+    final int serverPort = 1236;
 
     public RmiBootstrapServer(GameController gameController) {
         this.gameController = gameController;
@@ -28,6 +29,6 @@ public class RmiBootstrapServer implements RmiBootstrap {
 
         RmiServer server = new RmiServer(gameController, session);
 
-        return (RemoteServer) UnicastRemoteObject.exportObject(server, 0);
+        return (RemoteServer) UnicastRemoteObject.exportObject(server, serverPort);
     }
 }

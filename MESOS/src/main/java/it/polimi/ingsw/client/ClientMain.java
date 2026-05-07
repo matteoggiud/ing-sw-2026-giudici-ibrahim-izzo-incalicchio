@@ -28,6 +28,7 @@ public class ClientMain {
         final int defaultPort = 12345;
         final int socketPort = 12345;
         final int rmiPort = 1234;
+        final int rmiClientCallbackPort = 1237;
         final String defaultRmiName = "MESOS_RMI";
 
         String defaultClientIp;
@@ -122,9 +123,14 @@ public class ClientMain {
         } else if (port == rmiPort) {
             try {
                 RmiClient rmiClient = new RmiClient(viewController);
-                RemoteClientView clientStub =
-                        (RemoteClientView) UnicastRemoteObject.exportObject(rmiClient, 0);
 
+                //The Remote version of the client that the server can call, the server use the clientStud to callback to the client
+                //We create a remoteclient given to the server and every client listen the server on the port 1237, which is our remote
+                //object
+                RemoteClientView clientStub =
+                        (RemoteClientView) UnicastRemoteObject.exportObject(rmiClient, rmiClientCallbackPort);
+
+                //Just like a map it associates a logic name to a remote object
                 Registry registry = LocateRegistry.getRegistry(host, port);
                 RmiBootstrap bootstrap = (RmiBootstrap) registry.lookup(defaultRmiName);
                 RemoteServer remoteServer = bootstrap.connect(clientStub);
