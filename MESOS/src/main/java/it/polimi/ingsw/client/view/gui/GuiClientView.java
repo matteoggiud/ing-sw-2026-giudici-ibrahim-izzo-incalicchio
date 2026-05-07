@@ -1,9 +1,9 @@
 package it.polimi.ingsw.client.view.gui;
 
-import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.network.socket.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.gui.controllers.AuthController;
+import it.polimi.ingsw.client.view.gui.controllers.LobbyController;
+import it.polimi.ingsw.client.view.gui.controllers.MenuController;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -17,17 +17,71 @@ import java.util.List;
 
 
 public class GuiClientView implements ClientView {
-    private final ClientState clientState;
     private final Stage stage;
-    private ClientController clientController;
 
-    public GuiClientView(ClientState clientState, Stage stage) {
-        this.clientState = clientState;
+    private GuiContext guiContext;
+
+    private Scene menuScene;
+    private MenuController menuController;
+
+    private Scene authScene;
+    private AuthController authController;
+
+    private Scene lobbyScene;
+    private LobbyController lobbyController;
+
+    public GuiClientView(Stage stage) {
         this.stage = stage;
     }
 
-    public void setClientController(ClientController clientController) {
-        this.clientController = clientController;
+
+    public void setGuiContext(GuiContext guiContext) {
+        this.guiContext = guiContext;
+    }
+
+    private void ensureMenuLoaded() throws IOException {
+        if (menuScene != null && menuController != null) return;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MenuPane.fxml"));
+        Parent root = loader.load();
+
+        menuController = loader.getController();
+        menuController.setGuiContext(guiContext);
+
+        menuScene = new Scene(root);
+    }
+
+    private void ensureAuthLoaded() throws IOException {
+        if (authScene != null && authController != null) return;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AuthPane.fxml"));
+        Parent root = loader.load();
+
+        authController = loader.getController();
+        authController.setGuiContext(guiContext);
+
+        authScene = new Scene(root);
+    }
+
+    private void ensureLobbyLoaded() throws IOException {
+        if (lobbyScene != null && lobbyController != null) return;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LobbyPane.fxml"));
+        Parent root = loader.load();
+
+        lobbyController = loader.getController();
+        lobbyController.setGuiContext(guiContext);
+
+        lobbyScene = new Scene(root);
+    }
+
+    private void changeSceneIfNeeded(Scene newScene) {
+        if (newScene == null) return;
+
+        if (stage.getScene() != null && stage.getScene() != newScene) {
+            stage.setScene(newScene);
+            stage.show();
+        }
     }
 
     /**
@@ -56,7 +110,17 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showAvailableGames(List<GameInfoDTO> games) {
+        Platform.runLater(() -> {
+            try {
+                ensureMenuLoaded();
 
+                menuController.showAvailableGames();
+
+                changeSceneIfNeeded(menuScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -64,6 +128,17 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showGameInfo(GameInfoDTO gameInfo) {
+        Platform.runLater(() -> {
+            try {
+                ensureLobbyLoaded();
+
+                lobbyController.showGameInfo(gameInfo);
+
+                changeSceneIfNeeded(lobbyScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 
@@ -161,23 +236,17 @@ public class GuiClientView implements ClientView {
     @Override
     public void showAuthenticator(String message) {
         Platform.runLater(() -> {
-           try{
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AuthPane.fxml"));
-               Parent root = loader.load();
+            try {
+                ensureAuthLoaded();
 
-               AuthController authController = loader.getController();
-               authController.setClientController(clientController);
-               
-               if (message != null && !message.isBlank()) {
-                   authController.showErrorMessage(message);
-               }
-               
-               stage.setScene(new Scene(root));
-               stage.show();
-           } catch (IOException e){
-               e.printStackTrace();
-           }
-            
+                authController.showErrorMessage(message);
+
+
+                changeSceneIfNeeded(authScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         });
     }
 }

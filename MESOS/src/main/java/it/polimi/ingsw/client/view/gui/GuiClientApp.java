@@ -63,7 +63,7 @@ public class GuiClientApp extends Application {
 
         // 2. Initialize client controller
         this.clientState = new ClientState();
-        GuiClientView view = new GuiClientView(clientState, primaryStage);
+        GuiClientView view = new GuiClientView(primaryStage);
         // this.guiClientView = view;
         this.viewController = new ViewController(clientState, view);
 
@@ -73,7 +73,8 @@ public class GuiClientApp extends Application {
             GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
             this.clientController = new ClientController(network);
 
-            view.setClientController(clientController);
+            // Set the GUI context for the view, so it can interact with the controller and update the UI
+            view.setGuiContext(new GuiContext(clientController, viewController, clientState));
 
             try {
                 socketServerConnection.connect();

@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.Credentials;
+import it.polimi.ingsw.client.view.gui.GuiContext;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -17,10 +18,10 @@ public class AuthController {
     @FXML
     private Label messageLabel;
 
-    private ClientController clientController;
+    private GuiContext guiContext;
 
-    public void setClientController(ClientController clientController) {
-        this.clientController = clientController;
+    public void setGuiContext(GuiContext guiContext) {
+        this.guiContext = guiContext;
     }
 
     @FXML
@@ -29,11 +30,11 @@ public class AuthController {
         String password = passwordField.getText();
 
         if (nickname.isBlank() || password.isBlank()) {
-            messageLabel.setText("Please fill all the fields");
+            showErrorMessage("Please fill all the fields");
             return;
         }
 
-        clientController.submitLogin(new Credentials(nickname, password));
+        guiContext.clientController().submitLogin(new Credentials(nickname, password));
     }
 
     @FXML
@@ -42,14 +43,15 @@ public class AuthController {
         String password = passwordField.getText();
 
         if (nickname.isBlank() || password.isBlank()) {
-            messageLabel.setText("Please fill all the fields");
+            showErrorMessage("Please fill all the fields");
             return;
         }
 
-        clientController.submitRegistration(new Credentials(nickname, password));
+        guiContext.clientController().submitRegistration(new Credentials(nickname, password));
     }
 
     public void showErrorMessage(String message) {
-        messageLabel.setText(message);
+        messageLabel.setText(guiContext.clientState().getErrorMessage());
+        //messageLabel.setStyle("-fx-text-fill: red;");
     }
 }
