@@ -19,7 +19,7 @@ public class RmiServerMain {
             GameController gameController = new GameController(gamePortal);
 
             RmiBootstrap bootstrap = new RmiBootstrapServer(gameController);
-            RmiBootstrap stub = (RmiBootstrap) UnicastRemoteObject.exportObject(bootstrap, rmiPort);
+            RmiBootstrap stub = (RmiBootstrap) UnicastRemoteObject.exportObject(bootstrap, 0);
 
             Registry registry = LocateRegistry.createRegistry(rmiPort);
             registry.rebind(rmiName, stub);
