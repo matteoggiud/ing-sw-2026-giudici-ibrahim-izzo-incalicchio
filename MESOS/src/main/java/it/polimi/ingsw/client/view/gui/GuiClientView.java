@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.gui.controllers.AuthController;
+import it.polimi.ingsw.client.view.gui.controllers.GameController;
 import it.polimi.ingsw.client.view.gui.controllers.LobbyController;
 import it.polimi.ingsw.client.view.gui.controllers.MenuController;
 import it.polimi.ingsw.server.model.observer.dto.*;
@@ -29,6 +30,9 @@ public class GuiClientView implements ClientView {
 
     private Scene lobbyScene;
     private LobbyController lobbyController;
+
+    private Scene gameScene;
+    private GameController gameController;
 
     public GuiClientView(Stage stage) {
         this.stage = stage;
@@ -73,6 +77,18 @@ public class GuiClientView implements ClientView {
         lobbyController.setGuiContext(guiContext);
 
         lobbyScene = new Scene(root);
+    }
+
+    private void ensureGameLoaded() throws IOException {
+        if (gameScene != null && gameController != null) return;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GamePane.fxml"));
+        Parent root = loader.load();
+
+        gameController = loader.getController();
+        gameController.setGuiContext(guiContext);
+
+        gameScene = new Scene(root);
     }
 
     private void changeSceneIfNeeded(Scene newScene) {
@@ -148,7 +164,17 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showGameStarted(int gameId, List<String> playerNicknames) {
+        Platform.runLater(() -> {
+            try {
+                ensureGameLoaded();
 
+                gameController.showGameStarted(gameId, playerNicknames);
+
+                changeSceneIfNeeded(gameScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
@@ -156,7 +182,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showBoardSummary(BoardDTO board) {
-
+        Platform.runLater(() -> {
+            if (gameController != null) {
+                gameController.showBoard(board);
+            }
+        });
     }
 
     /**
@@ -165,7 +195,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn) {
-
+        Platform.runLater(() -> {
+            if (gameController != null) {
+                gameController.showPlaceTotemTurn(currentPlayerNickname, isMyTurn);
+            }
+        });
     }
 
     /**
@@ -174,7 +208,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showResolveActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-
+        Platform.runLater(() -> {
+            if (gameController != null) {
+                gameController.showResolveActionTurn(currentPlayerNickname, isMyTurn);
+            }
+        });
     }
 
     /**
@@ -183,7 +221,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-
+        Platform.runLater(() -> {
+            if (gameController != null) {
+                gameController.showExtraActionTurn(currentPlayerNickname, isMyTurn);
+            }
+        });
     }
 
     /**
@@ -194,7 +236,6 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showPlayerResources(String playerNickname, int food, int prestigePoints, boolean isMe) {
-
     }
 
     /**
@@ -204,7 +245,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe) {
-
+        Platform.runLater(() -> {
+            if (gameController != null) {
+                gameController.showPlayerDeck(playerNickname, playerDeck, isMe);
+            }
+        });
     }
 
     /**
@@ -222,7 +267,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
-
+        Platform.runLater(() -> {
+            if (gameController != null) {
+                gameController.showPlayersInfo(playersInfo, myNickname);
+            }
+        });
     }
 
     /**
