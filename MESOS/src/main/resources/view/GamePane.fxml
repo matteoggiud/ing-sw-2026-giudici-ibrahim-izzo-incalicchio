@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="it.polimi.ingsw.client.view.gui.controllers.GameController"
             prefWidth="1100.0" prefHeight="700.0">
 
@@ -18,13 +19,37 @@
     </top>
 
     <center>
-        <VBox spacing="10" style="-fx-padding: 10;">
+        <VBox spacing="10" style="-fx-padding: 10;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
             <Label text="Board" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <TextArea fx:id="boardArea" editable="false" wrapText="true" prefRowCount="18"/>
+
+            <!-- UPPER ROW -->
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="160">
+                <HBox fx:id="upperRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
+            </ScrollPane>
+
+            <!-- MIDDLE ROW: offer track (scrollable) + turn order -->
+            <HBox spacing="12" alignment="CENTER" minHeight="160">
+                <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="140" HBox.hgrow="ALWAYS">
+                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;" />
+                </ScrollPane>
+
+                <VBox fx:id="turnOrderBox" spacing="8" alignment="TOP_CENTER" prefWidth="220">
+                    <Label text="Turn order" style="-fx-font-weight:bold;"/>
+                    <VBox fx:id="turnOrder" spacing="6" />
+                </VBox>
+            </HBox>
+
+            <!-- LOWER ROW -->
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="160">
+                <HBox fx:id="lowerRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
+            </ScrollPane>
+
+            <!-- Optional area for debug/text summary of board -->
+            <TextArea fx:id="boardArea" editable="false" wrapText="true" prefRowCount="4" visible="false"/>
         </VBox>
     </center>
 
-    <!-- PLAYER PANELS: usa una ListView di PlayerInfoDTO con cellFactory personalizzata -->
+    <!-- PLAYER PANELS alla destra (usa la tua playersListView già presente) -->
     <right>
         <VBox spacing="10" style="-fx-padding: 10;" prefWidth="420.0">
             <Label text="Players" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>

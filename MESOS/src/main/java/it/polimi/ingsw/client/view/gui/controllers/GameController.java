@@ -1,6 +1,7 @@
 package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
+import it.polimi.ingsw.client.view.gui.ImageCache;
 import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
@@ -8,9 +9,12 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.Collection;
@@ -22,12 +26,26 @@ public class GameController {
 
     private GuiContext guiContext;
 
-    @FXML private Label eraLabel;
-    @FXML private Label turnLabel;
-    @FXML private Label gameInfoLabel;
-    @FXML private TextArea boardArea;
+    @FXML
+    private Label eraLabel;
+    @FXML
+    private Label turnLabel;
+    @FXML
+    private Label gameInfoLabel;
+    @FXML
+    private ListView<PlayerInfoDTO> playersListView;
 
-    @FXML private ListView<PlayerInfoDTO> playersListView;
+    // nel GameController (aggiungi i campi @FXML all'inizio della classe)
+    @FXML
+    private HBox upperRow;
+    @FXML
+    private HBox offerTrack;
+    @FXML
+    private VBox turnOrder;
+    @FXML
+    private VBox turnOrderBox;
+    @FXML
+    private HBox lowerRow;
 
     private final ObservableList<PlayerInfoDTO> playersItems = FXCollections.observableArrayList();
 
@@ -49,20 +67,97 @@ public class GameController {
         playersListView.setCellFactory(lv -> new PlayerCell());
     }
 
+    private void configureCardNode(ImageView iv, int cardId, boolean isUpper) {
+        iv.setOnMouseEntered(e -> {
+            iv.setScaleX(1.05);
+            iv.setScaleY(1.05);
+        });
+        iv.setOnMouseExited(e -> {
+            iv.setScaleX(1.0);
+            iv.setScaleY(1.0);
+        });
+        iv.setOnMouseClicked(e -> {
+            if (guiContext != null && guiContext.clientController() != null) {
+                // esempio: drawCard(selectedCardId, fromUpperRow)
+                guiContext.clientController().drawCard(cardId, isUpper);
+            }
+        });
+    }
+
+    private StackPane createOfferBoxNode(int boxIndex, String imageKey) {
+        String img = "/assets/offer/offer_box.png";
+        ImageView boxView = ImageCache.view(img, 120, 120);
+        StackPane stack = new StackPane(boxView);
+        // se boxDto ha totem:
+        // ImageView totem = ImageCache.view("/assets/totems/totem_blue.png", 32, 32);
+        // StackPane.setAlignment(totem, Pos.TOP_RIGHT);
+        // stack.getChildren().add(totem);
+        stack.setOnMouseClicked(e -> {
+            // es. guiContext.getClientController().placeTotem(boxIndex);
+        });
+        return stack;
+    }
+
+    private VBox createTurnSlotNode(int slotIndex, String playerNickname) {
+        String img = "/assets/turn/turn_slot.png";
+        ImageView slotView = ImageCache.view(img, 120, 60);
+        Label name = new Label(/*slotDto.playerNickname() or "-"*/ "-");
+        VBox box = new VBox(4, slotView, name);
+        box.setAlignment(Pos.CENTER);
+        return box;
+    }
+
+    public void populateBoard(BoardDTO board) {
+        Platform.runLater(() -> {
+            // header
+            eraLabel.setText("Era: " + board.currentEra());
+
+            // UPPER: for each card in upperCharacterCards, create an ImageView and add to upperRow
+            upperRow.getChildren().clear();
+            board.upperCharacterCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                configureCardNode(imageView, cardDto.cardId(), true);
+                upperRow.getChildren().add(imageView);
+            });
+
+            // OFFER TRACK:TODO
+            offerTrack.getChildren().clear();
+            board.offerTrackBoxes().forEach(boxDto -> {
+                StackPane boxNode = createOfferBoxNode(boxDto.position(), boxDto.imageKey());
+                offerTrack.getChildren().add(boxNode);
+            });
+
+            // TURN ORDER:TODO
+            turnOrder.getChildren().clear();
+            board.turnOrderSlots().forEach(slotDto -> {
+                VBox slotNode = createTurnSlotNode(slotDto.position(), slotDto.placedPlayerNickname());
+                turnOrder.getChildren().add(slotNode);
+            });
+
+            // LOWER: for each card in lowerCharacterCards, create an ImageView and add to lowerRow
+            lowerRow.getChildren().clear();
+            board.lowerCharacterCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView iv = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                configureCardNode(iv, cardDto.cardId(), false);
+                lowerRow.getChildren().add(iv);
+            });
+
+        });
+    }
+
     public void showGameStarted(int gameId, List<String> playerNicknames) {
         Platform.runLater(() -> {
             gameInfoLabel.setText("Game started. ID: " + gameId + " | Players: " + String.join(", ", playerNicknames));
             turnLabel.setText("Turn: waiting...");
             eraLabel.setText("Era: -");
-            boardArea.setText("Board will appear here...");
-            // playersItems rimane vuoto fino a onPlayerInfosChanged
         });
     }
 
     public void showBoard(BoardDTO board) {
         Platform.runLater(() -> {
             eraLabel.setText("Era: " + board.currentEra());
-            boardArea.setText(formatBoard(board));
         });
     }
 
@@ -98,7 +193,6 @@ public class GameController {
         this.myNickname = myNickname;
         Platform.runLater(() -> {
             playersItems.setAll(playersInfo);
-            // refresh per far ridisegnare le celle (servirà se deck aggiornati prima)
             playersListView.refresh();
         });
     }
@@ -114,7 +208,6 @@ public class GameController {
             } else {
                 playerDecks.put(nickname, playerDeck);
             }
-            // forzare il refresh delle celle per mostrare il deck aggiornato
             playersListView.refresh();
         });
     }
@@ -126,7 +219,6 @@ public class GameController {
         });
     }
 
-    /* --- formattatori --- */
 
     private String formatPlayerInfo(PlayerInfoDTO p) {
         String me = (myNickname != null && p.nickname().equals(myNickname)) ? " (you)" : "";
@@ -138,8 +230,7 @@ public class GameController {
 
     private String formatDeck(PlayerDeckDTO deck) {
         if (deck == null) return "<no deck>";
-        // Sostituisci con il formato utile del tuo PlayerDeckDTO;
-        // qui uso toString() come fallback
+
         return deck.toString();
     }
 
