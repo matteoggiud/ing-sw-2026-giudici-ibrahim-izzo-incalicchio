@@ -1,15 +1,36 @@
 package it.polimi.ingsw.client.view.gui;
 
+import it.polimi.ingsw.client.GenericVirtualServer;
+import it.polimi.ingsw.client.controller.ClientController;
+import it.polimi.ingsw.client.controller.ViewController;
+import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.network.socket.SocketServerConnection;
+import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
+import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
+import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
+import it.polimi.ingsw.client.view.ClientView;
 import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.util.List;
+
 public class GuiClientApp extends Application {
+    private ClientState clientState;
+    private ClientController clientController;
+
+    private ClientView guiClientView;
+    private ViewController viewController;
 
 
     @Override
     public void init() throws Exception {
-        //initialize all the necessary components for the application
-        super.init();
+        //TODO: we do here the "client main" of the gui
+
+        // this.clientController = new ClientController(virtualServer);
+
     }
 
     /**
@@ -29,6 +50,41 @@ public class GuiClientApp extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("Mesos");
+
+        primaryStage.setScene(new Scene(new Label("Connecting to server...")));
+        primaryStage.show();
+
+        // 1. Parse command line arguments
+        List<String> args = getParameters().getRaw();
+        String protocol = args.size() > 0 ? args.get(0) : "SOCKET";
+        String host = args.size() > 1 ? args.get(1) : "localhost";
+        int port = args.size() > 2 ? Integer.parseInt(args.get(2)) : 12345;
+
+        // 2. Initialize client controller
+        this.clientState = new ClientState();
+        GuiClientView view = new GuiClientView(clientState, primaryStage);
+        // this.guiClientView = view;
+        this.viewController = new ViewController(clientState, view);
+
+        if ("SOCKET".equals(protocol)) {
+            ServerMessageVisitor visitor = new ServerVisitor(viewController);
+            SocketServerConnection socketServerConnection = new SocketServerConnection(host, port, visitor, clientState, guiClientView);
+            GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
+            this.clientController = new ClientController(network);
+
+            view.setClientController(clientController);
+
+            try {
+                socketServerConnection.connect();
+            } catch (Exception e) {
+                viewController.onGenericError("Failed to connect to server: " + e.getMessage());
+            }
+        }
+
+
+        primaryStage.setTitle("Mesos");
+
 
     }
 }

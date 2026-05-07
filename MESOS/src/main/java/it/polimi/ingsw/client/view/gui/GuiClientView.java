@@ -1,19 +1,33 @@
 package it.polimi.ingsw.client.view.gui;
 
+import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.network.socket.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.client.view.gui.controllers.AuthController;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+
 
 public class GuiClientView implements ClientView {
     private final ClientState clientState;
+    private final Stage stage;
+    private ClientController clientController;
 
-    public GuiClientView(ClientState clientState) {
+    public GuiClientView(ClientState clientState, Stage stage) {
         this.clientState = clientState;
+        this.stage = stage;
+    }
+
+    public void setClientController(ClientController clientController) {
+        this.clientController = clientController;
     }
 
     /**
@@ -146,6 +160,24 @@ public class GuiClientView implements ClientView {
 
     @Override
     public void showAuthenticator(String message) {
+        Platform.runLater(() -> {
+           try{
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AuthPane.fxml"));
+               Parent root = loader.load();
 
+               AuthController authController = loader.getController();
+               authController.setClientController(clientController);
+               
+               if (message != null && !message.isBlank()) {
+                   authController.showErrorMessage(message);
+               }
+               
+               stage.setScene(new Scene(root));
+               stage.show();
+           } catch (IOException e){
+               e.printStackTrace();
+           }
+            
+        });
     }
 }

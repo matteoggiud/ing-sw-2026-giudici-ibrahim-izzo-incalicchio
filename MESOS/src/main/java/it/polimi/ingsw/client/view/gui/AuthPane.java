@@ -25,7 +25,7 @@ public class AuthPane {
         TextField nicknameField = new TextField();
         nicknameField.setPromptText("Nickname");
 
-        TextField passwordField = new TextField();
+        PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
 
         Button loginButton = new Button("Login");
