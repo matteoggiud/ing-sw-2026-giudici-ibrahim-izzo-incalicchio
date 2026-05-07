@@ -15,6 +15,8 @@ import it.polimi.ingsw.client.view.tui.TuiClientView;
 import it.polimi.ingsw.server.network.rmi.RemoteClientView;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -28,11 +30,21 @@ public class ClientMain {
         final int rmiPort = 1234;
         final String defaultRmiName = "MESOS_RMI";
 
+        String defaultClientIp;
+        try {
+            defaultClientIp = InetAddress.getLocalHost().toString();
+        } catch (UnknownHostException e) {
+            defaultClientIp = defaultHost;
+        }
+
         // Shared Scanner for user input (passed to view and app)
         Scanner scanner = new Scanner(System.in);
 
         // Parse host and port from command-line arguments or prompt the user
         String host;
+
+        //
+        String clienIp;
         int port;
 
         if (args.length >= 1) {
@@ -67,6 +79,19 @@ public class ClientMain {
             }
         }
 
+        if (args.length >= 3 && !args[2].isBlank()) {
+            clienIp = args[2];
+        } else {
+            System.out.print("Client ip [" + defaultClientIp + "]: ");
+            String clientIpLine = scanner.nextLine().trim();
+            if (clientIpLine.isEmpty()) {
+                clienIp = defaultClientIp;
+            } else {
+                clienIp = clientIpLine;
+            }
+        }
+
+        System.setProperty("java.rmi.server.hostname", clienIp);
 
         // 2. Create the View
         TuiClientView view = new TuiClientView(sessionState);
@@ -75,7 +100,7 @@ public class ClientMain {
 
         GenericVirtualServer network;
 
-        if(port == socketPort){
+        if (port == socketPort) {
             // 3. Create the Message Visitor (it only needs the View now, not the Controller)
             ServerMessageVisitor visitor = new ServerVisitor(viewController);
 
@@ -94,9 +119,7 @@ public class ClientMain {
             }
 
             network = socketNetwork;
-        }
-
-        else if(port == rmiPort){
+        } else if (port == rmiPort) {
             try {
                 RmiClient rmiClient = new RmiClient(viewController);
                 RemoteClientView clientStub =
