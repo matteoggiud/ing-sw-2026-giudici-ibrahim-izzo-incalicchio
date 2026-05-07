@@ -32,7 +32,7 @@ public class ClientMain {
 
         String defaultClientIp;
         try {
-            defaultClientIp = InetAddress.getLocalHost().toString();
+            defaultClientIp = InetAddress.getLocalHost().getHostAddress();
         } catch (UnknownHostException e) {
             defaultClientIp = defaultHost;
         }
