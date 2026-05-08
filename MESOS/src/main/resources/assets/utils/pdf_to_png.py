@@ -7,7 +7,7 @@ from pathlib import Path
 
 import fitz  # pymupdf
 
-#usage: python pdf_to_png.py input.pdf mapper.csv --temp-out temp_pages --final-out renamed_png --dpi 300
+#usage: python pdf_to_png.py "./graphics/Cards_total_front_NO PROMO.pdf" ./mapper.csv --temp-out ./temp --final-out ../cards --crop-border 32 --dpi 150
 
 def read_mapper(csv_path: Path) -> dict[int, str]:
     mapping: dict[int, str] = {}
@@ -25,7 +25,15 @@ def read_mapper(csv_path: Path) -> dict[int, str]:
     return mapping
 
 
-def export_pdf_to_png(pdf_path: Path, out_dir: Path, dpi: int) -> list[Path]:
+def export_pdf_to_png(
+    pdf_path: Path,
+    out_dir: Path,
+    dpi: int,
+    crop_left_px: int = 0,
+    crop_top_px: int = 0,
+    crop_right_px: int = 0,
+    crop_bottom_px: int = 0,
+) -> list[Path]:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     doc = fitz.open(pdf_path)
@@ -33,9 +41,18 @@ def export_pdf_to_png(pdf_path: Path, out_dir: Path, dpi: int) -> list[Path]:
 
     zoom = dpi / 72.0
     matrix = fitz.Matrix(zoom, zoom)
+    px_to_pt = 72.0 / dpi  # converte pixel di output in punti PDF
 
     for i, page in enumerate(doc, start=1):
-        pix = page.get_pixmap(matrix=matrix, alpha=False)
+        rect = page.rect
+        clip = fitz.Rect(
+            rect.x0 + crop_left_px * px_to_pt,
+            rect.y0 + crop_top_px * px_to_pt,
+            rect.x1 - crop_right_px * px_to_pt,
+            rect.y1 - crop_bottom_px * px_to_pt,
+        )
+
+        pix = page.get_pixmap(matrix=matrix, alpha=False, clip=clip)
         out_path = out_dir / f"page_{i}.png"
         pix.save(str(out_path))
         exported.append(out_path)
@@ -77,6 +94,7 @@ def main():
     parser.add_argument("mapper", type=Path, help="CSV mapper path (page,imageKey)")
     parser.add_argument("--temp-out", type=Path, default=Path("tmp_pages"), help="Temporary output folder")
     parser.add_argument("--final-out", type=Path, default=Path("renamed_png"), help="Final output folder")
+    parser.add_argument("--crop-border", type=int, default=0, help="Crop border in pixels (applies to all sides)")
     parser.add_argument("--dpi", type=int, default=300, help="Export DPI (default: 300)")
     args = parser.parse_args()
 
@@ -86,7 +104,7 @@ def main():
         raise FileNotFoundError(f"Mapper CSV not found: {args.mapper}")
 
     mapping = read_mapper(args.mapper)
-    exported = export_pdf_to_png(args.pdf, args.temp_out, args.dpi)
+    exported = export_pdf_to_png(args.pdf, args.temp_out, args.dpi, args.crop_border, args.crop_border, args.crop_border, args.crop_border)
     rename_with_mapper(exported, mapping, args.final_out)
 
     print(f"\nDone. Final PNGs are in: {args.final_out.resolve()}")
