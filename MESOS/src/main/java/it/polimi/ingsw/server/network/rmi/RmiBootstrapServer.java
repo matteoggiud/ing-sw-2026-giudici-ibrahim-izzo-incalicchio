@@ -29,6 +29,8 @@ public class RmiBootstrapServer implements RmiBootstrap {
 
         RmiServer server = new RmiServer(gameController, session);
 
+        clientView.onAuthenticationNeeded("Welcome! Please log in or register to continue.");
+
         return (RemoteServer) UnicastRemoteObject.exportObject(server, serverPort);
     }
 }
