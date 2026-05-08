@@ -14,7 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class RmiBootstrapServer implements RmiBootstrap {
 
     private final GameController gameController;
-    final int serverPort = 1236;
+    final int serverPort = 0;
 
     public RmiBootstrapServer(GameController gameController) {
         this.gameController = gameController;

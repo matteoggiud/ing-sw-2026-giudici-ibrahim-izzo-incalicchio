@@ -45,7 +45,7 @@ public class ClientMain {
         String host;
 
         //
-        String clienIp;
+        String clientIp;
         int port;
 
         if (args.length >= 1) {
@@ -81,18 +81,18 @@ public class ClientMain {
         }
 
         if (args.length >= 3 && !args[2].isBlank()) {
-            clienIp = args[2];
+            clientIp = args[2];
         } else {
             System.out.print("Client ip [" + defaultClientIp + "]: ");
             String clientIpLine = scanner.nextLine().trim();
             if (clientIpLine.isEmpty()) {
-                clienIp = defaultClientIp;
+                clientIp = defaultClientIp;
             } else {
-                clienIp = clientIpLine;
+                clientIp = clientIpLine;
             }
         }
 
-        System.setProperty("java.rmi.server.hostname", clienIp);
+        System.setProperty("java.rmi.server.hostname", clientIp);
 
         // 2. Create the View
         TuiClientView view = new TuiClientView(sessionState);
