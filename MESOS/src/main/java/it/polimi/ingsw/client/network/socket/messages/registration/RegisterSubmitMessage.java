@@ -16,7 +16,7 @@ public class RegisterSubmitMessage extends ClientMessage {
         return username;
     }
 
-    public String getPassword() {
+    public String getPasswordHash() {
         return password;
     }
 

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.network.rmi;
 
 import it.polimi.ingsw.client.network.rmi.RemoteServer;
+import it.polimi.ingsw.common.CommandHandler;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.network.ClientSession;
@@ -11,64 +12,66 @@ public class RmiServer implements RemoteServer {
 
     private final GameController gameController;
     private final ClientSession clientSession;
+    private final CommandHandler commandHandler;
 
     public RmiServer(GameController gameController, ClientSession clientSession) {
         this.gameController = gameController;
         this.clientSession = clientSession;
+        this.commandHandler = new CommandHandler(gameController, clientSession);
     }
 
     @Override
     public void loginRequest(String username, String password) throws RemoteException {
-        gameController.login(clientSession, username, password);
+        commandHandler.handleLogin(username, password);
     }
 
     @Override
     public void onRegisterMessage(String username, String password) throws RemoteException {
-        gameController.register(clientSession, username, password);
+        commandHandler.handleRegistration(username, password);
     }
 
     @Override
     public void onCreateGameMessage(int numPlayers) throws RemoteException {
-        gameController.createGame(clientSession, numPlayers);
+        commandHandler.handleGameCreation(numPlayers);
     }
 
     @Override
     public void onJoinGameMessage(int gameId) throws RemoteException {
-        gameController.joinGame(clientSession, gameId);
+        commandHandler.handleJoinGame(gameId);
     }
 
     @Override
     public void onGetAvailableGamesMessage() throws RemoteException {
-        gameController.getAvailableGames(clientSession);
+        commandHandler.handleGetAvailableGames();
     }
 
     @Override
     public void onDisconnectMessage() throws RemoteException {
-        gameController.handleDisconnect(clientSession);
+        commandHandler.handleDisconnection();
     }
 
     @Override
     public void onPlaceTotemMessage(int offerBoxPosition) throws RemoteException {
-        gameController.placing(clientSession, offerBoxPosition);
+        commandHandler.handlePlaceTotem(offerBoxPosition);
     }
 
     @Override
     public void onLeftGameMessage() throws RemoteException {
-        gameController.leaveGame(clientSession);
+        commandHandler.handleLeftGame();
     }
 
     @Override
     public void onDrawCardMessage(int cardId, boolean fromUpperRow) throws RemoteException {
-        gameController.drawCard(clientSession, cardId, fromUpperRow);
+        commandHandler.handleDrawCard(cardId, fromUpperRow);
     }
 
     @Override
     public void onDrawExtraCardMessage(int cardId) throws RemoteException {
-        gameController.drawCard(clientSession, cardId, true);
+        commandHandler.handleExtraDraw(cardId);
     }
 
     @Override
     public void onGetRankings(int numPlayers) throws RemoteException {
-        gameController.getRankings(clientSession, numPlayers);
+        commandHandler.handleRankings(numPlayers);
     }
 }
