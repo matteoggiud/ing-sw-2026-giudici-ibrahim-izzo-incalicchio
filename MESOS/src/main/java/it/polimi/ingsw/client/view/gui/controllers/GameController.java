@@ -38,7 +38,6 @@ public class GameController {
     @FXML
     private ListView<PlayerInfoDTO> playersListView;
 
-    // nel GameController (aggiungi i campi @FXML all'inizio della classe)
     @FXML
     private HBox upperRow;
     @FXML
@@ -52,11 +51,8 @@ public class GameController {
 
     private final ObservableList<PlayerInfoDTO> playersItems = FXCollections.observableArrayList();
 
-    // mappa nickname -> PlayerDeckDTO; aggiornata da showPlayerDeck(...)
+    // it maps nickname with his player deck
     private final Map<String, PlayerDeckDTO> playerDecks = new HashMap<>();
-
-    // nickname dell'utente locale (viene passato a showPlayersInfo)
-    private String myNickname = null;
 
     public void setGuiContext(GuiContext guiContext) {
         this.guiContext = guiContext;
@@ -80,8 +76,7 @@ public class GameController {
             iv.setScaleY(1.0);
         });
         iv.setOnMouseClicked(e -> {
-            if (guiContext != null && guiContext.clientController() != null) {
-                // esempio: drawCard(selectedCardId, fromUpperRow)
+            if (guiContext != null && guiContext.clientController() != null /*TODO: check if is the player turn and is the draw action*/) {
                 guiContext.clientController().drawCard(cardId, isUpper);
             }
         });
@@ -246,7 +241,6 @@ public class GameController {
      * Chiamato da ViewController.onPlayerInfosChanged -> view.showPlayersInfo(...)
      */
     public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
-        this.myNickname = myNickname;
         Platform.runLater(() -> {
             playersItems.setAll(playersInfo);
             playersListView.refresh();
@@ -277,7 +271,7 @@ public class GameController {
 
 
     private String formatPlayerInfo(PlayerInfoDTO p) {
-        String me = (myNickname != null && p.nickname().equals(myNickname)) ? " (you)" : "";
+        String me = (this.guiContext.clientState().getNickname() != null && p.nickname().equals(this.guiContext.clientState().getNickname())) ? " (you)" : "";
         return p.nickname() + me +
                 " | food=" + p.food() +
                 " | pp=" + p.pp() +
@@ -329,7 +323,7 @@ public class GameController {
                 setText(null);
                 setGraphic(null);
             } else {
-                nicknameLabel.setText(item.nickname() + ((myNickname != null && item.nickname().equals(myNickname)) ? " (you)" : ""));
+                nicknameLabel.setText(item.nickname() + ((guiContext.clientState().getNickname() != null && item.nickname().equals(guiContext.clientState().getNickname())) ? " (you)" : ""));
                 statsLabel.setText("food=" + item.food() + " | pp=" + item.pp() + " | totem=" + item.totem());
                 PlayerDeckDTO deck = playerDecks.get(item.nickname());
                 deckLabel.setText(formatDeck(deck));
