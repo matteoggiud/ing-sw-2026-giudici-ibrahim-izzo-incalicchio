@@ -107,7 +107,7 @@ public class GameController {
         return box;
     }
 
-    public void populateBoard(BoardDTO board) {
+    private void populateBoard(BoardDTO board) {
         Platform.runLater(() -> {
             // header
             eraLabel.setText("Era: " + board.currentEra());
@@ -116,11 +116,16 @@ public class GameController {
             upperRow.getChildren().clear();
             board.upperCharacterCards().forEach(cardDto -> {
                 // creates an image view for the card; adjust path and size as needed
-                ImageView imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
                 configureCardNode(imageView, cardDto.cardId(), true);
                 upperRow.getChildren().add(imageView);
             });
-
+            /*
             // OFFER TRACK:TODO
             offerTrack.getChildren().clear();
             board.offerTrackBoxes().forEach(boxDto -> {
@@ -134,14 +139,19 @@ public class GameController {
                 VBox slotNode = createTurnSlotNode(slotDto.position(), slotDto.placedPlayerNickname());
                 turnOrder.getChildren().add(slotNode);
             });
-
+*/
             // LOWER: for each card in lowerCharacterCards, create an ImageView and add to lowerRow
             lowerRow.getChildren().clear();
             board.lowerCharacterCards().forEach(cardDto -> {
                 // creates an image view for the card; adjust path and size as needed
-                ImageView iv = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
-                configureCardNode(iv, cardDto.cardId(), false);
-                lowerRow.getChildren().add(iv);
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), false);
+                lowerRow.getChildren().add(imageView);
             });
 
         });
@@ -156,9 +166,7 @@ public class GameController {
     }
 
     public void showBoard(BoardDTO board) {
-        Platform.runLater(() -> {
-            eraLabel.setText("Era: " + board.currentEra());
-        });
+        populateBoard(board);
     }
 
     public void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn) {

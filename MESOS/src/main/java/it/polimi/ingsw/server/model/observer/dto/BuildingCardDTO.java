@@ -15,5 +15,6 @@ public record BuildingCardDTO(
         if (name == null || name.isBlank()) throw new IllegalArgumentException("name cannot be null or blank");
         if (era == null || era.isBlank()) throw new IllegalArgumentException("era cannot be null or blank");
         if (foodCost < 0) throw new IllegalArgumentException("foodCost cannot be negative");
+        if (imageKey == null || imageKey.isBlank()) throw new IllegalArgumentException("imageKey cannot be null or blank");
     }
 }
