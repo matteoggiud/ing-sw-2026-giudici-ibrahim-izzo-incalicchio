@@ -26,6 +26,9 @@ public class GameController {
 
     private GuiContext guiContext;
 
+    private static final int IMG_WIDTH = 100;
+    private static final int IMG_HEIGHT = 160;
+
     @FXML
     private Label eraLabel;
     @FXML
@@ -118,13 +121,36 @@ public class GameController {
                 // creates an image view for the card; adjust path and size as needed
                 ImageView imageView = new ImageView();
                 try {
-                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
                 } catch (IllegalArgumentException e) {
                     System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
                 }
                 configureCardNode(imageView, cardDto.cardId(), true);
                 upperRow.getChildren().add(imageView);
             });
+            board.upperEventCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                //configureCardNode(imageView, cardDto.cardId(), true);
+                upperRow.getChildren().add(imageView);
+            });
+            board.upperBuildingCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), true);
+                upperRow.getChildren().add(imageView);
+            });
+
             /*
             // OFFER TRACK:TODO
             offerTrack.getChildren().clear();
@@ -146,7 +172,29 @@ public class GameController {
                 // creates an image view for the card; adjust path and size as needed
                 ImageView imageView = new ImageView();
                 try {
-                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", 140, 200);
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), false);
+                lowerRow.getChildren().add(imageView);
+            });
+            board.lowerEventCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                //configureCardNode(imageView, cardDto.cardId(), false);
+                lowerRow.getChildren().add(imageView);
+            });
+            board.lowerBuildingCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
                 } catch (IllegalArgumentException e) {
                     System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
                 }
