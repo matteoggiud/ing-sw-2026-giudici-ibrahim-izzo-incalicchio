@@ -1,9 +1,8 @@
 package it.polimi.ingsw.server.network.rmi;
 
 import it.polimi.ingsw.client.network.rmi.RemoteServer;
-import it.polimi.ingsw.common.CommandHandler;
+import it.polimi.ingsw.server.network.CommandHandler;
 import it.polimi.ingsw.server.controller.GameController;
-import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.network.ClientSession;
 
 import java.rmi.RemoteException;

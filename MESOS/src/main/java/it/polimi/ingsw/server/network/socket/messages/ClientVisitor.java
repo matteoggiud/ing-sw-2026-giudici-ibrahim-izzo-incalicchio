@@ -7,23 +7,9 @@ import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMess
 import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
 import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
-import it.polimi.ingsw.common.CommandHandler;
+import it.polimi.ingsw.server.network.CommandHandler;
 import it.polimi.ingsw.server.controller.GameController;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.network.ClientSession;
-import it.polimi.ingsw.server.network.GenericVirtualView;
-import it.polimi.ingsw.server.network.SessionRegistry;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
-import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
-import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
-
-import java.util.List;
 
 public class ClientVisitor implements ClientMessageVisitor {
 

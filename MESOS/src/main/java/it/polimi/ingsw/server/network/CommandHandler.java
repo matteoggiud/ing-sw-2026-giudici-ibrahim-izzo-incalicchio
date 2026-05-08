@@ -1,16 +1,8 @@
-package it.polimi.ingsw.common;
+package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.client.network.socket.messages.game.*;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
-import it.polimi.ingsw.server.network.ClientSession;
 
 import java.util.List;
 
