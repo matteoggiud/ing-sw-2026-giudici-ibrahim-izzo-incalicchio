@@ -1,17 +1,12 @@
 package it.polimi.ingsw.client.view.tui;
 
-import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
+import it.polimi.ingsw.client.network.NetworkBuilder;
 import it.polimi.ingsw.client.network.socket.ClientState;
-import it.polimi.ingsw.client.network.socket.SocketServerConnection;
-import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
-import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
 import it.polimi.ingsw.client.view.Credentials;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -27,7 +22,7 @@ public class TuiClientApp {
     private ClientController controller;
     private Scanner scanner;
     private final Map<String, CommandDefinition> commands;
-    private ClientState sessionState;
+    private ClientState clientState;
     private TuiClientView view;
 
     public TuiClientApp(Scanner scanner) {
@@ -40,27 +35,18 @@ public class TuiClientApp {
     public void init(String[] args) {
         String protocol = args.length > 0 ? args[0] : "SOCKET";
         String host = args.length > 1 ? args[1] : "localhost";
-        int port = args.length > 2 ? Integer.parseInt(args[2]) : 12345;
 
-        this.sessionState = new ClientState();
-        this.view = new TuiClientView(sessionState);
+        this.clientState = new ClientState();
+        this.view = new TuiClientView(clientState);
 
-        ViewController viewController = new ViewController(sessionState, view);
+        ViewController viewController = new ViewController(clientState, view);
 
+        // Create network connection based on selected protocol and set the ClientController
+        NetworkBuilder networkBuilder = new NetworkBuilder(host, viewController);
         if (protocol.equals("RMI")) {
-            //TODO: implement RMI connection
+            networkBuilder.createRmiConnection(this);
         } else if (protocol.equals("SOCKET")) {
-            ServerMessageVisitor visitor = new ServerVisitor(viewController);
-            SocketServerConnection socketServerConnection = new SocketServerConnection(host, port, visitor, sessionState, view);
-            GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
-            this.controller = new ClientController(network);
-
-            try {
-                socketServerConnection.connect();
-            } catch (Exception e) {
-                viewController.onGenericError("Failed to connect to server: " + e.getMessage());
-                System.exit(1);
-            }
+            networkBuilder.createSocketConnection(clientState, view, this);
         }
     }
 
@@ -70,7 +56,7 @@ public class TuiClientApp {
     public void run() {
         printWelcome();
 
-        while (sessionState.isConnected()) {
+        while (clientState.isConnected()) {
             System.out.print("\nmesos> ");
             String line = scanner.nextLine().trim();
 
@@ -99,7 +85,7 @@ public class TuiClientApp {
      * Registers the available commands for the TUI client application.
      */
     private void registerCommands() {
-        put("help", "help", "Show this help menu", args -> printHelp());
+        put("help", "help", "Show this help menu", this::printHelp);
 
         put("login", "login <nickname> <password>", "Login with username and password", this::handleLogin);
         put("register", "register <nickname> <password>", "Create a new account", this::handleRegistration);
@@ -217,11 +203,15 @@ public class TuiClientApp {
         //System.out.println(commands.get("help").usage);
     }
 
-    private void printHelp() {
+    private void printHelp(String[] parts) {
         System.out.println("Commands:");
         for (CommandDefinition cmd : commands.values()) {
             System.out.printf("  %-16s %s%n", cmd.usage(), cmd.description());
         }
+    }
+
+    public void setController(ClientController clientController) {
+        this.controller = clientController;
     }
 
     private record CommandDefinition(

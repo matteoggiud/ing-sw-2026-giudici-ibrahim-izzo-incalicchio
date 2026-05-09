@@ -1,13 +1,9 @@
 package it.polimi.ingsw.client.view.gui;
 
-import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
+import it.polimi.ingsw.client.network.NetworkBuilder;
 import it.polimi.ingsw.client.network.socket.ClientState;
-import it.polimi.ingsw.client.network.socket.SocketServerConnection;
-import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
-import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
 import it.polimi.ingsw.client.view.ClientView;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -19,9 +15,7 @@ import java.util.List;
 
 public class GuiClientApp extends Application {
     private ClientState clientState;
-    private ClientController clientController;
 
-    private ClientView guiClientView;
     private ViewController viewController;
 
 
@@ -67,22 +61,13 @@ public class GuiClientApp extends Application {
         // this.guiClientView = view;
         this.viewController = new ViewController(clientState, view);
 
+
+        NetworkBuilder builder = new NetworkBuilder(host, viewController);
         if ("SOCKET".equals(protocol)) {
-            ServerMessageVisitor visitor = new ServerVisitor(viewController);
-            SocketServerConnection socketServerConnection = new SocketServerConnection(host, port, visitor, clientState, guiClientView);
-            GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
-            this.clientController = new ClientController(network);
-
-            // Set the GUI context for the view, so it can interact with the controller and update the UI
-            view.setGuiContext(new GuiContext(clientController, viewController, clientState));
-
-            try {
-                socketServerConnection.connect();
-            } catch (Exception e) {
-                viewController.onGenericError("Failed to connect to server: " + e.getMessage());
-            }
+            builder.createSocketConnection(clientState, view);
+        } else if ("RMI".equals(protocol)) {
+            builder.createRmiConnection(clientState, view);
         }
-
 
         primaryStage.setTitle("Mesos");
 
