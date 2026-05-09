@@ -2,6 +2,7 @@ package it.polimi.ingsw.client;
 
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
+import it.polimi.ingsw.client.network.InetAddressLookup;
 import it.polimi.ingsw.client.network.rmi.RemoteServer;
 import it.polimi.ingsw.client.network.rmi.RmiClient;
 import it.polimi.ingsw.client.network.rmi.RmiVirtualServer;
@@ -31,12 +32,7 @@ public class ClientMain {
         final int rmiClientCallbackPort = 1237;
         final String defaultRmiName = "MESOS_RMI";
 
-        String defaultClientIp;
-        try {
-            defaultClientIp = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            defaultClientIp = defaultHost;
-        }
+        String defaultClientIp = InetAddressLookup.getLocalHostAddress();
 
         // Shared Scanner for user input (passed to view and app)
         Scanner scanner = new Scanner(System.in);

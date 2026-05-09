@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server;
 
+import it.polimi.ingsw.client.network.InetAddressLookup;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
@@ -22,17 +23,13 @@ public class ServerMain {
         final int rmiPort = 1234;
         final String rmiName = "MESOS_RMI";
 
-        String defaultServerIp;
+        String defaultServerIp = InetAddressLookup.getLocalHostAddress();
         String serverIp;
         Scanner scanner = new Scanner(System.in);
 
-        try {
-            defaultServerIp = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            defaultServerIp = "localhost";
-        }
 
-        if (args.length >= 1) {
+
+        if (args.length >= 1 && !args[0].isBlank()) {
             serverIp = args[0];
         } else {
             System.out.print("Server ip [" + defaultServerIp + "]: ");
