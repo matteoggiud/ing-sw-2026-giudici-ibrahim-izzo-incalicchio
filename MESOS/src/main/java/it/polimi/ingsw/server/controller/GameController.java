@@ -245,8 +245,8 @@ public class GameController {
             model.logout(nickname);
         } finally {
             // Ensure that the client session is properly disconnected and unregistered from the session registry
-            clientSession.disconnectSession();
             SessionRegistry.getInstance().unregisterSession(clientSession);
+            clientSession.disconnectSession();
         }
 
         return playersInterested;

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.client.view.gui.controllers.GameController"
+            prefWidth="1100.0" prefHeight="700.0">
+
+    <top>
+        <VBox spacing="8" style="-fx-padding: 10;">
+            <Label text="Game" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+            <Label fx:id="eraLabel" text="Era: -"/>
+            <Label fx:id="turnLabel" text="Turn: -"/>
+            <Label fx:id="gameInfoLabel" text=""/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding: 10;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <Label text="Board" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+            <!-- UPPER ROW -->
+            <Pane>
+                <HBox fx:id="upperRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
+            </Pane>
+
+            <!-- MIDDLE ROW: offer track  + turn order -->
+            <HBox spacing="12" alignment="CENTER" minHeight="160">
+                <HBox fx:id="turnOrderBox" spacing="0" alignment="TOP_CENTER" prefWidth="220">
+                </HBox>
+
+                <HBox HBox.hgrow="ALWAYS">
+                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;"/>
+                </HBox>
+            </HBox>
+
+            <!-- LOWER ROW -->
+            <Pane>
+                <HBox fx:id="lowerRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
+            </Pane>
+
+            <!-- Optional area for debug/text summary of board -->
+            <TextArea fx:id="boardArea" editable="false" wrapText="true" prefRowCount="4" visible="false"/>
+        </VBox>
+    </center>
+
+    <!-- PLAYER PANELS alla destra (usa la tua playersListView già presente) -->
+    <right>
+        <VBox spacing="10" style="-fx-padding: 10;" prefWidth="420.0">
+            <Label text="Players" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <ListView fx:id="playersListView" prefHeight="600.0"/>
+        </VBox>
+    </right>
+
+</BorderPane>

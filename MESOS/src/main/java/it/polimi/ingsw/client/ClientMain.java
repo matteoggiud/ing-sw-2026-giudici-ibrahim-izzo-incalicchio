@@ -11,10 +11,13 @@ import it.polimi.ingsw.client.network.socket.SocketServerConnection;
 import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
+
+import it.polimi.ingsw.client.view.gui.GuiClientApp;
 import it.polimi.ingsw.client.view.tui.TuiClientApp;
 import it.polimi.ingsw.client.view.tui.TuiClientView;
 import it.polimi.ingsw.server.network.rmi.RemoteClientView;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
+import javafx.application.Application;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -38,30 +41,40 @@ public class ClientMain {
         Scanner scanner = new Scanner(System.in);
 
         // Parse host and port from command-line arguments or prompt the user
-        String host;
-
-        //
         String clientIp;
-        int port;
 
-        if (args.length >= 1) {
-            host = args[0];
+        System.out.println("--- MESOS CLIENT ---");
+
+        // Step 1: Choose UI
+        System.out.println("1) GUI client");
+        System.out.println("2) TUI client");
+        System.out.print("Select interface [1]: ");
+        String uiChoice = scanner.nextLine().trim();
+        // Default to GUI if input is invalid
+        boolean useGui = !uiChoice.equals("2");
+
+        // Step 2: Choose protocol
+        System.out.println("\n1) Socket");
+        System.out.println("2) RMI");
+        System.out.print("Select protocol [1]: ");
+        String protocolChoice = scanner.nextLine().trim();
+        // Default to Socket if input is invalid
+        Integer port = protocolChoice.equals("2") ? rmiPort : socketPort;
+
+        System.out.print("\nServer ip [localhost]: ");
+        String host = scanner.nextLine().trim();
+        if (host.isEmpty()) host = "localhost";
+
+        String[] appArgs = {host, port.toString()};
+
+        if (useGui) {
+            Application.launch(GuiClientApp.class, appArgs);
         } else {
-            System.out.print("Server host [" + defaultHost + "]: ");
-            String line = scanner.nextLine().trim();
-            host = line.isEmpty() ? defaultHost : line;
+            TuiClientApp tuiApp = new TuiClientApp(scanner);
+            tuiApp.init(appArgs);
+            tuiApp.run();
         }
-
-        // 1. Create the Session State
-        ClientState sessionState = new ClientState(null, null);
-        if (args.length >= 2) {
-            try {
-                port = Integer.parseInt(args[1]);
-            } catch (NumberFormatException e) {
-                System.out.println("Port argument not a number, using default " + defaultPort);
-                port = defaultPort;
-            }
-        } else {
+        }
             System.out.print("Server port [" + defaultPort + "]: ");
             String portLine = scanner.nextLine().trim();
             if (portLine.isEmpty()) {

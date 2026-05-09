@@ -1,10 +1,17 @@
 package it.polimi.ingsw.client.view.tui;
 
+import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ClientController;
+import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.network.socket.SocketServerConnection;
+import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
+import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
+import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
 import it.polimi.ingsw.client.view.Credentials;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
@@ -17,20 +24,44 @@ import java.util.function.Consumer;
  * The commands are registered in a map, allowing for easy addition of new commands in the future.
  */
 public class TuiClientApp {
-    private final ClientController controller;
-    private final Scanner scanner;
+    private ClientController controller;
+    private Scanner scanner;
     private final Map<String, CommandDefinition> commands;
-    private final ClientState sessionState;
-    private final TuiClientView view;
+    private ClientState sessionState;
+    private TuiClientView view;
 
-    public TuiClientApp(ClientController controller, ClientState sessionState, Scanner scanner, TuiClientView view) {
-        this.controller = controller;
-        this.view = view;
-        this.scanner = scanner;
+    public TuiClientApp(Scanner scanner) {
         this.commands = new LinkedHashMap<>();
-        this.sessionState = sessionState;
+        this.scanner = scanner;
 
         registerCommands();
+    }
+
+    public void init(String[] args) {
+        String protocol = args.length > 0 ? args[0] : "SOCKET";
+        String host = args.length > 1 ? args[1] : "localhost";
+        int port = args.length > 2 ? Integer.parseInt(args[2]) : 12345;
+
+        this.sessionState = new ClientState();
+        this.view = new TuiClientView(sessionState);
+
+        ViewController viewController = new ViewController(sessionState, view);
+
+        if (protocol.equals("RMI")) {
+            //TODO: implement RMI connection
+        } else if (protocol.equals("SOCKET")) {
+            ServerMessageVisitor visitor = new ServerVisitor(viewController);
+            SocketServerConnection socketServerConnection = new SocketServerConnection(host, port, visitor, sessionState, view);
+            GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
+            this.controller = new ClientController(network);
+
+            try {
+                socketServerConnection.connect();
+            } catch (Exception e) {
+                viewController.onGenericError("Failed to connect to server: " + e.getMessage());
+                System.exit(1);
+            }
+        }
     }
 
     /**

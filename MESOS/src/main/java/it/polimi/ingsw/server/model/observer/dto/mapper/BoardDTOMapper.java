@@ -60,7 +60,7 @@ public final class BoardDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        "",
+                        card.getImageKey(),
                         card.getShamanStars(),
                         card.hasFoodIcon(),
                         card.getInventorType()
@@ -81,7 +81,7 @@ public final class BoardDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        ""
+                        card.getImageKey()
                 ))
                 .toList();
     }
@@ -98,7 +98,7 @@ public final class BoardDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        "",
+                        card.getImageKey(),
                         card.getFoodCost()
                 )).toList();
     }
@@ -120,7 +120,7 @@ public final class BoardDTOMapper {
                             box.getFoodReward(),
                             box.getUpperRowPicks(),
                             box.getLowerRowPicks(),
-                            ""
+                            box.getImageKey()
                     );
                 })
                 .toList();
