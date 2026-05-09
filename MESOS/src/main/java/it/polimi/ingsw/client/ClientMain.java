@@ -43,7 +43,7 @@ public class ClientMain {
         if (useGui) {
             Application.launch(GuiClientApp.class, appArgs);
         } else {
-            TuiClientApp tuiApp = new TuiClientApp();
+            TuiClientApp tuiApp = new TuiClientApp(scanner);
             tuiApp.init(appArgs);
             tuiApp.run();
         }

@@ -30,8 +30,9 @@ public class TuiClientApp {
     private ClientState sessionState;
     private TuiClientView view;
 
-    public TuiClientApp() {
+    public TuiClientApp(Scanner scanner) {
         this.commands = new LinkedHashMap<>();
+        this.scanner = scanner;
 
         registerCommands();
     }
