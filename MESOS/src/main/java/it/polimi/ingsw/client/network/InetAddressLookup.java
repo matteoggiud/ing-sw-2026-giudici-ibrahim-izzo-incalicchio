@@ -6,13 +6,9 @@ import java.util.Enumeration;
 
 public class InetAddressLookup {
 
-    /**
-     * Versione raccomandata che prova a determinare l'IP locale usato per raggiungere remoteHost:remotePort.
-     * Se remoteHost è null o non raggiungibile, fa un fallback con scansione delle interfacce
-     * preferendo nomi tipici di schede Wi-Fi e filtrando virtual adapters.
-     */
     public static String getLocalHostAddress(String remoteHost, int remotePort) {
-        // 1) Prova UDP connect verso il server (non invia pacchetti)
+        // We try an UDP ping to a server to see if we receive a response, in that case we know for sure that
+        // The ip we found can be used to connect with the client server
         if (remoteHost != null && !remoteHost.isBlank() && remotePort > 0) {
             try (java.net.DatagramSocket socket = new java.net.DatagramSocket()) {
                 // la connect qui imposta la route locale; non invia nulla
@@ -22,14 +18,13 @@ public class InetAddressLookup {
                     return local.getHostAddress();
                 }
             } catch (Exception ignored) {
-                // ignora e passa al fallback
+                //Ignore and go to fallback
             }
         }
 
-        // 2) Fallback: scansione interfacce con preferenza per Wi-Fi / interfacce non virtuali
+        // The fallback scans all the ip with some word key that are likely to be in our wifi adapter, if we find one we return it, otherwise we return the first valid one
         try {
             Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
-            // Prima passata: cerca indirizzi che sembrano "Wi-Fi"
             while (nis.hasMoreElements()) {
                 NetworkInterface ni = nis.nextElement();
                 if (!isGoodInterface(ni)) continue;
@@ -45,7 +40,7 @@ public class InetAddressLookup {
                 }
             }
 
-            // Seconda passata: qualsiasi interfaccia valida (site-local preferita)
+            // If we are not lucky with the key word searched before we search for all the possible ips
             nis = NetworkInterface.getNetworkInterfaces();
             while (nis.hasMoreElements()) {
                 NetworkInterface ni = nis.nextElement();
@@ -63,16 +58,17 @@ public class InetAddressLookup {
         return "localhost";
     }
 
-    // Mantieni un overload compatibile per chiamate senza parametri (usa 8.8.8.8 come heuristica)
+    // When we send the UDP message to see of the ip works for the connection, we use a public DNS server as destination,
+    // so we are sure that it is always up and reachable, and that the port is open
     public static String getLocalHostAddress() {
         return getLocalHostAddress("8.8.8.8", 53);
     }
 
+    // See if the inferface has some keyword that we don't need so the interface for us is useless or not
     private static boolean isGoodInterface(NetworkInterface ni) {
         try {
             if (!ni.isUp() || ni.isLoopback() || ni.isVirtual()) return false;
             String display = ni.getDisplayName().toLowerCase();
-            // escludi esplicitamente adattatori virtuali comuni
             if (display.contains("virtual") || display.contains("vmware") ||
                     display.contains("hyper") || display.contains("vbox") ||
                     display.contains("docker") || display.contains("wsl") || display.contains("vpn")) {
