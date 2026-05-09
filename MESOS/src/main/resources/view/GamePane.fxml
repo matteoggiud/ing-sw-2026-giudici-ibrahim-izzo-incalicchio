@@ -29,12 +29,11 @@
 
             <!-- MIDDLE ROW: offer track  + turn order -->
             <HBox spacing="12" alignment="CENTER" minHeight="160">
-                <HBox HBox.hgrow="ALWAYS">
-                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;"/>
+                <HBox fx:id="turnOrderBox" spacing="0" alignment="TOP_CENTER" prefWidth="220">
                 </HBox>
 
-                <HBox fx:id="turnOrderBox" spacing="0" alignment="TOP_CENTER" prefWidth="220">
-
+                <HBox HBox.hgrow="ALWAYS">
+                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;"/>
                 </HBox>
             </HBox>
 
