@@ -128,10 +128,10 @@ public class GameController {
     private String getTotemKeyForPlayer(String nickname) {
         return playersItems.stream()
                 .filter(p -> p.nickname().equals(nickname))
+                .map(PlayerInfoDTO::totem)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Player non trovato: " + nickname))
-                .totem()
-                .toUpperCase();
+                .map(String::toUpperCase)
+                .orElse("WHITE");
     }
 
     // given a list of TurnOrderSlotDTO, create a StackPane with the turn order image and totems of players in the correct positions
@@ -342,6 +342,16 @@ public class GameController {
         Platform.runLater(() -> {
             playersItems.setAll(playersInfo);
             playersListView.refresh();
+
+            PlayerDeckDTO personalDeck = null;
+            for (PlayerInfoDTO playerInfoDTO : playersInfo) {
+                if (playerInfoDTO.nickname().equals(guiContext.clientState().getNickname())) {
+                    personalDeck = playerInfoDTO.deck();
+                    break;
+                }
+            }
+            populateMyDeck(personalDeck);
+
         });
     }
 
@@ -351,6 +361,12 @@ public class GameController {
      */
     public void showPlayerDeck(String nickname, PlayerDeckDTO playerDeck, boolean isMe) {
         Platform.runLater(() -> {
+            if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
+                System.out.println("[DEBUG] This is MY deck! Populating myDeckBox");
+                populateMyDeck(playerDeck);
+            } else {
+                System.out.println("[DEBUG] This is NOT my deck. nickname=" + nickname + ", myNickname=" + guiContext.clientState().getNickname());
+            }
             if (playerDeck == null) {
                 playerDecks.remove(nickname);
             } else {
@@ -367,32 +383,52 @@ public class GameController {
     }
 
     private void populateMyDeck(PlayerDeckDTO deck) {
+        System.out.println("[DEBUG] populateMyDeck called");
+        System.out.println("[DEBUG] deck is null? " + (deck == null));
+        System.out.println("[DEBUG] myDeckBox is null? " + (myDeckBox == null));
+
         myDeckBox.getChildren().clear();
-        if (deck == null) return;
+
+        if (deck == null) {
+            System.out.println("[DEBUG] deck is null, returning");
+            return;
+        }
 
         double thumbWidth = IMG_WIDTH;
         double thumbHeight = IMG_HEIGHT;
 
+        System.out.println("[DEBUG] Character cards: " + deck.characterCards().size());
+        System.out.println("[DEBUG] Building cards: " + deck.buildingCards().size());
 
         for (CharacterCardDTO card : deck.characterCards()) {
             String key = card.imageKey();
             String path = "/assets/cards/" + key + ".png";
+            System.out.println("[DEBUG] Loading character card: " + path);
 
-            ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
-
-            myDeckBox.getChildren().add(thumb);
+            try {
+                ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+                myDeckBox.getChildren().add(thumb);
+                System.out.println("[DEBUG] Added character card: " + key);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Failed to load character card " + key + ": " + e.getMessage());
+            }
         }
 
         for (BuildingCardDTO card : deck.buildingCards()) {
             String key = card.imageKey();
             String path = "/assets/cards/" + key + ".png";
+            System.out.println("[DEBUG] Loading building card: " + path);
 
-            ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
-
-            myDeckBox.getChildren().add(thumb);
+            try {
+                ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+                myDeckBox.getChildren().add(thumb);
+                System.out.println("[DEBUG] Added building card: " + key);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Failed to load building card " + key + ": " + e.getMessage());
+            }
         }
 
-
+        System.out.println("[DEBUG] Total cards added to myDeckBox: " + myDeckBox.getChildren().size());
     }
 
     public void clearDecks() {
@@ -435,33 +471,79 @@ public class GameController {
     private class PlayerCell extends ListCell<PlayerInfoDTO> {
         private final HBox root = new HBox(12);
         private final VBox statsBox = new VBox(4);
-        private final VBox deckBox = new VBox(4);
+        private final HBox headerRow = new HBox(6);
         private final Label nicknameLabel = new Label();
         private final Label statsLabel = new Label();
-        private final Label deckLabel = new Label();
+        private final Label resourceLabel = new Label();
+        private final Pane totemImage = new Pane();
 
         PlayerCell() {
             super();
-            statsBox.getChildren().addAll(nicknameLabel, statsLabel);
-            deckBox.getChildren().addAll(new Label("Deck:"), deckLabel);
 
+            headerRow.setAlignment(Pos.CENTER_LEFT);
+            headerRow.getChildren().addAll(totemImage, nicknameLabel);
+
+            statsLabel.setWrapText(true);
+            resourceLabel.setWrapText(true);
+
+            statsBox.getChildren().addAll(headerRow, resourceLabel, statsLabel);
             HBox.setHgrow(statsBox, Priority.ALWAYS);
-            root.getChildren().addAll(statsBox, deckBox);
+            root.getChildren().setAll(statsBox);
         }
 
         @Override
         protected void updateItem(PlayerInfoDTO item, boolean empty) {
             super.updateItem(item, empty);
+
             if (empty || item == null) {
                 setText(null);
                 setGraphic(null);
-            } else {
-                nicknameLabel.setText(item.nickname() + ((guiContext.clientState().getNickname() != null && item.nickname().equals(guiContext.clientState().getNickname())) ? " (you)" : ""));
-                statsLabel.setText("food=" + item.food() + " | pp=" + item.pp() + " | totem=" + item.totem());
-                PlayerDeckDTO deck = playerDecks.get(item.nickname());
-                deckLabel.setText(formatDeck(deck));
-                setGraphic(root);
+                return;
             }
+
+            String myNick = null;
+            if (guiContext != null && guiContext.clientState() != null) {
+                myNick = guiContext.clientState().getNickname();
+            }
+
+            boolean isMe = myNick != null && myNick.equals(item.nickname());
+
+            // Totem
+            try {
+                totemImage.getChildren().setAll(
+                        ImageCache.view("/assets/totem/TOTEM_" + item.totem().toUpperCase() + ".png", 10, 20)
+                );
+            } catch (Exception e) {
+                totemImage.getChildren().clear();
+            }
+
+            nicknameLabel.setText(item.nickname() + (isMe ? " (you)" : ""));
+
+            // Prima riga: risorse base
+            resourceLabel.setText("PP=" + item.pp() + " | Food=" + item.food());
+
+            // Riga stats come TUI
+            PlayerStatsDTO s = item.stats();
+            if (s == null) {
+                statsLabel.setText("No stats yet");
+            } else {
+                String line1 = "Cards=" + s.characterCount()
+                        + " | SustDisc=" + s.sustenanceDiscount()
+                        + " | ShamStars=" + s.shamanStars()
+                        + " | BuildDisc=" + s.builderDiscount()
+                        + " | InvIcons=" + s.differentInventorIcons();
+
+                String line2 = "Gath=" + s.gathererCount()
+                        + " Hunt=" + s.hunterCount()
+                        + " Build=" + s.builderCount()
+                        + " Sham=" + s.shamanCount()
+                        + " Art=" + s.artistCount()
+                        + " Inv=" + s.inventorCount();
+
+                statsLabel.setText(line1 + "\n" + line2);
+            }
+
+            setGraphic(root);
         }
     }
 }
