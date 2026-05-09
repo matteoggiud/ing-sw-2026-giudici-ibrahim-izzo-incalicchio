@@ -46,7 +46,7 @@ public final class PlayerDeckDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        "",
+                        card.getImageKey(),
                         card.getShamanStars(),
                         card.hasFoodIcon(),
                         card.getInventorType()
@@ -67,7 +67,7 @@ public final class PlayerDeckDTOMapper {
                         card.getCardId(),
                         card.getName(),
                         card.getEra().getName(),
-                        "",
+                        card.getImageKey(),
                         card.getFoodCost()
                 )).toList();
     }

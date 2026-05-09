@@ -106,10 +106,14 @@ public class GuiClientView implements ClientView {
     @Override
     public void showMessage(String message) {
         Platform.runLater(() -> {
-            // Tutto il codice qui dentro viene eseguito in sicurezza sul Thread di JavaFX
-            // Esempio:
-            // myAlertBox.setText(message);
-            // myAlertBox.show();
+               /* if (menuController != null) {
+                    menuController.showMessage(message);
+                } else if (lobbyController != null) {
+                    lobbyController.showMessage(message);
+                } else if (gameController != null) {
+                    gameController.showMessage(message);
+                }*/
+            System.out.println(message);
         });
     }
 
@@ -118,7 +122,8 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showError(String message) {
-
+        //stage.getScene().showError();
+        System.err.println("Error: " + message);
     }
 
     /**
