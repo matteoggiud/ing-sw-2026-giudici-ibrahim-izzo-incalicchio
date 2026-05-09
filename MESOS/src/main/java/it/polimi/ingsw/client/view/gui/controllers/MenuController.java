@@ -44,6 +44,12 @@ public class MenuController {
     private void initialize() {
         gamesListView.setItems(games);
 
+        gamesListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                handleJoin();
+            }
+        });
+
         gamesListView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(GameInfoDTO item, boolean empty) {
