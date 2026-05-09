@@ -12,12 +12,10 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import it.polimi.ingsw.server.model.observer.dto.TurnOrderSlotDTO;
 import javafx.geometry.Point2D;
+
 import java.util.Comparator;
 
 import java.util.*;
@@ -28,7 +26,7 @@ public class GameController {
 
     private static final int IMG_WIDTH = 100;
     private static final int IMG_HEIGHT = 160;
-    private static final int TOTEM_SIZE = 28;
+    private static final int TOTEM_SIZE = 50;
     private static final int TURN_IMG_WIDTH = 220;
     private static final int TURN_IMG_HEIGHT = 160;
 
@@ -84,7 +82,7 @@ public class GameController {
         });
     }
 
-    private StackPane createOfferBoxNode(int boxIndex, String imageKey, String placedPlayerNickname) {
+    private Pane createOfferBoxNode(int boxIndex, String imageKey, String placedPlayerNickname) {
         String img = "/assets/offer/" + imageKey + ".png";
         ImageView boxView;
         try {
@@ -96,33 +94,36 @@ public class GameController {
             boxView.setFitHeight(IMG_HEIGHT);
         }
 
-        StackPane stack = new StackPane(boxView);
+        Pane canvas = new Pane();
+        canvas.setPrefSize(boxView.getFitWidth(), boxView.getFitHeight());
+
+        boxView.setLayoutX(0);
+        boxView.setLayoutY(0);
+        canvas.getChildren().add(boxView);
 
         //  show totem when box has a player
         if (placedPlayerNickname != null) {
             // return player's totem from playersItems
             String totemKey = getTotemKeyForPlayer(placedPlayerNickname);
-
             // import and show totem's picture
             String totemPath = "/assets/totem/TOTEM_" + totemKey + ".png";
+
             try {
                 ImageView totemView = ImageCache.view(totemPath, TOTEM_SIZE, TOTEM_SIZE);
-                StackPane.setAlignment(totemView, Pos.TOP_RIGHT);
-                // corner
-                totemView.setTranslateX(-6);
-                totemView.setTranslateY(6);
-                stack.getChildren().add(totemView);
+                canvas.getChildren().add(totemView);
+                totemView.setLayoutX(boxView.getFitWidth() / 2 - totemView.getFitWidth() / 2);
+                totemView.setLayoutY(boxView.getFitHeight() * 3 / 4 - totemView.getFitHeight() / 2);
             } catch (IllegalArgumentException e) {
                 System.err.println("Errore caricamento totem per " + placedPlayerNickname + ": " + e.getMessage());
             }
         }
 
-        stack.setOnMouseClicked(e -> {
+        canvas.setOnMouseClicked(e -> {
             if (guiContext != null && guiContext.clientController() != null) {
                 guiContext.clientController().placeTotem(boxIndex);
             }
         });
-        return stack;
+        return canvas;
     }
 
     // given a player nickname, return the totem key (lowercase) from playersItems; if not found, throw an exception
@@ -134,12 +135,13 @@ public class GameController {
                 .totem()
                 .toUpperCase();
     }
+
     // given a list of TurnOrderSlotDTO, create a StackPane with the turn order image and totems of players in the correct positions
     private StackPane createTurnBox(List<TurnOrderSlotDTO> slots) {
         int numSlots = slots.size();
 
         String img = "/assets/turn/TURN_" + numSlots + ".png";
-        ImageView boardView = ImageCache.view(img, TURN_IMG_WIDTH, TURN_IMG_HEIGHT);
+        ImageView boardView = ImageCache.view(img, IMG_WIDTH, IMG_HEIGHT);
 
         StackPane stack = new StackPane(boardView);
 
@@ -158,15 +160,16 @@ public class GameController {
             Point2D anchor = getTurnSlotAnchor(numSlots, slot.position());
 
             StackPane.setAlignment(totemView, Pos.CENTER);
-            totemView.setTranslateX((anchor.getX() - 0.5) * TURN_IMG_WIDTH);
-            totemView.setTranslateY((anchor.getY() - 0.5) * TURN_IMG_HEIGHT);
+            totemView.setTranslateX((anchor.getX() - 0.5) * IMG_WIDTH);
+            totemView.setTranslateY((anchor.getY() - 0.5) * IMG_HEIGHT);
 
             stack.getChildren().add(totemView);
         }
 
         return stack;
     }
-// returns the anchor point for a totem in the turn order image based on the number of slots and the slot position; coordinates are normalized (0 to 1) relative to the image size
+
+    // returns the anchor point for a totem in the turn order image based on the number of slots and the slot position; coordinates are normalized (0 to 1) relative to the image size
     private Point2D getTurnSlotAnchor(int numSlots, int slotPosition) {
         // these coordinates are normalized (0 to 1) relative to the turn order image; adjust as needed based on the actual image design
         return switch (numSlots) {
@@ -246,7 +249,7 @@ public class GameController {
             // OFFER TRACK: iterate on all offer boxes and show offerboxes with totem
             offerTrack.getChildren().clear();
             board.offerTrackBoxes().forEach(boxDto -> {
-                StackPane boxNode = createOfferBoxNode(boxDto.position(), boxDto.imageKey(), boxDto.placedPlayerNickname());
+                Pane boxNode = createOfferBoxNode(boxDto.position(), boxDto.imageKey(), boxDto.placedPlayerNickname());
                 offerTrack.getChildren().add(boxNode);
             });
 
@@ -254,7 +257,6 @@ public class GameController {
             turnOrderBox.getChildren().clear();
             StackPane slotNode = createTurnBox(board.turnOrderSlots());
             turnOrderBox.getChildren().add(slotNode);
-
 
 
             // LOWER: for each card in lowerCharacterCards, create an ImageView and add to lowerRow
