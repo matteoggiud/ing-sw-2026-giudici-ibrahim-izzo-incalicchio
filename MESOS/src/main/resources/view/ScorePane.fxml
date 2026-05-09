@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="it.polimi.ingsw.client.view.gui.controllers.ScoreController"
+            prefWidth="900" prefHeight="600">
+
+    <top>
+        <VBox alignment="CENTER" spacing="6" style="-fx-padding:12;">
+            <Label text="Partita terminata" style="-fx-font-size:20px; -fx-font-weight:bold;"/>
+            <Label fx:id="subtitleLabel" text="Classifica finale" style="-fx-font-size:12px;"/>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="10" style="-fx-padding:10;" alignment="TOP_CENTER">
+            <Label text="Classifica della partita" style="-fx-font-size:14px; -fx-font-weight:bold;"/>
+
+            <!-- ListView con le righe formattate della classifica -->
+            <ListView fx:id="rankingListView" prefHeight="380.0" prefWidth="560.0"/>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" style="-fx-padding: 12 10 16 10;">
+            <Button fx:id="backToMenuButton"
+                    text="Torna al menu"
+                    onAction="#handleBackToMenu"
+                    style="-fx-font-size: 14px; -fx-padding: 10px 22px;"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>
+

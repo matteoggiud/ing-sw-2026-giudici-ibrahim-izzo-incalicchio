@@ -1,10 +1,7 @@
 package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.client.view.gui.controllers.AuthController;
-import it.polimi.ingsw.client.view.gui.controllers.GameController;
-import it.polimi.ingsw.client.view.gui.controllers.LobbyController;
-import it.polimi.ingsw.client.view.gui.controllers.MenuController;
+import it.polimi.ingsw.client.view.gui.controllers.*;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +12,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 
 public class GuiClientView implements ClientView {
@@ -33,6 +31,10 @@ public class GuiClientView implements ClientView {
 
     private Scene gameScene;
     private GameController gameController;
+
+    private Scene endGameScene;
+    private ScoreController ScoreController;
+
 
     public GuiClientView(Stage stage) {
         this.stage = stage;
@@ -99,6 +101,19 @@ public class GuiClientView implements ClientView {
             stage.show();
         }
     }
+
+    private void ensureScoreLoaded() throws IOException {
+        if (endGameScene != null && ScoreController != null) return;
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EndGamePane.fxml"));
+        Parent root = loader.load();
+
+        ScoreController = loader.getController();
+        ScoreController.setGuiContext(guiContext);
+
+        endGameScene = new Scene(root);
+    }
+
 
     /**
      * @param message
@@ -257,14 +272,6 @@ public class GuiClientView implements ClientView {
         });
     }
 
-    /**
-     *
-     */
-    @Override
-    public void showGameEnded() {
-
-    }
-
 
     /**
      * @param playersInfo
@@ -313,4 +320,33 @@ public class GuiClientView implements ClientView {
 
         });
     }
+
+    @Override
+    public void showGameEnded() {
+        Platform.runLater(() -> {
+            try {
+                ensureScoreLoaded();
+
+                // Prendi la final ranking dallo stato cliente
+                Map<String, Integer> finalRanking = guiContext != null && guiContext.clientState() != null
+                        ? guiContext.clientState().getFinalRanking()
+                        : Map.of();
+
+                // e la classifica storica (opzionale)
+                List<LeadBoardDTO> historical = guiContext != null && guiContext.clientState() != null
+                        ? guiContext.clientState().getHistoricalRankings()
+                        : List.of();
+
+                // Passa i dati al controller dell'end game
+                ScoreController.showFinalRanking(finalRanking, historical);
+
+                // Cambia scena al pannello di fine partita
+                changeSceneIfNeeded(endGameScene);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 }
