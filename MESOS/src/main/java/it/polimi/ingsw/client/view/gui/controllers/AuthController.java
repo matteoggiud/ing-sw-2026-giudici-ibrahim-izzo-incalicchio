@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 public class AuthController {
 
@@ -52,5 +54,12 @@ public class AuthController {
     public void showErrorMessage(String message) {
         messageLabel.setText(guiContext.clientState().getErrorMessage());
         //messageLabel.setStyle("-fx-text-fill: red;");
+    }
+
+    @FXML
+    private void handleKeyPress(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            handleLogin();
+        }
     }
 }

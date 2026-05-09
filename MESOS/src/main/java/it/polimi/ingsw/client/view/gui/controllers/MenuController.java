@@ -2,6 +2,7 @@ package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,7 +24,15 @@ public class MenuController {
     @FXML
     private ChoiceBox<Integer> choiceExpectedNumPlayers;
 
+    @FXML
+    private ListView<LeadBoardDTO> rankingsListView;
+
+    @FXML
+    private ChoiceBox<Integer> choiceNumPlayersForRankings;
+
     private final ObservableList<GameInfoDTO> games = FXCollections.observableArrayList();
+
+    private final ObservableList<LeadBoardDTO> rankingsObs = FXCollections.observableArrayList();
 
 
     public void setGuiContext(GuiContext guiContext) {
@@ -53,6 +62,21 @@ public class MenuController {
 
         // disable join button if no game is selected
         joinButton.disableProperty().bind(gamesListView.getSelectionModel().selectedItemProperty().isNull());
+
+        rankingsListView.setItems(rankingsObs);
+
+        rankingsListView.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(LeadBoardDTO item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(String.format("#%d %s - %d pt (%s)",
+                            item.position(), item.nickname(), item.finalScore(), item.finished_at()));
+                }
+            }
+        });
     }
 
 
@@ -60,6 +84,11 @@ public class MenuController {
         Platform.runLater(() -> {
             games.setAll(guiContext.clientState().getAvailableGames());
         });
+    }
+
+    public void showRankings(List<LeadBoardDTO> rankingsList) {
+        System.out.println("DEBUG: showRankings called with " + rankingsList.size() + " rankings");
+        Platform.runLater(() -> rankingsObs.setAll(rankingsList));
     }
 
     @FXML
@@ -81,5 +110,18 @@ public class MenuController {
         int expectedPlayers = choiceExpectedNumPlayers.getValue() == null ? 2 : choiceExpectedNumPlayers.getValue();
 
         guiContext.clientController().createGame(expectedPlayers);
+    }
+
+    @FXML
+    private void handleQuit() {
+        guiContext.clientController().disconnect();
+        System.exit(0);
+    }
+
+    @FXML
+    private void handleRankings(){
+        int numPlayers = choiceNumPlayersForRankings.getValue() == null ? 2 : choiceNumPlayersForRankings.getValue();
+        System.out.println("DEBUG: handleRankings called with numPlayers=" + numPlayers);
+        guiContext.clientController().getRankings(numPlayers);
     }
 }

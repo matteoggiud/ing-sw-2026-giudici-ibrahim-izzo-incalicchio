@@ -284,7 +284,17 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showRankings(List<LeadBoardDTO> rankings) {
+        Platform.runLater(() -> {
+            try {
+                ensureMenuLoaded();
 
+                menuController.showRankings(rankings);
+
+                changeSceneIfNeeded(menuScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
