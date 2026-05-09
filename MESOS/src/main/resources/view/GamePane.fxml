@@ -55,4 +55,13 @@
         </VBox>
     </right>
 
+    <bottom>
+        <VBox>
+            <Label text="Your deck"/>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="200" >
+                <HBox fx:id="myDeckBox" alignment="CENTER"/>
+            </ScrollPane>
+        </VBox>
+    </bottom>
+
 </BorderPane>

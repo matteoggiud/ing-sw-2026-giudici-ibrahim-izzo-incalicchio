@@ -2,9 +2,8 @@ package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.client.view.gui.ImageCache;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.server.model.card.BuildingCard;
+import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,7 +12,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import it.polimi.ingsw.server.model.observer.dto.TurnOrderSlotDTO;
 import javafx.geometry.Point2D;
 
 import java.util.Comparator;
@@ -21,7 +19,6 @@ import java.util.Comparator;
 import java.util.*;
 
 public class GameController {
-
     private GuiContext guiContext;
 
     private static final int IMG_WIDTH = 100;
@@ -30,7 +27,8 @@ public class GameController {
     private static final int TOTEM_WIDTH = 26;
 
 
-
+    @FXML
+    private HBox myDeckBox;
     @FXML
     private Label eraLabel;
     @FXML
@@ -112,7 +110,7 @@ public class GameController {
                 ImageView totemView = ImageCache.view(totemPath, TOTEM_WIDTH, TOTEM_HEIGHT);
                 canvas.getChildren().add(totemView);
                 totemView.setLayoutX(0.5 * boxView.getFitWidth() - 0.5 * totemView.getFitWidth());
-                totemView.setLayoutY(0.32 *  boxView.getFitHeight() - totemView.getFitHeight());
+                totemView.setLayoutY(0.32 * boxView.getFitHeight() - totemView.getFitHeight());
             } catch (IllegalArgumentException e) {
                 System.err.println("Errore caricamento totem per " + placedPlayerNickname + ": " + e.getMessage());
             }
@@ -358,8 +356,43 @@ public class GameController {
             } else {
                 playerDecks.put(nickname, playerDeck);
             }
+
+            if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
+                // refresh my bottom deck
+                populateMyDeck(playerDeck);
+            }
+
             playersListView.refresh();
         });
+    }
+
+    private void populateMyDeck(PlayerDeckDTO deck) {
+        myDeckBox.getChildren().clear();
+        if (deck == null) return;
+
+        double thumbWidth = IMG_WIDTH;
+        double thumbHeight = IMG_HEIGHT;
+
+
+        for (CharacterCardDTO card : deck.characterCards()) {
+            String key = card.imageKey();
+            String path = "/assets/cards/" + key + ".png";
+
+            ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+
+            myDeckBox.getChildren().add(thumb);
+        }
+
+        for (BuildingCardDTO card : deck.buildingCards()) {
+            String key = card.imageKey();
+            String path = "/assets/cards/" + key + ".png";
+
+            ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+
+            myDeckBox.getChildren().add(thumb);
+        }
+
+
     }
 
     public void clearDecks() {
