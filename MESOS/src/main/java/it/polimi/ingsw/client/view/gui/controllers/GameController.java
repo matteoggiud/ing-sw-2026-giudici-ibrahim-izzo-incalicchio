@@ -26,9 +26,9 @@ public class GameController {
 
     private static final int IMG_WIDTH = 100;
     private static final int IMG_HEIGHT = 160;
-    private static final int TOTEM_SIZE = 50;
-    private static final int TURN_IMG_WIDTH = 220;
-    private static final int TURN_IMG_HEIGHT = 160;
+    private static final int TOTEM_HEIGHT = 50;
+    private static final int TOTEM_WIDTH = 26;
+
 
 
     @FXML
@@ -109,10 +109,10 @@ public class GameController {
             String totemPath = "/assets/totem/TOTEM_" + totemKey + ".png";
 
             try {
-                ImageView totemView = ImageCache.view(totemPath, TOTEM_SIZE, TOTEM_SIZE);
+                ImageView totemView = ImageCache.view(totemPath, TOTEM_WIDTH, TOTEM_HEIGHT);
                 canvas.getChildren().add(totemView);
-                totemView.setLayoutX(boxView.getFitWidth() / 2 - totemView.getFitWidth() / 2);
-                totemView.setLayoutY(boxView.getFitHeight() * 3 / 4 - totemView.getFitHeight() / 2);
+                totemView.setLayoutX(0.5 * boxView.getFitWidth() - 0.5 * totemView.getFitWidth());
+                totemView.setLayoutY(0.32 *  boxView.getFitHeight() - totemView.getFitHeight());
             } catch (IllegalArgumentException e) {
                 System.err.println("Errore caricamento totem per " + placedPlayerNickname + ": " + e.getMessage());
             }
@@ -137,36 +137,38 @@ public class GameController {
     }
 
     // given a list of TurnOrderSlotDTO, create a StackPane with the turn order image and totems of players in the correct positions
-    private StackPane createTurnBox(List<TurnOrderSlotDTO> slots) {
+    private Pane createTurnBox(List<TurnOrderSlotDTO> slots) {
         int numSlots = slots.size();
 
         String img = "/assets/turn/TURN_" + numSlots + ".png";
         ImageView boardView = ImageCache.view(img, IMG_WIDTH, IMG_HEIGHT);
 
-        StackPane stack = new StackPane(boardView);
+        Pane canvas = new Pane();
+        canvas.setPrefSize(boardView.getFitWidth(), boardView.getFitHeight());
+        boardView.setLayoutX(0);
+        boardView.setLayoutY(0);
+        canvas.getChildren().add(boardView);
 
-        List<TurnOrderSlotDTO> ordered = slots.stream()
+        /*List<TurnOrderSlotDTO> ordered = slots.stream()
                 .sorted(Comparator.comparingInt(TurnOrderSlotDTO::position))
-                .toList();
+                .toList();*/
 
-        for (TurnOrderSlotDTO slot : ordered) {
+        for (TurnOrderSlotDTO slot : slots) {
             if (slot.placedPlayerNickname() == null) {
                 continue;
             }
 
             String totemKey = getTotemKeyForPlayer(slot.placedPlayerNickname());
-            ImageView totemView = ImageCache.view("/assets/totem/TOTEM_" + totemKey + ".png", TOTEM_SIZE, TOTEM_SIZE);
-
+            ImageView totemView = ImageCache.view("/assets/totem/TOTEM_" + totemKey + ".png", TOTEM_WIDTH, TOTEM_HEIGHT);
+            canvas.getChildren().add(totemView);
             Point2D anchor = getTurnSlotAnchor(numSlots, slot.position());
 
-            StackPane.setAlignment(totemView, Pos.CENTER);
-            totemView.setTranslateX((anchor.getX() - 0.5) * IMG_WIDTH);
-            totemView.setTranslateY((anchor.getY() - 0.5) * IMG_HEIGHT);
+            totemView.setLayoutX(anchor.getX() * boardView.getFitWidth() - totemView.getFitWidth() / 2);
+            totemView.setLayoutY((anchor.getY()) * boardView.getFitHeight() - totemView.getFitHeight());
 
-            stack.getChildren().add(totemView);
         }
 
-        return stack;
+        return canvas;
     }
 
     // returns the anchor point for a totem in the turn order image based on the number of slots and the slot position; coordinates are normalized (0 to 1) relative to the image size
@@ -174,29 +176,29 @@ public class GameController {
         // these coordinates are normalized (0 to 1) relative to the turn order image; adjust as needed based on the actual image design
         return switch (numSlots) {
             case 2 -> switch (slotPosition) {
-                case 0 -> new Point2D(0.32, 0.50);
-                case 1 -> new Point2D(0.68, 0.50);
+                case 0 -> new Point2D(0.50, 0.36); //0.33 -> 0.5
+                case 1 -> new Point2D(0.50, 0.54);
                 default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
             };
             case 3 -> switch (slotPosition) {
-                case 0 -> new Point2D(0.22, 0.50);
-                case 1 -> new Point2D(0.50, 0.50);
-                case 2 -> new Point2D(0.78, 0.50);
+                case 0 -> new Point2D(0.50, 0.305);
+                case 1 -> new Point2D(0.50, 0.49);
+                case 2 -> new Point2D(0.50, 0.67);
                 default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
             };
             case 4 -> switch (slotPosition) {
-                case 0 -> new Point2D(0.16, 0.50);
-                case 1 -> new Point2D(0.39, 0.50);
-                case 2 -> new Point2D(0.61, 0.50);
-                case 3 -> new Point2D(0.84, 0.50);
+                case 0 -> new Point2D(0.50, 0.26);
+                case 1 -> new Point2D(0.50, 0.44);
+                case 2 -> new Point2D(0.50, 0.63);
+                case 3 -> new Point2D(0.50, 0.82);
                 default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
             };
             case 5 -> switch (slotPosition) {
-                case 0 -> new Point2D(0.10, 0.50);
-                case 1 -> new Point2D(0.30, 0.50);
-                case 2 -> new Point2D(0.50, 0.50);
-                case 3 -> new Point2D(0.70, 0.50);
-                case 4 -> new Point2D(0.90, 0.50);
+                case 0 -> new Point2D(0.50, 0.19);
+                case 1 -> new Point2D(0.50, 0.38);
+                case 2 -> new Point2D(0.50, 0.56);
+                case 3 -> new Point2D(0.50, 0.75);
+                case 4 -> new Point2D(0.50, 0.93);
                 default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
             };
             default -> throw new IllegalArgumentException("Numero slot non supportato: " + numSlots);
@@ -255,7 +257,7 @@ public class GameController {
 
 // TURN ORDER: create the turn order box with totems in the correct positions
             turnOrderBox.getChildren().clear();
-            StackPane slotNode = createTurnBox(board.turnOrderSlots());
+            Pane slotNode = createTurnBox(board.turnOrderSlots());
             turnOrderBox.getChildren().add(slotNode);
 
 
