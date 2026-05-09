@@ -22,7 +22,8 @@ public class InetAddressLookup {
             }
         }
 
-        // The fallback scans all the ip with some word key that are likely to be in our wifi adapter, if we find one we return it, otherwise we return the first valid one
+        // The fallback scans all the ip with some word key that are likely to be in our wifi adapter,
+        // if we find one we return it, otherwise we return the first valid one
         try {
             Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
             while (nis.hasMoreElements()) {
