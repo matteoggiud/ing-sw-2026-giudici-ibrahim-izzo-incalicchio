@@ -43,9 +43,7 @@ public class GameController {
     @FXML
     private HBox offerTrack;
     @FXML
-    private VBox turnOrder;
-    @FXML
-    private VBox turnOrderBox;
+    private HBox turnOrderBox;
     @FXML
     private HBox lowerRow;
 
@@ -83,26 +81,25 @@ public class GameController {
     }
 
     private StackPane createOfferBoxNode(int boxIndex, String imageKey) {
-        String img = "/assets/offer/offer_box.png";
-        ImageView boxView = ImageCache.view(img, 120, 120);
+        String img = "/assets/offer/" + imageKey + ".png";
+        ImageView boxView = ImageCache.view(img, IMG_WIDTH, IMG_HEIGHT);
         StackPane stack = new StackPane(boxView);
         // se boxDto ha totem:
         // ImageView totem = ImageCache.view("/assets/totems/totem_blue.png", 32, 32);
         // StackPane.setAlignment(totem, Pos.TOP_RIGHT);
         // stack.getChildren().add(totem);
         stack.setOnMouseClicked(e -> {
-            // es. guiContext.getClientController().placeTotem(boxIndex);
+            guiContext.clientController().placeTotem(boxIndex);
         });
         return stack;
     }
 
-    private VBox createTurnSlotNode(int slotIndex, String playerNickname) {
-        String img = "/assets/turn/turn_slot.png";
-        ImageView slotView = ImageCache.view(img, 120, 60);
-        Label name = new Label(/*slotDto.playerNickname() or "-"*/ "-");
-        VBox box = new VBox(4, slotView, name);
-        box.setAlignment(Pos.CENTER);
-        return box;
+    private StackPane createTurnBox(int numSlots) {
+        String img = "/assets/turn/TURN_" + numSlots + ".png";
+        ImageView slotView = ImageCache.view(img, IMG_WIDTH, IMG_HEIGHT);
+        StackPane stack = new StackPane(slotView);
+
+        return stack;
     }
 
     private void populateBoard(BoardDTO board) {
@@ -146,7 +143,7 @@ public class GameController {
                 upperRow.getChildren().add(imageView);
             });
 
-            /*
+
             // OFFER TRACK:TODO
             offerTrack.getChildren().clear();
             board.offerTrackBoxes().forEach(boxDto -> {
@@ -154,13 +151,12 @@ public class GameController {
                 offerTrack.getChildren().add(boxNode);
             });
 
-            // TURN ORDER:TODO
-            turnOrder.getChildren().clear();
-            board.turnOrderSlots().forEach(slotDto -> {
-                VBox slotNode = createTurnSlotNode(slotDto.position(), slotDto.placedPlayerNickname());
-                turnOrder.getChildren().add(slotNode);
-            });
-*/
+
+            turnOrderBox.getChildren().clear();
+            StackPane slotNode = createTurnBox(board.turnOrderSlots().size());
+            turnOrderBox.getChildren().add(slotNode);
+
+
             // LOWER: for each card in lowerCharacterCards, create an ImageView and add to lowerRow
             lowerRow.getChildren().clear();
             board.lowerCharacterCards().forEach(cardDto -> {

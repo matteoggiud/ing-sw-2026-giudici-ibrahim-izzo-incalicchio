@@ -23,26 +23,25 @@
             <Label text="Board" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
 
             <!-- UPPER ROW -->
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="160">
+            <Pane>
                 <HBox fx:id="upperRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
-            </ScrollPane>
+            </Pane>
 
-            <!-- MIDDLE ROW: offer track (scrollable) + turn order -->
+            <!-- MIDDLE ROW: offer track  + turn order -->
             <HBox spacing="12" alignment="CENTER" minHeight="160">
-                <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="140" HBox.hgrow="ALWAYS">
-                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;" />
-                </ScrollPane>
+                <HBox HBox.hgrow="ALWAYS">
+                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;"/>
+                </HBox>
 
-                <VBox fx:id="turnOrderBox" spacing="8" alignment="TOP_CENTER" prefWidth="220">
-                    <Label text="Turn order" style="-fx-font-weight:bold;"/>
-                    <VBox fx:id="turnOrder" spacing="6" />
-                </VBox>
+                <HBox fx:id="turnOrderBox" spacing="0" alignment="TOP_CENTER" prefWidth="220">
+
+                </HBox>
             </HBox>
 
             <!-- LOWER ROW -->
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="160">
+            <Pane>
                 <HBox fx:id="lowerRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
-            </ScrollPane>
+            </Pane>
 
             <!-- Optional area for debug/text summary of board -->
             <TextArea fx:id="boardArea" editable="false" wrapText="true" prefRowCount="4" visible="false"/>

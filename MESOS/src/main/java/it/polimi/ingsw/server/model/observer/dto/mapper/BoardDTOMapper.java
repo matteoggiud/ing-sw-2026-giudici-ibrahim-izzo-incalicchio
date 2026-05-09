@@ -120,7 +120,7 @@ public final class BoardDTOMapper {
                             box.getFoodReward(),
                             box.getUpperRowPicks(),
                             box.getLowerRowPicks(),
-                            ""
+                            box.getImageKey()
                     );
                 })
                 .toList();

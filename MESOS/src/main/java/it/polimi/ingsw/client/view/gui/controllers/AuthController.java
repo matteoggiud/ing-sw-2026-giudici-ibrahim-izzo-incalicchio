@@ -1,6 +1,5 @@
 package it.polimi.ingsw.client.view.gui.controllers;
 
-import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.view.Credentials;
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import javafx.fxml.FXML;

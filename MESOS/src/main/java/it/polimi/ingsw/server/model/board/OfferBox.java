@@ -135,4 +135,13 @@ public class OfferBox {
         this.placedPlayer = null;
         return removed;
     }
+
+    /**
+     * Generates a unique image key for this offer box based on its configuration of picks.
+     *
+     * @return a string key that can be used to retrieve the corresponding image for this offer box configuration.
+     */
+    public String getImageKey(){
+        return "OFFER_" + upperRowPicks + "_" + lowerRowPicks;
+    }
 }
