@@ -104,7 +104,7 @@ public class GameController {
             String totemKey = getTotemKeyForPlayer(placedPlayerNickname);
 
             // import and show totem's picture
-            String totemPath = "/assets/totems/totem_" + totemKey + ".png";
+            String totemPath = "/assets/totem/TOTEM_" + totemKey + ".png";
             try {
                 ImageView totemView = ImageCache.view(totemPath, TOTEM_SIZE, TOTEM_SIZE);
                 StackPane.setAlignment(totemView, Pos.TOP_RIGHT);
@@ -132,7 +132,7 @@ public class GameController {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Player non trovato: " + nickname))
                 .totem()
-                .toLowerCase();
+                .toUpperCase();
     }
     // given a list of TurnOrderSlotDTO, create a StackPane with the turn order image and totems of players in the correct positions
     private StackPane createTurnBox(List<TurnOrderSlotDTO> slots) {
@@ -153,7 +153,7 @@ public class GameController {
             }
 
             String totemKey = getTotemKeyForPlayer(slot.placedPlayerNickname());
-            ImageView totemView = ImageCache.view("/assets/totems/totem_" + totemKey + ".png", TOTEM_SIZE, TOTEM_SIZE);
+            ImageView totemView = ImageCache.view("/assets/totem/TOTEM_" + totemKey + ".png", TOTEM_SIZE, TOTEM_SIZE);
 
             Point2D anchor = getTurnSlotAnchor(numSlots, slot.position());
 
