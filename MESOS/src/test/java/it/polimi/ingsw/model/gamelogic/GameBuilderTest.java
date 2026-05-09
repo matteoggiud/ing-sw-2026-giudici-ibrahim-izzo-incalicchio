@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model.gamelogic;
 
-import it.polimi.ingsw.model.core.*;
-import it.polimi.ingsw.model.card.*;
-import it.polimi.ingsw.model.deck.*;
-import it.polimi.ingsw.model.board.*;
+import it.polimi.ingsw.server.model.board.TurnOrderBox;
+import it.polimi.ingsw.server.model.board.TurnOrderSlot;
+import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.deck.TribeDeck;
+import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,12 +25,13 @@ class GameBuilderTest {
     @BeforeEach
     void setUp() {
         // Initialize the host player
-        Player host = new Player("Player1", Totem.RED);
-        game = new Game(host);
+        Player host = new Player("Player1");
+        int gameId = 1;
+        game = new Game(host, gameId);
 
         // Add two more players to reach the minimum for a standard test
-        game.getPlayers().addPlayer(new Player("Player2", Totem.WHITE));
-        game.getPlayers().addPlayer(new Player("Player3", Totem.BLUE));
+        game.getPlayers().addPlayer(new Player("Player2"));
+        game.getPlayers().addPlayer(new Player("Player3"));
 
         gameBuilder = new GameBuilder(game);
     }
@@ -67,8 +70,8 @@ class GameBuilderTest {
     @Test
     void testInitialFoodForFivePlayers() {
         // Adding 4th and 5th players
-        game.getPlayers().addPlayer(new Player("Player4", Totem.YELLOW));
-        game.getPlayers().addPlayer(new Player("Player5", Totem.PURPLE));
+        game.getPlayers().addPlayer(new Player("Player4"));
+        game.getPlayers().addPlayer(new Player("Player5"));
 
         gameBuilder.prepareGame();
 

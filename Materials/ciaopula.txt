@@ -1,3 +1,10 @@
 - Come richiedere al player di prendere la carta
 - Implementare interfaccia per Controller 
 - Creare sequence diagram
+
+Bugs:
+Distinguere quando un player esce dal game in lobby rispetto al game che sta giocando. 
+Nel game in lobby semplicemente si rimuove il player e si manda la lista aggiornata dei players
+Mentre nel game in corso il game crasha.
+
+Quando faccio il quit durante una partita non funziona bene (probabile lato View)

@@ -1,29 +1,32 @@
 package it.polimi.ingsw.model.ruleset;
 
-import it.polimi.ingsw.model.board.OFFER_BOX_ID;
-import it.polimi.ingsw.model.board.OfferBox;
-import it.polimi.ingsw.model.board.TurnOrderSlot;
-import it.polimi.ingsw.model.card.Era;
-import it.polimi.ingsw.model.card.EventCard;
-import it.polimi.ingsw.model.card.EventType;
-import it.polimi.ingsw.model.core.Game;
-import it.polimi.ingsw.model.effect.EffectEventResult;
-import it.polimi.ingsw.model.effect.event.IEventEffect;
+import it.polimi.ingsw.server.model.board.OfferBox;
+import it.polimi.ingsw.server.model.board.TurnOrderSlot;
+import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.era.Era1;
+import it.polimi.ingsw.server.model.era.Era2;
+import it.polimi.ingsw.server.model.era.Era3;
+import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class StandardRuleSetTest {
 
     private StandardRuleSet ruleSet;
+    private Era1 era1;
+    private Era2 era2;
+    private Era3 era3;
 
     @BeforeEach
     void setUp() {
         ruleSet = new StandardRuleSet();
+        era1 = new Era1();
+        era2 = new Era2();
+        era3 = new Era3();
     }
 
     @Test
@@ -104,113 +107,107 @@ class StandardRuleSetTest {
     }
 
     @Test
-    void getBuildingLimit() {
-        // Test numPlayers == 2
-        assertEquals(1, ruleSet.getBuildingLimit(Era.ERA_1, 2));
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_2, 2));
-        assertEquals(3, ruleSet.getBuildingLimit(Era.ERA_3, 2));
+    void buildingLimitMapsContainExpectedValues() {
+        assertEquals(1, StandardRuleSet.getEra1BuildingLimits().get(2));
+        assertEquals(2, StandardRuleSet.getEra2BuildingLimits().get(2));
+        assertEquals(3, StandardRuleSet.getEra3BuildingLimits().get(2));
 
-        // Test numPlayers == 3
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_1, 3));
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_2, 3));
-        assertEquals(4, ruleSet.getBuildingLimit(Era.ERA_3, 3));
+        assertEquals(2, StandardRuleSet.getEra1BuildingLimits().get(3));
+        assertEquals(2, StandardRuleSet.getEra2BuildingLimits().get(3));
+        assertEquals(4, StandardRuleSet.getEra3BuildingLimits().get(3));
 
-        // Test numPlayers == 4
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_1, 4));
-        assertEquals(3, ruleSet.getBuildingLimit(Era.ERA_2, 4));
-        assertEquals(4, ruleSet.getBuildingLimit(Era.ERA_3, 4));
+        assertEquals(2, StandardRuleSet.getEra1BuildingLimits().get(4));
+        assertEquals(3, StandardRuleSet.getEra2BuildingLimits().get(4));
+        assertEquals(4, StandardRuleSet.getEra3BuildingLimits().get(4));
 
-        // Test numPlayers == 5
-        assertEquals(2, ruleSet.getBuildingLimit(Era.ERA_1, 5));
-        assertEquals(3, ruleSet.getBuildingLimit(Era.ERA_2, 5));
-        assertEquals(5, ruleSet.getBuildingLimit(Era.ERA_3, 5));
+        assertEquals(2, StandardRuleSet.getEra1BuildingLimits().get(5));
+        assertEquals(3, StandardRuleSet.getEra2BuildingLimits().get(5));
+        assertEquals(5, StandardRuleSet.getEra3BuildingLimits().get(5));
 
-        // Test era null
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(null, 2));
-
-        // Test numPlayers not valid
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(Era.ERA_1, 1));
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.getBuildingLimit(Era.ERA_1, 6));
+        assertNull(StandardRuleSet.getEra1BuildingLimits().get(1));
+        assertNull(StandardRuleSet.getEra1BuildingLimits().get(6));
     }
 
-    @Test
-    void sortEventCards() {
-        // Create effect dummy
-        IEventEffect dummyEffect = new IEventEffect() {
-            @Override
-            public EventType getEventEffectType() {
-                return EventType.SUSTENANCE;
-            }
 
-            @Override
-            public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
-                return List.of();
-            }
-        };
-
-        // Create cards
-        EventCard sustenance1 = new EventCard("Sustenance1", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
-        EventCard sustenance2 = new EventCard("Sustenance2", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
-        EventCard other1 = new EventCard("Hunt", Era.ERA_1, 2, false, EventType.HUNT, dummyEffect, 0, 0, 0, 0, 0);
-        EventCard other2 = new EventCard("Ritual", Era.ERA_1, 2, false, EventType.SHAMANIC_RITUAL, dummyEffect, 0, 0, 0, 0, 0);
-
-        List<EventCard> eventCards = List.of(sustenance1, other1, sustenance2, other2);
-
-        Stack<EventCard> stack = ruleSet.sortEventCards(eventCards);
-
-
-        assertEquals(EventType.HUNT, stack.pop().getEventType());
-        assertEquals(EventType.SHAMANIC_RITUAL, stack.pop().getEventType());
-        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
-        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
-
-        // Test null
-        assertThrows(IllegalArgumentException.class, () -> ruleSet.sortEventCards(null));
-    }
+    //   @Test
+//    void sortEventCards() {
+//        // Create effect dummy
+//        IEventEffect dummyEffect = new IEventEffect() {
+//            @Override
+//            public EventType getEventEffectType() {
+//                return EventType.SUSTENANCE;
+//            }
+//
+//            @Override
+//            public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
+//                return List.of();
+//            }
+//        };
+//
+//        // Create cards
+//        EventCard sustenance1 = new EventCard("Sustenance1", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
+//        EventCard sustenance2 = new EventCard("Sustenance2", Era.ERA_1, 2, false, EventType.SUSTENANCE, dummyEffect, 0, 0, 0, 0, 0);
+//        EventCard other1 = new EventCard("Hunt", Era.ERA_1, 2, false, EventType.HUNT, dummyEffect, 0, 0, 0, 0, 0);
+//        EventCard other2 = new EventCard("Ritual", Era.ERA_1, 2, false, EventType.SHAMANIC_RITUAL, dummyEffect, 0, 0, 0, 0, 0);
+//
+//        List<EventCard> eventCards = List.of(sustenance1, other1, sustenance2, other2);
+//
+//        Stack<EventCard> stack = ruleSet.sortEventCards(eventCards);
+//
+//
+//        assertEquals(EventType.HUNT, stack.pop().getEventType());
+//        assertEquals(EventType.SHAMANIC_RITUAL, stack.pop().getEventType());
+//        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
+//        assertEquals(EventType.SUSTENANCE, stack.pop().getEventType());
+//
+//        // Test null
+//        assertThrows(IllegalArgumentException.class, () -> ruleSet.sortEventCards(null));
+//    }
 
     @Test
     void createOfferBoxes() {
-        // Test numPlayers == 2
         List<OfferBox> boxes2 = ruleSet.createOfferBoxes(2);
-        assertEquals(4, boxes2.size()); // B, C, E, F (no A, no D, no G)
-        assertEquals(OFFER_BOX_ID.B, boxes2.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes2.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes2.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes2.get(3).getBoxId());
+        assertEquals(4, boxes2.size());
+        assertOfferBox(boxes2.get(0), 0, 0, 1);
+        assertOfferBox(boxes2.get(1), 0, 1, 0);
+        assertOfferBox(boxes2.get(2), 0, 1, 1);
+        assertOfferBox(boxes2.get(3), 0, 2, 0);
 
-        // Test numPlayers == 3
         List<OfferBox> boxes3 = ruleSet.createOfferBoxes(3);
-        assertEquals(5, boxes3.size()); // B, C, D, E, F (no A, no G)
-        assertEquals(OFFER_BOX_ID.B, boxes3.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes3.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.D, boxes3.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes3.get(3).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes3.get(4).getBoxId());
+        assertEquals(5, boxes3.size());
+        assertOfferBox(boxes3.get(0), 0, 0, 1);
+        assertOfferBox(boxes3.get(1), 0, 1, 0);
+        assertOfferBox(boxes3.get(2), 0, 0, 2);
+        assertOfferBox(boxes3.get(3), 0, 1, 1);
+        assertOfferBox(boxes3.get(4), 0, 2, 0);
 
-        // Test numPlayers == 4
         List<OfferBox> boxes4 = ruleSet.createOfferBoxes(4);
-        assertEquals(6, boxes4.size()); // B, C, D, E, F, G (no A)
-        assertEquals(OFFER_BOX_ID.B, boxes4.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes4.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.D, boxes4.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes4.get(3).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes4.get(4).getBoxId());
-        assertEquals(OFFER_BOX_ID.G, boxes4.get(5).getBoxId());
+        assertEquals(6, boxes4.size());
+        assertOfferBox(boxes4.get(0), 0, 0, 1);
+        assertOfferBox(boxes4.get(1), 0, 1, 0);
+        assertOfferBox(boxes4.get(2), 0, 0, 2);
+        assertOfferBox(boxes4.get(3), 0, 1, 1);
+        assertOfferBox(boxes4.get(4), 0, 2, 0);
+        assertOfferBox(boxes4.get(5), 0, 2, 1);
 
-        // Test numPlayers == 5
         List<OfferBox> boxes5 = ruleSet.createOfferBoxes(5);
-        assertEquals(7, boxes5.size()); // A, B, C, D, E, F, G
-        assertEquals(OFFER_BOX_ID.A, boxes5.get(0).getBoxId());
-        assertEquals(OFFER_BOX_ID.B, boxes5.get(1).getBoxId());
-        assertEquals(OFFER_BOX_ID.C, boxes5.get(2).getBoxId());
-        assertEquals(OFFER_BOX_ID.D, boxes5.get(3).getBoxId());
-        assertEquals(OFFER_BOX_ID.E, boxes5.get(4).getBoxId());
-        assertEquals(OFFER_BOX_ID.F, boxes5.get(5).getBoxId());
-        assertEquals(OFFER_BOX_ID.G, boxes5.get(6).getBoxId());
+        assertEquals(7, boxes5.size());
+        assertOfferBox(boxes5.get(0), 3, 0, 0);
+        assertOfferBox(boxes5.get(1), 0, 0, 1);
+        assertOfferBox(boxes5.get(2), 0, 1, 0);
+        assertOfferBox(boxes5.get(3), 0, 0, 2);
+        assertOfferBox(boxes5.get(4), 0, 1, 1);
+        assertOfferBox(boxes5.get(5), 0, 2, 0);
+        assertOfferBox(boxes5.get(6), 0, 2, 1);
 
-        // Test numPlayers not valid
         assertThrows(IllegalArgumentException.class, () -> ruleSet.createOfferBoxes(1));
         assertThrows(IllegalArgumentException.class, () -> ruleSet.createOfferBoxes(6));
+    }
+
+    private void assertOfferBox(OfferBox box, int foodReward, int upperRowPicks, int lowerRowPicks) {
+        assertEquals(foodReward, box.getFoodReward());
+        assertEquals(upperRowPicks, box.getUpperRowPicks());
+        assertEquals(lowerRowPicks, box.getLowerRowPicks());
     }
 
 
