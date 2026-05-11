@@ -16,7 +16,8 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-public class ServerMain {
+public class
+ServerMain {
     public static void main(String[] args) {
         final int socketPort = 12345;
 
