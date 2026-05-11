@@ -1,0 +1,106 @@
+.auth-root {
+    -fx-background-image: url("../assets/backgrounds/authBg.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.auth-panel {
+    -fx-background-color: rgba(18, 8, 4, 0.42);
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(198, 125, 38, 0.62);
+    -fx-border-width: 1.2;
+    -fx-padding: 24 30 26 30;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.55), 24, 0.25, 0, 10);
+}
+
+
+.auth-heading {
+    -fx-font-size: 23px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #d9a441;
+}
+
+.auth-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #c99855;
+}
+
+.auth-field {
+    -fx-pref-height: 44;
+    -fx-font-size: 14px;
+    -fx-text-fill: #f7ddb1;
+    -fx-prompt-text-fill: rgba(235, 184, 105, 0.70);
+    -fx-background-color: rgba(12, 6, 3, 0.68);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: rgba(184, 105, 30, 0.72);
+    -fx-border-width: 1;
+    -fx-padding: 0 13 0 13;
+    -fx-highlight-fill: #b96a1f;
+    -fx-highlight-text-fill: #fff0cf;
+}
+
+.auth-field:focused {
+    -fx-border-color: #e0a84b;
+    -fx-background-color: rgba(18, 8, 4, 0.82);
+    -fx-effect: dropshadow(gaussian, rgba(226, 132, 31, 0.34), 12, 0.18, 0, 0);
+}
+
+.auth-message {
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-padding: 9 12 9 12;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-wrap-text: true;
+}
+
+.auth-message.error {
+    -fx-text-fill: #ffe3c2;
+    -fx-background-color: rgba(111, 22, 12, 0.78);
+    -fx-border-color: rgba(255, 132, 70, 0.78);
+}
+
+.auth-message.info {
+    -fx-text-fill: #f2d6a3;
+    -fx-background-color: rgba(44, 24, 10, 0.72);
+    -fx-border-color: rgba(199, 130, 47, 0.65);
+}
+
+.auth-actions {
+    -fx-padding: 4 0 0 0;
+}
+
+.auth-button {
+    -fx-pref-height: 42;
+    -fx-font-size: 13px;
+    -fx-font-weight: 800;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+}
+
+#loginButton {
+    -fx-background-color: linear-gradient(to bottom, #e1a649, #a85c1c);
+    -fx-text-fill: #1a0b04;
+    -fx-border-color: #f2c46d;
+    -fx-border-width: 1;
+}
+
+#loginButton:hover {
+    -fx-background-color: linear-gradient(to bottom, #f0bd63, #bd7028);
+}
+
+#registerButton {
+    -fx-background-color: rgba(12, 6, 3, 0.46);
+    -fx-text-fill: #e4b15c;
+    -fx-border-color: rgba(212, 139, 48, 0.86);
+    -fx-border-width: 1;
+}
+
+#registerButton:hover {
+    -fx-background-color: rgba(70, 31, 9, 0.70);
+}
