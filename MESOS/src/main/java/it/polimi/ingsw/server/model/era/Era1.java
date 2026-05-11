@@ -24,10 +24,6 @@ public class Era1 extends Era{
         return name;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
 
     @Override
     public void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
@@ -35,30 +31,32 @@ public class Era1 extends Era{
     }
 
     @Override
-    public HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks) {
-        buildingDecks.put(this, new BuildingDeck());
-        return buildingDecks;
+    public Era handleDrawnEra(Game game, Era drawnEra) {
+        if (drawnEra == null) {
+            throw new IllegalArgumentException("Drawn era cannot be null.");
+        }
+        return drawnEra.acceptTransition(game, this);
     }
 
     @Override
-    public Era eraTransition(Game game, Era newEra) {
-        if (newEra == null) {
-            throw new IllegalArgumentException("New era cannot be null");
-        }
+    protected Era acceptTransition(Game game, Era1 currentEra) {
+        return stayIn(currentEra);
+    }
 
-        Era currentEra = game.getCurrentEra();
+    @Override
+    protected Era acceptTransition(Game game, Era2 currentEra) {
+        return stayIn(currentEra);
+    }
 
-        if (newEra.getOrder() <= currentEra.getOrder()) {
-            return currentEra;
-        }
+    @Override
+    protected Era acceptTransition(Game game, Era3 currentEra) {
+        return stayIn(currentEra);
+    }
 
-        Board board = game.getBoard();
-        game.setCurrentEra(newEra);
-
-        board.transferUpperBuildingToLower();
-        board.placeInUpperBuildingRow(game.getBuildingDecks().getBuildingDeck(newEra));
-
-        return newEra;
+    @Override
+    public HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks) {
+        buildingDecks.put(this, new BuildingDeck());
+        return buildingDecks;
     }
 
     @Override
