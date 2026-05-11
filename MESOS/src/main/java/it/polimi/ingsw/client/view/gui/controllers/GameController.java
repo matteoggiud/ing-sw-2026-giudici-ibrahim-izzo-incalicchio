@@ -362,10 +362,7 @@ public class GameController {
     public void showPlayerDeck(String nickname, PlayerDeckDTO playerDeck, boolean isMe) {
         Platform.runLater(() -> {
             if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
-                System.out.println("[DEBUG] This is MY deck! Populating myDeckBox");
                 populateMyDeck(playerDeck);
-            } else {
-                System.out.println("[DEBUG] This is NOT my deck. nickname=" + nickname + ", myNickname=" + guiContext.clientState().getNickname());
             }
             if (playerDeck == null) {
                 playerDecks.remove(nickname);
@@ -383,32 +380,24 @@ public class GameController {
     }
 
     private void populateMyDeck(PlayerDeckDTO deck) {
-        System.out.println("[DEBUG] populateMyDeck called");
-        System.out.println("[DEBUG] deck is null? " + (deck == null));
-        System.out.println("[DEBUG] myDeckBox is null? " + (myDeckBox == null));
+        ;
 
         myDeckBox.getChildren().clear();
 
         if (deck == null) {
-            System.out.println("[DEBUG] deck is null, returning");
             return;
         }
 
         double thumbWidth = IMG_WIDTH;
         double thumbHeight = IMG_HEIGHT;
 
-        System.out.println("[DEBUG] Character cards: " + deck.characterCards().size());
-        System.out.println("[DEBUG] Building cards: " + deck.buildingCards().size());
-
         for (CharacterCardDTO card : deck.characterCards()) {
             String key = card.imageKey();
             String path = "/assets/cards/" + key + ".png";
-            System.out.println("[DEBUG] Loading character card: " + path);
 
             try {
                 ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
                 myDeckBox.getChildren().add(thumb);
-                System.out.println("[DEBUG] Added character card: " + key);
             } catch (Exception e) {
                 System.out.println("[ERROR] Failed to load character card " + key + ": " + e.getMessage());
             }
@@ -417,18 +406,14 @@ public class GameController {
         for (BuildingCardDTO card : deck.buildingCards()) {
             String key = card.imageKey();
             String path = "/assets/cards/" + key + ".png";
-            System.out.println("[DEBUG] Loading building card: " + path);
 
             try {
                 ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
                 myDeckBox.getChildren().add(thumb);
-                System.out.println("[DEBUG] Added building card: " + key);
             } catch (Exception e) {
                 System.out.println("[ERROR] Failed to load building card " + key + ": " + e.getMessage());
             }
         }
-
-        System.out.println("[DEBUG] Total cards added to myDeckBox: " + myDeckBox.getChildren().size());
     }
 
     public void clearDecks() {
