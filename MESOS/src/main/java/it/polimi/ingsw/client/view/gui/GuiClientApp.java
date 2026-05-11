@@ -9,6 +9,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.awt.*;
 import java.util.List;
@@ -48,6 +49,12 @@ public class GuiClientApp extends Application {
 
         primaryStage.setScene(new Scene(new Label("Connecting to server...")));
         primaryStage.show();
+
+        primaryStage.setMinWidth(1200);
+        primaryStage.setMinHeight(760);
+
+        Platform.runLater(() -> primaryStage.setMaximized(true));
+
 
         // 1. Parse command line arguments
         List<String> args = getParameters().getRaw();

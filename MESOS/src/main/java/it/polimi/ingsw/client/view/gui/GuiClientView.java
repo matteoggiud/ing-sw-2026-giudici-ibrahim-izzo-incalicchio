@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -105,8 +106,12 @@ public class GuiClientView implements ClientView {
 
         if (stage.getScene() != null && stage.getScene() != newScene) {
             stage.setScene(newScene);
-            stage.show();
         }
+        stage.setMinWidth(1100);
+        stage.setMinHeight(700);
+        stage.show();
+
+        Platform.runLater(() -> stage.setMaximized(true));
     }
 
     private void ensureScoreLoaded() throws IOException {
@@ -144,8 +149,13 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showError(String message) {
-        //stage.getScene().showError();
-        System.err.println("Error: " + message);
+        Platform.runLater(() -> {
+            System.err.println("Error: " + message);
+
+            if (authController != null) {
+                authController.showErrorMessage(message);
+            }
+        });
     }
 
     /**
@@ -317,7 +327,7 @@ public class GuiClientView implements ClientView {
             try {
                 ensureAuthLoaded();
 
-                authController.showErrorMessage(message);
+                authController.showInfoMessage(message);
 
 
                 changeSceneIfNeeded(authScene);
