@@ -273,5 +273,15 @@ public class RmiClient implements RemoteClientView {
         viewController.onGameCrashed(reason);
     }
 
+    /**
+     * Called to check if the client is still alive and responsive.
+     * @return true if the client is alive and responsive
+     * @throws RemoteException
+     */
+    @Override
+    public boolean isAlive() throws RemoteException {
+        return true;
+    }
+
 
 }

@@ -384,5 +384,13 @@ public class RmiGenericVirtualView implements GenericVirtualView {
         }
     }
 
+    @Override
+    public boolean isReachable() {
+        try {
+            return clientView.isAlive();
+        } catch (RemoteException e) {
+            return false;
+        }
+    }
 
 }

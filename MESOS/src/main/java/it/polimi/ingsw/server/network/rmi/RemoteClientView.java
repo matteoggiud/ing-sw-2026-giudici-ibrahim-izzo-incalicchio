@@ -191,4 +191,11 @@ public interface RemoteClientView extends Remote {
      * @param reason the reason for the game crash
      */
     void onGameCrashed(String reason) throws RemoteException;
+
+    /**
+     * Called to check if the client is still alive and responsive.
+     * @return true if the client is alive and responsive
+     * @throws RemoteException
+     */
+    boolean isAlive() throws RemoteException;
 }

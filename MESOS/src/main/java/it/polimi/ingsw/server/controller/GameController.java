@@ -33,6 +33,7 @@ public class GameController {
         if (clientSession.isLoggedIn()) {
             throw new RuntimeException("You are already logged in, please logout first.");
         }
+        disconnectStaleSessionIfPresent(username);
 
         try {
             model.login(username, password);
@@ -58,6 +59,8 @@ public class GameController {
         if (clientSession.isLoggedIn()) {
             throw new RuntimeException("You are already logged in, please logout first.");
         }
+
+        disconnectStaleSessionIfPresent(username);
 
         try {
             model.register(username, password);
@@ -278,6 +281,21 @@ public class GameController {
             }
             clientSession.setActiveGameId(actualActiveGameId);
         }
+    }
+
+    /**
+     * Checks for an existing client session associated with the given nickname and disconnects it if it is found to be stale
+     * @param nickname the nickname of the player for which to check for an existing session
+     */
+    private void disconnectStaleSessionIfPresent(String nickname) {
+        ClientSession existingSession = SessionRegistry.getInstance().getSession(nickname);
+        if (existingSession == null) {
+            return;
+        }
+        if (existingSession.getEventHandler().getView().isReachable()) {
+            return;
+        }
+        handleDisconnect(existingSession);
     }
 
     /**
