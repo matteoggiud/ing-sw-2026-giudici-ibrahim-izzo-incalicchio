@@ -15,4 +15,5 @@ public interface RemoteServer extends Remote {
      void onDrawCardMessage(int cardId, boolean fromUpperRow) throws java.rmi.RemoteException;
      void onDrawExtraCardMessage(int cardId) throws java.rmi.RemoteException;
      void onGetRankings(int numPlayers) throws java.rmi.RemoteException;
+     void onLeftLobbyMessage() throws java.rmi.RemoteException;
 }

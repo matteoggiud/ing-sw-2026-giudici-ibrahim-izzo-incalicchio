@@ -13,6 +13,5 @@ public class LeftGameMessage extends ClientMessage {
     @Override
     public void dispatch(ClientMessageVisitor clientVisitor) {
         clientVisitor.visit(this);
-
     }
 }

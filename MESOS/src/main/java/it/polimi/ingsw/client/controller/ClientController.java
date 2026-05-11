@@ -44,6 +44,8 @@ public class ClientController {
         virtualServer.onLeftGameMessage();
     }
 
+    public void leftLobby(){virtualServer.onLeftLobbyMessage();};
+
     public void drawCard(int selectedCardId, boolean fromUpperRow) {
         virtualServer.onDrawCardMessage(selectedCardId, fromUpperRow);
     }

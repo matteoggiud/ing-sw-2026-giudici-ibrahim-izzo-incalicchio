@@ -40,7 +40,7 @@ public class LobbyController {
     @FXML
     private void handleLeave() {
         if (guiContext != null) {
-            guiContext.clientController().leftGame();
+            guiContext.clientController().leftLobby();
         }
     }
 }

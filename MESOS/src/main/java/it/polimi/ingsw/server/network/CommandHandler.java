@@ -19,7 +19,7 @@ public class CommandHandler {
     /**
      * Returns the client session associated with this visitor.
      *
-     * @return the ClientSession instance
+     * @return
      */
     public ClientSession getClientSession() {
         return clientSession;
@@ -28,16 +28,17 @@ public class CommandHandler {
     /**
      * Returns the game controller associated with this visitor.
      *
-     * @return the GameController instance
+     * @return
      */
     public GameController getGameController() {
         return gameController;
     }
 
     /**
-     * Handles the client's request to log in.
+     * Handles the client's request to log in to the server.
      *
-     * @param message the message containing the login credentials
+     * @param username
+     * @param password
      */
     public void handleLogin(String username, String password) {
         try {
@@ -60,9 +61,10 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to register a new account.
+     * Handles the client's request to register a new account on the server.
      *
-     * @param message the message containing the registration credentials
+     * @param username
+     * @param password
      */
     public void handleRegistration(String username, String password) {
         try {
@@ -85,9 +87,9 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to create a new game.
+     * Handles the client's request to create a new game on the server.
      *
-     * @param message the message containing the game creation details
+     * @param expectedNumOfPlayers
      */
     public void handleGameCreation(int expectedNumOfPlayers) {
         try {
@@ -100,9 +102,9 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to join an existing game.
+     * Handles the client's request to join an existing game on the server.
      *
-     * @param message the message containing the game ID to join
+     * @param gameId
      */
     public void handleJoinGame(int gameId) {
         try {
@@ -115,9 +117,7 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to retrieve the list of available games.
-     *
-     * @param message the message requesting available games
+     * Handles the client's request to retrieve the list of available games on the server.
      */
     public void handleGetAvailableGames() {
         try {
@@ -131,9 +131,8 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to disconnect from the server.
-     *
-     * @param message the disconnect message from the client
+     * Handles the client's request to disconnect from the server, ensuring that any necessary
+     * cleanup is performed and that other players are notified if the disconnection affects an active game.
      */
     public void handleDisconnection() {
         try {
@@ -151,9 +150,7 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to leave an active game.
-     *
-     * @param message the message indicating the client wants to leave the game
+     * Handles the client's request to leave the current game, ensuring that any necessary cleanup is performed
      */
     public void handleLeftGame() {
         try {
@@ -178,10 +175,11 @@ public class CommandHandler {
         }
     }
 
+
     /**
-     * Handles the client's request to place a totem on the game board.
+     * Handles the client's request to place a totem on the game board, ensuring that the action is valid and updating the game state accordingly.
      *
-     * @param message the message containing the details of the place totem action
+     * @param offerBoxPosition
      */
     public void handlePlaceTotem(int offerBoxPosition) {
         try {
@@ -194,9 +192,9 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to draw a card from the game.
-     *
-     * @param message the message containing the details of the draw card action
+     * Handles the client's request to draw a card from the game, ensuring that the action is valid and updating the game state
+     * @param cardId
+     * @param isFromUpperRow
      */
     public void handleDrawCard(int cardId, boolean isFromUpperRow) {
         try {
@@ -209,9 +207,9 @@ public class CommandHandler {
     }
 
     /**
-     * Handles the client's request to draw an extra card from the game.
+     * Handles the client's request to draw an extra card from the game, ensuring that the action is valid and updating the game state accordingly.
      *
-     * @param message the message containing the details of the extra draw card action
+     * @param cardId
      */
     public void handleExtraDraw(int cardId) {
         try {
@@ -223,6 +221,11 @@ public class CommandHandler {
         }
     }
 
+    /**
+     * Handles the client's request to retrieve the current player rankings for a game, ensuring that the information is accurate and up-to-date.
+     *
+     * @param numPlayers
+     */
     public void handleRankings(int numPlayers) {
         try {
             List<LeadBoardDTO> rankings = gameController.getRankings(clientSession, numPlayers);
@@ -232,5 +235,9 @@ public class CommandHandler {
         } catch (Exception e) {
             clientSession.getEventHandler().getView().onGenericError("Failed to get rankings");
         }
+    }
+
+    public void handleLeftLobby(){
+        gameController.leaveLobby(clientSession);
     }
 }

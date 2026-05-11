@@ -312,4 +312,8 @@ public class GameController {
         return model.getRanking(numPlayers);
     }
 
+    public void leaveLobby(ClientSession clientSession){
+        model.leaveLobby(clientSession.getNickname(), clientSession.getActiveGameId());
+        clientSession.clearActiveGameId();
+    }
 }

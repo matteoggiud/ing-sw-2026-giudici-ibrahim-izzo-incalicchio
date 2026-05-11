@@ -535,4 +535,33 @@ public class GamePortal implements IGameModel {
         DataDepository db = new DataDepository();
         return db.getLeadBoard(numPlayer);
     }
+
+    @Override
+    public void leaveLobby(String player, int gameId){
+        if(gameId < 0){
+            throw new IllegalArgumentException("Game id cannot be negative.");
+        }
+
+        Player leavingPlayer = playerManager.getPlayer(player);
+
+        if(leavingPlayer == null){
+            throw new IllegalArgumentException("Player with nickname " + player + " is not logged in.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        if (!game.getGameState().isJoinable(game)) {
+            throw new IllegalStateException("leaveLobby is allowed only while game is in lobby.");
+        }
+
+
+        boolean isHost = game.getHostPlayer().equals(leavingPlayer);
+
+        if (isHost) {
+            gameManager.removeGame(gameId);
+            return;
+        }
+
+        gameManager.leaveGame(gameId, leavingPlayer);
+    }
 }

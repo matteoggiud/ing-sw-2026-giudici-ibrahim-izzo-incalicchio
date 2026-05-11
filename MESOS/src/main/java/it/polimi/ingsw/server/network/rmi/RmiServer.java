@@ -73,4 +73,9 @@ public class RmiServer implements RemoteServer {
     public void onGetRankings(int numPlayers) throws RemoteException {
         commandHandler.handleRankings(numPlayers);
     }
+
+    @Override
+    public void onLeftLobbyMessage() throws RemoteException {
+        commandHandler.handleLeftLobby();
+    }
 }
