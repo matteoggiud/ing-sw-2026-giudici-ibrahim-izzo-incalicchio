@@ -178,11 +178,12 @@ public class GameBuilder {
      */
     private void initializePlayersTotems() {
         List<Player> players = game.getPlayers().getShuffledPlayers();
-        Totem[] totems = Totem.values();
+        List<Totem> totems = new ArrayList<>(Arrays.asList(Totem.values()));
+        Collections.shuffle(totems);
 
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-            player.setTotem(totems[i]);
+            player.setTotem(totems.get(i));
         }
     }
 
