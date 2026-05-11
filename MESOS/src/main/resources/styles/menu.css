@@ -1,0 +1,133 @@
+.menu-root {
+    -fx-background-image: url("../assets/backgrounds/menuBg.png");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.menu-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #e0a84b;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 8, 0.30, 0, 2);
+}
+
+.menu-section-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #f0bd63;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.82), 8, 0.35, 0, 2);
+}
+
+.menu-label {
+    -fx-font-size: 17px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #f0bd63;
+}
+
+.menu-panel {
+    -fx-background-color: transparent;
+}
+
+.menu-list {
+    -fx-background-color: rgba(12, 6, 3, 0.24);
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 6;
+}
+
+
+.menu-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f4d69b;
+    -fx-font-size: 14px;
+    -fx-padding: 10 12 10 12;
+}
+
+.menu-list .list-cell:filled:hover {
+    -fx-background-color: rgba(142, 65, 18, 0.48);
+}
+
+.menu-list .list-cell:filled:selected {
+    -fx-background-color: rgba(210, 130, 39, 0.58);
+    -fx-text-fill: #fff0cf;
+}
+
+.menu-list .scroll-bar:vertical,
+.menu-list .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.menu-list .thumb {
+    -fx-background-color: rgba(214, 139, 48, 0.78);
+    -fx-background-radius: 4;
+}
+
+.menu-choice {
+    -fx-pref-height: 40;
+    -fx-background-color: rgba(12, 6, 3, 0.68);
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-border-color: rgba(212, 139, 48, 0.86);
+    -fx-border-width: 1;
+    -fx-mark-color: #e0a84b;
+}
+
+.menu-choice > .label {
+    -fx-text-fill: #f4d69b;
+    -fx-font-size: 14px;
+    -fx-font-weight: 800;
+}
+
+.menu-choice .context-menu {
+    -fx-background-color: #1a0b04;
+    -fx-border-color: #b96a1f;
+}
+
+.menu-choice .menu-item:focused {
+    -fx-background-color: #7a3511;
+}
+
+.menu-choice .menu-item > .label {
+    -fx-text-fill: #f4d69b;
+}
+
+.menu-button {
+    -fx-pref-height: 42;
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+    -fx-background-color: rgba(12, 6, 3, 0.50);
+    -fx-text-fill: #e4b15c;
+    -fx-border-color: rgba(212, 139, 48, 0.90);
+    -fx-border-width: 1;
+}
+
+.menu-button:hover {
+    -fx-background-color: rgba(78, 36, 11, 0.78);
+    -fx-text-fill: #ffd98a;
+}
+
+.menu-button.primary {
+    -fx-background-color: linear-gradient(to bottom, #e1a649, #a85c1c);
+    -fx-text-fill: #1a0b04;
+    -fx-border-color: #f2c46d;
+}
+
+.menu-button.primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #f0bd63, #bd7028);
+}
+
+.menu-button.danger {
+    -fx-background-color: linear-gradient(to bottom, #9d321d, #5e130b);
+    -fx-text-fill: #ffd39a;
+    -fx-border-color: #d26b37;
+}
+
+.menu-button.danger:hover {
+    -fx-background-color: linear-gradient(to bottom, #b94727, #741b0f);
+}

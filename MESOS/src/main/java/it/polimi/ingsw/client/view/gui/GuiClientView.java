@@ -107,11 +107,12 @@ public class GuiClientView implements ClientView {
         if (stage.getScene() != null && stage.getScene() != newScene) {
             stage.setScene(newScene);
         }
-        stage.setMinWidth(1100);
-        stage.setMinHeight(700);
         stage.show();
 
-        Platform.runLater(() -> stage.setMaximized(true));
+        Platform.runLater(() -> {
+            stage.setFullScreen(true);
+            stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        });
     }
 
     private void ensureScoreLoaded() throws IOException {
