@@ -327,20 +327,17 @@ public class GuiClientView implements ClientView {
             try {
                 ensureScoreLoaded();
 
-                // Prendi la final ranking dallo stato cliente
+                // Pick the final Ranking of the Game
                 Map<String, Integer> finalRanking = guiContext != null && guiContext.clientState() != null
                         ? guiContext.clientState().getFinalRanking()
                         : Map.of();
 
-                // e la classifica storica (opzionale)
-                List<LeadBoardDTO> historical = guiContext != null && guiContext.clientState() != null
+                List<LeadBoardDTO> global = guiContext != null && guiContext.clientState() != null
                         ? guiContext.clientState().getHistoricalRankings()
                         : List.of();
 
-                // Passa i dati al controller dell'end game
-                ScoreController.showFinalRanking(finalRanking, historical);
+                ScoreController.showFinalRanking(finalRanking, global);
 
-                // Cambia scena al pannello di fine partita
                 changeSceneIfNeeded(endGameScene);
 
             } catch (IOException e) {

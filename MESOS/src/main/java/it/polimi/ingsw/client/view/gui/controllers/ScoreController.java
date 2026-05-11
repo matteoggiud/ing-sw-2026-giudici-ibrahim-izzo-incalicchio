@@ -22,6 +22,9 @@ public class ScoreController {
     @FXML
     private ListView<String> rankingListView;
 
+    @FXML
+    private Label playerPositionLabel;
+
     private final ObservableList<String> rankingItems = FXCollections.observableArrayList();
 
     public void setGuiContext(GuiContext guiContext) {
@@ -33,21 +36,31 @@ public class ScoreController {
         rankingListView.setItems(rankingItems);
     }
 
-    /**
-     * Popola la classifica usando la final ranking della partita (map nickname -> score).
-     * Visualizza in forma ordinata (#pos Nickname - X pt). Evidenzia "(tu)" se è il player locale.
-     */
-    public void showFinalRanking(Map<String, Integer> finalRanking, List<LeadBoardDTO> historical) {
+    public void showFinalRanking(Map<String, Integer> finalRanking, List<LeadBoardDTO> global) {
         Platform.runLater(() -> {
             rankingItems.clear();
+            String Player = guiContext != null && guiContext.clientState() != null ? guiContext.clientState().getNickname() : null;
+
+            if (global != null && !global.isEmpty()) {
+                int position = 1;
+                for (LeadBoardDTO board : global) {
+                    if (Player != null && Player.equals(board.nickname())) {
+                        String scoreText = String.format("Your Position: #%d with %d points",
+                                position,
+                                board.finalScore());
+                        playerPositionLabel.setText(scoreText);
+                        return;
+                    }
+                    position++;
+                }
+                playerPositionLabel.setText("Position not found");
+            }
 
             if (finalRanking == null || finalRanking.isEmpty()) {
-                // Se non c'è la mappa, ma potrebbe esserci la lista storica (non è il caso), mostriamo messaggio
-                rankingItems.add("Classifica non disponibile.");
+                rankingItems.add("Rankings Unavailable");
                 return;
             }
 
-            // Ordina per punteggio discendente, poi nome
             List<Map.Entry<String, Integer>> ordered = finalRanking.entrySet().stream()
                     .sorted((e1, e2) -> {
                         int cmp = Integer.compare(e2.getValue(), e1.getValue());
@@ -64,21 +77,17 @@ public class ScoreController {
                 String label = String.format("#%d %s%s \u2014 %d pt",
                         pos++,
                         nick,
-                        (me != null && me.equals(nick) ? " (tu)" : ""),
+                        (me != null && me.equals(nick) ? " (you)" : ""),
                         e.getValue() == null ? 0 : e.getValue());
                 rankingItems.add(label);
             }
         });
     }
 
-    /**
-     * Azione del pulsante: torna al menu. Chiede la lista giochi al server; la UI sarà aggiornata da showAvailableGames().
-     */
     @FXML
     private void handleBackToMenu() {
         if (guiContext == null || guiContext.clientController() == null) return;
 
-        // La partita è già finita -> chiediamo la lista dei giochi per tornare al menu
         guiContext.clientController().getAvailableGames();
     }
 }
