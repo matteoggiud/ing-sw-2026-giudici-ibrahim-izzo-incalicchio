@@ -20,13 +20,15 @@ import java.util.*;
 
 public class GameController {
     private GuiContext guiContext;
+    private Runnable SeeResultsRequested;
 
     private static final int IMG_WIDTH = 100;
     private static final int IMG_HEIGHT = 160;
     private static final int TOTEM_HEIGHT = 50;
     private static final int TOTEM_WIDTH = 26;
 
-
+    @FXML
+    private Button seeResults;
     @FXML
     private HBox myDeckBox;
     @FXML
@@ -54,6 +56,9 @@ public class GameController {
 
     public void setGuiContext(GuiContext guiContext) {
         this.guiContext = guiContext;
+    }
+    public void setSeeResultsRequested(Runnable onSeeResultsRequested) {
+        this.SeeResultsRequested = onSeeResultsRequested;
     }
 
     @FXML
@@ -529,6 +534,22 @@ public class GameController {
             }
 
             setGraphic(root);
+        }
+    }
+
+    public void showSeeResultsButton() {
+        Platform.runLater(() -> {
+            if (seeResults != null) {
+                seeResults.setVisible(true);
+                seeResults.setManaged(true);
+            }
+        });
+    }
+
+    @FXML
+    private void handleSeeResults() {
+        if (SeeResultsRequested != null) {
+            SeeResultsRequested.run();
         }
     }
 }
