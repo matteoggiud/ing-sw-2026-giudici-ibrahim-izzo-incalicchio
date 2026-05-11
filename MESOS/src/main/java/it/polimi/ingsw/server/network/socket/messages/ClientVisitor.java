@@ -2,10 +2,7 @@ package it.polimi.ingsw.server.network.socket.messages;
 
 import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.*;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.network.CommandHandler;
 import it.polimi.ingsw.server.controller.GameController;
@@ -144,5 +141,10 @@ public class ClientVisitor implements ClientMessageVisitor {
     @Override
     public void visit(GetRankingsMessage message) {
         commandHandler.handleRankings(message.getNumPlayers());
+    }
+
+    @Override
+    public void visit(LeftLobbyMessage message){
+        commandHandler.handleLeftLobby();
     }
 }

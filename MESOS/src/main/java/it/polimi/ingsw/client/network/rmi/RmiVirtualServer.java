@@ -113,4 +113,13 @@ public class RmiVirtualServer implements GenericVirtualServer {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void onLeftLobbyMessage() {
+        try {
+            remoteServer.onLeftLobbyMessage();
+        }catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

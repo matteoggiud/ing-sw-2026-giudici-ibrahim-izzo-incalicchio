@@ -30,6 +30,7 @@ public class ViewController {
         clientState.clearPlayersInfo();
         clientState.setCurrentPhase("STARTED");
         clientState.setStatusMessage("Game started.");
+        clientState.clearGameState();
         view.showGameStarted(gameId, playerNicknames);
     }
 
@@ -155,7 +156,8 @@ public class ViewController {
     public void onPlayerChanged(List<String> playerNicknames) {
         String msg = "Players: " + String.join(", ", playerNicknames);
         clientState.setStatusMessage(msg);
-        view.showMessage(msg);    }
+        view.showMessage(msg);
+    }
 
     /**
      * Called when the game board changes

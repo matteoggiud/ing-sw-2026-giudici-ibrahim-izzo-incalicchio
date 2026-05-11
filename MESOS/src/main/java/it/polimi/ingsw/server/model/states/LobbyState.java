@@ -1,8 +1,12 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
+import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayersChangedEvent;
 
 public class LobbyState implements IGameState {
@@ -68,6 +72,10 @@ public class LobbyState implements IGameState {
      */
     @Override
     public void startGame(Game game) {
+        DataWriting dw = new DataWriting();
+        for (String player : game.getPlayers().getPlayerNicknames())
+            dw.joinExistingGame(game.getGameId(), player);
+
         notifyGameStarted(game);
         nextState(game);
     }
@@ -79,7 +87,7 @@ public class LobbyState implements IGameState {
      */
     private void notifyPlayersChanged(Game game) {
         game.getObserverManager().notifyObservers(
-                new PlayersChangedEvent(game.getPlayers().getPlayerNicknames())
+                new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game))
         );
     }
 

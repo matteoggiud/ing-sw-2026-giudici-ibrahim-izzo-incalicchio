@@ -10,13 +10,19 @@
             prefWidth="1100.0" prefHeight="700.0">
 
     <top>
-        <VBox spacing="8" style="-fx-padding: 10;">
-            <Label text="Game" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
-            <Label fx:id="eraLabel" text="Era: -"/>
-            <Label fx:id="turnLabel" text="Turn: -"/>
-            <Label fx:id="gameInfoLabel" text=""/>
-            <Button fx:id="seeResults" text="See Results" onAction="#handleSeeResults" visible="false" managed="false" style="-fx-font-size: 14px; -fx-padding: 8px 18px;"/>
-        </VBox>
+        <HBox spacing="8" alignment="TOP_LEFT" style="-fx-padding: 10;">
+            <VBox spacing="8">
+                <Label text="Game" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+                <Label fx:id="eraLabel" text="Era: -"/>
+                <Label fx:id="turnLabel" text="Turn: -"/>
+                <Label fx:id="gameInfoLabel" text=""/>
+                <Button fx:id="seeResults" text="See Results" onAction="#handleSeeResults" visible="false" managed="false" style="-fx-font-size: 14px; -fx-padding: 8px 18px;"/>
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button fx:id="leaveGameButton" text="Leave Game" onAction="#handleLeaveGame" style="-fx-font-size: 14px; -fx-padding: 8px 18px;"/>
+        </HBox>
     </top>
 
     <center>

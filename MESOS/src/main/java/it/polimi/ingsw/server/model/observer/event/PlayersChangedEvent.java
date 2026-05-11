@@ -13,10 +13,6 @@ public class PlayersChangedEvent implements IGameEvent {
         this.playerNicknames = playerNicknames;
     }
 
-    public PlayersChangedEvent(Game game) {
-        this.playerNicknames = game.getPlayers().getPlayerNicknames();
-    }
-
     /**
      * Returns the list of player nicknames participating in the game.
      *

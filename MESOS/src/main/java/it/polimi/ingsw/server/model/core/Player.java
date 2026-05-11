@@ -199,4 +199,13 @@ public class Player {
         this.connected = true;
     }
 
+    /**
+     * Resets the player's state to the initial conditions
+     */
+    public void reset() {
+        this.food = 0;
+        this.PP = 0;
+        this.totem = null;
+        this.playerDeck.reset();
+    }
 }

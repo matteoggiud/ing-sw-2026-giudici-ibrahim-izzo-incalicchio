@@ -16,7 +16,8 @@ public class DataWriting {
 
     /**
      * Creates a new game in the database with the specified host nickname and expected player count.
-     * @param hostNickname the nickname of the player who will host the game
+     *
+     * @param hostNickname        the nickname of the player who will host the game
      * @param expectedPlayerCount the expected number of players for the game (must be between 2 and 5)
      * @return the unique identifier of the created game
      */
@@ -30,7 +31,7 @@ public class DataWriting {
 
         String selectHostIdSql = "SELECT player_id FROM player WHERE nickname = ?";
         String insertGameSql = "INSERT INTO game (expected_players, host_id) VALUES (?, ?)";
-        String insertHostLinkSql = "INSERT INTO game_player (game_id, player_id) VALUES (?, ?)";
+        //String insertHostLinkSql = "INSERT INTO game_player (game_id, player_id) VALUES (?, ?)";
 
         try (Connection c = DatabaseManager.getConnection()) {
             c.setAutoCommit(false);
@@ -75,16 +76,16 @@ public class DataWriting {
                 }
 
                 //We connect the two tables game and player into game_player
-                try (PreparedStatement psHost = c.prepareStatement(insertHostLinkSql)) {
-                    psHost.setInt(1, generatedGameId);
-                    psHost.setInt(2, hostId);
-
-                    int rowsHost = psHost.executeUpdate();
-                    if (rowsHost == 0) {
-                        c.rollback();
-                        throw new SQLException("Linking host to game failed.");
-                    }
-                }
+//                try (PreparedStatement psHost = c.prepareStatement(insertHostLinkSql)) {
+//                    psHost.setInt(1, generatedGameId);
+//                    psHost.setInt(2, hostId);
+//
+//                    int rowsHost = psHost.executeUpdate();
+//                    if (rowsHost == 0) {
+//                        c.rollback();
+//                        throw new SQLException("Linking host to game failed.");
+//                    }
+//                }
 
                 c.commit();
                 return generatedGameId;
@@ -135,22 +136,22 @@ public class DataWriting {
 
             int position = 1;
 
-            for(Player player : rankings.keySet()) {
-                int final_score =  rankings.get(player);
-                try(PreparedStatement psUpdateRank = c.prepareStatement(updateGamePlayerSql)) {
+            for (Player player : rankings.keySet()) {
+                int final_score = rankings.get(player);
+                try (PreparedStatement psUpdateRank = c.prepareStatement(updateGamePlayerSql)) {
                     psUpdateRank.setInt(1, final_score);
                     psUpdateRank.setInt(2, position);
                     psUpdateRank.setInt(3, game.getGameId());
                     psUpdateRank.setString(4, player.getNickname());
                     psUpdateRank.executeUpdate();
                     position++;
-                }catch (SQLException e) {
+                } catch (SQLException e) {
                     c.rollback();
                     throw new SQLException("Updating player ranking failed for player: " + player.getNickname(), e);
                 }
             }
             c.commit();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

@@ -217,6 +217,12 @@ public class PlayerDeck {
     }
 
 
-
+    public void reset() {
+        this.characters.clear();
+        this.buildings.clear();
+        for (CharacterType characterType : CharacterType.values()) {
+            characterTypeCounts.put(characterType, 0);
+        }
+    }
 }
 

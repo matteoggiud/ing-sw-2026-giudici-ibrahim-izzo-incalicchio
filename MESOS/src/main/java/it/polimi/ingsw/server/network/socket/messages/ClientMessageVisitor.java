@@ -2,10 +2,7 @@ package it.polimi.ingsw.server.network.socket.messages;
 
 import it.polimi.ingsw.client.network.socket.messages.game.*;
 import it.polimi.ingsw.client.network.socket.messages.login.*;
-import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
+import it.polimi.ingsw.client.network.socket.messages.menu.*;
 import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
 
 public interface ClientMessageVisitor {
@@ -20,4 +17,5 @@ public interface ClientMessageVisitor {
     void visit(DrawCardMessage message);
     void visit(ExtraDrawMessage message);
     void visit(GetRankingsMessage message);
+    void visit(LeftLobbyMessage message);
 }
