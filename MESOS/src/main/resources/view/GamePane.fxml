@@ -24,22 +24,22 @@
 
             <!-- UPPER ROW -->
             <Pane>
-                <HBox fx:id="upperRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
+                <HBox fx:id="upperRow" spacing="2" alignment="CENTER"/>
             </Pane>
 
             <!-- MIDDLE ROW: offer track  + turn order -->
-            <HBox spacing="12" alignment="CENTER" minHeight="160">
-                <HBox fx:id="turnOrderBox" spacing="0" alignment="TOP_CENTER" prefWidth="220">
+            <HBox spacing="0" alignment="CENTER">
+                <HBox fx:id="turnOrderBox" alignment="CENTER">
                 </HBox>
 
                 <HBox HBox.hgrow="ALWAYS">
-                    <HBox fx:id="offerTrack" spacing="10" style="-fx-padding:6;"/>
+                    <HBox fx:id="offerTrack"/>
                 </HBox>
             </HBox>
 
             <!-- LOWER ROW -->
             <Pane>
-                <HBox fx:id="lowerRow" spacing="8" alignment="CENTER_LEFT" style="-fx-padding:6;"/>
+                <HBox fx:id="lowerRow" spacing="2" alignment="CENTER"/>
             </Pane>
 
             <!-- Optional area for debug/text summary of board -->
@@ -49,10 +49,19 @@
 
     <!-- PLAYER PANELS alla destra (usa la tua playersListView già presente) -->
     <right>
-        <VBox spacing="10" style="-fx-padding: 10;" prefWidth="420.0">
+        <VBox spacing="10" style="-fx-padding: 10;" >
             <Label text="Players" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <ListView fx:id="playersListView" prefHeight="600.0"/>
+            <ListView fx:id="playersListView" maxHeight="600.0"/>
         </VBox>
     </right>
+
+    <bottom>
+        <VBox>
+            <Label text="Your deck"/>
+            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="200">
+                <HBox fx:id="myDeckBox" alignment="CENTER_LEFT"/>
+            </ScrollPane>
+        </VBox>
+    </bottom>
 
 </BorderPane>

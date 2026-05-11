@@ -2,9 +2,8 @@ package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.client.view.gui.ImageCache;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.server.model.card.BuildingCard;
+import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,7 +12,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import it.polimi.ingsw.server.model.observer.dto.TurnOrderSlotDTO;
 import javafx.geometry.Point2D;
 
 import java.util.Comparator;
@@ -21,7 +19,6 @@ import java.util.Comparator;
 import java.util.*;
 
 public class GameController {
-
     private GuiContext guiContext;
 
     private static final int IMG_WIDTH = 100;
@@ -30,7 +27,8 @@ public class GameController {
     private static final int TOTEM_WIDTH = 26;
 
 
-
+    @FXML
+    private HBox myDeckBox;
     @FXML
     private Label eraLabel;
     @FXML
@@ -112,7 +110,7 @@ public class GameController {
                 ImageView totemView = ImageCache.view(totemPath, TOTEM_WIDTH, TOTEM_HEIGHT);
                 canvas.getChildren().add(totemView);
                 totemView.setLayoutX(0.5 * boxView.getFitWidth() - 0.5 * totemView.getFitWidth());
-                totemView.setLayoutY(0.32 *  boxView.getFitHeight() - totemView.getFitHeight());
+                totemView.setLayoutY(0.32 * boxView.getFitHeight() - totemView.getFitHeight());
             } catch (IllegalArgumentException e) {
                 System.err.println("Errore caricamento totem per " + placedPlayerNickname + ": " + e.getMessage());
             }
@@ -130,10 +128,10 @@ public class GameController {
     private String getTotemKeyForPlayer(String nickname) {
         return playersItems.stream()
                 .filter(p -> p.nickname().equals(nickname))
+                .map(PlayerInfoDTO::totem)
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Player non trovato: " + nickname))
-                .totem()
-                .toUpperCase();
+                .map(String::toUpperCase)
+                .orElse("WHITE");
     }
 
     // given a list of TurnOrderSlotDTO, create a StackPane with the turn order image and totems of players in the correct positions
@@ -344,6 +342,16 @@ public class GameController {
         Platform.runLater(() -> {
             playersItems.setAll(playersInfo);
             playersListView.refresh();
+
+            PlayerDeckDTO personalDeck = null;
+            for (PlayerInfoDTO playerInfoDTO : playersInfo) {
+                if (playerInfoDTO.nickname().equals(guiContext.clientState().getNickname())) {
+                    personalDeck = playerInfoDTO.deck();
+                    break;
+                }
+            }
+            populateMyDeck(personalDeck);
+
         });
     }
 
@@ -353,13 +361,59 @@ public class GameController {
      */
     public void showPlayerDeck(String nickname, PlayerDeckDTO playerDeck, boolean isMe) {
         Platform.runLater(() -> {
+            if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
+                populateMyDeck(playerDeck);
+            }
             if (playerDeck == null) {
                 playerDecks.remove(nickname);
             } else {
                 playerDecks.put(nickname, playerDeck);
             }
+
+            if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
+                // refresh my bottom deck
+                populateMyDeck(playerDeck);
+            }
+
             playersListView.refresh();
         });
+    }
+
+    private void populateMyDeck(PlayerDeckDTO deck) {
+        ;
+
+        myDeckBox.getChildren().clear();
+
+        if (deck == null) {
+            return;
+        }
+
+        double thumbWidth = IMG_WIDTH;
+        double thumbHeight = IMG_HEIGHT;
+
+        for (CharacterCardDTO card : deck.characterCards()) {
+            String key = card.imageKey();
+            String path = "/assets/cards/" + key + ".png";
+
+            try {
+                ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+                myDeckBox.getChildren().add(thumb);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Failed to load character card " + key + ": " + e.getMessage());
+            }
+        }
+
+        for (BuildingCardDTO card : deck.buildingCards()) {
+            String key = card.imageKey();
+            String path = "/assets/cards/" + key + ".png";
+
+            try {
+                ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+                myDeckBox.getChildren().add(thumb);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Failed to load building card " + key + ": " + e.getMessage());
+            }
+        }
     }
 
     public void clearDecks() {
@@ -402,33 +456,79 @@ public class GameController {
     private class PlayerCell extends ListCell<PlayerInfoDTO> {
         private final HBox root = new HBox(12);
         private final VBox statsBox = new VBox(4);
-        private final VBox deckBox = new VBox(4);
+        private final HBox headerRow = new HBox(6);
         private final Label nicknameLabel = new Label();
         private final Label statsLabel = new Label();
-        private final Label deckLabel = new Label();
+        private final Label resourceLabel = new Label();
+        private final Pane totemImage = new Pane();
 
         PlayerCell() {
             super();
-            statsBox.getChildren().addAll(nicknameLabel, statsLabel);
-            deckBox.getChildren().addAll(new Label("Deck:"), deckLabel);
 
+            headerRow.setAlignment(Pos.CENTER_LEFT);
+            headerRow.getChildren().addAll(totemImage, nicknameLabel);
+
+            statsLabel.setWrapText(true);
+            resourceLabel.setWrapText(true);
+
+            statsBox.getChildren().addAll(headerRow, resourceLabel, statsLabel);
             HBox.setHgrow(statsBox, Priority.ALWAYS);
-            root.getChildren().addAll(statsBox, deckBox);
+            root.getChildren().setAll(statsBox);
         }
 
         @Override
         protected void updateItem(PlayerInfoDTO item, boolean empty) {
             super.updateItem(item, empty);
+
             if (empty || item == null) {
                 setText(null);
                 setGraphic(null);
-            } else {
-                nicknameLabel.setText(item.nickname() + ((guiContext.clientState().getNickname() != null && item.nickname().equals(guiContext.clientState().getNickname())) ? " (you)" : ""));
-                statsLabel.setText("food=" + item.food() + " | pp=" + item.pp() + " | totem=" + item.totem());
-                PlayerDeckDTO deck = playerDecks.get(item.nickname());
-                deckLabel.setText(formatDeck(deck));
-                setGraphic(root);
+                return;
             }
+
+            String myNick = null;
+            if (guiContext != null && guiContext.clientState() != null) {
+                myNick = guiContext.clientState().getNickname();
+            }
+
+            boolean isMe = myNick != null && myNick.equals(item.nickname());
+
+            // Totem
+            try {
+                totemImage.getChildren().setAll(
+                        ImageCache.view("/assets/totem/TOTEM_" + item.totem().toUpperCase() + ".png", 10, 20)
+                );
+            } catch (Exception e) {
+                totemImage.getChildren().clear();
+            }
+
+            nicknameLabel.setText(item.nickname() + (isMe ? " (you)" : ""));
+
+            // Prima riga: risorse base
+            resourceLabel.setText("PP=" + item.pp() + " | Food=" + item.food());
+
+            // Riga stats come TUI
+            PlayerStatsDTO s = item.stats();
+            if (s == null) {
+                statsLabel.setText("No stats yet");
+            } else {
+                String line1 = "Cards=" + s.characterCount()
+                        + " | SustDisc=" + s.sustenanceDiscount()
+                        + " | ShamStars=" + s.shamanStars()
+                        + " | BuildDisc=" + s.builderDiscount()
+                        + " | InvIcons=" + s.differentInventorIcons();
+
+                String line2 = "Gath=" + s.gathererCount()
+                        + " Hunt=" + s.hunterCount()
+                        + " Build=" + s.builderCount()
+                        + " Sham=" + s.shamanCount()
+                        + " Art=" + s.artistCount()
+                        + " Inv=" + s.inventorCount();
+
+                statsLabel.setText(line1 + "\n" + line2);
+            }
+
+            setGraphic(root);
         }
     }
 }
