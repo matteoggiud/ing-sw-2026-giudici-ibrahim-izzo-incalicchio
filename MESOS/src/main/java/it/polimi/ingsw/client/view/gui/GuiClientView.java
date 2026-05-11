@@ -336,7 +336,8 @@ public class GuiClientView implements ClientView {
                         ? guiContext.clientState().getHistoricalRankings()
                         : List.of();
 
-                ScoreController.showFinalRanking(finalRanking, global);
+                ScoreController.showMatchRankings(finalRanking);
+                ScoreController.showGlobalPosition(global);
 
                 changeSceneIfNeeded(endGameScene);
 

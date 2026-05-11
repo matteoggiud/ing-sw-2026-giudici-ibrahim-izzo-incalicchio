@@ -36,29 +36,11 @@ public class ScoreController {
         rankingListView.setItems(rankingItems);
     }
 
-    public void showFinalRanking(Map<String, Integer> finalRanking, List<LeadBoardDTO> global) {
+    public void showMatchRankings(Map<String, Integer> finalRanking) {
         Platform.runLater(() -> {
-            rankingItems.clear();
-            String Player = guiContext != null && guiContext.clientState() != null ? guiContext.clientState().getNickname() : null;
 
-            if (global != null && !global.isEmpty()) {
-                int position = 1;
-                for (LeadBoardDTO board : global) {
-                    if (Player != null && Player.equals(board.nickname())) {
-                        String scoreText = String.format("Your Position: #%d with %d points",
-                                position,
-                                board.finalScore());
-                        playerPositionLabel.setText(scoreText);
-                        return;
-                    }
-                    position++;
-                }
-                playerPositionLabel.setText("Position not found");
-            }
-
-            if (finalRanking == null || finalRanking.isEmpty()) {
-                rankingItems.add("Rankings Unavailable");
-                return;
+            if(finalRanking == null || finalRanking.isEmpty()) {
+                rankingItems.addAll("Rankings Unavailable");
             }
 
             List<Map.Entry<String, Integer>> ordered = finalRanking.entrySet().stream()
@@ -81,6 +63,27 @@ public class ScoreController {
                         e.getValue() == null ? 0 : e.getValue());
                 rankingItems.add(label);
             }
+        });
+    }
+
+    public void showGlobalPosition(List<LeadBoardDTO> global) {
+        Platform.runLater(() -> {
+            String Player = guiContext != null && guiContext.clientState() != null ? guiContext.clientState().getNickname() : null;
+
+            if (global != null && !global.isEmpty()) {
+                int position = 1;
+                for (LeadBoardDTO board : global) {
+                    if (Player != null && Player.equals(board.nickname())) {
+                        String scoreText = String.format("Your Position: #%d with %d points",
+                                position,
+                                board.finalScore());
+                        playerPositionLabel.setText(scoreText);
+                        return;
+                    }
+                    position++;
+                }
+            }
+            playerPositionLabel.setText("Position not found");
         });
     }
 
