@@ -30,6 +30,8 @@ public class GameController {
     @FXML
     private Button seeResults;
     @FXML
+    private Button leaveGameButton;
+    @FXML
     private HBox myDeckBox;
     @FXML
     private Label eraLabel;
@@ -551,5 +553,13 @@ public class GameController {
         if (SeeResultsRequested != null) {
             SeeResultsRequested.run();
         }
+    }
+
+    @FXML
+    private void handleLeaveGame(){
+        if(guiContext == null || guiContext.clientState() == null){
+            return;
+        }
+        guiContext.clientController().leftGame();
     }
 }
