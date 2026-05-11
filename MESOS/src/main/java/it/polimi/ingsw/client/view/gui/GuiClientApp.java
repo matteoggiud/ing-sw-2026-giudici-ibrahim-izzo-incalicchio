@@ -69,6 +69,8 @@ public class GuiClientApp extends Application {
             builder.createRmiConnection(clientState, view);
         }
 
+        clientState.connect();
+
         primaryStage.setTitle("Mesos");
 
 

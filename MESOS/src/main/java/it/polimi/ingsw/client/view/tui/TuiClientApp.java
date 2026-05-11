@@ -48,6 +48,7 @@ public class TuiClientApp {
         } else if (protocol.equals("SOCKET")) {
             networkBuilder.createSocketConnection(clientState, view, this);
         }
+        clientState.connect();
     }
 
     /**
