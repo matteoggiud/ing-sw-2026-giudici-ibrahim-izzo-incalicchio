@@ -40,7 +40,8 @@ public class ScoreController {
         Platform.runLater(() -> {
 
             if(finalRanking == null || finalRanking.isEmpty()) {
-                rankingItems.addAll("Rankings Unavailable");
+                rankingItems.add("Rankings Unavailable");
+                return;
             }
 
             List<Map.Entry<String, Integer>> ordered = finalRanking.entrySet().stream()

@@ -35,6 +35,10 @@ public class GuiClientView implements ClientView {
     private Scene endGameScene;
     private ScoreController ScoreController;
 
+    private Map<String, Integer> pendingFinalRanking = Map.of();
+    private List<LeadBoardDTO> pendingGlobalRankings = List.of();
+
+
 
     public GuiClientView(Stage stage) {
         this.stage = stage;
@@ -84,11 +88,14 @@ public class GuiClientView implements ClientView {
     private void ensureGameLoaded() throws IOException {
         if (gameScene != null && gameController != null) return;
 
+
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GamePane.fxml"));
         Parent root = loader.load();
 
         gameController = loader.getController();
         gameController.setGuiContext(guiContext);
+        gameController.setSeeResultsRequested(this::openScorePane);
 
         gameScene = new Scene(root);
     }
@@ -321,6 +328,22 @@ public class GuiClientView implements ClientView {
         });
     }
 
+    private void openScorePane() {
+        Platform.runLater(() -> {
+            try {
+                ensureScoreLoaded();
+
+                ScoreController.showMatchRankings(pendingFinalRanking);
+                ScoreController.showGlobalPosition(pendingGlobalRankings);
+
+                changeSceneIfNeeded(endGameScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+
     @Override
     public void showGameEnded() {
         Platform.runLater(() -> {
@@ -336,11 +359,12 @@ public class GuiClientView implements ClientView {
                         ? guiContext.clientState().getHistoricalRankings()
                         : List.of();
 
-                ScoreController.showMatchRankings(finalRanking);
-                ScoreController.showGlobalPosition(global);
+                this.pendingFinalRanking = finalRanking;
+                this.pendingGlobalRankings = global;
 
-                changeSceneIfNeeded(endGameScene);
-
+                if (gameController != null) {
+                    gameController.showSeeResultsButton();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

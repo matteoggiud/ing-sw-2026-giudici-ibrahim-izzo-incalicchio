@@ -15,6 +15,7 @@
             <Label fx:id="eraLabel" text="Era: -"/>
             <Label fx:id="turnLabel" text="Turn: -"/>
             <Label fx:id="gameInfoLabel" text=""/>
+            <Button fx:id="seeResults" text="See Results" onAction="#handleSeeResults" visible="false" managed="false" style="-fx-font-size: 14px; -fx-padding: 8px 18px;"/>
         </VBox>
     </top>
 
