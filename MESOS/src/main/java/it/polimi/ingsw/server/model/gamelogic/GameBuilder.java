@@ -177,9 +177,10 @@ public class GameBuilder {
      * Initializes the players' totems by assigning each player a unique totem from the available totems.
      */
     private void initializePlayersTotems() {
+        Random random = new Random();
         List<Player> players = game.getPlayers().getShuffledPlayers();
         List<Totem> totems = new ArrayList<>(Arrays.asList(Totem.values()));
-        Collections.shuffle(totems);
+        Collections.shuffle(totems, random);
 
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
@@ -189,7 +190,9 @@ public class GameBuilder {
 
 
     private void initializePlacedPlayers(TurnOrderBox turnOrderBox) {
-        List<Player> players = game.getPlayers().getShuffledPlayers();
+        Random random = new Random();
+        List<Player> players = game.getPlayers().getPlayers();
+        Collections.shuffle(players, random);
 
         for (Player player : players) {
             // Place the player in the first free slot.
