@@ -105,7 +105,7 @@ public class GuiClientView implements ClientView {
     private void ensureScoreLoaded() throws IOException {
         if (endGameScene != null && ScoreController != null) return;
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EndGamePane.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ScorePane.fxml"));
         Parent root = loader.load();
 
         ScoreController = loader.getController();

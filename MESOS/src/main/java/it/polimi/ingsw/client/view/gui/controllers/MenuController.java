@@ -93,7 +93,6 @@ public class MenuController {
     }
 
     public void showRankings(List<LeadBoardDTO> rankingsList) {
-        System.out.println("DEBUG: showRankings called with " + rankingsList.size() + " rankings");
         Platform.runLater(() -> rankingsObs.setAll(rankingsList));
     }
 
