@@ -123,6 +123,7 @@ public class CommandHandler {
         try {
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
             clientSession.getEventHandler().getView().onAvailableGames(games);
+            clientSession.clearActiveGameId();
         } catch (RuntimeException e) {
             clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games: " + e.getMessage());
         } catch (Exception e) {
@@ -193,6 +194,7 @@ public class CommandHandler {
 
     /**
      * Handles the client's request to draw a card from the game, ensuring that the action is valid and updating the game state
+     *
      * @param cardId
      * @param isFromUpperRow
      */
@@ -237,7 +239,17 @@ public class CommandHandler {
         }
     }
 
-    public void handleLeftLobby(){
-        gameController.leaveLobby(clientSession);
+    public void handleLeftLobby() {
+        try {
+            List<ClientSession> playersInterested = gameController.leaveLobby(clientSession);
+
+            for (ClientSession playerToNotify : playersInterested) {
+                playerToNotify.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(playerToNotify));
+            }
+            clientSession.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(clientSession));
+            clientSession.getEventHandler().getView().onLeftGameSuccess("You have left the lobby");
+        } catch (RuntimeException e) {
+            clientSession.getEventHandler().getView().onGenericError("Failed to leave lobby: " + e.getMessage());
+        }
     }
 }

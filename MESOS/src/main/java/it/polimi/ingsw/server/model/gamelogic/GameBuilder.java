@@ -53,6 +53,7 @@ public class GameBuilder {
         game.setCurrentEra(new Era1());
 
         // Initialize the tribe deck, building decks, offer track, turn order box, and fill the card rows according to the game rules and the available cards.
+        initializePlayerStats();
         initializeTribeDeck(allTribeCards);
         initializeBuildingDecks(allBuildingCards);
         initializeOfferTrack();
@@ -60,6 +61,12 @@ public class GameBuilder {
         initializePlayersTotems();
         initialFillCardRows();
 
+    }
+
+    private void initializePlayerStats() {
+        for(Player player : game.getPlayers().getPlayers()){
+            player.reset();
+        }
     }
 
     /**

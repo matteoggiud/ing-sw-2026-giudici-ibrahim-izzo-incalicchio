@@ -40,7 +40,6 @@ public class GuiClientView implements ClientView {
     private List<LeadBoardDTO> pendingGlobalRankings = List.of();
 
 
-
     public GuiClientView(Stage stage) {
         this.stage = stage;
     }
@@ -88,7 +87,6 @@ public class GuiClientView implements ClientView {
 
     private void ensureGameLoaded() throws IOException {
         if (gameScene != null && gameController != null) return;
-
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GamePane.fxml"));
@@ -203,6 +201,9 @@ public class GuiClientView implements ClientView {
     public void showGameStarted(int gameId, List<String> playerNicknames) {
         Platform.runLater(() -> {
             try {
+                gameScene = null;
+                gameController = null;
+
                 ensureGameLoaded();
 
                 gameController.showGameStarted(gameId, playerNicknames);

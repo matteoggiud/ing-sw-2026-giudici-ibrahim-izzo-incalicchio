@@ -285,6 +285,7 @@ public class GameController {
 
     /**
      * Checks for an existing client session associated with the given nickname and disconnects it if it is found to be stale
+     *
      * @param nickname the nickname of the player for which to check for an existing session
      */
     private void disconnectStaleSessionIfPresent(String nickname) {
@@ -312,8 +313,22 @@ public class GameController {
         return model.getRanking(numPlayers);
     }
 
-    public void leaveLobby(ClientSession clientSession){
-        model.leaveLobby(clientSession.getNickname(), clientSession.getActiveGameId());
-        clientSession.clearActiveGameId();
+    public List<ClientSession> leaveLobby(ClientSession clientSession) {
+        if (!clientSession.isLoggedIn()) {
+            throw new IllegalStateException("Player must be logged in to leave a lobby");
+        }
+
+        List<ClientSession> playersInterested = new ArrayList<>();
+        if (clientSession.isInGame()) {
+            List<String> remainingPlayerNicknames = model.leaveLobby(clientSession.getNickname(), clientSession.getActiveGameId());
+            for (String remainingPlayerNickname : remainingPlayerNicknames) {
+                ClientSession playerSession = SessionRegistry.getInstance().getSession(remainingPlayerNickname);
+                playerSession.clearActiveGameId();
+                playersInterested.add(playerSession);
+            }
+            clientSession.clearActiveGameId();
+        }
+
+        return playersInterested;
     }
 }

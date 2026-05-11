@@ -3,6 +3,8 @@ package it.polimi.ingsw.client.view.gui.controllers;
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -20,6 +22,13 @@ public class LobbyController {
     @FXML
     private ListView<String> playersListView;
 
+    private ObservableList<String> playersList = FXCollections.observableArrayList();
+
+    @FXML
+    private void initialize() {
+        playersListView.setItems(playersList);
+    }
+
     public void setGuiContext(GuiContext guiContext) {
         this.guiContext = guiContext;
     }
@@ -32,7 +41,9 @@ public class LobbyController {
             playersCountLabel.setText(
                     "Players: " + gameInfo.numOfPlayers() + " / " + gameInfo.expectedPlayerCount()
             );
-            playersListView.getItems().setAll(gameInfo.players());
+
+            //Updates new players
+            playersList.setAll(gameInfo.players());
         });
     }
 

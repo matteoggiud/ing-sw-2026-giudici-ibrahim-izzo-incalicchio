@@ -387,8 +387,6 @@ public class GameController {
     }
 
     private void populateMyDeck(PlayerDeckDTO deck) {
-        ;
-
         myDeckBox.getChildren().clear();
 
         if (deck == null) {

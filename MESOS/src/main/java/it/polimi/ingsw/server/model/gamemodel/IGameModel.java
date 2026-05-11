@@ -226,5 +226,5 @@ public interface IGameModel {
 
     List<LeadBoardDTO> getRanking(int numPlayer);
 
-    void leaveLobby(String player, int gameId);
+    List<String> leaveLobby(String player, int gameId);
 }

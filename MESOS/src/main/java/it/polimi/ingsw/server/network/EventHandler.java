@@ -149,8 +149,6 @@ public class EventHandler implements IGameObserver {
      */
     @Override
     public void update(JoinedGameEvent event) {
-        GameInfoMessage message = new GameInfoMessage(event.getGameInfo());
-
         view.onJoinedGame(event.getGameInfo());
     }
 
@@ -160,8 +158,6 @@ public class EventHandler implements IGameObserver {
      */
     @Override
     public void update(PlayerInfosChangedEvent event) {
-        PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfos());
-
         view.onPlayerInfosChanged(event.getGameId(), event.getPlayerInfos());
     }
 
@@ -171,8 +167,6 @@ public class EventHandler implements IGameObserver {
      */
     @Override
     public void update(ResolvingEventUpdate resolvingEventUpdate) {
-        ResolvingEventMessage message = new ResolvingEventMessage(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
-
         view.onResolvingEvent(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
     }
 }
