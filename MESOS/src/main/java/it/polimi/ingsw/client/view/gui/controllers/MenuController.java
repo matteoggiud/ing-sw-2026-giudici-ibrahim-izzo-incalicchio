@@ -169,7 +169,7 @@ public class MenuController {
      */
     private void bindMenuLayout() {
         bindNode(availableGamesTitle, 0.220, 0.385, 0.28, 0.055);
-        bindNode(gamesListView, 0.225, 0.590, 0.295, 0.285);
+        bindNode(gamesListView, 0.225, 0.620, 0.295, 0.285);
         bindNode(gamesActions, 0.215, 0.795, 0.245, 0.055);
 
         bindNode(menuTitle, 0.500, 0.385, 0.15, 0.055);
