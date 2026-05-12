@@ -1,10 +1,8 @@
 .auth-root {
-    -fx-background-image: url("../assets/backgrounds/authBg.png");
-    -fx-background-size: cover;
-    -fx-background-position: center center;
-    -fx-background-repeat: no-repeat;
+    -fx-background-color: #050201;
     -fx-font-family: "Segoe UI", "Arial";
 }
+
 
 .auth-panel {
     -fx-background-color: rgba(18, 8, 4, 0.42);
