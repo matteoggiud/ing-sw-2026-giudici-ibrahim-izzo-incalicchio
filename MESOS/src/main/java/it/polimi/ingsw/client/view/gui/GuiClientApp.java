@@ -1,10 +1,8 @@
 package it.polimi.ingsw.client.view.gui;
 
-import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.NetworkBuilder;
-import it.polimi.ingsw.client.network.socket.ClientState;
-import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.client.ClientState;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -12,7 +10,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
-import java.awt.*;
 import java.util.List;
 
 public class GuiClientApp extends Application {

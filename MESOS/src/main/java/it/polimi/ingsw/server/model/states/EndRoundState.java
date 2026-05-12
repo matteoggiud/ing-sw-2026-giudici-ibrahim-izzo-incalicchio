@@ -7,6 +7,7 @@ import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
@@ -65,6 +66,14 @@ public class EndRoundState implements IGameState {
 
         notifyBoardUpdate(game);
         nextState(game);
+        notifyPlayerInfos(game);
+    }
+
+    private void notifyPlayerInfos(Game game) {
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(
+                game.getGameId(),
+                PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers()
+                )));
     }
 
     /**

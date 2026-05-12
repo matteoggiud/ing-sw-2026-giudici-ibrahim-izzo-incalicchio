@@ -1,5 +1,6 @@
 package it.polimi.ingsw.client.network.socket;
 
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.client.view.ClientView;

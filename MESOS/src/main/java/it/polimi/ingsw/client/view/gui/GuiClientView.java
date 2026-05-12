@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -39,6 +40,7 @@ public class GuiClientView implements ClientView {
     private Map<String, Integer> pendingFinalRanking = Map.of();
     private List<LeadBoardDTO> pendingGlobalRankings = List.of();
 
+    private boolean resolvingShowing = false;
 
     public GuiClientView(Stage stage) {
         this.stage = stage;
@@ -221,6 +223,7 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showBoardSummary(BoardDTO board) {
+        if (resolvingShowing) return;
         Platform.runLater(() -> {
             if (gameController != null) {
                 gameController.showBoard(board);
@@ -338,6 +341,106 @@ public class GuiClientView implements ClientView {
             }
 
         });
+    }
+
+    @Override
+    public void showResolvingEvent(int gameId, EventCardDTO eventCard) {
+        Platform.runLater(() -> {
+            // if we are not already showing resolving events, start the sequence
+            if (!resolvingShowing) {
+                resolvingShowing = true;
+                showNextResolvingEvent();
+            }
+        });
+    }
+
+    private void showNextResolvingEvent() {
+
+        EventCardDTO next = guiContext.clientState().popEventCard();
+        if (next == null) {
+            resolvingShowing = false;
+            showBoardSummary(guiContext.clientState().getBoard());
+            if (gameController != null && guiContext != null && guiContext.clientState() != null) {
+                BoardDTO board = guiContext.clientState().getBoard();
+                if (board != null) {
+                    gameController.showBoard(board);
+                }
+            }
+            return;
+        }
+
+        try {
+            // load FXML and the popup controller
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EventPopupPane.fxml"));
+            StackPane root = loader.load();
+
+            EventPopupController controller = loader.getController();
+            controller.populateEventCard(next);
+
+            // popup stage transparent
+            javafx.stage.Stage popup = new javafx.stage.Stage(javafx.stage.StageStyle.TRANSPARENT);
+            popup.initOwner(stage);
+            popup.setAlwaysOnTop(true);
+            popup.setResizable(false);
+
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, javafx.scene.paint.Color.TRANSPARENT);
+            popup.setScene(scene);
+
+            // popup dimensions
+            double popupWidth = 360;
+            double popupHeight = 520;
+
+            // center popup on owner stage
+            double ownerX = stage.getX();
+            double ownerY = stage.getY();
+            double ownerW = stage.getWidth();
+            double ownerH = stage.getHeight();
+
+            popup.setX(ownerX + (ownerW - popupWidth) / 2);
+            popup.setY(ownerY + (ownerH - popupHeight) / 2);
+
+            // animation sequence: fade in, pause, fade out
+            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(
+                    javafx.util.Duration.millis(220), root);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
+
+            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
+                    javafx.util.Duration.seconds(3));
+
+            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(
+                    javafx.util.Duration.millis(300), root);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
+
+            // allow click to skip animation and show next immediately
+            root.setOnMouseClicked(ev -> {
+                fadeIn.stop();
+                pause.stop();
+                fadeOut.stop();
+                popup.close();
+                // skip directly to the next event
+                showNextResolvingEvent();
+            });
+
+            // chain animations
+            fadeIn.setOnFinished(ev -> pause.play());
+            pause.setOnFinished(ev -> fadeOut.play());
+            fadeOut.setOnFinished(ev -> {
+                popup.close();
+                // skip directly to the next event
+                showNextResolvingEvent();
+            });
+
+            popup.show();
+            fadeIn.play();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // in case of error, try to show the next event to avoid blocking the sequence
+            showNextResolvingEvent();
+        }
+
     }
 
     private void openScorePane() {

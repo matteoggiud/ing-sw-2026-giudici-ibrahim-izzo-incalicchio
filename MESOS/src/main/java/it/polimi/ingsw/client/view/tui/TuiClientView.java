@@ -1,14 +1,11 @@
 package it.polimi.ingsw.client.view.tui;
 
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.client.view.Credentials;
 import it.polimi.ingsw.server.model.observer.dto.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 
 public class TuiClientView implements ClientView {
     private final TerminalRenderer renderer;
@@ -111,6 +108,10 @@ public class TuiClientView implements ClientView {
         renderer.render();
     }
 
+    @Override
+    public void showResolvingEvent(int gameId, EventCardDTO eventCardDTO) {
+        renderer.render();
+    }
 
 
     @Override

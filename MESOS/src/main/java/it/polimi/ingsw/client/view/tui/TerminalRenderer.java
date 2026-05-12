@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.view.tui;
 
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.server.model.observer.dto.*;
 
 import java.util.Collection;

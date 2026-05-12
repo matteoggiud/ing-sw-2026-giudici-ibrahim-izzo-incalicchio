@@ -37,4 +37,6 @@ public interface ClientView {
     void showRankings(List<LeadBoardDTO> rankings);
 
     void showAuthenticator(String message);
+
+    void showResolvingEvent(int gameId, EventCardDTO eventCardDTO);
 }

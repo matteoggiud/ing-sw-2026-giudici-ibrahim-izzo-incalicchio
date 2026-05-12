@@ -1,9 +1,6 @@
-package it.polimi.ingsw.client.network.socket;
+package it.polimi.ingsw.client;
 
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.*;
 
 
 import java.util.*;
@@ -99,6 +96,8 @@ public class ClientState {
         return currentPlayerNickname;
     }
 
+    private final Deque<EventCardDTO> resolvingQueue = new ArrayDeque<>();
+
     public void setCurrentPlayerNickname(String currentPlayerNickname) {
         this.currentPlayerNickname = currentPlayerNickname;
     }
@@ -191,4 +190,15 @@ public class ClientState {
     }
 
 
+    public void pushEventCard(EventCardDTO eventCard) {
+        synchronized (resolvingQueue) {
+            resolvingQueue.addLast(eventCard);
+        }
+    }
+
+    public EventCardDTO popEventCard() {
+        synchronized (resolvingQueue) {
+            return resolvingQueue.pollFirst();
+        }
+    }
 }

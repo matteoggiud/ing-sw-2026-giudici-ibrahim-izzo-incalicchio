@@ -1,6 +1,6 @@
 package it.polimi.ingsw.client.controller;
 
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.server.model.observer.dto.*;
 
@@ -280,7 +280,9 @@ public class ViewController {
      */
     public void onResolvingEvent(int gameId, EventCardDTO eventCard) {
         clientState.setResolvingEventName(eventCard.name());
-        view.showMessage("Resolving event: " + eventCard.name());
+        clientState.pushEventCard(eventCard);
+        clientState.setStatusMessage("Resolving event: " + eventCard.name());
+        view.showResolvingEvent(gameId, eventCard);
     }
 
     /**
