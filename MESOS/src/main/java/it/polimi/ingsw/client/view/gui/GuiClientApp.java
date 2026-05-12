@@ -6,6 +6,7 @@ import it.polimi.ingsw.client.ClientState;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import javafx.application.Platform;
@@ -49,6 +50,7 @@ public class GuiClientApp extends Application {
         primaryStage.show();
 
         Platform.runLater(() -> {
+            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/fish.png")));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         });
@@ -58,7 +60,6 @@ public class GuiClientApp extends Application {
         List<String> args = getParameters().getRaw();
         String protocol = args.size() > 0 ? args.get(0) : "SOCKET";
         String host = args.size() > 1 ? args.get(1) : "localhost";
-        int port = args.size() > 2 ? Integer.parseInt(args.get(2)) : 12345;
 
         // 2. Initialize client controller
         this.clientState = new ClientState();
