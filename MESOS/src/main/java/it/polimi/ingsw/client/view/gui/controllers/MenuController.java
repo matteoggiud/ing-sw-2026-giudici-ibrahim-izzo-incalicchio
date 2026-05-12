@@ -179,7 +179,7 @@ public class MenuController {
 
         bindNode(rankingsTitle, 0.780, 0.385, 0.30, 0.055);
         bindNode(rankingFilter, 0.730, 0.470, 0.185, 0.050);
-        bindNode(rankingsListView, 0.775, 0.595, 0.295, 0.280);
+        bindNode(rankingsListView, 0.775, 0.630, 0.295, 0.280);
         bindNode(rankingsRefreshButton, 0.775, 0.795, 0.170, 0.050);
     }
 
