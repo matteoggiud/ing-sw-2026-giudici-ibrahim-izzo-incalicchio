@@ -23,11 +23,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class NetworkBuilder {
-    private static final int SOCKET_PORT = 12345;
-
-    private static final int RMI_PORT = 1234;
-    private static final String RMI_NAME = "MESOS_RMI";
-
     private final String host;
     private final ViewController viewController;
 
@@ -36,78 +31,20 @@ public class NetworkBuilder {
         this.viewController = viewController;
     }
 
-
-    public void createSocketConnection(ClientState clientState, GuiClientView view) {
-        ServerMessageVisitor visitor = new ServerVisitor(viewController);
-        SocketServerConnection socketServerConnection = new SocketServerConnection(host, SOCKET_PORT, visitor, clientState, view);
-        GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
-        ClientController clientController = new ClientController(network);
-        view.setGuiContext(new GuiContext(clientController, clientState));
-
+    public ClientController createConnection(
+            NetworkConnectionStrategy strategy,
+            ClientState clientState,
+            ClientView view
+    ) {
         try {
-            socketServerConnection.connect();
+            GenericVirtualServer network =
+                    strategy.connect(host, viewController, clientState, view);
+
+            return new ClientController(network);
         } catch (Exception e) {
             viewController.onGenericError("Failed to connect to server: " + e.getMessage());
-        }
-
-    }
-
-    public void createRmiConnection(ClientState clientState, GuiClientView view) {
-        try {
-            // Set the RMI server hostname to the local IP address to ensure callbacks work correctly
-            System.setProperty("java.rmi.server.hostname", InetAddressLookup.getLocalHostAddress());
-
-            RmiClient rmiClient = new RmiClient(viewController);
-
-            RemoteClientView clientStub = (RemoteClientView) UnicastRemoteObject.exportObject(rmiClient, 0);
-
-            Registry registry = LocateRegistry.getRegistry(host, RMI_PORT);
-            RmiBootstrap bootstrap = (RmiBootstrap) registry.lookup(RMI_NAME);
-            RemoteServer remoteServer = bootstrap.connect(clientStub);
-
-            GenericVirtualServer network = new RmiVirtualServer(remoteServer);
-            ClientController clientController = new ClientController(network);
-            view.setGuiContext(new GuiContext(clientController, clientState));
-        } catch (Exception e) {
-            viewController.onGenericError("Failed to connect to server: " + e.getMessage());
-        }
-    }
-
-    public void createSocketConnection(ClientState clientState, ClientView view,TuiClientApp tuiClientApp) {
-        ServerMessageVisitor visitor = new ServerVisitor(viewController);
-        SocketServerConnection socketServerConnection = new SocketServerConnection(host, SOCKET_PORT, visitor, clientState, view);
-        GenericVirtualServer network = new SocketVirtualServer(socketServerConnection);
-
-        ClientController clientController = new ClientController(network);
-        tuiClientApp.setController(clientController);
-
-        try {
-            socketServerConnection.connect();
-        } catch (Exception e) {
-            viewController.onGenericError("Failed to connect to server: " + e.getMessage());
-        }
-
-    }
-
-
-    public void createRmiConnection(TuiClientApp clientApp) {
-        try {
-            // Set the RMI server hostname to the local IP address to ensure callbacks work correctly
-            System.setProperty("java.rmi.server.hostname", InetAddressLookup.getLocalHostAddress());
-
-            RmiClient rmiClient = new RmiClient(viewController);
-
-            RemoteClientView clientStub = (RemoteClientView) UnicastRemoteObject.exportObject(rmiClient, 0);
-
-            Registry registry = LocateRegistry.getRegistry(host, RMI_PORT);
-            RmiBootstrap bootstrap = (RmiBootstrap) registry.lookup(RMI_NAME);
-            RemoteServer remoteServer = bootstrap.connect(clientStub);
-
-            GenericVirtualServer network = new RmiVirtualServer(remoteServer);
-            ClientController clientController = new ClientController(network);
-            clientApp.setController(clientController);
-        } catch (Exception e) {
-            viewController.onGenericError("Failed to connect to server: " + e.getMessage());
+            return null;
         }
     }
 }
+

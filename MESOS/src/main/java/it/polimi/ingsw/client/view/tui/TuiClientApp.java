@@ -1,10 +1,16 @@
 package it.polimi.ingsw.client.view.tui;
 
+import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.NetworkBuilder;
 import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.client.network.NetworkConnectionStrategy;
+import it.polimi.ingsw.client.network.RmiConnectionStrategy;
+import it.polimi.ingsw.client.network.SocketConnectionStrategy;
 import it.polimi.ingsw.client.view.Credentials;
+import it.polimi.ingsw.client.view.gui.GuiContext;
+import javafx.scene.control.Label;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,7 +26,7 @@ import java.util.function.Consumer;
  */
 public class TuiClientApp {
     private ClientController controller;
-    private Scanner scanner;
+    private final Scanner scanner;
     private final Map<String, CommandDefinition> commands;
     private ClientState clientState;
     private TuiClientView view;
@@ -32,7 +38,7 @@ public class TuiClientApp {
         registerCommands();
     }
 
-    public void init(String[] args) {
+    public void start(String[] args) {
         String protocol = args.length > 0 ? args[0] : "SOCKET";
         String host = args.length > 1 ? args[1] : "localhost";
 
@@ -41,14 +47,21 @@ public class TuiClientApp {
 
         ViewController viewController = new ViewController(clientState, view);
 
-        // Create network connection based on selected protocol and set the ClientController
-        NetworkBuilder networkBuilder = new NetworkBuilder(host, viewController);
-        if (protocol.equals("RMI")) {
-            networkBuilder.createRmiConnection(this);
-        } else if (protocol.equals("SOCKET")) {
-            networkBuilder.createSocketConnection(clientState, view, this);
+        NetworkConnectionStrategy connectionStrategy = "RMI".equals(protocol) ? new RmiConnectionStrategy() : new SocketConnectionStrategy();
+        try {
+            // Connect to server and get virtual server proxy
+            GenericVirtualServer network = connectionStrategy.connect(host, viewController, clientState, view);
+
+            // Initialize client controller with network connection and the view
+            this.controller = new ClientController(network);
+            clientState.connect();
+        } catch (Exception e) {
+            System.out.println("Failed to connect to server: " + e.getMessage());
+            view.showError("Failed to connect to server: " + e.getMessage());
         }
-        clientState.connect();
+
+
+        this.run();
     }
 
     /**

@@ -1,8 +1,13 @@
 package it.polimi.ingsw.client.view.gui;
 
+import it.polimi.ingsw.client.GenericVirtualServer;
+import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.NetworkBuilder;
 import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.client.network.NetworkConnectionStrategy;
+import it.polimi.ingsw.client.network.RmiConnectionStrategy;
+import it.polimi.ingsw.client.network.SocketConnectionStrategy;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -46,10 +51,11 @@ public class GuiClientApp extends Application {
             try{
                 primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/mesos_lowbar.png")));
             }catch(Exception e){
-                System.out.println(e);
+                System.out.println("Error loading icon: " + e.getMessage());
             }
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            primaryStage.setTitle("MESOS");
         });
 
         primaryStage.show();
@@ -67,17 +73,18 @@ public class GuiClientApp extends Application {
         this.viewController = new ViewController(clientState, view);
 
 
-        NetworkBuilder builder = new NetworkBuilder(host, viewController);
-        if ("SOCKET".equals(protocol)) {
-            builder.createSocketConnection(clientState, view);
-        } else if ("RMI".equals(protocol)) {
-            builder.createRmiConnection(clientState, view);
+        NetworkConnectionStrategy connectionStrategy = "RMI".equals(protocol) ? new RmiConnectionStrategy() : new SocketConnectionStrategy();
+        try {
+            // Connect to server and get virtual server proxy
+            GenericVirtualServer network = connectionStrategy.connect(host, viewController, clientState, view);
+
+            // Initialize client controller with network connection and the view
+            ClientController controller = new ClientController(network);
+            view.setGuiContext(new GuiContext(controller, clientState));
+            clientState.connect();
+        } catch (Exception e) {
+            System.out.println("Failed to connect to server: " + e.getMessage());
+            view.showRoot(new Label("Failed to connect to server"));
         }
-
-        clientState.connect();
-
-        primaryStage.setTitle("Mesos");
-
-
     }
 }

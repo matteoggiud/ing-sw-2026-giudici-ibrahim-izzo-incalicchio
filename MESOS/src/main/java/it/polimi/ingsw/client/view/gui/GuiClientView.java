@@ -50,7 +50,7 @@ public class GuiClientView implements ClientView {
         this.guiContext = guiContext;
     }
 
-    private void showRoot(Parent node) {
+    public void showRoot(Parent node) {
         root.getChildren().setAll(node);
     }
 
