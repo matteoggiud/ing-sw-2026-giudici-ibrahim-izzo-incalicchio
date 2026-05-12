@@ -86,5 +86,7 @@ public class GuiClientApp extends Application {
             System.out.println("Failed to connect to server: " + e.getMessage());
             view.showRoot(new Label("Failed to connect to server"));
         }
+
+        view.showAuthenticator("Login required!");
     }
 }
