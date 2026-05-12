@@ -19,15 +19,6 @@ public class GuiClientApp extends Application {
 
     private ViewController viewController;
 
-
-    @Override
-    public void init() throws Exception {
-        //TODO: we do here the "client main" of the gui
-
-        // this.clientController = new ClientController(virtualServer);
-
-    }
-
     /**
      * The main entry point for all JavaFX applications.
      * The start method is called after the init method has returned,
