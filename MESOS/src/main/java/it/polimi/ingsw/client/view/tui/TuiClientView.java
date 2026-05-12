@@ -111,6 +111,10 @@ public class TuiClientView implements ClientView {
         renderer.render();
     }
 
+    @Override
+    public void showResolvingEvent(int gameId, EventCardDTO eventCardDTO) {
+        renderer.render();
+    }
 
 
     @Override

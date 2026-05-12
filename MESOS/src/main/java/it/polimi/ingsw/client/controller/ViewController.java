@@ -278,7 +278,8 @@ public class ViewController {
      */
     public void onResolvingEvent(int gameId, EventCardDTO eventCard) {
         clientState.setResolvingEventName(eventCard.name());
-        view.showMessage("Resolving event: " + eventCard.name());
+        clientState.setStatusMessage("Resolving event: " + eventCard.name());
+        view.showResolvingEvent(gameId, eventCard);
     }
 
     /**
