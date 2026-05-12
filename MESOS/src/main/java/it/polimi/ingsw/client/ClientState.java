@@ -198,7 +198,7 @@ public class ClientState {
 
     public EventCardDTO popEventCard() {
         synchronized (resolvingQueue) {
-            return resolvingQueue.removeFirst();
+            return resolvingQueue.pollFirst();
         }
     }
 }
