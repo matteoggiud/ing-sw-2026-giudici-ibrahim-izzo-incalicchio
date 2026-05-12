@@ -2,20 +2,19 @@
 
 <?import java.lang.Integer?>
 <?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.Region?>
 
-<StackPane xmlns="http://javafx.com/javafx/17.0.12"
+<StackPane fx:id="menuRoot"
+           xmlns="http://javafx.com/javafx/17.0.12"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="it.polimi.ingsw.client.view.gui.controllers.MenuController"
            prefWidth="1600.0"
@@ -23,86 +22,55 @@
            stylesheets="@../styles/menu.css"
            styleClass="menu-root">
 
-    <GridPane maxWidth="Infinity" maxHeight="Infinity">
-        <columnConstraints>
-            <ColumnConstraints percentWidth="5.2"/>
-            <ColumnConstraints percentWidth="33.0"/>
-            <ColumnConstraints percentWidth="4.0"/>
-            <ColumnConstraints percentWidth="16.6"/>
-            <ColumnConstraints percentWidth="4.0"/>
-            <ColumnConstraints percentWidth="32.0"/>
-            <ColumnConstraints percentWidth="5.2"/>
-        </columnConstraints>
+    <ImageView fx:id="backgroundImage"
+               smooth="true"
+               preserveRatio="false">
+        <image>
+            <Image url="@../assets/backgrounds/menuBg.png"/>
+        </image>
+    </ImageView>
 
-        <rowConstraints>
-            <RowConstraints percentHeight="37.5"/>
-            <RowConstraints percentHeight="6.0"/>
-            <RowConstraints percentHeight="37.5"/>
-            <RowConstraints percentHeight="9.0"/>
-            <RowConstraints percentHeight="10.0"/>
-        </rowConstraints>
+    <Pane fx:id="menuOverlay"
+          pickOnBounds="false">
 
-
-        <!-- Left title -->
-        <Label text="Available Games"
-               GridPane.columnIndex="1"
-               GridPane.rowIndex="1"
+        <Label fx:id="availableGamesTitle"
+               text="Available Games"
                alignment="CENTER"
-               maxWidth="Infinity"
                styleClass="menu-section-title"/>
 
-        <!-- Left list and actions -->
-        <VBox GridPane.columnIndex="1"
-              GridPane.rowIndex="2"
-              spacing="14.0"
+        <ListView fx:id="gamesListView"
+                  maxWidth="Infinity"
+                  maxHeight="Infinity"
+                  styleClass="menu-list"/>
+
+        <HBox fx:id="gamesActions"
+              alignment="CENTER"
+              spacing="18.0"
               styleClass="menu-panel">
+            <Button fx:id="refreshButton"
+                    text="Refresh"
+                    onAction="#handleRefresh"
+                    prefWidth="135.0"
+                    styleClass="menu-button"/>
+
+            <Button fx:id="joinButton"
+                    text="Join"
+                    disable="true"
+                    onAction="#handleJoin"
+                    prefWidth="135.0"
+                    styleClass="menu-button, primary"/>
+        </HBox>
 
 
-            <padding>
-                <Insets top="8.0" right="8.0" bottom="10.0" left="8.0"/>
-            </padding>
-
-            <ListView fx:id="gamesListView"
-                      VBox.vgrow="ALWAYS"
-                      maxWidth="Infinity"
-                      maxHeight="Infinity"
-                      styleClass="menu-list"/>
-
-            <HBox alignment="CENTER_RIGHT" spacing="14.0">
-                <Button fx:id="refreshButton"
-                        text="Refresh"
-                        onAction="#handleRefresh"
-                        prefWidth="135.0"
-                        styleClass="menu-button"/>
-
-                <Button fx:id="joinButton"
-                        text="Join"
-                        disable="true"
-                        onAction="#handleJoin"
-                        prefWidth="135.0"
-                        styleClass="menu-button, primary"/>
-            </HBox>
-        </VBox>
-
-        <!-- Center title -->
-        <Label text="Menu"
-               GridPane.columnIndex="3"
-               GridPane.rowIndex="1"
+        <Label fx:id="menuTitle"
+               text="Menu"
                alignment="CENTER"
-               maxWidth="Infinity"
                styleClass="menu-title"/>
 
-        <!-- Center create panel -->
-        <VBox GridPane.columnIndex="3"
-              GridPane.rowIndex="2"
+        <VBox fx:id="createPanel"
               alignment="TOP_CENTER"
               spacing="14.0"
               styleClass="menu-panel">
-
-            <padding>
-                <Insets top="18.0" right="10.0" bottom="10.0" left="10.0"/>
-            </padding>
-
             <Label text="Create Game"
                    alignment="CENTER"
                    maxWidth="Infinity"
@@ -113,91 +81,70 @@
                     onAction="#handleCreate"
                     maxWidth="Infinity"
                     styleClass="menu-button, primary"/>
-
-            <Region VBox.vgrow="ALWAYS"/>
-
-            <VBox spacing="10.0" maxWidth="Infinity">
-                <Label text="Number of Players:"
-                       maxWidth="Infinity"
-                       styleClass="menu-label"/>
-
-                <ChoiceBox fx:id="choiceExpectedNumPlayers"
-                           maxWidth="Infinity"
-                           styleClass="menu-choice">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <Integer fx:value="2"/>
-                            <Integer fx:value="3"/>
-                            <Integer fx:value="4"/>
-                            <Integer fx:value="5"/>
-                        </FXCollections>
-                    </items>
-                </ChoiceBox>
-            </VBox>
         </VBox>
 
-        <!-- Quit area -->
+        <VBox fx:id="playerCountPanel"
+              spacing="10.0"
+              styleClass="menu-panel">
+            <Label text="Number of Players:"
+                   maxWidth="Infinity"
+                   styleClass="menu-label"/>
+
+            <ChoiceBox fx:id="choiceExpectedNumPlayers"
+                       maxWidth="Infinity"
+                       styleClass="menu-choice">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Integer fx:value="2"/>
+                        <Integer fx:value="3"/>
+                        <Integer fx:value="4"/>
+                        <Integer fx:value="5"/>
+                    </FXCollections>
+                </items>
+            </ChoiceBox>
+        </VBox>
+
         <Button fx:id="quitButton"
                 text="Quit"
                 onAction="#handleQuit"
-                GridPane.columnIndex="3"
-                GridPane.rowIndex="3"
-                maxWidth="Infinity"
-                styleClass="menu-button, danger">
-            <GridPane.margin>
-                <Insets top="14.0" right="16.0" bottom="8.0" left="16.0"/>
-            </GridPane.margin>
-        </Button>
+                styleClass="menu-button, danger"/>
 
-        <!-- Right title -->
-        <Label text="Player Rankings"
-               GridPane.columnIndex="5"
-               GridPane.rowIndex="1"
+        <Label fx:id="rankingsTitle"
+               text="Player Rankings"
                alignment="CENTER"
-               maxWidth="Infinity"
                styleClass="menu-section-title"/>
 
-        <!-- Right rankings -->
-        <VBox GridPane.columnIndex="5"
-              GridPane.rowIndex="2"
-              spacing="14.0"
+        <HBox fx:id="rankingFilter"
+              alignment="CENTER_LEFT"
+              spacing="12.0"
               styleClass="menu-panel">
+            <Label text="Players:" styleClass="menu-label"/>
 
-            <padding>
-                <Insets top="12.0" right="20.0" bottom="12.0" left="20.0"/>
-            </padding>
+            <ChoiceBox fx:id="choiceNumPlayersForRankings"
+                       prefWidth="120.0"
+                       onAction="#handleRankings"
+                       styleClass="menu-choice">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Integer fx:value="2"/>
+                        <Integer fx:value="3"/>
+                        <Integer fx:value="4"/>
+                        <Integer fx:value="5"/>
+                    </FXCollections>
+                </items>
+            </ChoiceBox>
+        </HBox>
 
-            <HBox alignment="CENTER_LEFT" spacing="12.0">
-                <Label text="Players:" styleClass="menu-label"/>
+        <ListView fx:id="rankingsListView"
+                  maxWidth="Infinity"
+                  maxHeight="Infinity"
+                  styleClass="menu-list"/>
 
-                <ChoiceBox fx:id="choiceNumPlayersForRankings"
-                           prefWidth="120.0"
-                           onAction="#handleRankings"
-                           styleClass="menu-choice">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <Integer fx:value="2"/>
-                            <Integer fx:value="3"/>
-                            <Integer fx:value="4"/>
-                            <Integer fx:value="5"/>
-                        </FXCollections>
-                    </items>
-                </ChoiceBox>
-            </HBox>
+        <Button fx:id="rankingsRefreshButton"
+                text="Refresh Rankings"
+                onAction="#handleRankings"
+                prefWidth="250.0"
+                styleClass="menu-button"/>
 
-            <ListView fx:id="rankingsListView"
-                      VBox.vgrow="ALWAYS"
-                      maxWidth="Infinity"
-                      maxHeight="Infinity"
-                      styleClass="menu-list"/>
-
-            <HBox alignment="CENTER">
-                <Button fx:id="rankingsRefreshButton"
-                        text="Refresh Rankings"
-                        onAction="#handleRankings"
-                        prefWidth="250.0"
-                        styleClass="menu-button"/>
-            </HBox>
-        </VBox>
-    </GridPane>
+    </Pane>
 </StackPane>
