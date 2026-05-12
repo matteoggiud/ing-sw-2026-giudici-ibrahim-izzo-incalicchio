@@ -6,8 +6,6 @@ import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -19,112 +17,104 @@ import java.util.Map;
 
 public class GuiClientView implements ClientView {
     private final Stage stage;
+    private final StackPane root;
 
     private GuiContext guiContext;
 
-    private Scene menuScene;
+    private Parent menuRoot;
     private MenuController menuController;
 
-    private Scene authScene;
+    private Parent authRoot;
     private AuthController authController;
 
-    private Scene lobbyScene;
+    private Parent lobbyRoot;
     private LobbyController lobbyController;
 
-    private Scene gameScene;
+    private Parent gameRoot;
     private GameController gameController;
 
-    private Scene endGameScene;
-    private ScoreController ScoreController;
+    private Parent endGameRoot;
+    private ScoreController scoreController;
 
     private Map<String, Integer> pendingFinalRanking = Map.of();
     private List<LeadBoardDTO> pendingGlobalRankings = List.of();
 
     private boolean resolvingShowing = false;
 
-    public GuiClientView(Stage stage) {
+    public GuiClientView(Stage stage, StackPane root) {
         this.stage = stage;
+        this.root = root;
     }
-
 
     public void setGuiContext(GuiContext guiContext) {
         this.guiContext = guiContext;
     }
 
+    private void showRoot(Parent node) {
+        root.getChildren().setAll(node);
+    }
+
+    private void showMenu() {
+        showRoot(menuRoot);
+    }
+
     private void ensureMenuLoaded() throws IOException {
-        if (menuScene != null && menuController != null) return;
+        if (menuRoot != null && menuController != null) return;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MenuPane.fxml"));
-        Parent root = loader.load();
+        menuRoot = loader.load();
 
         menuController = loader.getController();
         menuController.setGuiContext(guiContext);
-
-        menuScene = new Scene(root);
     }
 
     private void ensureAuthLoaded() throws IOException {
-        if (authScene != null && authController != null) return;
+        if (authRoot != null && authController != null) return;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AuthPane.fxml"));
-        Parent root = loader.load();
+        authRoot = loader.load();
 
         authController = loader.getController();
         authController.setGuiContext(guiContext);
 
-        authScene = new Scene(root);
     }
 
     private void ensureLobbyLoaded() throws IOException {
-        if (lobbyScene != null && lobbyController != null) return;
+        if (lobbyRoot != null && lobbyController != null) return;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/LobbyPane.fxml"));
-        Parent root = loader.load();
+        lobbyRoot = loader.load();
 
         lobbyController = loader.getController();
         lobbyController.setGuiContext(guiContext);
-
-        lobbyScene = new Scene(root);
     }
 
     private void ensureGameLoaded() throws IOException {
-        if (gameScene != null && gameController != null) return;
+        if (gameRoot != null && gameController != null) return;
 
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GamePane.fxml"));
-        Parent root = loader.load();
+        gameRoot = loader.load();
 
         gameController = loader.getController();
         gameController.setGuiContext(guiContext);
         gameController.setSeeResultsRequested(this::openScorePane);
 
-        gameScene = new Scene(root);
     }
 
-    private void changeSceneIfNeeded(Scene newScene) {
-        if (newScene == null) return;
-
-        if (stage.getScene() != null && stage.getScene() != newScene) {
-            stage.setScene(newScene);
-        }
-        stage.show();
-
-        Platform.runLater(() -> {
-            stage.setFullScreen(true);
-            stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        });
+    private void changeSceneIfNeeded(Parent newRoot) {
+        if (newRoot == null) return;
+        showRoot(newRoot);
     }
 
     private void ensureScoreLoaded() throws IOException {
-        if (endGameScene != null && ScoreController != null) return;
+        if (endGameRoot != null && scoreController != null) return;
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ScorePane.fxml"));
-        Parent root = loader.load();
+        endGameRoot = loader.load();
 
-        ScoreController = loader.getController();
-        ScoreController.setGuiContext(guiContext);
-
-        endGameScene = new Scene(root);
+        scoreController = loader.getController();
+        scoreController.setGuiContext(guiContext);
     }
 
 
@@ -170,7 +160,7 @@ public class GuiClientView implements ClientView {
 
                 menuController.showAvailableGames();
 
-                changeSceneIfNeeded(menuScene);
+                changeSceneIfNeeded(menuRoot);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -188,7 +178,7 @@ public class GuiClientView implements ClientView {
 
                 lobbyController.showGameInfo(gameInfo);
 
-                changeSceneIfNeeded(lobbyScene);
+                changeSceneIfNeeded(lobbyRoot);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -204,14 +194,14 @@ public class GuiClientView implements ClientView {
     public void showGameStarted(int gameId, List<String> playerNicknames) {
         Platform.runLater(() -> {
             try {
-                gameScene = null;
+                gameRoot = null;
                 gameController = null;
 
                 ensureGameLoaded();
 
                 gameController.showGameStarted(gameId, playerNicknames);
 
-                changeSceneIfNeeded(gameScene);
+                changeSceneIfNeeded(gameRoot);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -319,7 +309,7 @@ public class GuiClientView implements ClientView {
 
                 menuController.showRankings(rankings);
 
-                changeSceneIfNeeded(menuScene);
+                changeSceneIfNeeded(menuRoot);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -335,7 +325,7 @@ public class GuiClientView implements ClientView {
                 authController.showInfoMessage(message);
 
 
-                changeSceneIfNeeded(authScene);
+                changeSceneIfNeeded(authRoot);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -448,10 +438,10 @@ public class GuiClientView implements ClientView {
             try {
                 ensureScoreLoaded();
 
-                ScoreController.showMatchRankings(pendingFinalRanking);
-                ScoreController.showGlobalPosition(pendingGlobalRankings);
+                scoreController.showMatchRankings(pendingFinalRanking);
+                scoreController.showGlobalPosition(pendingGlobalRankings);
 
-                changeSceneIfNeeded(endGameScene);
+                changeSceneIfNeeded(endGameRoot);
             } catch (IOException e) {
                 e.printStackTrace();
             }

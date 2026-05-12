@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
@@ -46,14 +47,17 @@ public class GuiClientApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Mesos");
 
-        primaryStage.setScene(new Scene(new Label("Connecting to server...")));
-        primaryStage.show();
+        StackPane root = new StackPane();
+        Scene scene = new Scene(root,1600, 900);
+        primaryStage.setScene(scene);
 
         Platform.runLater(() -> {
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/fish.png")));
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         });
+
+        primaryStage.show();
 
 
         // 1. Parse command line arguments
@@ -63,7 +67,7 @@ public class GuiClientApp extends Application {
 
         // 2. Initialize client controller
         this.clientState = new ClientState();
-        GuiClientView view = new GuiClientView(primaryStage);
+        GuiClientView view = new GuiClientView(primaryStage, root);
         // this.guiClientView = view;
         this.viewController = new ViewController(clientState, view);
 
