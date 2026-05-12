@@ -8,6 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.layout.Region;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,9 +36,48 @@ public class MenuController {
     @FXML
     private ChoiceBox<Integer> choiceNumPlayersForRankings;
 
+    @FXML
+    private StackPane menuRoot;
+
+    @FXML
+    private ImageView backgroundImage;
+
+    @FXML
+    private Pane menuOverlay;
+
+    @FXML
+    private Label availableGamesTitle;
+
+    @FXML
+    private Label menuTitle;
+
+    @FXML
+    private VBox createPanel;
+
+    @FXML
+    private VBox playerCountPanel;
+
+    @FXML
+    private Button quitButton;
+
+    @FXML
+    private Label rankingsTitle;
+
+    @FXML
+    private HBox rankingFilter;
+
+    @FXML
+    private HBox gamesActions;
+
+    @FXML
+    private Button rankingsRefreshButton;
+
+
     private final ObservableList<GameInfoDTO> games = FXCollections.observableArrayList();
 
     private final ObservableList<LeadBoardDTO> rankingsObs = FXCollections.observableArrayList();
+
+    private static final double BACKGROUND_RATIO = 16.0 / 9.0;
 
 
     public void setGuiContext(GuiContext guiContext) {
@@ -42,6 +87,10 @@ public class MenuController {
 
     @FXML
     private void initialize() {
+        bindBackgroundCover();
+        bindMenuLayout();
+        rankingFilter.toFront();
+        choiceNumPlayersForRankings.toFront();
         gamesListView.setItems(games);
 
         gamesListView.setOnMouseClicked(event -> {
@@ -59,8 +108,11 @@ public class MenuController {
                 } else {
                     String players = item.players() == null ? "" :
                             item.players().stream().collect(Collectors.joining(", "));
-                    String text = String.format("Game #%d — %d/%d players — [%s]",
-                            item.gameId(), item.players() == null ? 0 : item.players().size(), item.expectedPlayerCount(), players);
+                    String text = String.format("Game #%d - %d/%d players - %s",
+                            item.gameId(),
+                            item.players() == null ? 0 : item.players().size(),
+                            item.expectedPlayerCount(),
+                            players.isBlank() ? "waiting for players" : players);
                     setText(text);
                 }
             }
@@ -84,6 +136,75 @@ public class MenuController {
             }
         });
     }
+
+    /**
+     * Binds the menu layout to the background cover to ensure that the menu elements are always centered and properly spaced
+     */
+    private void bindBackgroundCover() {
+        // The background image should cover the entire menuRoot while maintaining its aspect ratio.
+        DoubleBinding coverWidth = Bindings.createDoubleBinding(
+                () -> Math.max(menuRoot.getWidth(), menuRoot.getHeight() * BACKGROUND_RATIO),
+                menuRoot.widthProperty(),
+                menuRoot.heightProperty()
+        );
+
+        // Similarly, the cover height is determined by the width and the aspect ratio.
+        DoubleBinding coverHeight = Bindings.createDoubleBinding(
+                () -> Math.max(menuRoot.getHeight(), menuRoot.getWidth() / BACKGROUND_RATIO),
+                menuRoot.widthProperty(),
+                menuRoot.heightProperty()
+        );
+
+        // Bind the background image size to the calculated cover dimensions
+        backgroundImage.fitWidthProperty().bind(coverWidth);
+        backgroundImage.fitHeightProperty().bind(coverHeight);
+
+        // Bind the menu overlay size to match the cover dimensions
+        menuOverlay.prefWidthProperty().bind(coverWidth);
+        menuOverlay.prefHeightProperty().bind(coverHeight);
+    }
+
+    /**
+     * Binds the menu elements to specific positions and sizes relative to the menu overlay
+     */
+    private void bindMenuLayout() {
+        bindNode(availableGamesTitle, 0.220, 0.385, 0.28, 0.055);
+        bindNode(gamesListView, 0.225, 0.590, 0.295, 0.285);
+        bindNode(gamesActions, 0.215, 0.795, 0.245, 0.055);
+
+        bindNode(menuTitle, 0.500, 0.385, 0.15, 0.055);
+        bindNode(createPanel, 0.500, 0.495, 0.170, 0.105);
+        bindNode(playerCountPanel, 0.500, 0.690, 0.165, 0.105);
+        bindNode(quitButton, 0.500, 0.865, 0.160, 0.050);
+
+        bindNode(rankingsTitle, 0.780, 0.385, 0.30, 0.055);
+        bindNode(rankingFilter, 0.730, 0.470, 0.185, 0.050);
+        bindNode(rankingsListView, 0.775, 0.630, 0.295, 0.280);
+        bindNode(rankingsRefreshButton, 0.775, 0.795, 0.170, 0.050);
+    }
+
+
+    /**
+     * Helper method to bind a node's size and position relative to the menu overlay.
+     * @param node the node to bind
+     * @param centerX the horizontal center position as a percentage of the menu overlay width (0.0 to 1.0)
+     * @param centerY the vertical center position as a percentage of the menu overlay height (0.0 to 1.0)
+     * @param width the width of the node as a percentage of the menu overlay width (0.0 to 1.0)
+     * @param height the height of the node as a percentage of the menu overlay height (0.0 to 1.0)
+     */
+    private void bindNode(Region node, double centerX, double centerY, double width, double height) {
+        node.prefWidthProperty().bind(menuOverlay.widthProperty().multiply(width));
+        node.prefHeightProperty().bind(menuOverlay.heightProperty().multiply(height));
+
+        node.layoutXProperty().bind(menuOverlay.widthProperty()
+                .multiply(centerX)
+                .subtract(menuOverlay.widthProperty().multiply(width).divide(2.0)));
+
+        node.layoutYProperty().bind(menuOverlay.heightProperty()
+                .multiply(centerY)
+                .subtract(menuOverlay.heightProperty().multiply(height).divide(2.0)));
+    }
+
 
 
     public void showAvailableGames() {
