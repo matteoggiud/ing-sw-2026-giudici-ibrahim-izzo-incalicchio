@@ -40,6 +40,7 @@ public class GuiClientView implements ClientView {
     private Map<String, Integer> pendingFinalRanking = Map.of();
     private List<LeadBoardDTO> pendingGlobalRankings = List.of();
 
+    private boolean resolvingShowing = false;
 
 
     public GuiClientView(Stage stage) {
@@ -220,6 +221,7 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showBoardSummary(BoardDTO board) {
+        if (resolvingShowing) return;
         Platform.runLater(() -> {
             if (gameController != null) {
                 gameController.showBoard(board);
@@ -341,28 +343,57 @@ public class GuiClientView implements ClientView {
 
     @Override
     public void showResolvingEvent(int gameId, EventCardDTO eventCard) {
+        // siamo sicuri che la view chiami Platform.runLater: ma riforziamo comunque l'esecuzione sul FX thread
         Platform.runLater(() -> {
+            // accoda l'evento
+            guiContext.clientState().pushEventCard(eventCard);
+
+            // se non stiamo già mostrando un popup, iniziamo la catena
+            if (!resolvingShowing) {
+                showNextResolvingEvent();
+            }
+        });
+    }
+
+    private void showNextResolvingEvent() {
+        Platform.runLater(() -> {
+            EventCardDTO next = guiContext.clientState().popEventCard();
+            if (next == null) {
+                resolvingShowing = false;
+                showBoardSummary(guiContext.clientState().getBoard());
+                if (gameController != null && guiContext != null && guiContext.clientState() != null) {
+                    BoardDTO board = guiContext.clientState().getBoard();
+                    if (board != null) {
+                        gameController.showBoard(board);
+                    }
+                }
+                return;
+            }
+
+            resolvingShowing = true;
+
             try {
-                // load the event card pane
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EventNotificationPane.fxml"));
+                // carica FXML del popup (assumi che esista /view/EventPopupPane.fxml)
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EventPopupPane.fxml"));
                 StackPane root = loader.load();
 
                 EventPopupController controller = loader.getController();
-                controller.populateEventCard(eventCard);
+                controller.populateEventCard(next);
 
-                // create a transparent popup stage
+                // popup stage trasparente
                 javafx.stage.Stage popup = new javafx.stage.Stage(javafx.stage.StageStyle.TRANSPARENT);
                 popup.initOwner(stage);
                 popup.setAlwaysOnTop(true);
                 popup.setResizable(false);
 
-                // scene with transparent fill
                 javafx.scene.Scene scene = new javafx.scene.Scene(root, javafx.scene.paint.Color.TRANSPARENT);
                 popup.setScene(scene);
 
-                // center the popup over the main stage
+                // dimensioni popup (se vuoi estrarle dall'FXML puoi misurarle dopo load)
                 double popupWidth = 360;
                 double popupHeight = 520;
+
+                // centra popup sopra lo stage principale
                 double ownerX = stage.getX();
                 double ownerY = stage.getY();
                 double ownerW = stage.getWidth();
@@ -371,7 +402,7 @@ public class GuiClientView implements ClientView {
                 popup.setX(ownerX + (ownerW - popupWidth) / 2);
                 popup.setY(ownerY + (ownerH - popupHeight) / 2);
 
-                // animazioni: fade in, pausa, fade out
+                // animazioni: fade in -> pausa -> fade out
                 javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(
                         javafx.util.Duration.millis(220), root);
                 fadeIn.setFromValue(0.0);
@@ -385,24 +416,32 @@ public class GuiClientView implements ClientView {
                 fadeOut.setFromValue(1.0);
                 fadeOut.setToValue(0.0);
 
-                // click-to-dismiss
+                // click-to-dismiss: chiudi e continua con prossimo immediatamente
                 root.setOnMouseClicked(ev -> {
                     fadeIn.stop();
                     pause.stop();
                     fadeOut.stop();
                     popup.close();
+                    // appena chiuso, procedi col prossimo evento
+                    showNextResolvingEvent();
                 });
 
-                // sequenza animazioni
+                // alla fine della sequenza nascondi e lancia il prossimo
                 fadeIn.setOnFinished(ev -> pause.play());
                 pause.setOnFinished(ev -> fadeOut.play());
-                fadeOut.setOnFinished(ev -> popup.close());
+                fadeOut.setOnFinished(ev -> {
+                    popup.close();
+                    // procedi al prossimo evento nella coda
+                    showNextResolvingEvent();
+                });
 
                 popup.show();
                 fadeIn.play();
+
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Resolving event: " + eventCard.name());
+                // in caso di errore carichiamo solo la board e continuiamo
+                showNextResolvingEvent();
             }
         });
     }

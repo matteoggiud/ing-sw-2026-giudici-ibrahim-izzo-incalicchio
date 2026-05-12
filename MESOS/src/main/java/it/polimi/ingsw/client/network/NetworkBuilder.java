@@ -6,7 +6,7 @@ import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.rmi.RemoteServer;
 import it.polimi.ingsw.client.network.rmi.RmiClient;
 import it.polimi.ingsw.client.network.rmi.RmiVirtualServer;
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.network.socket.SocketServerConnection;
 import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;

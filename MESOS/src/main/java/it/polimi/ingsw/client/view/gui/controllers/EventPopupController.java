@@ -14,26 +14,19 @@ public class EventPopupController {
     @FXML
     private Text eventTitle;
 
-    /**
-     * Popola la notifica con i dati dell'evento
-     */
     public void populateEventCard(EventCardDTO eventCard) {
         if (eventCard == null) return;
 
-        // set the title
-        if (eventCard.name() != null) {
-            eventTitle.setText(eventCard.name());
-        } else {
-            eventTitle.setText("Resolving event");
-        }
+        // titolo
+        eventTitle.setText(eventCard.name() != null ? eventCard.name() : "Resolving event");
 
-        // loads the image
+        // immagine (fallback se non c'è)
         try {
             String imagePath = "/assets/cards/" + eventCard.imageKey() + ".png";
             ImageView iv = ImageCache.view(imagePath, 320, 350);
             cardImageView.setImage(iv.getImage());
         } catch (Exception e) {
-            // fallback: no image
+            // ignora: rimane vuoto o mostra titolo
             System.err.println("Could not load event card image: " + e.getMessage());
         }
     }

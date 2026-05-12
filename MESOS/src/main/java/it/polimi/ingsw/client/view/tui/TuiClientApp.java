@@ -3,7 +3,7 @@ package it.polimi.ingsw.client.view.tui;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.NetworkBuilder;
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.view.Credentials;
 
 import java.util.LinkedHashMap;

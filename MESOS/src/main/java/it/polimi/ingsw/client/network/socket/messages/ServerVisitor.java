@@ -1,8 +1,6 @@
 package it.polimi.ingsw.client.network.socket.messages;
 
 import it.polimi.ingsw.client.controller.ViewController;
-import it.polimi.ingsw.client.network.socket.ClientState;
-import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
 import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
@@ -14,8 +12,6 @@ import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessag
 import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
-
-import javax.swing.text.View;
 
 public class ServerVisitor implements ServerMessageVisitor {
 
