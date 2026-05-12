@@ -92,7 +92,6 @@ public class GuiClientView implements ClientView {
         if (gameScene != null && gameController != null) return;
 
 
-
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/GamePane.fxml"));
         Parent root = loader.load();
 
@@ -343,107 +342,102 @@ public class GuiClientView implements ClientView {
 
     @Override
     public void showResolvingEvent(int gameId, EventCardDTO eventCard) {
-        // siamo sicuri che la view chiami Platform.runLater: ma riforziamo comunque l'esecuzione sul FX thread
         Platform.runLater(() -> {
-            // accoda l'evento
-            guiContext.clientState().pushEventCard(eventCard);
-
-            // se non stiamo già mostrando un popup, iniziamo la catena
+            // if we are not already showing resolving events, start the sequence
             if (!resolvingShowing) {
+                resolvingShowing = true;
                 showNextResolvingEvent();
             }
         });
     }
 
     private void showNextResolvingEvent() {
-        Platform.runLater(() -> {
-            EventCardDTO next = guiContext.clientState().popEventCard();
-            if (next == null) {
-                resolvingShowing = false;
-                showBoardSummary(guiContext.clientState().getBoard());
-                if (gameController != null && guiContext != null && guiContext.clientState() != null) {
-                    BoardDTO board = guiContext.clientState().getBoard();
-                    if (board != null) {
-                        gameController.showBoard(board);
-                    }
+
+        EventCardDTO next = guiContext.clientState().popEventCard();
+        if (next == null) {
+            resolvingShowing = false;
+            showBoardSummary(guiContext.clientState().getBoard());
+            if (gameController != null && guiContext != null && guiContext.clientState() != null) {
+                BoardDTO board = guiContext.clientState().getBoard();
+                if (board != null) {
+                    gameController.showBoard(board);
                 }
-                return;
             }
+            return;
+        }
 
-            resolvingShowing = true;
+        try {
+            // load FXML and the popup controller
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EventPopupPane.fxml"));
+            StackPane root = loader.load();
 
-            try {
-                // carica FXML del popup (assumi che esista /view/EventPopupPane.fxml)
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/EventPopupPane.fxml"));
-                StackPane root = loader.load();
+            EventPopupController controller = loader.getController();
+            controller.populateEventCard(next);
 
-                EventPopupController controller = loader.getController();
-                controller.populateEventCard(next);
+            // popup stage transparent
+            javafx.stage.Stage popup = new javafx.stage.Stage(javafx.stage.StageStyle.TRANSPARENT);
+            popup.initOwner(stage);
+            popup.setAlwaysOnTop(true);
+            popup.setResizable(false);
 
-                // popup stage trasparente
-                javafx.stage.Stage popup = new javafx.stage.Stage(javafx.stage.StageStyle.TRANSPARENT);
-                popup.initOwner(stage);
-                popup.setAlwaysOnTop(true);
-                popup.setResizable(false);
+            javafx.scene.Scene scene = new javafx.scene.Scene(root, javafx.scene.paint.Color.TRANSPARENT);
+            popup.setScene(scene);
 
-                javafx.scene.Scene scene = new javafx.scene.Scene(root, javafx.scene.paint.Color.TRANSPARENT);
-                popup.setScene(scene);
+            // popup dimensions
+            double popupWidth = 360;
+            double popupHeight = 520;
 
-                // dimensioni popup (se vuoi estrarle dall'FXML puoi misurarle dopo load)
-                double popupWidth = 360;
-                double popupHeight = 520;
+            // center popup on owner stage
+            double ownerX = stage.getX();
+            double ownerY = stage.getY();
+            double ownerW = stage.getWidth();
+            double ownerH = stage.getHeight();
 
-                // centra popup sopra lo stage principale
-                double ownerX = stage.getX();
-                double ownerY = stage.getY();
-                double ownerW = stage.getWidth();
-                double ownerH = stage.getHeight();
+            popup.setX(ownerX + (ownerW - popupWidth) / 2);
+            popup.setY(ownerY + (ownerH - popupHeight) / 2);
 
-                popup.setX(ownerX + (ownerW - popupWidth) / 2);
-                popup.setY(ownerY + (ownerH - popupHeight) / 2);
+            // animation sequence: fade in, pause, fade out
+            javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(
+                    javafx.util.Duration.millis(220), root);
+            fadeIn.setFromValue(0.0);
+            fadeIn.setToValue(1.0);
 
-                // animazioni: fade in -> pausa -> fade out
-                javafx.animation.FadeTransition fadeIn = new javafx.animation.FadeTransition(
-                        javafx.util.Duration.millis(220), root);
-                fadeIn.setFromValue(0.0);
-                fadeIn.setToValue(1.0);
+            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
+                    javafx.util.Duration.seconds(3));
 
-                javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(
-                        javafx.util.Duration.seconds(1.6));
+            javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(
+                    javafx.util.Duration.millis(300), root);
+            fadeOut.setFromValue(1.0);
+            fadeOut.setToValue(0.0);
 
-                javafx.animation.FadeTransition fadeOut = new javafx.animation.FadeTransition(
-                        javafx.util.Duration.millis(300), root);
-                fadeOut.setFromValue(1.0);
-                fadeOut.setToValue(0.0);
-
-                // click-to-dismiss: chiudi e continua con prossimo immediatamente
-                root.setOnMouseClicked(ev -> {
-                    fadeIn.stop();
-                    pause.stop();
-                    fadeOut.stop();
-                    popup.close();
-                    // appena chiuso, procedi col prossimo evento
-                    showNextResolvingEvent();
-                });
-
-                // alla fine della sequenza nascondi e lancia il prossimo
-                fadeIn.setOnFinished(ev -> pause.play());
-                pause.setOnFinished(ev -> fadeOut.play());
-                fadeOut.setOnFinished(ev -> {
-                    popup.close();
-                    // procedi al prossimo evento nella coda
-                    showNextResolvingEvent();
-                });
-
-                popup.show();
-                fadeIn.play();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                // in caso di errore carichiamo solo la board e continuiamo
+            // allow click to skip animation and show next immediately
+            root.setOnMouseClicked(ev -> {
+                fadeIn.stop();
+                pause.stop();
+                fadeOut.stop();
+                popup.close();
+                // skip directly to the next event
                 showNextResolvingEvent();
-            }
-        });
+            });
+
+            // chain animations
+            fadeIn.setOnFinished(ev -> pause.play());
+            pause.setOnFinished(ev -> fadeOut.play());
+            fadeOut.setOnFinished(ev -> {
+                popup.close();
+                // skip directly to the next event
+                showNextResolvingEvent();
+            });
+
+            popup.show();
+            fadeIn.play();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // in case of error, try to show the next event to avoid blocking the sequence
+            showNextResolvingEvent();
+        }
+
     }
 
     private void openScorePane() {

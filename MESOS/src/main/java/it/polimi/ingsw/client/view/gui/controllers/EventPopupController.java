@@ -17,16 +17,16 @@ public class EventPopupController {
     public void populateEventCard(EventCardDTO eventCard) {
         if (eventCard == null) return;
 
-        // titolo
+        // title
         eventTitle.setText(eventCard.name() != null ? eventCard.name() : "Resolving event");
 
-        // immagine (fallback se non c'è)
+        // image
         try {
             String imagePath = "/assets/cards/" + eventCard.imageKey() + ".png";
             ImageView iv = ImageCache.view(imagePath, 320, 350);
             cardImageView.setImage(iv.getImage());
         } catch (Exception e) {
-            // ignora: rimane vuoto o mostra titolo
+            // ignore: if the image cannot be loaded, we just won't show it
             System.err.println("Could not load event card image: " + e.getMessage());
         }
     }
