@@ -76,6 +76,8 @@ public class GuiClientApp extends Application {
 
         clientState.connect();
 
+        view.showAuthenticator("Login required!");
+
         primaryStage.setTitle("Mesos");
 
 

@@ -49,6 +49,8 @@ public class TuiClientApp {
             networkBuilder.createSocketConnection(clientState, view, this);
         }
         clientState.connect();
+        clientState.setStatusMessage("login required!");
+        view.showAuthenticator("Login required!");
     }
 
     /**
