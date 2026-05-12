@@ -1,32 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="it.polimi.ingsw.client.view.gui.controllers.LobbyController"
-            prefHeight="400.0" prefWidth="600.0">
+<StackPane fx:id="lobbyRoot"
+           xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.polimi.ingsw.client.view.gui.controllers.LobbyController"
+           prefWidth="1600.0"
+           prefHeight="900.0"
+           stylesheets="@../styles/lobby.css"
+           styleClass="lobby-root">
 
-    <VBox spacing="12"
-          alignment="CENTER"
-          layoutX="20.0" layoutY="20.0"
-          AnchorPane.topAnchor="20.0"
-          AnchorPane.leftAnchor="20.0"
-          AnchorPane.rightAnchor="20.0"
-          AnchorPane.bottomAnchor="20.0">
+    <ImageView fx:id="backgroundImage"
+               smooth="true"
+               preserveRatio="false">
+        <image>
+            <Image url="@../assets/backgrounds/lobbyBg.png"/>
+        </image>
+    </ImageView>
 
-        <Label text="Lobby" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
+    <Pane fx:id="lobbyOverlay"
+          pickOnBounds="false">
 
-        <Label fx:id="gameIdLabel" text="Game ID: -"/>
-        <Label fx:id="playersCountLabel" text="Players: -"/>
-        <Label text="Players in lobby:"/>
+        <Label fx:id="lobbyTitleLabel"
+               text="Lobby"
+               alignment="CENTER"
+               styleClass="lobby-title"/>
 
-        <ListView fx:id="playersListView" prefHeight="180.0" prefWidth="250.0"/>
+        <Label fx:id="gameIdLabel"
+               text="Game ID: -"
+               alignment="CENTER"
+               styleClass="lobby-info"/>
 
-        <HBox spacing="10" alignment="CENTER">
-            <Button fx:id="leaveButton" text="Leave" onAction="#handleLeave"/>
-        </HBox>
+        <Label fx:id="playersCountLabel"
+               text="Players: -"
+               alignment="CENTER"
+               styleClass="lobby-info"/>
 
-    </VBox>
-</AnchorPane>
+        <Label fx:id="playersTitleLabel"
+               text="Players in lobby"
+               alignment="CENTER"
+               styleClass="lobby-section-title"/>
+
+        <ListView fx:id="playersListView"
+                  styleClass="lobby-list"/>
+
+        <Button fx:id="leaveButton"
+                text="Leave"
+                onAction="#handleLeave"
+                styleClass="lobby-button, danger"/>
+    </Pane>
+</StackPane>
