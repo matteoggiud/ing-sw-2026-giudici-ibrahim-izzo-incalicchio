@@ -50,7 +50,11 @@ public class GuiClientApp extends Application {
         primaryStage.show();
 
         Platform.runLater(() -> {
-            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/fish.png")));
+            try{
+                primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/assets/icons/mesos_lowbar.png")));
+            }catch(Exception e){
+                System.out.println(e);
+            }
             primaryStage.setFullScreen(true);
             primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         });
