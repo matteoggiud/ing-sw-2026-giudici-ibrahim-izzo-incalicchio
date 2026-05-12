@@ -55,6 +55,8 @@ public class TuiClientApp {
             // Initialize client controller with network connection and the view
             this.controller = new ClientController(network);
             clientState.connect();
+            clientState.setStatusMessage("Login required!");
+            view.showAuthenticator("Login required!");
         } catch (Exception e) {
             System.out.println("Failed to connect to server: " + e.getMessage());
             view.showError("Failed to connect to server: " + e.getMessage());

@@ -41,7 +41,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            sendWelcome();
 
             while (!clientSocket.isClosed() && !clientVisitor.getClientSession().isRequestedDisconnection()) {
                 // Read a message from the client
@@ -62,10 +61,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-
-    private void sendWelcome() {
-        eventHandler.getView().onAuthenticationNeeded("Welcome! Please log in or register to continue.");
-    }
 
     private void safeClose() {
         try {
