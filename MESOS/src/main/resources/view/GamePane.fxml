@@ -26,33 +26,79 @@
     </top>
 
     <center>
-        <VBox spacing="10" style="-fx-padding: 10;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
-            <Label text="Board" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED">
 
-            <!-- UPPER ROW -->
-            <Pane>
-                <HBox fx:id="upperRow" spacing="2" alignment="CENTER"/>
-            </Pane>
+            <VBox spacing="18"
+                  style="-fx-padding: 10;"
+                  fillWidth="true">
 
-            <!-- MIDDLE ROW: offer track  + turn order -->
-            <HBox spacing="0" alignment="CENTER">
-                <HBox fx:id="turnOrderBox" alignment="CENTER">
+                <Label text="Board" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+                <!-- UPPER ROW -->
+                <ScrollPane fitToHeight="true"
+                            fitToWidth="true"
+                            hbarPolicy="AS_NEEDED"
+                            vbarPolicy="NEVER"
+                            prefViewportHeight="175"
+                            minViewportHeight="175">
+                    <HBox fx:id="upperRow"
+                          spacing="8"
+                          alignment="CENTER_LEFT"
+                          minHeight="165"/>
+                </ScrollPane>
+
+                <!-- MIDDLE ROW: turn order + offer track -->
+                <HBox spacing="18"
+                      alignment="CENTER_LEFT"
+                      minHeight="175"
+                      prefHeight="175">
+
+                    <HBox fx:id="turnOrderBox"
+                          alignment="CENTER"
+                          minWidth="115"
+                          prefWidth="115"
+                          minHeight="165"/>
+
+                    <ScrollPane fitToHeight="true"
+                                fitToWidth="true"
+                                hbarPolicy="AS_NEEDED"
+                                vbarPolicy="NEVER"
+                                HBox.hgrow="ALWAYS"
+                                prefViewportHeight="175"
+                                minViewportHeight="175">
+                        <HBox fx:id="offerTrack"
+                              spacing="8"
+                              alignment="CENTER_LEFT"
+                              minHeight="165"/>
+                    </ScrollPane>
                 </HBox>
 
-                <HBox HBox.hgrow="ALWAYS">
-                    <HBox fx:id="offerTrack"/>
-                </HBox>
-            </HBox>
+                <!-- LOWER ROW -->
+                <ScrollPane fitToHeight="true"
+                            fitToWidth="true"
+                            hbarPolicy="AS_NEEDED"
+                            vbarPolicy="NEVER"
+                            prefViewportHeight="175"
+                            minViewportHeight="175">
+                    <HBox fx:id="lowerRow"
+                          spacing="8"
+                          alignment="CENTER_LEFT"
+                          minHeight="165"/>
+                </ScrollPane>
 
-            <!-- LOWER ROW -->
-            <Pane>
-                <HBox fx:id="lowerRow" spacing="2" alignment="CENTER"/>
-            </Pane>
-
-            <!-- Optional area for debug/text summary of board -->
-            <TextArea fx:id="boardArea" editable="false" wrapText="true" prefRowCount="4" visible="false"/>
-        </VBox>
+                <TextArea fx:id="boardArea"
+                          editable="false"
+                          wrapText="true"
+                          prefRowCount="4"
+                          visible="false"
+                          managed="false"/>
+            </VBox>
+        </ScrollPane>
     </center>
+
 
     <!-- PLAYER PANELS alla destra (usa la tua playersListView già presente) -->
     <right>
