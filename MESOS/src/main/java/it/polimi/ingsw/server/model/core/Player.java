@@ -49,7 +49,6 @@ public class Player {
     private boolean connected;
 
 
-
     /**
      * Constructs a new Player with the specified nickname and totem.
      *
@@ -207,5 +206,13 @@ public class Player {
         this.PP = 0;
         this.totem = null;
         this.playerDeck.reset();
+    }
+
+    public void setFood(int food) {
+        this.food = food;
+    }
+
+    public void setPp(int pp) {
+        this.PP = pp;
     }
 }

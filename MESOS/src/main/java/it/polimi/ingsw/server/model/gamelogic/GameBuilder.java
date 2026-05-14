@@ -6,20 +6,30 @@ import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.era.Era;
+import it.polimi.ingsw.server.model.card.CharacterCard;
+import it.polimi.ingsw.server.model.card.EventCard;
+import it.polimi.ingsw.server.model.core.*;
+import it.polimi.ingsw.server.model.deck.BuildingDecks;
 import it.polimi.ingsw.server.model.card.TribeCard;
-import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.core.Totem;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.deck.TribeDeck;
 import it.polimi.ingsw.server.model.era.Era1;
-import it.polimi.ingsw.server.model.era.Era2;
-import it.polimi.ingsw.server.model.era.Era3;
+import it.polimi.ingsw.server.model.menu.PlayerManager;
+import it.polimi.ingsw.server.model.observer.dto.BuildingCardDTO;
+import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.CharacterCardDTO;
+import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
+import it.polimi.ingsw.server.model.observer.dto.OfferBoxDTO;
+import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.server.model.observer.dto.TurnOrderSlotDTO;
 import it.polimi.ingsw.server.model.ruleset.IGameRuleSet;
+import it.polimi.ingsw.server.model.states.WaitingForReconnectState;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 
 public class GameBuilder {
@@ -64,7 +74,7 @@ public class GameBuilder {
     }
 
     private void initializePlayerStats() {
-        for(Player player : game.getPlayers().getPlayers()){
+        for (Player player : game.getPlayers().getPlayers()) {
             player.reset();
         }
     }
@@ -82,10 +92,7 @@ public class GameBuilder {
         int numOfPlayers = game.getNumberOfPlayers();
 
         // Filter tribe cards by player count.
-        List<TribeCard> validCards = new ArrayList<>(allCards.stream()
-                .filter(card -> card.isAvailableForPlayerCount(numOfPlayers))
-                .toList()
-        );
+        List<TribeCard> validCards = new ArrayList<>(allCards.stream().filter(card -> card.isAvailableForPlayerCount(numOfPlayers)).toList());
 
 
         // Define the composition of the tribe deck.
@@ -129,9 +136,7 @@ public class GameBuilder {
         IGameRuleSet ruleSet = game.getRuleSet();
 
         // Filter buildings by player count.
-        List<BuildingCard> validBuildings = new ArrayList<>(allBuildings.stream()
-                .filter(b -> b.isAvailableForPlayerCount(game.getNumberOfPlayers()))
-                .toList());
+        List<BuildingCard> validBuildings = new ArrayList<>(allBuildings.stream().filter(b -> b.isAvailableForPlayerCount(game.getNumberOfPlayers())).toList());
 
         Collections.shuffle(validBuildings);
 
@@ -143,7 +148,7 @@ public class GameBuilder {
         for (BuildingCard card : validBuildings) {
             card.getEra().selfAdd(deckCompositionEra1, deckCompositionEra2, deckCompositionEra3, card, game.getNumberOfPlayers());
         }
-        
+
 
         // Add the selected building cards to the corresponding building decks in the game.
         game.getBuildingDecks().setBuildingDeck(deckCompositionEra1, deckCompositionEra2, deckCompositionEra3);
@@ -293,5 +298,220 @@ public class GameBuilder {
         upperRow.addBuildingRowFrom(initialBuildingDeck);
     }
 
+    public static Game reconstructGame(GameSnapshotDTO snapshot, DataDepository depository) {
 
+        // 1. RICOSTRUISCI I PLAYERS
+        Players playersObj = new Players();
+        for (PlayerInfoDTO pDto : snapshot.players()) {
+            Player p = PlayerManager.getInstance().getPlayer(pDto.nickname());
+            p.setFood(pDto.food());
+            p.setPp(pDto.pp());
+            p.setTotem(Totem.valueOf(pDto.totem()));
+
+            // Ricrea il deck personale
+            // Character cards
+            List<CharacterCardDTO> characterCards = pDto.deck().characterCards();
+            if (characterCards != null) {
+                for (CharacterCardDTO cDto : characterCards) {
+                    int cardId = cDto.cardId();
+                    CharacterCard card = depository.getCharacterCardById(cardId);
+                    if (card == null) {
+                        System.err.println("[RECOVER] Character card not found for id: " + cardId + " (player: " + pDto.nickname() + ")");
+                        continue;
+                    }
+                    // Add card in player deck and call onAddToPlayerDeck to update player deck stats
+                    p.getPlayerDeck().addCard(card);
+                    card.onAddToPlayerDeck(p.getPlayerDeck());
+                }
+            }
+
+            // Building cards
+            List<BuildingCardDTO> buildingCards = pDto.deck().buildingCards();
+            for (BuildingCardDTO bDto : buildingCards) {
+                int cardId = bDto.cardId();
+                BuildingCard card = depository.getBuildingCardById(cardId);
+                if (card == null) {
+                    System.err.println("[RECOVER] Building card not found for id: " + cardId + " (player: " + pDto.nickname() + ")");
+                    continue;
+                }
+                p.getPlayerDeck().addCard(card);
+            }
+
+            playersObj.addPlayer(p);
+        }
+
+        // 2. RICOSTRUISCI LA BOARD E L'OFFER BOX
+        Board board = new Board();
+        BoardDTO boardDTO = snapshot.board();
+
+        // Upper character cards
+        List<CharacterCardDTO> upperChars = boardDTO.upperCharacterCards();
+        for (CharacterCardDTO cDto : upperChars) {
+            int cardId = cDto.cardId();
+            CharacterCard card = depository.getCharacterCardById(cardId);
+            if (card == null) {
+                System.err.println("[RECOVER] Upper character card not found for id: " + cardId);
+                continue;
+            }
+            board.getUpperRow().addCard(card);
+        }
+
+        // Upper event cards
+        List<EventCardDTO> upperEvents = boardDTO.upperEventCards();
+        for (EventCardDTO eDto : upperEvents) {
+            int cardId = eDto.cardId();
+            EventCard card = depository.getEventCardById(cardId);
+            if (card == null) {
+                System.err.println("[RECOVER] Upper event card not found for id: " + cardId);
+                continue;
+            }
+            board.getUpperRow().addCard(card);
+        }
+
+        // Upper building cards
+        List<BuildingCardDTO> upperBuildings = boardDTO.upperBuildingCards();
+        for (BuildingCardDTO bDto : upperBuildings) {
+            int cardId = bDto.cardId();
+            BuildingCard card = depository.getBuildingCardById(cardId);
+            if (card == null) {
+                System.err.println("[RECOVER] Upper building card not found for id: " + cardId);
+                continue;
+            }
+            board.getUpperRow().getBuildingRow().add(card);
+        }
+
+
+        // Lower character cards
+        List<CharacterCardDTO> lowerChars = boardDTO.lowerCharacterCards();
+        for (CharacterCardDTO cDto : lowerChars) {
+            int cardId = cDto.cardId();
+            CharacterCard card = depository.getCharacterCardById(cardId);
+            if (card == null) {
+                System.err.println("[RECOVER] Lower character card not found for id: " + cardId);
+                continue;
+            }
+            board.getLowerRow().addCard(card);
+        }
+
+
+        // Lower event cards
+        List<EventCardDTO> lowerEvents = boardDTO.lowerEventCards();
+        for (EventCardDTO eDto : lowerEvents) {
+            int cardId = eDto.cardId();
+            EventCard card = depository.getEventCardById(cardId);
+            if (card == null) {
+                System.err.println("[RECOVER] Lower event card not found for id: " + cardId);
+                continue;
+            }
+            board.getLowerRow().addCard(card);
+
+        }
+
+        // Lower building cards
+        List<BuildingCardDTO> lowerBuildings = boardDTO.lowerBuildingCards();
+        for (BuildingCardDTO bDto : lowerBuildings) {
+            int cardId = bDto.cardId();
+            BuildingCard card = depository.getBuildingCardById(cardId);
+            if (card == null) {
+                System.err.println("[RECOVER] Lower building card not found for id: " + cardId);
+                continue;
+            }
+            board.getLowerRow().getBuildingRow().add(card);
+        }
+
+
+        // Offer track
+        List<OfferBoxDTO> offerDtos = boardDTO.offerTrackBoxes();
+        if (offerDtos != null && !offerDtos.isEmpty()) {
+            // Ensure order by position
+            offerDtos.sort(Comparator.comparingInt(OfferBoxDTO::position));
+            List<OfferBox> offerBoxes = new ArrayList<>();
+            for (OfferBoxDTO ob : offerDtos) {
+                OfferBox box = new OfferBox(ob.foodReward(), ob.upperRowPicks(), ob.lowerRowPicks());
+                if (ob.placedPlayerNickname() != null && !ob.placedPlayerNickname().isBlank()) {
+                    try {
+                        Player placed = PlayerManager.getInstance().getPlayer(ob.placedPlayerNickname());
+                        box.placePlayer(placed);
+                    } catch (Exception ex) {
+                        System.err.println("[RECOVER] Could not place player " + ob.placedPlayerNickname() + " on offer box: " + ex.getMessage());
+                    }
+                }
+                offerBoxes.add(box);
+            }
+            board.getOfferTrack().initializeOfferTrack(offerBoxes);
+        }
+
+        // Turn order slots
+        List<TurnOrderSlotDTO> slotDtos = boardDTO.turnOrderSlots();
+        if (slotDtos != null && !slotDtos.isEmpty()) {
+            slotDtos.sort(Comparator.comparingInt(TurnOrderSlotDTO::position));
+            List<TurnOrderSlot> slots = new ArrayList<>();
+            for (TurnOrderSlotDTO ts : slotDtos) {
+                TurnOrderSlot slot = new TurnOrderSlot(ts.foodBonus());
+                if (ts.placedPlayerNickname() != null && !ts.placedPlayerNickname().isBlank()) {
+                    try {
+                        Player placed = PlayerManager.getInstance().getPlayer(ts.placedPlayerNickname());
+                        slot.placePlayer(placed);
+                    } catch (Exception ex) {
+                        System.err.println("[RECOVER] Could not place player " + ts.placedPlayerNickname() + " on turn order slot: " + ex.getMessage());
+                    }
+                }
+                slots.add(slot);
+            }
+            board.getTurnOrderBox().initializeTurnOrderBox(slots);
+        }
+
+
+        // 3. RICOSTRUISCI I DECK GLOBALI
+        TribeDeck tribeDeck = new TribeDeck();
+        // Svuoti il deck creato di default e ci metti le carte salvate
+        tribeDeck.getTribeDeck().clear();
+        for (int id : snapshot.remainingTribeCardIds()) {
+            try {
+                TribeCard card = (TribeCard) depository.getCardbyId(id);
+
+                tribeDeck.getTribeDeck().add(card);
+            } catch (Exception ex) {
+                System.err.println("[RECOVER] Tribe card not found for id: " + id);
+            }
+        }
+
+        List<BuildingCard> buildingsEra1 = new ArrayList<>();
+        List<BuildingCard> buildingsEra2 = new ArrayList<>();
+        List<BuildingCard> buildingsEra3 = new ArrayList<>();
+
+        for (int id : snapshot.remainingEra1BuildingIds()){
+            BuildingCard card = depository.getBuildingCardById(id);
+            if (card == null) {
+                System.err.println("[RECOVER] Era 1 building card not found for id: " + id);
+            }
+            buildingsEra1.add(card);
+        }
+        for (int id : snapshot.remainingEra2BuildingIds()){
+            BuildingCard card = depository.getBuildingCardById(id);
+            if (card == null) {
+                System.err.println("[RECOVER] Era 2 building card not found for id: " + id);
+            }
+            buildingsEra2.add(card);
+        }
+        for (int id : snapshot.remainingEra3BuildingIds()){
+            BuildingCard card = depository.getBuildingCardById(id);
+            if (card == null) {
+                System.err.println("[RECOVER] Era 3 building card not found for id: " + id);
+            }
+            buildingsEra3.add(card);
+        }
+
+
+        BuildingDecks buildingDecks = new BuildingDecks(buildingsEra1, buildingsEra2, buildingsEra3);
+        // 4. CREA LO STATO INIZIALE (WaitingForReconnectState)
+        List<String> pendingNicks = snapshot.players().stream().map(PlayerInfoDTO::nickname).collect(Collectors.toList());
+        WaitingForReconnectState waitState = new WaitingForReconnectState(snapshot.currentStateName(), pendingNicks);
+        // 5. ASSEMBLA IL GIOCO
+        // (Assumiamo che se non avevi salvato l'Era e il lastRound, li ricavi o usi dei valori di default per ora)
+        Game game = new Game(snapshot.gameId(), snapshot.expectedPlayerCount(), playersObj, board, waitState, tribeDeck, buildingDecks, null, snapshot.lastRoundTriggered());
+        return game;
+    }
 }
+
+

@@ -25,6 +25,7 @@ import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.era.Era2;
 import it.polimi.ingsw.server.model.era.Era3;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -609,6 +610,61 @@ public class DataDepository {
         }
 
         return leadBoardDTO;
+    }
+
+    /**
+     * Loads the saved game snapshot from the database for a specific game.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the GameSnapshotDTO if found, otherwise null
+     */
+    public GameSnapshotDTO loadGameSnapshot(int gameId) {
+        String query = "SELECT game_snapshot FROM game WHERE game_id = ?";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query)) {
+
+            ps.setInt(1, gameId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String jsonSnapshot = rs.getString("game_snapshot");
+                    if (jsonSnapshot != null && !jsonSnapshot.isBlank()) {
+                        return mapper.readValue(jsonSnapshot, GameSnapshotDTO.class);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load game snapshot for gameId: " + gameId);
+            e.printStackTrace();
+        }
+
+        return null; // Return null if no snapshot exists or an error occurred
+    }
+
+    /**
+     * Retrieves a list of game IDs for all games that are currently marked as in progress.
+     *
+     * @return a list of game IDs
+     */
+    public List<Integer> getInProgressGames() {
+        String query = "SELECT game_id FROM game WHERE in_progress = true";
+        List<Integer> gameIds = new ArrayList<>();
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                gameIds.add(rs.getInt("game_id"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to retrieve in-progress games.");
+            e.printStackTrace();
+        }
+
+        return gameIds;
     }
 
 }

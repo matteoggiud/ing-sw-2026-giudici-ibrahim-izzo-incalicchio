@@ -44,9 +44,8 @@ public class ComputeFinalScoreState implements IGameState {
             throw new IllegalArgumentException("Game cannot be null.");
         }
 
-        // First of all: Save the game snapshot for server persistance
-        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
-        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        // Set the game ad finished
+        new DataWriting().updateGameInProgress(game.getGameId(), false);
 
         if (finalRankingNotified) {
             return;

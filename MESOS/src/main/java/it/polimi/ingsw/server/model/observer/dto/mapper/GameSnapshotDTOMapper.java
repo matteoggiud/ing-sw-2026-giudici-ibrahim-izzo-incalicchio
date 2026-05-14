@@ -30,4 +30,5 @@ public class GameSnapshotDTOMapper {
         return new GameSnapshotDTO(gameId, expectedPlayerCount, lastRoundTriggered, currentStateName, players, boardSnapshot, remainingTribeCardIds, remainingEra1BuildingIds, remainingEra2BuildingIds, remainingEra3BuildingIds);
 
     }
+
 }

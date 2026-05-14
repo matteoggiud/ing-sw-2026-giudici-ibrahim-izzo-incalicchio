@@ -1,5 +1,6 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
@@ -31,6 +32,10 @@ public class SetupState implements IGameState {
 
         // Prepare the board, decks, turn order and initial resources.
         builder.prepareGame();
+
+        // Update the database to set the game as in progress
+        new DataWriting().updateGameInProgress(game.getGameId(), true);
+
 
         // Notify observers about the board initialized
         notifyAll(game);

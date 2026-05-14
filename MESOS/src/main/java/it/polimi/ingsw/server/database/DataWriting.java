@@ -162,8 +162,8 @@ public class DataWriting {
      * It updates the game snapshot in the database for a given game ID. The snapshot is provided as a GameSnapshotDTO object, which is converted to JSON format before being stored in the database.
      * Is used for game recovery in case of server crash, so it is crucial to keep it updated after every turn.
      *
-     * @param gameId
-     * @param snapshot
+     * @param gameId   the unique identifier of the game for which the snapshot is being updated
+     * @param snapshot the GameSnapshotDTO object containing the current state of the game, which will be converted to JSON and stored in the database
      */
     public void updateGameSnapshot(int gameId, GameSnapshotDTO snapshot) {
         String sql = "UPDATE game SET game_snapshot = ? WHERE game_id = ?";
@@ -186,6 +186,26 @@ public class DataWriting {
 
         } catch (Exception e) {
             throw new RuntimeException("Error updating game snapshot for game ID: " + gameId, e);
+        }
+    }
+
+    public void updateGameInProgress(int gameId, boolean inProgress) {
+        String sql = "UPDATE game SET in_progress = ? WHERE game_id = ?";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+
+            ps.setBoolean(1, inProgress);
+            ps.setInt(2, gameId);
+
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Impossible to update the game in progress");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating game in_progress", e);
         }
     }
 }
