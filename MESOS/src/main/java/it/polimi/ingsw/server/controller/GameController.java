@@ -142,7 +142,7 @@ public class GameController {
         for (String player : remainingPlayerNicknames) {
             ClientSession playerSession = SessionRegistry.getInstance().getSession(player);
             if (playerSession == null)
-                throw new IllegalStateException("Player " + player + " is not found.");
+                continue;
 
             remainingPlayerSessions.add(playerSession);
             // The game is ended so we need to clear the active game id for all the remaining players in the game as well
@@ -312,8 +312,12 @@ public class GameController {
         if (existingSession == null) {
             return;
         }
-        if (existingSession.getEventHandler().getView().isReachable()) {
-            return;
+        try {
+            if (existingSession.getEventHandler().getView().isReachable()) {
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("[INFO] Detected stale session for " + nickname + ", forcing disconnect");
         }
         handleDisconnect(existingSession);
     }

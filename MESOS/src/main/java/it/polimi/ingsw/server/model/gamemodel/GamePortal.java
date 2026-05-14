@@ -320,6 +320,11 @@ public class GamePortal implements IGameModel {
         if (nickname == null) {
             throw new IllegalArgumentException("Nickname cannot be null");
         }
+
+        Player player = playerManager.getPlayer(nickname);
+        if (player != null) {
+            player.disconnect();
+        }
         playerManager.removePlayer(nickname);
     }
 
