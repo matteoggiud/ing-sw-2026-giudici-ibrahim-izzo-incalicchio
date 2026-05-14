@@ -1,8 +1,10 @@
 package it.polimi.ingsw.server.database;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -153,6 +155,37 @@ public class DataWriting {
             c.commit();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * It updates the game snapshot in the database for a given game ID. The snapshot is provided as a GameSnapshotDTO object, which is converted to JSON format before being stored in the database.
+     * Is used for game recovery in case of server crash, so it is crucial to keep it updated after every turn.
+     *
+     * @param gameId
+     * @param snapshot
+     */
+    public void updateGameSnapshot(int gameId, GameSnapshotDTO snapshot) {
+        String sql = "UPDATE game SET game_snapshot = ? WHERE game_id = ?";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            // Convert the GameSnapshotDTO to JSON using Jackson ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonSnapshot = objectMapper.writeValueAsString(snapshot);
+
+            // Set the JSON snapshot and game ID parameters in the prepared statement
+            ps.setString(1, jsonSnapshot);
+            ps.setInt(2, gameId);
+
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Impossible to update the game snapshot for game ID: " + gameId);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating game snapshot for game ID: " + gameId, e);
         }
     }
 }

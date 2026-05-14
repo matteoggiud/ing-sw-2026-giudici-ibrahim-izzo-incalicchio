@@ -4,6 +4,8 @@ import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
@@ -41,6 +43,10 @@ public class ComputeFinalScoreState implements IGameState {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null.");
         }
+
+        // First of all: Save the game snapshot for server persistance
+        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
 
         if (finalRankingNotified) {
             return;

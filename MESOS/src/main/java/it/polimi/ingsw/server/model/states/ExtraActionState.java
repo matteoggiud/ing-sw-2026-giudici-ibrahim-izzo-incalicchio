@@ -1,11 +1,14 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
@@ -49,6 +52,10 @@ public class ExtraActionState implements IGameState {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null.");
         }
+
+        // First of all: Save the game snapshot for server persistance
+        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
 
         if (!initialized) {
             initializePendingPlayers(game);
