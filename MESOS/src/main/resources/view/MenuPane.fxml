@@ -86,7 +86,8 @@
         <VBox fx:id="playerCountPanel"
               spacing="10.0"
               styleClass="menu-panel">
-            <Label text="Number of Players:"
+            <Label text="Number of Players"
+                   alignment="CENTER"
                    maxWidth="Infinity"
                    styleClass="menu-label"/>
 
