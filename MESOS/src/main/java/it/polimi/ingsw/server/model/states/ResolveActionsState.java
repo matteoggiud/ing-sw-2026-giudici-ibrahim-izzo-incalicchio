@@ -32,6 +32,7 @@ public class ResolveActionsState implements IGameState {
         notifyPlayerInfosUpdate(game);
 
         if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
+            notifyBoardUpdate(game);
             nextState(game);
             return;
         }
