@@ -1,74 +1,146 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/17.0.12"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.client.view.gui.controllers.GameController"
-            prefWidth="1100.0" prefHeight="700.0">
+<StackPane fx:id="gameRoot"
+           xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.polimi.ingsw.client.view.gui.controllers.GameController"
+           prefWidth="1600.0"
+           prefHeight="900.0"
+           stylesheets="@../styles/game.css"
+           styleClass="game-root">
 
-    <top>
-        <HBox spacing="8" alignment="TOP_LEFT" style="-fx-padding: 10;">
-            <VBox spacing="8">
-                <Label text="Game" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
-                <Label fx:id="eraLabel" text="Era: -"/>
-                <Label fx:id="turnLabel" text="Turn: -"/>
-                <Label fx:id="gameInfoLabel" text=""/>
-                <Button fx:id="seeResults" text="See Results" onAction="#handleSeeResults" visible="false" managed="false" style="-fx-font-size: 14px; -fx-padding: 8px 18px;"/>
-            </VBox>
+    <ImageView fx:id="backgroundImage"
+               smooth="true"
+               preserveRatio="false">
+        <image>
+            <Image url="@../assets/backgrounds/gameBg.PNG"/>
+        </image>
+    </ImageView>
 
-            <Region HBox.hgrow="ALWAYS"/>
+    <Pane fx:id="gameOverlay"
+          pickOnBounds="false">
 
-            <Button fx:id="leaveGameButton" text="Leave Game" onAction="#handleLeaveGame" style="-fx-font-size: 14px; -fx-padding: 8px 18px;"/>
+        <Label fx:id="eraLabel"
+               text="Era: -"
+               alignment="CENTER"
+               styleClass="game-info-label"/>
+
+        <Label fx:id="turnLabel"
+               text="Turn: -"
+               alignment="CENTER"
+               styleClass="game-info-label"/>
+
+        <Label fx:id="gameInfoLabel"
+               text=""
+               alignment="CENTER"
+               styleClass="game-info-label"/>
+
+        <Button fx:id="seeResults"
+                text="See Results"
+                onAction="#handleSeeResults"
+                visible="false"
+                managed="false"
+                styleClass="game-button"/>
+
+        <Button fx:id="leaveGameButton"
+                text="Leave"
+                onAction="#handleLeaveGame"
+                styleClass="game-button, danger"/>
+
+        <ScrollPane fx:id="upperRowArea"
+                    fitToHeight="true"
+                    fitToWidth="true"
+                    hbarPolicy="AS_NEEDED"
+                    vbarPolicy="NEVER"
+                    styleClass="game-scroll">
+            <HBox fx:id="upperRow"
+                  spacing="8"
+                  alignment="CENTER_LEFT"
+                  styleClass="game-card-row"/>
+        </ScrollPane>
+
+        <HBox fx:id="middleRowArea"
+              spacing="12"
+              alignment="CENTER_LEFT"
+              styleClass="game-row-wrapper">
+
+            <HBox fx:id="turnOrderBox"
+                  alignment="CENTER"
+                  minWidth="112"
+                  prefWidth="112"
+                  maxWidth="112"/>
+
+            <ScrollPane fitToHeight="true"
+                        fitToWidth="true"
+                        hbarPolicy="AS_NEEDED"
+                        vbarPolicy="NEVER"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="game-scroll">
+                <HBox fx:id="offerTrack"
+                      spacing="8"
+                      alignment="CENTER_LEFT"
+                      styleClass="game-card-row"/>
+            </ScrollPane>
         </HBox>
-    </top>
 
-    <center>
-        <VBox spacing="10" style="-fx-padding: 10;" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
-            <Label text="Board" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <ScrollPane fx:id="lowerRowArea"
+                    fitToHeight="true"
+                    fitToWidth="true"
+                    hbarPolicy="AS_NEEDED"
+                    vbarPolicy="NEVER"
+                    styleClass="game-scroll">
+            <HBox fx:id="lowerRow"
+                  spacing="8"
+                  alignment="CENTER_LEFT"
+                  styleClass="game-card-row"/>
+        </ScrollPane>
 
-            <!-- UPPER ROW -->
-            <Pane>
-                <HBox fx:id="upperRow" spacing="2" alignment="CENTER"/>
-            </Pane>
+        <VBox fx:id="statsPanel"
+              spacing="10"
+              styleClass="game-stats-panel">
+            <Label text="Players"
+                   alignment="CENTER"
+                   maxWidth="Infinity"
+                   styleClass="game-section-title"/>
 
-            <!-- MIDDLE ROW: offer track  + turn order -->
-            <HBox spacing="0" alignment="CENTER">
-                <HBox fx:id="turnOrderBox" alignment="CENTER">
-                </HBox>
+            <ListView fx:id="playersListView"
+                      VBox.vgrow="ALWAYS"
+                      styleClass="game-list"/>
 
-                <HBox HBox.hgrow="ALWAYS">
-                    <HBox fx:id="offerTrack"/>
-                </HBox>
-            </HBox>
+            <Label text="Your deck"
+                   alignment="CENTER"
+                   maxWidth="Infinity"
+                   styleClass="game-section-title"/>
 
-            <!-- LOWER ROW -->
-            <Pane>
-                <HBox fx:id="lowerRow" spacing="2" alignment="CENTER"/>
-            </Pane>
-
-            <!-- Optional area for debug/text summary of board -->
-            <TextArea fx:id="boardArea" editable="false" wrapText="true" prefRowCount="4" visible="false"/>
-        </VBox>
-    </center>
-
-    <!-- PLAYER PANELS alla destra (usa la tua playersListView già presente) -->
-    <right>
-        <VBox spacing="10" style="-fx-padding: 10;" >
-            <Label text="Players" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
-            <ListView fx:id="playersListView" maxHeight="600.0"/>
-        </VBox>
-    </right>
-
-    <bottom>
-        <VBox>
-            <Label text="Your deck"/>
-            <ScrollPane fitToHeight="true" fitToWidth="true" prefViewportHeight="200">
-                <HBox fx:id="myDeckBox" alignment="CENTER_LEFT"/>
+            <ScrollPane fitToHeight="true"
+                        fitToWidth="true"
+                        hbarPolicy="AS_NEEDED"
+                        vbarPolicy="NEVER"
+                        prefViewportHeight="145"
+                        styleClass="game-scroll">
+                <HBox fx:id="myDeckBox"
+                      spacing="8"
+                      alignment="CENTER_LEFT"
+                      styleClass="game-card-row"/>
             </ScrollPane>
         </VBox>
-    </bottom>
 
-</BorderPane>
+        <TextArea fx:id="boardArea"
+                  editable="false"
+                  wrapText="true"
+                  visible="false"
+                  managed="false"/>
+    </Pane>
+</StackPane>

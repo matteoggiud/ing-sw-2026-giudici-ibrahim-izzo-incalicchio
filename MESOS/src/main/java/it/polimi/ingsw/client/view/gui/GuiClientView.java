@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -21,19 +22,19 @@ public class GuiClientView implements ClientView {
 
     private GuiContext guiContext;
 
-    private Parent menuRoot;
+    private Region menuRoot;
     private MenuController menuController;
 
-    private Parent authRoot;
+    private Region authRoot;
     private AuthController authController;
 
-    private Parent lobbyRoot;
+    private Region lobbyRoot;
     private LobbyController lobbyController;
 
-    private Parent gameRoot;
+    private Region gameRoot;
     private GameController gameController;
 
-    private Parent endGameRoot;
+    private Region endGameRoot;
     private ScoreController scoreController;
 
     private Map<String, Integer> pendingFinalRanking = Map.of();
@@ -50,9 +51,22 @@ public class GuiClientView implements ClientView {
         this.guiContext = guiContext;
     }
 
-    public void showRoot(Parent node) {
+    private void showRoot(Region node) {
+        prepareScreenRoot(node);
         root.getChildren().setAll(node);
     }
+
+    private void prepareScreenRoot(Region node) {
+        node.setMinSize(0, 0);
+        node.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
+        node.prefWidthProperty().unbind();
+        node.prefHeightProperty().unbind();
+
+        node.prefWidthProperty().bind(root.widthProperty());
+        node.prefHeightProperty().bind(root.heightProperty());
+    }
+
 
     private void showMenu() {
         showRoot(menuRoot);
@@ -102,7 +116,7 @@ public class GuiClientView implements ClientView {
 
     }
 
-    private void changeSceneIfNeeded(Parent newRoot) {
+    private void changeSceneIfNeeded(Region newRoot) {
         if (newRoot == null) return;
         showRoot(newRoot);
     }

@@ -107,24 +107,32 @@ public class LobbyController {
     }
 
     private void bindBackgroundCover() {
-        DoubleBinding coverWidth = Bindings.createDoubleBinding(
-                () -> Math.max(lobbyRoot.getWidth(), lobbyRoot.getHeight() * BACKGROUND_RATIO),
+        double imageRatio = backgroundImage.getImage().getWidth() / backgroundImage.getImage().getHeight();
+
+        DoubleBinding imageWidth = Bindings.createDoubleBinding(
+                () -> Math.min(lobbyRoot.getWidth(), lobbyRoot.getHeight() * imageRatio),
                 lobbyRoot.widthProperty(),
                 lobbyRoot.heightProperty()
         );
 
-        DoubleBinding coverHeight = Bindings.createDoubleBinding(
-                () -> Math.max(lobbyRoot.getHeight(), lobbyRoot.getWidth() / BACKGROUND_RATIO),
+        DoubleBinding imageHeight = Bindings.createDoubleBinding(
+                () -> Math.min(lobbyRoot.getHeight(), lobbyRoot.getWidth() / imageRatio),
                 lobbyRoot.widthProperty(),
                 lobbyRoot.heightProperty()
         );
 
-        backgroundImage.fitWidthProperty().bind(coverWidth);
-        backgroundImage.fitHeightProperty().bind(coverHeight);
+        backgroundImage.fitWidthProperty().bind(imageWidth);
+        backgroundImage.fitHeightProperty().bind(imageHeight);
 
-        lobbyOverlay.prefWidthProperty().bind(coverWidth);
-        lobbyOverlay.prefHeightProperty().bind(coverHeight);
+        lobbyOverlay.minWidthProperty().bind(imageWidth);
+        lobbyOverlay.prefWidthProperty().bind(imageWidth);
+        lobbyOverlay.maxWidthProperty().bind(imageWidth);
+
+        lobbyOverlay.minHeightProperty().bind(imageHeight);
+        lobbyOverlay.prefHeightProperty().bind(imageHeight);
+        lobbyOverlay.maxHeightProperty().bind(imageHeight);
     }
+
 
     private void bindLobbyLayout() {
         bindNode(lobbyTitleLabel, TITLE_X, TITLE_Y, TITLE_W, TITLE_H);

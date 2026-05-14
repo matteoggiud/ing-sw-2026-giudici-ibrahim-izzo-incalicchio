@@ -44,7 +44,7 @@ public class GuiClientApp extends Application {
         primaryStage.setTitle("Mesos");
 
         StackPane root = new StackPane();
-        Scene scene = new Scene(root,1600, 900);
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
 
         Platform.runLater(() -> {
