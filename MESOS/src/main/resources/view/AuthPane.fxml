@@ -23,6 +23,7 @@
     <ImageView fx:id="backgroundImage"
                smooth="true"
                preserveRatio="false">
+
         <image>
             <Image url="@../assets/backgrounds/authBg.png"/>
         </image>

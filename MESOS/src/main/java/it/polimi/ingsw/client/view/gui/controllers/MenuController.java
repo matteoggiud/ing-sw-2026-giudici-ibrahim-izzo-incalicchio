@@ -141,27 +141,30 @@ public class MenuController {
      * Binds the menu layout to the background cover to ensure that the menu elements are always centered and properly spaced
      */
     private void bindBackgroundCover() {
-        // The background image should cover the entire menuRoot while maintaining its aspect ratio.
-        DoubleBinding coverWidth = Bindings.createDoubleBinding(
-                () -> Math.max(menuRoot.getWidth(), menuRoot.getHeight() * BACKGROUND_RATIO),
+        double imageRatio = backgroundImage.getImage().getWidth() / backgroundImage.getImage().getHeight();
+
+        DoubleBinding imageWidth = Bindings.createDoubleBinding(
+                () -> Math.min(menuRoot.getWidth(), menuRoot.getHeight() * imageRatio),
                 menuRoot.widthProperty(),
                 menuRoot.heightProperty()
         );
 
-        // Similarly, the cover height is determined by the width and the aspect ratio.
-        DoubleBinding coverHeight = Bindings.createDoubleBinding(
-                () -> Math.max(menuRoot.getHeight(), menuRoot.getWidth() / BACKGROUND_RATIO),
+        DoubleBinding imageHeight = Bindings.createDoubleBinding(
+                () -> Math.min(menuRoot.getHeight(), menuRoot.getWidth() / imageRatio),
                 menuRoot.widthProperty(),
                 menuRoot.heightProperty()
         );
 
-        // Bind the background image size to the calculated cover dimensions
-        backgroundImage.fitWidthProperty().bind(coverWidth);
-        backgroundImage.fitHeightProperty().bind(coverHeight);
+        backgroundImage.fitWidthProperty().bind(imageWidth);
+        backgroundImage.fitHeightProperty().bind(imageHeight);
 
-        // Bind the menu overlay size to match the cover dimensions
-        menuOverlay.prefWidthProperty().bind(coverWidth);
-        menuOverlay.prefHeightProperty().bind(coverHeight);
+        menuOverlay.minWidthProperty().bind(imageWidth);
+        menuOverlay.prefWidthProperty().bind(imageWidth);
+        menuOverlay.maxWidthProperty().bind(imageWidth);
+
+        menuOverlay.minHeightProperty().bind(imageHeight);
+        menuOverlay.prefHeightProperty().bind(imageHeight);
+        menuOverlay.maxHeightProperty().bind(imageHeight);
     }
 
     /**

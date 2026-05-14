@@ -58,27 +58,32 @@ public class AuthController {
     }
 
     private void bindBackgroundCover() {
-        // The background image should cover the entire authRoot while maintaining its aspect ratio.
-        DoubleBinding coverWidth = Bindings.createDoubleBinding(
-                () -> Math.max(authRoot.getWidth(), authRoot.getHeight() * BACKGROUND_RATIO),
-                authRoot.widthProperty(),
-                authRoot.heightProperty()
-        );
-        // Similarly, the cover height is determined by the width and the aspect ratio.
-        DoubleBinding coverHeight = Bindings.createDoubleBinding(
-                () -> Math.max(authRoot.getHeight(), authRoot.getWidth() / BACKGROUND_RATIO),
+        double imageRatio = backgroundImage.getImage().getWidth() / backgroundImage.getImage().getHeight();
+
+        DoubleBinding imageWidth = Bindings.createDoubleBinding(
+                () -> Math.min(authRoot.getWidth(), authRoot.getHeight() * imageRatio),
                 authRoot.widthProperty(),
                 authRoot.heightProperty()
         );
 
-        // Bind the background image size to the calculated cover dimensions
-        backgroundImage.fitWidthProperty().bind(coverWidth);
-        backgroundImage.fitHeightProperty().bind(coverHeight);
+        DoubleBinding imageHeight = Bindings.createDoubleBinding(
+                () -> Math.min(authRoot.getHeight(), authRoot.getWidth() / imageRatio),
+                authRoot.widthProperty(),
+                authRoot.heightProperty()
+        );
 
-        // The auth overlay should also cover the entire area of the background image to ensure consistent layout.
-        authOverlay.prefWidthProperty().bind(coverWidth);
-        authOverlay.prefHeightProperty().bind(coverHeight);
+        backgroundImage.fitWidthProperty().bind(imageWidth);
+        backgroundImage.fitHeightProperty().bind(imageHeight);
+
+        authOverlay.minWidthProperty().bind(imageWidth);
+        authOverlay.prefWidthProperty().bind(imageWidth);
+        authOverlay.maxWidthProperty().bind(imageWidth);
+
+        authOverlay.minHeightProperty().bind(imageHeight);
+        authOverlay.prefHeightProperty().bind(imageHeight);
+        authOverlay.maxHeightProperty().bind(imageHeight);
     }
+
 
     private void bindPanelToBackgroundPosition() {
         // The auth panel should have a width that is a percentage of the auth overlay, but clamped to reasonable limits for usability.
