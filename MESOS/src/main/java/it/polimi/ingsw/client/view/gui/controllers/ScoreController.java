@@ -51,9 +51,9 @@ public class ScoreController {
     private static final double PLAYER_POSITION_H = 0.070;
 
     private static final double BACK_BUTTON_X = 0.500;
-    private static final double BACK_BUTTON_Y = 0.918;
-    private static final double BACK_BUTTON_W = 0.175;
-    private static final double BACK_BUTTON_H = 0.060;
+    private static final double BACK_BUTTON_Y = 0.925;
+    private static final double BACK_BUTTON_W = 0.150;
+    private static final double BACK_BUTTON_H = 0.055;
 
     private GuiContext guiContext;
 
