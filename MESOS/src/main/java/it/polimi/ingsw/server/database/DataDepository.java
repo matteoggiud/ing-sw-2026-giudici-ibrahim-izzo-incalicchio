@@ -406,6 +406,8 @@ public class DataDepository {
             }
             return mapper.readTree(raw);
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
+            e.printStackTrace();
             throw new IllegalArgumentException("effectParams JSON non valido: " + raw, e);
         }
     }
@@ -417,7 +419,7 @@ public class DataDepository {
      * @return the card with the specified id, or null if no such card exists
      */
     public CharacterCard getCharacterCardById(int cardId) {
-        String query = "SELECT * FROM character_card JOIN card ON charcter_card_id=card_id WHERE id = ?";
+        String query = "SELECT * FROM character_card JOIN card ON character_card_id=card_id WHERE id = ?";
         CharacterCard card = null;
 
         try (Connection c = DatabaseManager.getConnection();
@@ -449,13 +451,14 @@ public class DataDepository {
                 }
             }
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
             e.printStackTrace();
         }
         return card;
     }
 
     public BuildingCard getBuildingCardById(int cardId) {
-        String query = "SELECT * FROM building_card JOIN card ON building_card_id=card_id WHERE card_id = ?";
+        String query = "SELECT * FROM building_card JOIN card ON building_card_id=card_id WHERE id = ?";
         BuildingCard card = null;
 
         try (Connection c = DatabaseManager.getConnection();
@@ -479,6 +482,7 @@ public class DataDepository {
                 }
             }
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -486,7 +490,7 @@ public class DataDepository {
     }
 
     public EventCard getEventCardById(int cardId) {
-        String query = "SELECT * FROM event_card JOIN card ON event_card_id=card_id WHERE card_id = ?";
+        String query = "SELECT * FROM event_card JOIN card ON event_card_id=card_id WHERE id = ?";
         EventCard card = null;
 
         try (Connection c = DatabaseManager.getConnection();
@@ -518,29 +522,27 @@ public class DataDepository {
                 }
             }
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
             e.printStackTrace();
         }
         return card;
     }
 
     public Card getCardbyId(int id){
-        Card card = null;
-        try{
-            card=getCharacterCardById(id);
-        }catch (Exception e){
-            System.out.println(e);
+        try {
+            Card card = getCharacterCardById(id);
+            if (card != null) return card;
+
+            card = getBuildingCardById(id);
+            if (card != null) return card;
+
+            card = getEventCardById(id);
+            if (card != null) return card;
+        } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
+            e.printStackTrace();
         }
-        try{
-            card=getBuildingCardById(id);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        try{
-            card=getEventCardById(id);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        return card;
+        return null;
     }
 
     public OfferBox getOfferBoxbyId(String OfferBoxId) {
@@ -552,6 +554,7 @@ public class DataDepository {
             ps.setString(1, OfferBoxId);
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
             e.printStackTrace();
         }
         return offerBox;
@@ -606,6 +609,7 @@ public class DataDepository {
                 }
             }
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -635,7 +639,7 @@ public class DataDepository {
                 }
             }
         } catch (Exception e) {
-            System.err.println("Failed to load game snapshot for gameId: " + gameId);
+            System.err.println("[ERROR] Exception caught in DataDepository (loadGameSnapshot): " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -660,7 +664,7 @@ public class DataDepository {
             }
 
         } catch (SQLException e) {
-            System.err.println("Failed to retrieve in-progress games.");
+            System.err.println("[ERROR] Exception caught in DataDepository (getInProgressGames): " + e.getMessage());
             e.printStackTrace();
         }
 

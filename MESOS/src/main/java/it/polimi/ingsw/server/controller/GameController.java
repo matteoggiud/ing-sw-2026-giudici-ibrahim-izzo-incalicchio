@@ -44,18 +44,19 @@ public class GameController {
             SessionRegistry.getInstance().registerSession(clientSession);
 
             try {
-
-
                 Integer gameId = model.getActiveGameIdForPlayer(username);
                 if (gameId != null) {
                     clientSession.setActiveGameId(gameId);
                     model.reconnectToGame(gameId, username, clientSession.getEventHandler());
                 }
             } catch (Exception e) {
-                //ignored
+                System.err.println("[ERROR] Exception caught in GameController (reconnecting to game): " + e.getMessage());
+                e.printStackTrace();
             }
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in GameController (login): " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
@@ -83,6 +84,8 @@ public class GameController {
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in GameController (register): " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Register failed: " + e.getMessage(), e);
         }
     }
@@ -246,6 +249,8 @@ public class GameController {
         try {
             nickname = clientSession.getNickname();
         } catch (Exception e) {
+            System.err.println("(Game portal) Player disconnected");
+            e.printStackTrace();
             clientSession.disconnectSession();
             return playersInterested;
         }

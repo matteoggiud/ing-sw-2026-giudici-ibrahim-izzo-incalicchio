@@ -21,7 +21,7 @@ public class DatabaseManager {
                 System.out.println("Connected to the PostgreSQL database.");
             }
         } catch (SQLException e) {
-            System.err.println("Error connecting to the PostgreSQL database.");
+            System.err.println("[ERROR] Exception caught in DatabaseManager: " + e.getMessage());
             e.printStackTrace();
         }
 

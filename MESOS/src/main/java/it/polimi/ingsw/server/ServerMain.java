@@ -5,10 +5,11 @@ import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
+import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
@@ -64,8 +65,15 @@ ServerMain {
                 for (int pendingGamesId : pendingGames) {
                     GameSnapshotDTO snapshotDTO = dataDepo.loadGameSnapshot(pendingGamesId);
                     Game restoredGame = GameBuilder.reconstructGame(snapshotDTO, dataDepo);
+                    //TODO: Understand if we can do it more safely
                     gamePortal.restoreGame(restoredGame);
                     System.out.println("Game " + pendingGamesId + " restored.");
+                }
+            } else {
+                // Set pending games as not in progress
+                for (int pendingGamesId : pendingGames) {
+                    new DataWriting().updateGameInProgress(pendingGamesId, false);
+                    System.out.println("Game " + pendingGamesId + " closed.");
                 }
             }
         }
@@ -83,6 +91,8 @@ ServerMain {
                 try {
                     socketServer.run();
                 } catch (IOException e) {
+                    System.err.println("[ERROR] Exception caught in ServerMain (Socket thread): " + e.getMessage());
+                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }).start();
@@ -100,7 +110,9 @@ ServerMain {
 
             System.out.println("[SERVER] Server rmi started at " + serverIp + ":" + rmiPort);
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in ServerMain: " + e.getMessage());
             e.printStackTrace();
         }
     }
 }
+

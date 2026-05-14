@@ -12,8 +12,13 @@ import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 import it.polimi.ingsw.server.network.EventHandler;
 
@@ -257,7 +262,8 @@ public class GamePortal implements IGameModel {
         // We then execute the remove game logic, which deletes the game
         gameManager.removeGame(gameId);
 
-        //TODO: update db
+        // Update db
+        new DataWriting().updateGameInProgress(gameId, false);
 
 
         return playerNames;
@@ -576,8 +582,7 @@ public class GamePortal implements IGameModel {
         gameManager.restoreGame(restoredGame);
 
         for (Player player : restoredGame.getPlayers().getPlayers()) {
-            if (player.isConnected()) {
-                player.disconnect();
+            if (!playerManager.isLoggedIn(player.getNickname())) {
                 playerManager.addPlayer(player);
             }
         }
@@ -592,5 +597,22 @@ public class GamePortal implements IGameModel {
 
         addObserver(game, eventHandler);
         game.getGameState().addPlayer(game, player);
+
+        // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
+        eventHandler.update(new GameStartedEvent(game));
+
+        // 2. Gli mandiamo lo stato attuale di Board, Risorse e Deck personale
+        eventHandler.update(new BoardUpdatedEvent(
+                gameId,
+               BoardDTOMapper.toBoardDTO(game)
+        ));
+        
+        eventHandler.update(new PlayerInfosChangedEvent(
+                gameId,
+                PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+        ));
+
+        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 
+        // non appena WaitingForReconnectState scatta su nextState()!
     }
 }

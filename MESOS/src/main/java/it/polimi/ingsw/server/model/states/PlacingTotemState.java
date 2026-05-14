@@ -55,6 +55,8 @@ public class PlacingTotemState implements IGameState {
             offerBox.placePlayer(player);
             game.getBoard().getTurnOrderBox().removePlayer(player);
         } catch (IllegalStateException e) {
+            System.err.println("[ERROR] Exception caught in PlacingTotemState: " + e.getMessage());
+            e.printStackTrace();
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 

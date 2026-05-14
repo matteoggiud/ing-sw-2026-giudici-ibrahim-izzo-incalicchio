@@ -98,6 +98,8 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -117,6 +119,8 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -132,6 +136,8 @@ public class DataWriting {
                 psUpdateGame.setInt(1, game.getGameId());
                 psUpdateGame.executeUpdate();
             } catch (SQLException e) {
+                System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
             Map<Player, Integer> rankings = ScoreCalculator.rankPlayer(game);
@@ -154,6 +160,8 @@ public class DataWriting {
             }
             c.commit();
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -175,8 +183,12 @@ public class DataWriting {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonSnapshot = objectMapper.writeValueAsString(snapshot);
 
+            org.postgresql.util.PGobject jsonObject = new org.postgresql.util.PGobject();
+            jsonObject.setType("jsonb");
+            jsonObject.setValue(jsonSnapshot);
+
             // Set the JSON snapshot and game ID parameters in the prepared statement
-            ps.setString(1, jsonSnapshot);
+            ps.setObject(1, jsonObject);
             ps.setInt(2, gameId);
 
             int rows = ps.executeUpdate();
@@ -185,6 +197,7 @@ public class DataWriting {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Error updating game snapshot for game ID: " + gameId, e);
         }
     }
@@ -205,6 +218,8 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Error updating game in_progress", e);
         }
     }

@@ -125,7 +125,9 @@ CREATE TABLE game (
     expected_players INTEGER NOT NULL CHECK (expected_players BETWEEN 2 AND 5),
     host_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE SET NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    finished_at TIMESTAMP DEFAULT NULL
+    finished_at TIMESTAMP DEFAULT NULL,
+    in_progress BOOLEAN NOT NULL DEFAULT FALSE,
+    game_snapshot JSONB NOT NULL DEFAULT '{}'
 );
 
 --Explicity asked to save the final score in the database
