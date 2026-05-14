@@ -3,27 +3,86 @@ package it.polimi.ingsw.client.view.gui.controllers;
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ScoreController {
 
+    private static final double BACKGROUND_RATIO = 1672.0 / 941.0;
+
+    private static final double TITLE_X = 0.500;
+    private static final double TITLE_Y = 0.108;
+    private static final double TITLE_W = 0.310;
+    private static final double TITLE_H = 0.070;
+
+    private static final double RANKING_TITLE_X = 0.500;
+    private static final double RANKING_TITLE_Y = 0.245;
+    private static final double RANKING_TITLE_W = 0.360;
+    private static final double RANKING_TITLE_H = 0.055;
+
+    private static final double RANKING_LIST_X = 0.500;
+    private static final double RANKING_LIST_Y = 0.425;
+    private static final double RANKING_LIST_W = 0.860;
+    private static final double RANKING_LIST_H = 0.320;
+
+    private static final double GLOBAL_TITLE_X = 0.500;
+    private static final double GLOBAL_TITLE_Y = 0.685;
+    private static final double GLOBAL_TITLE_W = 0.360;
+    private static final double GLOBAL_TITLE_H = 0.055;
+
+    private static final double PLAYER_POSITION_X = 0.500;
+    private static final double PLAYER_POSITION_Y = 0.760;
+    private static final double PLAYER_POSITION_W = 0.390;
+    private static final double PLAYER_POSITION_H = 0.070;
+
+    private static final double BACK_BUTTON_X = 0.500;
+    private static final double BACK_BUTTON_Y = 0.918;
+    private static final double BACK_BUTTON_W = 0.175;
+    private static final double BACK_BUTTON_H = 0.060;
+
     private GuiContext guiContext;
 
     @FXML
-    private Label subtitleLabel;
+    private StackPane scoreRoot;
+
+    @FXML
+    private ImageView backgroundImage;
+
+    @FXML
+    private Pane scoreOverlay;
+
+    @FXML
+    private Label titleLabel;
+
+    @FXML
+    private Label rankingTitleLabel;
 
     @FXML
     private ListView<String> rankingListView;
 
     @FXML
+    private Label globalTitleLabel;
+
+    @FXML
     private Label playerPositionLabel;
+
+    @FXML
+    private Button backToMenuButton;
 
     private final ObservableList<String> rankingItems = FXCollections.observableArrayList();
 
@@ -34,13 +93,13 @@ public class ScoreController {
     @FXML
     private void initialize() {
         rankingListView.setItems(rankingItems);
+        bindScoreLayout();
     }
 
     public void showMatchRankings(Map<String, Integer> finalRanking) {
         Platform.runLater(() -> {
-
-            if(finalRanking == null || finalRanking.isEmpty()) {
-                rankingItems.add("Rankings Unavailable");
+            if (finalRanking == null || finalRanking.isEmpty()) {
+                rankingItems.setAll("Rankings unavailable");
                 return;
             }
 
@@ -52,38 +111,45 @@ public class ScoreController {
                     })
                     .collect(Collectors.toList());
 
-            String me = guiContext != null && guiContext.clientState() != null ? guiContext.clientState().getNickname() : null;
+            String me = guiContext != null && guiContext.clientState() != null
+                    ? guiContext.clientState().getNickname()
+                    : null;
 
+            List<String> rows = new ArrayList<>();
             int pos = 1;
-            for (Map.Entry<String, Integer> e : ordered) {
-                String nick = e.getKey() == null ? "-" : e.getKey();
-                String label = String.format("#%d %s%s \u2014 %d pt",
+
+            for (Map.Entry<String, Integer> entry : ordered) {
+                String nick = entry.getKey() == null ? "-" : entry.getKey();
+                int score = entry.getValue() == null ? 0 : entry.getValue();
+
+                rows.add(String.format("#%d  %s%s  -  %d pt",
                         pos++,
                         nick,
-                        (me != null && me.equals(nick) ? " (you)" : ""),
-                        e.getValue() == null ? 0 : e.getValue());
-                rankingItems.add(label);
+                        me != null && me.equals(nick) ? " (you)" : "",
+                        score));
             }
+
+            rankingItems.setAll(rows);
         });
     }
 
     public void showGlobalPosition(List<LeadBoardDTO> global) {
         Platform.runLater(() -> {
-            String Player = guiContext != null && guiContext.clientState() != null ? guiContext.clientState().getNickname() : null;
+            String player = guiContext != null && guiContext.clientState() != null
+                    ? guiContext.clientState().getNickname()
+                    : null;
 
             if (global != null && !global.isEmpty()) {
-                int position = 1;
                 for (LeadBoardDTO board : global) {
-                    if (Player != null && Player.equals(board.nickname())) {
-                        String scoreText = String.format("Your Position: #%d with %d points",
-                                position,
-                                board.finalScore());
-                        playerPositionLabel.setText(scoreText);
+                    if (player != null && player.equals(board.nickname())) {
+                        playerPositionLabel.setText(String.format("Your position: #%d with %d points",
+                                board.position(),
+                                board.finalScore()));
                         return;
                     }
-                    position++;
                 }
             }
+
             playerPositionLabel.setText("Position not found");
         });
     }
@@ -94,5 +160,55 @@ public class ScoreController {
 
         guiContext.clientController().getAvailableGames();
     }
-}
 
+    private void bindScoreLayout() {
+        DoubleBinding imageWidth = Bindings.createDoubleBinding(() -> {
+            double rootWidth = scoreRoot.getWidth();
+            double rootHeight = scoreRoot.getHeight();
+
+            if (rootWidth <= 0 || rootHeight <= 0) return 0.0;
+
+            return Math.min(rootWidth, rootHeight * BACKGROUND_RATIO);
+        }, scoreRoot.widthProperty(), scoreRoot.heightProperty());
+
+        DoubleBinding imageHeight = imageWidth.divide(BACKGROUND_RATIO);
+
+        backgroundImage.fitWidthProperty().bind(imageWidth);
+        backgroundImage.fitHeightProperty().bind(imageHeight);
+
+        scoreOverlay.minWidthProperty().bind(imageWidth);
+        scoreOverlay.prefWidthProperty().bind(imageWidth);
+        scoreOverlay.maxWidthProperty().bind(imageWidth);
+
+        scoreOverlay.minHeightProperty().bind(imageHeight);
+        scoreOverlay.prefHeightProperty().bind(imageHeight);
+        scoreOverlay.maxHeightProperty().bind(imageHeight);
+
+        bindNode(titleLabel, TITLE_X, TITLE_Y, TITLE_W, TITLE_H, imageWidth, imageHeight);
+        bindNode(rankingTitleLabel, RANKING_TITLE_X, RANKING_TITLE_Y, RANKING_TITLE_W, RANKING_TITLE_H, imageWidth, imageHeight);
+        bindNode(rankingListView, RANKING_LIST_X, RANKING_LIST_Y, RANKING_LIST_W, RANKING_LIST_H, imageWidth, imageHeight);
+        bindNode(globalTitleLabel, GLOBAL_TITLE_X, GLOBAL_TITLE_Y, GLOBAL_TITLE_W, GLOBAL_TITLE_H, imageWidth, imageHeight);
+        bindNode(playerPositionLabel, PLAYER_POSITION_X, PLAYER_POSITION_Y, PLAYER_POSITION_W, PLAYER_POSITION_H, imageWidth, imageHeight);
+        bindNode(backToMenuButton, BACK_BUTTON_X, BACK_BUTTON_Y, BACK_BUTTON_W, BACK_BUTTON_H, imageWidth, imageHeight);
+    }
+
+    private void bindNode(Region node,
+                          double centerX,
+                          double centerY,
+                          double width,
+                          double height,
+                          DoubleBinding imageWidth,
+                          DoubleBinding imageHeight) {
+        node.layoutXProperty().bind(imageWidth.multiply(centerX - width / 2.0));
+        node.layoutYProperty().bind(imageHeight.multiply(centerY - height / 2.0));
+
+        node.prefWidthProperty().bind(imageWidth.multiply(width));
+        node.prefHeightProperty().bind(imageHeight.multiply(height));
+
+        node.minWidthProperty().bind(imageWidth.multiply(width));
+        node.minHeightProperty().bind(imageHeight.multiply(height));
+
+        node.maxWidthProperty().bind(imageWidth.multiply(width));
+        node.maxHeightProperty().bind(imageHeight.multiply(height));
+    }
+}
