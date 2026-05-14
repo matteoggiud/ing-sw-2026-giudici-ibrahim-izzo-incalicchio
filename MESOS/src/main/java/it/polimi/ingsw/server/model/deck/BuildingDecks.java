@@ -66,4 +66,16 @@ public class BuildingDecks {
         this.buildingDecksEra3.addBuildingCards(cardsEra3);
 
     }
+
+    public BuildingDeck getBuildingDecksEra1() {
+        return buildingDecksEra1;
+    }
+
+    public BuildingDeck getBuildingDecksEra2() {
+        return buildingDecksEra2;
+    }
+
+    public BuildingDeck getBuildingDecksEra3() {
+        return buildingDecksEra3;
+    }
 }
