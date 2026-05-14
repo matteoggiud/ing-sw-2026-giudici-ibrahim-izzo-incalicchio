@@ -131,7 +131,7 @@ public class MenuController {
                     setText(null);
                 } else {
                     setText(String.format("#%d %s - %d pt (%s)",
-                            item.position(), item.nickname(), item.finalScore(), item.finished_at()));
+                            item.position(), item.nickname(), item.finalScore()));
                 }
             }
         });

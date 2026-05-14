@@ -380,14 +380,12 @@ public class TerminalRenderer {
 
         for (LeadBoardDTO dto : rankings) {
             String nickname = dto.nickname() == null ? "-" : dto.nickname();
-            String finishedAt = dto.finished_at() == null ? "-" : dto.finished_at();
 
             System.out.printf(
                     "%-4d %-18s %-8d %-20s%n",
                     dto.position(),
                     nickname,
-                    dto.finalScore(),
-                    finishedAt
+                    dto.finalScore()
             );
         }
     }
