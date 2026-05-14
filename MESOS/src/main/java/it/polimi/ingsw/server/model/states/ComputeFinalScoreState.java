@@ -9,10 +9,12 @@ import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+
 import java.util.List;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * The ComputeFinalScoreState class represents the state of the game where the final scores
@@ -44,8 +46,8 @@ public class ComputeFinalScoreState implements IGameState {
             throw new IllegalArgumentException("Game cannot be null.");
         }
 
-        // Set the game ad finished
-        new DataWriting().updateGameInProgress(game.getGameId(), false);
+        // Set the game as finished in the database in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> new DataWriting().updateGameInProgress(game.getGameId(), false));
 
         if (finalRankingNotified) {
             return;
@@ -87,9 +89,7 @@ public class ComputeFinalScoreState implements IGameState {
         dw.rankingsUpdate(game);
         DataDepository dataDepository = new DataDepository();
         List<LeadBoardDTO> historicalLeaderboard = dataDepository.getLeadBoard(game.getExpectedPlayerCount());
-        game.getObserverManager().notifyObservers(
-                new GameEndedEvent(game.getGameId(), rankingByNickname, game.getExpectedPlayerCount(), historicalLeaderboard)
-        );
+        game.getObserverManager().notifyObservers(new GameEndedEvent(game.getGameId(), rankingByNickname, game.getExpectedPlayerCount(), historicalLeaderboard));
     }
 
     @Override

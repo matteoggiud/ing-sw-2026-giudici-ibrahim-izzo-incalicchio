@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents the end round phase of the game.
@@ -47,9 +48,12 @@ public class EndRoundState implements IGameState {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null");
         }
-        // First of all: Save the game snapshot for server persistance
-        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
-        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
 
         if (game.isLastRound()) {
             game.setLastRoundTriggered(true);

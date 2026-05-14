@@ -13,6 +13,8 @@ import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.ResolveActionTurnChangedEvent;
 
+import java.util.concurrent.CompletableFuture;
+
 
 /**
  * Represents the state of the game where players resolve their actions
@@ -31,9 +33,11 @@ public class ResolveActionsState implements IGameState {
      */
     @Override
     public void executePhase(Game game) {
-        // First of all: Save the game snapshot for server persistance
-        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
-        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
 
         actionResolver.resolveAutomaticSkips(game);
         notifyPlayerInfosUpdate(game);
@@ -82,9 +86,7 @@ public class ResolveActionsState implements IGameState {
      * @param game the current game context
      */
     private void notifyBoardUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
-        );
+        game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 
     /**
@@ -94,19 +96,12 @@ public class ResolveActionsState implements IGameState {
      */
     private void notifyCurrentResolvingPlayer(Game game) {
         Player currentPlayer = game.getBoard().getOfferTrack().getCurrentPlayer();
-        game.getObserverManager().notifyObservers(
-                new ResolveActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
+        game.getObserverManager().notifyObservers(new ResolveActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname()));
     }
 
 
     private void notifyPlayerInfosUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new PlayerInfosChangedEvent(
-                        game.getGameId(),
-                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-                )
-        );
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
     }
 
     @Override

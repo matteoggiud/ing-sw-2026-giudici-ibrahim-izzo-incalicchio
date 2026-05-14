@@ -18,6 +18,7 @@ import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents the phase where players with a specific building effect
@@ -53,9 +54,11 @@ public class ExtraActionState implements IGameState {
             throw new IllegalArgumentException("Game cannot be null.");
         }
 
-        // First of all: Save the game snapshot for server persistance
-        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
-        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
 
         if (!initialized) {
             initializePendingPlayers(game);
@@ -152,8 +155,7 @@ public class ExtraActionState implements IGameState {
      * @return true if the player owns an extra action effect, false otherwise
      */
     private boolean hasExtraActionEffect(Player player) {
-        return player.getPlayerDeck().getActiveExtractionEffects().stream()
-                .anyMatch(IExtraActionEffect::hasExtraAction);
+        return player.getPlayerDeck().getActiveExtractionEffects().stream().anyMatch(IExtraActionEffect::hasExtraAction);
     }
 
     /**
@@ -162,9 +164,7 @@ public class ExtraActionState implements IGameState {
      * @param game the current game context
      */
     private void notifyBoardUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
-        );
+        game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 
     /**
@@ -174,20 +174,12 @@ public class ExtraActionState implements IGameState {
      */
     private void notifyCurrentExtraActionPlayer(Game game) {
         Player currentPlayer = pendingPlayers.get(0);
-        game.getObserverManager().notifyObservers(
-                new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
+        game.getObserverManager().notifyObservers(new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname()));
     }
 
 
-
     private void notifyPlayerInfosUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new PlayerInfosChangedEvent(
-                        game.getGameId(),
-                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-                )
-        );
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
     }
 
     @Override

@@ -43,6 +43,7 @@ public class GameController {
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
 
+            System.out.println("[INFO] Player " + username + " logged in successfully.");
             try {
                 Integer gameId = model.getActiveGameIdForPlayer(username);
                 if (gameId != null) {
@@ -51,12 +52,10 @@ public class GameController {
                 }
             } catch (Exception e) {
                 System.err.println("[ERROR] Exception caught in GameController (reconnecting to game): " + e.getMessage());
-                e.printStackTrace();
             }
 
         } catch (SQLException e) {
             System.err.println("[ERROR] Exception caught in GameController (login): " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
@@ -83,6 +82,7 @@ public class GameController {
             clientSession.setNickname(username);
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
+            System.out.println("[INFO] Player " + username + " register and logged in successfully.");
         } catch (SQLException e) {
             System.err.println("[ERROR] Exception caught in GameController (register): " + e.getMessage());
             e.printStackTrace();
@@ -110,6 +110,8 @@ public class GameController {
 
         // update the client session to reflect the game they have joined
         clientSession.setActiveGameId(gameId);
+
+        System.out.println("[INFO] Player " + clientSession.getNickname() + " joined game " + gameId + " successfully.");
 
         model.startGameIfReady(gameId);
 
@@ -250,7 +252,6 @@ public class GameController {
             nickname = clientSession.getNickname();
         } catch (Exception e) {
             System.err.println("(Game portal) Player disconnected");
-            e.printStackTrace();
             clientSession.disconnectSession();
             return playersInterested;
         }

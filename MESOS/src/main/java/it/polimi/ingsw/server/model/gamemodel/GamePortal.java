@@ -601,15 +601,16 @@ public class GamePortal implements IGameModel {
         // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
         eventHandler.update(new GameStartedEvent(game));
 
-        // 2. Gli mandiamo lo stato attuale di Board, Risorse e Deck personale
-        eventHandler.update(new BoardUpdatedEvent(
-                gameId,
-               BoardDTOMapper.toBoardDTO(game)
-        ));
-        
+        // 2. Mandiamo PRIMA le info dei giocatori (così il client sa a chi appartengono i Totem e di che colore sono!)
         eventHandler.update(new PlayerInfosChangedEvent(
                 gameId,
                 PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+        ));
+
+        // 3. POI gli mandiamo lo stato attuale di Board, così quando renderizza la Turn Order Track i Totem avranno il colore giusto
+        eventHandler.update(new BoardUpdatedEvent(
+                gameId,
+               BoardDTOMapper.toBoardDTO(game)
         ));
 
         // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 

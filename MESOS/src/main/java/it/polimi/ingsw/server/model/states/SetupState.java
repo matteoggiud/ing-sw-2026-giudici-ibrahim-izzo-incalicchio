@@ -9,6 +9,8 @@ import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 
+import java.util.concurrent.CompletableFuture;
+
 
 public class SetupState implements IGameState {
 
@@ -33,8 +35,8 @@ public class SetupState implements IGameState {
         // Prepare the board, decks, turn order and initial resources.
         builder.prepareGame();
 
-        // Update the database to set the game as in progress
-        new DataWriting().updateGameInProgress(game.getGameId(), true);
+        // Update the database to set the game as in progress in a thread
+        CompletableFuture.runAsync(() -> new DataWriting().updateGameInProgress(game.getGameId(), true));
 
 
         // Notify observers about the board initialized

@@ -505,7 +505,7 @@ public class GameBuilder {
         tribeDeck.getTribeDeck().clear();
         for (int id : snapshot.remainingTribeCardIds()) {
             try {
-                TribeCard card = (TribeCard) depository.getCardbyId(id);
+                TribeCard card = (TribeCard) depository.getCardById(id);
 
                 tribeDeck.getTribeDeck().add(card);
             } catch (Exception ex) {

@@ -12,6 +12,8 @@ import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 
+import java.util.concurrent.CompletableFuture;
+
 public class PlacingTotemState implements IGameState {
 
     @Override
@@ -22,9 +24,11 @@ public class PlacingTotemState implements IGameState {
 
     @Override
     public void executePhase(Game game) {
-        // First of all: Save the game snapshot for server persistance
-        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
-        new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
 
         // Notify the first player who must place their totem.
         notifyCurrentPlacingPlayer(game);
