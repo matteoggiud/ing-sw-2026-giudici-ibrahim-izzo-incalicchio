@@ -51,7 +51,7 @@ public class GuiClientView implements ClientView {
         this.guiContext = guiContext;
     }
 
-    private void showRoot(Region node) {
+    public void showRoot(Region node) {
         prepareScreenRoot(node);
         root.getChildren().setAll(node);
     }
