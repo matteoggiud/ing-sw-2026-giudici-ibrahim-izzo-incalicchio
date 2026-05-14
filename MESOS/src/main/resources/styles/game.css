@@ -1,0 +1,179 @@
+.game-root {
+    -fx-background-color: #050201;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.game-info-label {
+    -fx-font-size: 15px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #f0bd63;
+    -fx-background-color: rgba(12, 6, 3, 0.30);
+    -fx-background-radius: 5;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.82), 8, 0.35, 0, 2);
+}
+
+.game-section-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #f0bd63;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.85), 8, 0.35, 0, 2);
+}
+
+.game-scroll {
+    -fx-background-color: rgba(12, 6, 3, 0.10);
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 4;
+}
+
+.game-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.game-card-row {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+}
+
+.game-row-wrapper {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+}
+
+.game-stats-panel {
+    -fx-background-color: rgba(12, 6, 3, 0.18);
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+}
+
+.game-list {
+    -fx-background-color: rgba(12, 6, 3, 0.20);
+    -fx-background-radius: 5;
+    -fx-border-color: transparent;
+    -fx-padding: 6;
+}
+
+.game-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f4d69b;
+    -fx-font-size: 13px;
+    -fx-padding: 9 10 9 10;
+}
+
+.game-list .list-cell:filled:selected {
+    -fx-background-color: rgba(210, 130, 39, 0.55);
+    -fx-text-fill: #fff0cf;
+}
+
+.game-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-cursor: hand;
+    -fx-background-color: rgba(12, 6, 3, 0.52);
+    -fx-text-fill: #e4b15c;
+    -fx-border-color: rgba(212, 139, 48, 0.90);
+    -fx-border-width: 1;
+}
+
+.game-button:hover {
+    -fx-background-color: rgba(78, 36, 11, 0.78);
+    -fx-text-fill: #ffd98a;
+}
+
+.game-button.danger {
+    -fx-background-color: linear-gradient(to bottom, #9d321d, #5e130b);
+    -fx-text-fill: #ffd39a;
+    -fx-border-color: #d26b37;
+}
+
+.game-button.danger:hover {
+    -fx-background-color: linear-gradient(to bottom, #b94727, #741b0f);
+}
+
+.game-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 8 8 8;
+}
+
+.game-list .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.game-list .list-cell:filled:selected {
+    -fx-background-color: rgba(210, 130, 39, 0.45);
+}
+
+.player-cell-root {
+    -fx-padding: 4 2 4 2;
+}
+
+.player-nickname {
+    -fx-text-fill: #ffd98a;
+    -fx-font-size: 14px;
+    -fx-font-weight: 900;
+}
+
+.player-resources {
+    -fx-text-fill: #f4d69b;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+}
+
+.player-stats {
+    -fx-text-fill: #d9b875;
+    -fx-font-size: 11px;
+}
+
+.game-stats-panel {
+    -fx-background-color: rgba(12, 6, 3, 0.18);
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+}
+
+.game-stats-panel .label {
+    -fx-text-fill: #f4d69b;
+}
+
+.game-stats-panel .game-section-title {
+    -fx-text-fill: #ffd36a;
+    -fx-font-weight: 900;
+}
+
+.game-list {
+    -fx-background-color: rgba(12, 6, 3, 0.20);
+    -fx-background-radius: 5;
+    -fx-border-color: transparent;
+    -fx-padding: 6;
+}
+
+.game-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f4d69b;
+    -fx-padding: 8 8 8 8;
+}
+
+.game-list .list-cell .label {
+    -fx-text-fill: #f4d69b;
+}
+
+.game-list .list-cell .text {
+    -fx-fill: #f4d69b;
+}
+
+.game-list .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.game-list .list-cell:filled:selected {
+    -fx-background-color: rgba(210, 130, 39, 0.45);
+}
+
+.game-list .list-cell:filled:selected .label {
+    -fx-text-fill: #fff0cf;
+}
+
+.game-list .list-cell:filled:selected .text {
+    -fx-fill: #fff0cf;
+}

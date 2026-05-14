@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.geometry.Point2D;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 
 import java.util.Comparator;
 
@@ -24,8 +26,48 @@ public class GameController {
 
     private static final int IMG_WIDTH = 100;
     private static final int IMG_HEIGHT = 160;
+
     private static final int TOTEM_HEIGHT = 50;
     private static final int TOTEM_WIDTH = 26;
+
+    private static final double INFO_Y = 0.200;
+    private static final double INFO_W = 0.165;
+    private static final double INFO_H = 0.050;
+    private static final double ERA_X = 0.245;
+    private static final double TURN_X = 0.435;
+    private static final double GAME_INFO_X = 0.625;
+
+    private static final double UPPER_ROW_X = 0.405;
+    private static final double UPPER_ROW_Y = 0.330;
+    private static final double UPPER_ROW_W = 0.655;
+    private static final double UPPER_ROW_H = 0.190;
+
+    private static final double MIDDLE_ROW_X = 0.405;
+    private static final double MIDDLE_ROW_Y = 0.545;
+    private static final double MIDDLE_ROW_W = 0.655;
+    private static final double MIDDLE_ROW_H = 0.190;
+
+    private static final double LOWER_ROW_X = 0.405;
+    private static final double LOWER_ROW_Y = 0.785;
+    private static final double LOWER_ROW_W = 0.655;
+    private static final double LOWER_ROW_H = 0.190;
+
+    private static final double STATS_X = 0.870;
+    private static final double STATS_Y = 0.600;
+    private static final double STATS_W = 0.205;
+    private static final double STATS_H = 0.710;
+
+    private static final double LEAVE_X = 0.945;
+    private static final double LEAVE_Y = 0.068;
+    private static final double LEAVE_W = 0.055;
+    private static final double LEAVE_H = 0.045;
+
+    private static final double RESULTS_X = 0.825;
+    private static final double RESULTS_Y = 0.068;
+    private static final double RESULTS_W = 0.100;
+    private static final double RESULTS_H = 0.045;
+
+
 
     @FXML
     private Button seeResults;
@@ -41,7 +83,6 @@ public class GameController {
     private Label gameInfoLabel;
     @FXML
     private ListView<PlayerInfoDTO> playersListView;
-
     @FXML
     private HBox upperRow;
     @FXML
@@ -50,6 +91,23 @@ public class GameController {
     private HBox turnOrderBox;
     @FXML
     private HBox lowerRow;
+    @FXML
+    private StackPane gameRoot;
+    @FXML
+    private ImageView backgroundImage;
+    @FXML
+    private Pane gameOverlay;
+    @FXML
+    private ScrollPane upperRowArea;
+    @FXML
+    private HBox middleRowArea;
+    @FXML
+    private ScrollPane lowerRowArea;
+    @FXML
+    private VBox statsPanel;
+
+
+
 
     private final ObservableList<PlayerInfoDTO> playersItems = FXCollections.observableArrayList();
 
@@ -65,11 +123,13 @@ public class GameController {
 
     @FXML
     private void initialize() {
-        playersListView.setItems(playersItems);
+        bindBackgroundContain();
+        bindGameLayout();
 
-        // Cell factory: per ogni PlayerInfoDTO crea un pannello con stats + deck
+        playersListView.setItems(playersItems);
         playersListView.setCellFactory(lv -> new PlayerCell());
     }
+
 
     private void configureCardNode(ImageView iv, int cardId, boolean isUpper) {
         iv.setOnMouseEntered(e -> {
@@ -307,7 +367,7 @@ public class GameController {
 
     public void showGameStarted(int gameId, List<String> playerNicknames) {
         Platform.runLater(() -> {
-            gameInfoLabel.setText("Game started. ID: " + gameId + " | Players: " + String.join(", ", playerNicknames));
+            gameInfoLabel.setText("Players: " + String.join(", ", playerNicknames));
             turnLabel.setText("Turn: waiting...");
             eraLabel.setText("Era: -");
         });
@@ -467,6 +527,7 @@ public class GameController {
         private final Label resourceLabel = new Label();
         private final Pane totemImage = new Pane();
 
+
         PlayerCell() {
             super();
 
@@ -560,4 +621,60 @@ public class GameController {
         }
         guiContext.clientController().leftGame();
     }
+
+    private void bindBackgroundContain() {
+        double imageRatio = backgroundImage.getImage().getWidth() / backgroundImage.getImage().getHeight();
+
+        DoubleBinding imageWidth = Bindings.createDoubleBinding(
+                () -> Math.min(gameRoot.getWidth(), gameRoot.getHeight() * imageRatio),
+                gameRoot.widthProperty(),
+                gameRoot.heightProperty()
+        );
+
+        DoubleBinding imageHeight = Bindings.createDoubleBinding(
+                () -> Math.min(gameRoot.getHeight(), gameRoot.getWidth() / imageRatio),
+                gameRoot.widthProperty(),
+                gameRoot.heightProperty()
+        );
+
+        backgroundImage.fitWidthProperty().bind(imageWidth);
+        backgroundImage.fitHeightProperty().bind(imageHeight);
+
+        gameOverlay.minWidthProperty().bind(imageWidth);
+        gameOverlay.prefWidthProperty().bind(imageWidth);
+        gameOverlay.maxWidthProperty().bind(imageWidth);
+
+        gameOverlay.minHeightProperty().bind(imageHeight);
+        gameOverlay.prefHeightProperty().bind(imageHeight);
+        gameOverlay.maxHeightProperty().bind(imageHeight);
+    }
+
+    private void bindGameLayout() {
+        bindNode(eraLabel, ERA_X, INFO_Y, INFO_W, INFO_H);
+        bindNode(turnLabel, TURN_X, INFO_Y, INFO_W, INFO_H);
+        bindNode(gameInfoLabel, GAME_INFO_X, INFO_Y, INFO_W, INFO_H);
+
+        bindNode(upperRowArea, UPPER_ROW_X, UPPER_ROW_Y, UPPER_ROW_W, UPPER_ROW_H);
+        bindNode(middleRowArea, MIDDLE_ROW_X, MIDDLE_ROW_Y, MIDDLE_ROW_W, MIDDLE_ROW_H);
+        bindNode(lowerRowArea, LOWER_ROW_X, LOWER_ROW_Y, LOWER_ROW_W, LOWER_ROW_H);
+
+        bindNode(statsPanel, STATS_X, STATS_Y, STATS_W, STATS_H);
+
+        bindNode(leaveGameButton, LEAVE_X, LEAVE_Y, LEAVE_W, LEAVE_H);
+        bindNode(seeResults, RESULTS_X, RESULTS_Y, RESULTS_W, RESULTS_H);
+    }
+
+    private void bindNode(Region node, double centerX, double centerY, double width, double height) {
+        node.prefWidthProperty().bind(gameOverlay.widthProperty().multiply(width));
+        node.prefHeightProperty().bind(gameOverlay.heightProperty().multiply(height));
+
+        node.layoutXProperty().bind(gameOverlay.widthProperty()
+                .multiply(centerX)
+                .subtract(gameOverlay.widthProperty().multiply(width).divide(2.0)));
+
+        node.layoutYProperty().bind(gameOverlay.heightProperty()
+                .multiply(centerY)
+                .subtract(gameOverlay.heightProperty().multiply(height).divide(2.0)));
+    }
+
 }
