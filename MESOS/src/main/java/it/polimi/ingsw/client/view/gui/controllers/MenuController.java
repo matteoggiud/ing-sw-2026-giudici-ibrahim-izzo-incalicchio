@@ -130,7 +130,7 @@ public class MenuController {
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(String.format("#%d %s - %d pt (%s)",
+                    setText(String.format("#%d %s - %d pts",
                             item.position(), item.nickname(), item.finalScore()));
                 }
             }

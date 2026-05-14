@@ -375,14 +375,14 @@ public class TerminalRenderer {
     private void printHistoricalRankings(List<LeadBoardDTO> rankings) {
         printSection("Historical leaderboard");
 
-        System.out.printf("%-4s %-18s %-8s %-20s%n", "Pos", "Player", "Score", "Finished at");
-        printLine(56);
+        System.out.printf("%-4s %-18s %-8s%n", "Pos", "Player", "Score");
+        printLine(36);
 
         for (LeadBoardDTO dto : rankings) {
             String nickname = dto.nickname() == null ? "-" : dto.nickname();
 
             System.out.printf(
-                    "%-4d %-18s %-8d %-20s%n",
+                    "%-4d %-18s %-8d%n",
                     dto.position(),
                     nickname,
                     dto.finalScore()
