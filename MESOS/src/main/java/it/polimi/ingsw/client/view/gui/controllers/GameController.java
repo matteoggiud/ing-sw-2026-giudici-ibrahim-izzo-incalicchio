@@ -27,6 +27,9 @@ public class GameController {
     private static final int IMG_WIDTH = 100;
     private static final int IMG_HEIGHT = 160;
 
+    private static final int CARD_DECK_WIDTH = 87;
+    private static final int CARD_DECK_HEIGHT = 140;
+
     private static final int TOTEM_HEIGHT = 50;
     private static final int TOTEM_WIDTH = 26;
 
@@ -453,15 +456,12 @@ public class GameController {
             return;
         }
 
-        double thumbWidth = IMG_WIDTH;
-        double thumbHeight = IMG_HEIGHT;
-
         for (CharacterCardDTO card : deck.characterCards()) {
             String key = card.imageKey();
             String path = "/assets/cards/" + key + ".png";
 
             try {
-                ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+                ImageView thumb = ImageCache.view(path, CARD_DECK_WIDTH, CARD_DECK_HEIGHT);
                 myDeckBox.getChildren().add(thumb);
             } catch (Exception e) {
                 System.out.println("[ERROR] Failed to load character card " + key + ": " + e.getMessage());
@@ -473,7 +473,7 @@ public class GameController {
             String path = "/assets/cards/" + key + ".png";
 
             try {
-                ImageView thumb = ImageCache.view(path, thumbWidth, thumbHeight);
+                ImageView thumb = ImageCache.view(path, CARD_DECK_WIDTH, CARD_DECK_HEIGHT);
                 myDeckBox.getChildren().add(thumb);
             } catch (Exception e) {
                 System.out.println("[ERROR] Failed to load building card " + key + ": " + e.getMessage());
