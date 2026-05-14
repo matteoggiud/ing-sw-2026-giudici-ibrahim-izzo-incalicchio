@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.server.network.EventHandler;
 
 import java.util.Map;
 
@@ -227,4 +228,8 @@ public interface IGameModel {
     List<LeadBoardDTO> getRanking(int numPlayer);
 
     List<String> leaveLobby(String player, int gameId);
+
+    void restoreGame(Game restoredGame);
+
+    void reconnectToGame(Integer gameId, String username, EventHandler eventHandler);
 }

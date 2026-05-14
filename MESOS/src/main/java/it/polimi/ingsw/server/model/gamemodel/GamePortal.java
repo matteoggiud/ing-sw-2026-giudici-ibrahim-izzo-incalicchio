@@ -15,6 +15,7 @@ import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
+import it.polimi.ingsw.server.network.EventHandler;
 
 import java.util.*;
 
@@ -32,8 +33,8 @@ public class GamePortal implements IGameModel {
     private final GameManager gameManager;
 
     public GamePortal() {
-        this.playerManager = new PlayerManager();
-        this.gameManager = new GameManager();
+        this.playerManager = PlayerManager.getInstance();
+        this.gameManager = GameManager.getInstance();
     }
 
 
@@ -568,5 +569,28 @@ public class GamePortal implements IGameModel {
 
         return playerNames;
 
+    }
+
+    @Override
+    public void restoreGame(Game restoredGame) {
+        gameManager.restoreGame(restoredGame);
+
+        for (Player player : restoredGame.getPlayers().getPlayers()) {
+            if (player.isConnected()) {
+                player.disconnect();
+                playerManager.addPlayer(player);
+            }
+        }
+
+        restoredGame.getGameState().executePhase(restoredGame);
+    }
+
+    @Override
+    public void reconnectToGame(Integer gameId, String username, EventHandler eventHandler) {
+        Game game = gameManager.getGame(gameId);
+        Player player = playerManager.getPlayer(username);
+
+        addObserver(game, eventHandler);
+        game.getGameState().addPlayer(game, player);
     }
 }

@@ -127,4 +127,8 @@ public class WaitingForReconnectState implements IGameState {
         };
     }
 
+    @Override
+    public String getPersistenceName() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

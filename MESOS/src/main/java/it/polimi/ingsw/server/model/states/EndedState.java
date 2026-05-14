@@ -31,4 +31,9 @@ public class EndedState implements IGameState {
     public boolean isEnded() {
         return true;
     }
+
+    @Override
+    public String getPersistenceName() {
+        return "EndedState";
+    }
 }

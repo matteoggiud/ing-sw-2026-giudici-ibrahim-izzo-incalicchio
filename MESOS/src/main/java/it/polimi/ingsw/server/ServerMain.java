@@ -5,6 +5,7 @@ import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
 import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
@@ -34,7 +35,6 @@ ServerMain {
         Scanner scanner = new Scanner(System.in);
 
 
-
         if (args.length >= 1 && !args[0].isBlank()) {
             serverIp = args[0];
         } else {
@@ -54,23 +54,20 @@ ServerMain {
         GameController controller = new GameController(gamePortal);
 
         DataDepository dataDepo = new DataDepository();
-        
+
         List<Integer> pendingGames = dataDepo.getInProgressGames();
-        for (Integer pendingGame : pendingGames) {
-            GameSnapshotDTO gameSnapshot = dataDepo.loadGameSnapshot(pendingGame); 
-            
-            // 1. Ricostruzione dell'oggetto Game tramite un metodo (da implementare) che mappa i DTO sul modello
-            Game reconstructedGame = GameSnapshotDTOMapper.reconstructGame(gameSnapshot);
-            
-            // 2. Imposta lo stato a WaitingForReconnectState (passandogli il nome dello stato originario)
-            // WaitingForReconnectState reconnectState = new WaitingForReconnectState(gameSnapshot.gameState());
-            // reconstructedGame.setGameState(reconnectState);
-            
-            // 3. Aggiungi il game ricostruito al GamePortal / GameManager
-            // gamePortal.getGameManager().restoreGame(reconstructedGame);
-            
-            // 4. Fai partire la fase di attesa (e di conseguenza il timer dei 5 minuti)
-            // reconnectState.executePhase(reconstructedGame);
+
+        if (pendingGames.size() > 0) {
+            System.out.println("Find " + pendingGames.size() + " games in progress. Do you want to restore them? (y/n)");
+            String restoreChoice = scanner.nextLine().trim().toLowerCase();
+            if (restoreChoice.equals("y")) {
+                for (int pendingGamesId : pendingGames) {
+                    GameSnapshotDTO snapshotDTO = dataDepo.loadGameSnapshot(pendingGamesId);
+                    Game restoredGame = GameBuilder.reconstructGame(snapshotDTO, dataDepo);
+                    gamePortal.restoreGame(restoredGame);
+                    System.out.println("Game " + pendingGamesId + " restored.");
+                }
+            }
         }
 
         try {

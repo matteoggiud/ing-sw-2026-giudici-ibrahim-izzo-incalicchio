@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
+import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.network.ClientSession;
@@ -41,6 +42,18 @@ public class GameController {
 
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
+
+            try {
+
+
+                Integer gameId = model.getActiveGameIdForPlayer(username);
+                if (gameId != null) {
+                    clientSession.setActiveGameId(gameId);
+                    model.reconnectToGame(gameId, username, clientSession.getEventHandler());
+                }
+            } catch (Exception e) {
+                //ignored
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException("Login failed: " + e.getMessage(), e);

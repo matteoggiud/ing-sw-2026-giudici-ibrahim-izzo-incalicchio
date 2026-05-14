@@ -62,4 +62,8 @@ public class SetupState implements IGameState {
         return false;
     }
 
+    @Override
+    public String getPersistenceName() {
+        return "SetupState";
+    }
 }

@@ -303,7 +303,8 @@ public class GameBuilder {
         // 1. RICOSTRUISCI I PLAYERS
         Players playersObj = new Players();
         for (PlayerInfoDTO pDto : snapshot.players()) {
-            Player p = PlayerManager.getInstance().getPlayer(pDto.nickname());
+            Player p = new Player(pDto.nickname());
+            p.disconnect(); // I players ricostruiti partono tutti disconnected, poi quando si riconnettono vengono messi online
             p.setFood(pDto.food());
             p.setPp(pDto.pp());
             p.setTotem(Totem.valueOf(pDto.totem()));

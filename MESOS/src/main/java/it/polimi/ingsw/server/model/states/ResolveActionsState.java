@@ -114,4 +114,8 @@ public class ResolveActionsState implements IGameState {
         return false;
     }
 
+    @Override
+    public String getPersistenceName() {
+        return "ResolveActionsState";
+    }
 }

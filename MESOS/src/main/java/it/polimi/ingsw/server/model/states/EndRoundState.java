@@ -175,4 +175,8 @@ public class EndRoundState implements IGameState {
         return false;
     }
 
+    @Override
+    public String getPersistenceName() {
+        return "EndRoundState";
+    }
 }
