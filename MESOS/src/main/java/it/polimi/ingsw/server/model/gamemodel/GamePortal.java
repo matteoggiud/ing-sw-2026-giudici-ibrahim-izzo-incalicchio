@@ -12,9 +12,15 @@ import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
+import it.polimi.ingsw.server.network.EventHandler;
 
 import java.util.*;
 
@@ -32,8 +38,8 @@ public class GamePortal implements IGameModel {
     private final GameManager gameManager;
 
     public GamePortal() {
-        this.playerManager = new PlayerManager();
-        this.gameManager = new GameManager();
+        this.playerManager = PlayerManager.getInstance();
+        this.gameManager = GameManager.getInstance();
     }
 
 
@@ -256,7 +262,8 @@ public class GamePortal implements IGameModel {
         // We then execute the remove game logic, which deletes the game
         gameManager.removeGame(gameId);
 
-        //TODO: update db
+        // Update db
+        new DataWriting().updateGameInProgress(gameId, false);
 
 
         return playerNames;
@@ -568,5 +575,45 @@ public class GamePortal implements IGameModel {
 
         return playerNames;
 
+    }
+
+    @Override
+    public void restoreGame(Game restoredGame) {
+        gameManager.restoreGame(restoredGame);
+
+        for (Player player : restoredGame.getPlayers().getPlayers()) {
+            if (!playerManager.isLoggedIn(player.getNickname())) {
+                playerManager.addPlayer(player);
+            }
+        }
+
+        restoredGame.getGameState().executePhase(restoredGame);
+    }
+
+    @Override
+    public void reconnectToGame(Integer gameId, String username, EventHandler eventHandler) {
+        Game game = gameManager.getGame(gameId);
+        Player player = playerManager.getPlayer(username);
+
+        addObserver(game, eventHandler);
+        game.getGameState().addPlayer(game, player);
+
+        // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
+        eventHandler.update(new GameStartedEvent(game));
+
+        // 2. Mandiamo PRIMA le info dei giocatori (così il client sa a chi appartengono i Totem e di che colore sono!)
+        eventHandler.update(new PlayerInfosChangedEvent(
+                gameId,
+                PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+        ));
+
+        // 3. POI gli mandiamo lo stato attuale di Board, così quando renderizza la Turn Order Track i Totem avranno il colore giusto
+        eventHandler.update(new BoardUpdatedEvent(
+                gameId,
+               BoardDTOMapper.toBoardDTO(game)
+        ));
+
+        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 
+        // non appena WaitingForReconnectState scatta su nextState()!
     }
 }

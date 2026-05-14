@@ -3,7 +3,6 @@ package it.polimi.ingsw.client.view.gui;
 import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ClientController;
 import it.polimi.ingsw.client.controller.ViewController;
-import it.polimi.ingsw.client.network.NetworkBuilder;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.network.NetworkConnectionStrategy;
 import it.polimi.ingsw.client.network.RmiConnectionStrategy;

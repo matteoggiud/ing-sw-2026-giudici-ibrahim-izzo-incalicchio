@@ -94,4 +94,6 @@ public interface IGameState {
         throw new IllegalStateException("You cannot start this phase of the game.");
     }
     boolean isEnded();
+
+    String getPersistenceName();
 }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
+import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
 import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.network.ClientSession;
@@ -42,7 +43,19 @@ public class GameController {
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
 
+            System.out.println("[INFO] Player " + username + " logged in successfully.");
+            try {
+                Integer gameId = model.getActiveGameIdForPlayer(username);
+                if (gameId != null) {
+                    clientSession.setActiveGameId(gameId);
+                    model.reconnectToGame(gameId, username, clientSession.getEventHandler());
+                }
+            } catch (Exception e) {
+                System.err.println("[ERROR] Exception caught in GameController (reconnecting to game): " + e.getMessage());
+            }
+
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in GameController (login): " + e.getMessage());
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
@@ -69,7 +82,10 @@ public class GameController {
             clientSession.setNickname(username);
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
+            System.out.println("[INFO] Player " + username + " register and logged in successfully.");
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in GameController (register): " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Register failed: " + e.getMessage(), e);
         }
     }
@@ -94,6 +110,8 @@ public class GameController {
 
         // update the client session to reflect the game they have joined
         clientSession.setActiveGameId(gameId);
+
+        System.out.println("[INFO] Player " + clientSession.getNickname() + " joined game " + gameId + " successfully.");
 
         model.startGameIfReady(gameId);
 
@@ -233,6 +251,7 @@ public class GameController {
         try {
             nickname = clientSession.getNickname();
         } catch (Exception e) {
+            System.err.println("(Game portal) Player disconnected");
             clientSession.disconnectSession();
             return playersInterested;
         }

@@ -1,13 +1,18 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
+
+import java.util.concurrent.CompletableFuture;
 
 public class PlacingTotemState implements IGameState {
 
@@ -19,6 +24,12 @@ public class PlacingTotemState implements IGameState {
 
     @Override
     public void executePhase(Game game) {
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
+
         // Notify the first player who must place their totem.
         notifyCurrentPlacingPlayer(game);
     }
@@ -48,6 +59,8 @@ public class PlacingTotemState implements IGameState {
             offerBox.placePlayer(player);
             game.getBoard().getTurnOrderBox().removePlayer(player);
         } catch (IllegalStateException e) {
+            System.err.println("[ERROR] Exception caught in PlacingTotemState: " + e.getMessage());
+            e.printStackTrace();
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 
@@ -105,5 +118,10 @@ public class PlacingTotemState implements IGameState {
     @Override
     public boolean isEnded() {
         return false;
+    }
+
+    @Override
+    public String getPersistenceName() {
+        return "PlacingTotemState";
     }
 }

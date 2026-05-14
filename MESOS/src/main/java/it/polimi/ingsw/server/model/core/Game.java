@@ -115,6 +115,26 @@ public class Game {
         players.addPlayer(hostPlayer);
     }
 
+    /**
+     * Constructor for GameBuilder to reconstruct a game from a snapshot.
+     * Takes all state parameters explicitly.
+     */
+    public Game(int gameId, int expectedPlayerCount, Players players, Board board, IGameState gameState, 
+                TribeDeck tribeDeck, BuildingDecks buildingDecks, Era currentEra, boolean lastRoundTriggered) {
+        this.gameId = gameId;
+        this.expectedPlayerCount = expectedPlayerCount;
+        this.players = players;
+        this.board = board;
+        this.gameState = gameState;
+        this.tribeDeck = tribeDeck;
+        this.buildingDecks = buildingDecks;
+        this.currentEra = currentEra;
+        this.lastRoundTriggered = lastRoundTriggered;
+        
+        this.ruleSet = new StandardRuleSet();
+        this.observerManager = new ObserverManager();
+    }
+
 
     /**
      * Gets the unique identifier of the game.

@@ -7,10 +7,18 @@ import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 import java.util.*;
 
 public class GameManager {
+    private static GameManager instance;
     private final Map<Integer, Game> activeGames;
 
-    public GameManager() {
+    private GameManager() {
         activeGames = new HashMap<>();
+    }
+
+    public static synchronized GameManager getInstance() {
+        if (instance == null) {
+            instance = new GameManager();
+        }
+        return instance;
     }
 
     /**
@@ -40,6 +48,18 @@ public class GameManager {
         Game newGame = new Game(host, gameId, expectedPlayerCount);
         activeGames.put(newGame.getGameId(), newGame);
         return newGame.getGameId();
+    }
+
+    /**
+     * Inserisce una partita già esistente (recuperata dal DB) nella mappa delle partite attive.
+     *
+     * @param game la partita ricostruita
+     */
+    public void restoreGame(Game game) {
+        if (game == null) {
+            throw new IllegalArgumentException("Game cannot be null.");
+        }
+        activeGames.put(game.getGameId(), game);
     }
 
 

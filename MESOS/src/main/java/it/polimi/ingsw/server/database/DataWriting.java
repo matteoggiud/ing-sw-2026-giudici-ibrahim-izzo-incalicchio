@@ -1,8 +1,10 @@
 package it.polimi.ingsw.server.database;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -96,6 +98,8 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -115,6 +119,8 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -130,6 +136,8 @@ public class DataWriting {
                 psUpdateGame.setInt(1, game.getGameId());
                 psUpdateGame.executeUpdate();
             } catch (SQLException e) {
+                System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
             Map<Player, Integer> rankings = ScoreCalculator.rankPlayer(game);
@@ -152,7 +160,67 @@ public class DataWriting {
             }
             c.commit();
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * It updates the game snapshot in the database for a given game ID. The snapshot is provided as a GameSnapshotDTO object, which is converted to JSON format before being stored in the database.
+     * Is used for game recovery in case of server crash, so it is crucial to keep it updated after every turn.
+     *
+     * @param gameId   the unique identifier of the game for which the snapshot is being updated
+     * @param snapshot the GameSnapshotDTO object containing the current state of the game, which will be converted to JSON and stored in the database
+     */
+    public void updateGameSnapshot(int gameId, GameSnapshotDTO snapshot) {
+        String sql = "UPDATE game SET game_snapshot = ? WHERE game_id = ?";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            // Convert the GameSnapshotDTO to JSON using Jackson ObjectMapper
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonSnapshot = objectMapper.writeValueAsString(snapshot);
+
+            org.postgresql.util.PGobject jsonObject = new org.postgresql.util.PGobject();
+            jsonObject.setType("jsonb");
+            jsonObject.setValue(jsonSnapshot);
+
+            // Set the JSON snapshot and game ID parameters in the prepared statement
+            ps.setObject(1, jsonObject);
+            ps.setInt(2, gameId);
+
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Impossible to update the game snapshot for game ID: " + gameId);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error updating game snapshot for game ID: " + gameId, e);
+        }
+    }
+
+    public void updateGameInProgress(int gameId, boolean inProgress) {
+        String sql = "UPDATE game SET in_progress = ? WHERE game_id = ?";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+
+            ps.setBoolean(1, inProgress);
+            ps.setInt(2, gameId);
+
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Impossible to update the game in progress");
+            }
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error updating game in_progress", e);
         }
     }
 }

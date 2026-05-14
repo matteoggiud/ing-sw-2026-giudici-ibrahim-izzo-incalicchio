@@ -6,11 +6,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerManager {
+    private static PlayerManager instance;
     private final Map<String, Player> loggedInPlayers;
 
-    public PlayerManager() {
+    private PlayerManager() {
         loggedInPlayers = new HashMap<>();
     }
+
+    public static synchronized PlayerManager getInstance() {
+        if (instance == null) {
+            instance = new PlayerManager();
+        }
+        return instance;
+    }
+
 
     /**
      * Adds a player to the logged-in players map.

@@ -23,6 +23,16 @@ public class BuildingDecks {
         this.buildingDecksEra3 = new BuildingDeck();
     }
 
+    public BuildingDecks(List<BuildingCard> buildingsEra1, List<BuildingCard> buildingsEra2, List<BuildingCard> buildingsEra3) {
+        if (buildingsEra1 == null || buildingsEra2 == null || buildingsEra3 == null) {
+            throw new IllegalArgumentException("Building card lists cannot be null");
+        }
+
+        this.buildingDecksEra1 = new BuildingDeck(buildingsEra1);
+        this.buildingDecksEra2 = new BuildingDeck(buildingsEra2);
+        this.buildingDecksEra3 = new BuildingDeck(buildingsEra3);
+    }
+
     /**
      * This method allows to get the building deck corresponding to a specific era.
      *
@@ -65,5 +75,17 @@ public class BuildingDecks {
         this.buildingDecksEra2.addBuildingCards(cardsEra2);
         this.buildingDecksEra3.addBuildingCards(cardsEra3);
 
+    }
+
+    public BuildingDeck getBuildingDecksEra1() {
+        return buildingDecksEra1;
+    }
+
+    public BuildingDeck getBuildingDecksEra2() {
+        return buildingDecksEra2;
+    }
+
+    public BuildingDeck getBuildingDecksEra3() {
+        return buildingDecksEra3;
     }
 }

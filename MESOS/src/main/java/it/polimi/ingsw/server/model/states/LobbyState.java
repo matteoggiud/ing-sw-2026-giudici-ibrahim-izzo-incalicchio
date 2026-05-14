@@ -106,4 +106,9 @@ public class LobbyState implements IGameState {
     public boolean isEnded() {
         return false;
     }
+
+    @Override
+    public String getPersistenceName() {
+        return "LobbyState";
+    }
 }

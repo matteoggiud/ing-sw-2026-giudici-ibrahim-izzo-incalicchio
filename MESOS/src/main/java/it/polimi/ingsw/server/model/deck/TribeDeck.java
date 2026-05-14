@@ -75,5 +75,9 @@ public class TribeDeck {
     public boolean isEmpty(){
         return this.tribeDeck.isEmpty();
     }
+
+    public LinkedList<TribeCard> getTribeDeck() {
+        return tribeDeck;
+    }
 }
 

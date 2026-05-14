@@ -1,17 +1,21 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents the end round phase of the game.
@@ -44,6 +48,12 @@ public class EndRoundState implements IGameState {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null");
         }
+
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
 
         if (game.isLastRound()) {
             game.setLastRoundTriggered(true);
@@ -169,4 +179,8 @@ public class EndRoundState implements IGameState {
         return false;
     }
 
+    @Override
+    public String getPersistenceName() {
+        return "EndRoundState";
+    }
 }

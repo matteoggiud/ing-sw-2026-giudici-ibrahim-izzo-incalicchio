@@ -48,13 +48,17 @@ public class CommandHandler {
             // If login is successful, send a LoginSuccessMessage to the client
             clientSession.getEventHandler().getView().onLoginSuccess(username, "Login successful, welcome " + username);
 
-            // After a successful login, send the list of available games to the client
-            List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
-            clientSession.getEventHandler().getView().onAvailableGames(games);
+            if (!clientSession.isInGame()) {
+                // After a successful login, if not reconnected to a game, send the list of available games
+                List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
+                clientSession.getEventHandler().getView().onAvailableGames(games);
+            }
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleLogin RuntimeException): " + e.getMessage());
             // If login fails, send a LoginFailedMessage to the client with the error message
             clientSession.getEventHandler().getView().onLoginFailed("Login failed: " + e.getMessage(), username);
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleLogin Exception): " + e.getMessage());
             // If login fails due to any other exception, send a GenericErrorMessage to the client with the error message
             clientSession.getEventHandler().getView().onGenericError("Login failed");
         }
@@ -74,13 +78,17 @@ public class CommandHandler {
             // If registration is successful, send a RegisterSuccessMessage to the client
             clientSession.getEventHandler().getView().onRegisterSuccess(username, "Registration successful, welcome " + username);
 
-            // After a successful login, send the list of available games to the client
-            List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
-            clientSession.getEventHandler().getView().onAvailableGames(games);
+            if (!clientSession.isInGame()) {
+                // After a successful login, if not reconnected to a game, send the list of available games
+                List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
+                clientSession.getEventHandler().getView().onAvailableGames(games);
+            }
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleRegistration RuntimeException): " + e.getMessage());
             // If registration fails, send a LoginFailedMessage to the client with the error message
             clientSession.getEventHandler().getView().onRegisterFailed("Registration failed: " + e.getMessage(), username);
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleRegistration Exception): " + e.getMessage());
             // If registration fails due to any other exception, send a GenericErrorMessage to the client with the error message
             clientSession.getEventHandler().getView().onGenericError("Registration failed");
         }
@@ -95,8 +103,10 @@ public class CommandHandler {
         try {
             gameController.createGame(clientSession, expectedNumOfPlayers);
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleGameCreation RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to create game: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleGameCreation Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to create game");
         }
     }
@@ -110,8 +120,10 @@ public class CommandHandler {
         try {
             gameController.joinGame(clientSession, gameId);
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleJoinGame RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to join game: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleJoinGame Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to join game");
         }
     }
@@ -125,8 +137,10 @@ public class CommandHandler {
             clientSession.getEventHandler().getView().onAvailableGames(games);
             clientSession.clearActiveGameId();
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleGetAvailableGames RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleGetAvailableGames Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games");
         }
     }
@@ -146,6 +160,7 @@ public class CommandHandler {
                 playerToNotify.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(playerToNotify));
             }
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleDisconnection Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to disconnect");
         }
     }
@@ -170,8 +185,10 @@ public class CommandHandler {
             }
 
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleLeftGame RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to leave game: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleLeftGame Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to leave game");
         }
     }
@@ -186,8 +203,10 @@ public class CommandHandler {
         try {
             gameController.placing(clientSession, offerBoxPosition);
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handlePlaceTotem RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to place totem: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handlePlaceTotem Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to place totem");
         }
     }
@@ -202,8 +221,10 @@ public class CommandHandler {
         try {
             gameController.drawCard(clientSession, cardId, isFromUpperRow);
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleDrawCard RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to draw card: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleDrawCard Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to draw card");
         }
     }
@@ -217,8 +238,10 @@ public class CommandHandler {
         try {
             gameController.drawCard(clientSession, cardId, true);
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleExtraDraw RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to draw card: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleExtraDraw Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to draw card");
         }
     }
@@ -233,8 +256,10 @@ public class CommandHandler {
             List<LeadBoardDTO> rankings = gameController.getRankings(clientSession, numPlayers);
             clientSession.getEventHandler().getView().onRankingsReceived(rankings);
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleRankings RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to get rankings: " + e.getMessage());
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleRankings Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to get rankings");
         }
     }
@@ -249,6 +274,7 @@ public class CommandHandler {
             clientSession.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(clientSession));
             clientSession.getEventHandler().getView().onLeftGameSuccess("You have left the lobby");
         } catch (RuntimeException e) {
+            System.err.println("[ERROR] Exception caught in CommandHandler (handleLeftLobby RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to leave lobby: " + e.getMessage());
         }
     }

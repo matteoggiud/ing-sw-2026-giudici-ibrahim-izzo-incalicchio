@@ -23,6 +23,14 @@ public class BuildingDeck {
         this.buildingDeck = new ArrayList<>();
     }
 
+    public BuildingDeck(List<BuildingCard> buildingsEra1) {
+        if (buildingsEra1 == null) {
+            throw new IllegalArgumentException("Building card list cannot be null");
+        }
+
+        this.buildingDeck = new ArrayList<>(buildingsEra1);
+    }
+
     /**
      * Gets the building deck.
      *

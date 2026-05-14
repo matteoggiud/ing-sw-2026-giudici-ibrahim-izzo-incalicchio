@@ -51,9 +51,10 @@ public class ClientHandler implements Runnable {
             }
         } catch (EOFException | SocketException e) {
             //Normal disconnection
+            System.out.println("Client disconnected: " + e.getMessage());
         } catch (Exception e) {
             //Unexpected error during communication with the client
-            e.printStackTrace();
+            System.out.println("Error in communication with client: " + e.getMessage());
         } finally {
             safeClose();
             clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());

@@ -2,16 +2,25 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.client.network.InetAddressLookup;
 import it.polimi.ingsw.server.controller.GameController;
+import it.polimi.ingsw.server.database.DataDepository;
+import it.polimi.ingsw.server.database.DataWriting;
+import it.polimi.ingsw.server.model.core.Game;
+import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
+import it.polimi.ingsw.server.model.menu.PlayerManager;
+import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
+// import it.polimi.ingsw.server.model.states.WaitingForReconnectState; // Assicurati di importarlo
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Scanner;
 
 public class
@@ -25,7 +34,6 @@ ServerMain {
         String defaultServerIp = InetAddressLookup.getLocalHostAddress();
         String serverIp;
         Scanner scanner = new Scanner(System.in);
-
 
 
         if (args.length >= 1 && !args[0].isBlank()) {
@@ -46,6 +54,30 @@ ServerMain {
         GamePortal gamePortal = new GamePortal();
         GameController controller = new GameController(gamePortal);
 
+        DataDepository dataDepo = new DataDepository();
+
+        List<Integer> pendingGames = dataDepo.getInProgressGames();
+
+        if (pendingGames.size() > 0) {
+            System.out.println("Find " + pendingGames.size() + " games in progress. Do you want to restore them? (y/n)");
+            String restoreChoice = scanner.nextLine().trim().toLowerCase();
+            if (restoreChoice.equals("y")) {
+                for (int pendingGamesId : pendingGames) {
+                    GameSnapshotDTO snapshotDTO = dataDepo.loadGameSnapshot(pendingGamesId);
+                    Game restoredGame = GameBuilder.reconstructGame(snapshotDTO, dataDepo);
+                    //TODO: Understand if we can do it more safely
+                    gamePortal.restoreGame(restoredGame);
+                    System.out.println("Game " + pendingGamesId + " restored.");
+                }
+            } else {
+                // Set pending games as not in progress
+                for (int pendingGamesId : pendingGames) {
+                    new DataWriting().updateGameInProgress(pendingGamesId, false);
+                    System.out.println("Game " + pendingGamesId + " closed.");
+                }
+            }
+        }
+
         try {
             //SOCKET
 
@@ -59,6 +91,8 @@ ServerMain {
                 try {
                     socketServer.run();
                 } catch (IOException e) {
+                    System.err.println("[ERROR] Exception caught in ServerMain (Socket thread): " + e.getMessage());
+                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }).start();
@@ -76,7 +110,9 @@ ServerMain {
 
             System.out.println("[SERVER] Server rmi started at " + serverIp + ":" + rmiPort);
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in ServerMain: " + e.getMessage());
             e.printStackTrace();
         }
     }
 }
+
