@@ -87,5 +87,6 @@ public class GuiClientApp extends Application {
         }
 
         view.showAuthenticator("Login required!");
+        MusicManager.startBackgroundMusic();
     }
 }
