@@ -154,11 +154,12 @@ public class CommandHandler {
             String nickname = clientSession.isLoggedIn() ? clientSession.getNickname() : "";
             List<ClientSession> playersToNotifyGameLeft = gameController.handleDisconnect(clientSession);
 
-            clientSession.getEventHandler().getView().onDisconnectionSuccess("Goodbye " + nickname);
             gameController.notifyGameClosed(
                     playersToNotifyGameLeft,
                     nickname + " has disconnected, the game is ended"
             );
+
+            //clientSession.getEventHandler().getView().onDisconnectionSuccess("Goodbye " + nickname);
         } catch (Exception e) {
             System.err.println("[ERROR] Exception caught in CommandHandler (handleDisconnection Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to disconnect");
