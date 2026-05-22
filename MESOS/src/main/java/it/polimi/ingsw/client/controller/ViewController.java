@@ -309,6 +309,6 @@ public class ViewController {
         clientState.setErrorMessage(message);
         clientState.setStatusMessage(message);
 
-        view.showError(message);
+        view.showDisconnected(message);
     }
 }

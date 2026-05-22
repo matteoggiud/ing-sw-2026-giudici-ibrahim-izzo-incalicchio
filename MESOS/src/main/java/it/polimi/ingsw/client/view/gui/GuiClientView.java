@@ -154,6 +154,11 @@ public class GuiClientView implements ClientView {
      */
     @Override
     public void showError(String message) {
+        System.out.println("Error: " + message);
+    }
+
+    @Override
+    public void showDisconnected(String message) {
         Platform.runLater(() -> {
             System.err.println("Error: " + message);
 

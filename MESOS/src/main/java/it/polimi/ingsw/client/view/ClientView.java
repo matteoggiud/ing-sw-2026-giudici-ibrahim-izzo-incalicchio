@@ -11,6 +11,8 @@ public interface ClientView {
 
     void showError(String message);
 
+    void showDisconnected(String message);
+
     void showAvailableGames(List<GameInfoDTO> games);
 
     void showGameInfo(GameInfoDTO gameInfo);
