@@ -116,7 +116,7 @@ class CardTest {
         }
 
         private TestCard(String name, Era era, int minNumPlayers) {
-            super(1 ,name, era, minNumPlayers,"");
+            super(-1, name, era, minNumPlayers, "");
             this.added = false;
             this.lastDeck = null;
         }

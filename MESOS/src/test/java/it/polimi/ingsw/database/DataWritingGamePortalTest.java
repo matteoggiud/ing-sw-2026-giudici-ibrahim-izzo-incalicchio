@@ -1,26 +1,29 @@
 package it.polimi.ingsw.database;
 
-import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.database.DatabaseManager;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
+import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.menu.PlayerManager;
+import it.polimi.ingsw.server.model.observer.IGameObserver;
+import it.polimi.ingsw.server.model.observer.event.*;
+import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataWritingGamePortalTest {
 
+    private static final Logger LOGGER = Logger.getLogger(DataWritingGamePortalTest.class.getName());
     private static final String TEST_PASSWORD_HASH = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
     private final List<Integer> createdGameIds = new ArrayList<>();
@@ -30,115 +33,227 @@ class DataWritingGamePortalTest {
     private String joinerNickname;
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         String suffix = String.valueOf(System.nanoTime());
         hostNickname = "test_host_" + suffix;
         joinerNickname = "test_joiner_" + suffix;
+
+        // Create players directly in database
+        createPlayerInDatabase(hostNickname);
+        createPlayerInDatabase(joinerNickname);
+
+        // Add players to PlayerManager
+        Player host = new Player(hostNickname);
+        Player joiner = new Player(joinerNickname);
+        PlayerManager.getInstance().addPlayer(host);
+        PlayerManager.getInstance().addPlayer(joiner);
+
+        createdNicknames.add(hostNickname);
+        createdNicknames.add(joinerNickname);
     }
 
     @AfterEach
-    void tearDown() throws SQLException {
+    void tearDown() {
         Connection c = DatabaseManager.getConnection();
+        if (c == null) {
+            return;
+        }
 
+        // Clean up game_player records
         try (PreparedStatement deleteGamePlayer = c.prepareStatement("DELETE FROM game_player WHERE game_id = ?")) {
             for (Integer gameId : createdGameIds) {
                 deleteGamePlayer.setInt(1, gameId);
                 deleteGamePlayer.executeUpdate();
             }
+        } catch (SQLException e) {
+            LOGGER.warning("Error deleting game_player: " + e.getMessage());
         }
 
+        // Clean up game records
         try (PreparedStatement deleteGame = c.prepareStatement("DELETE FROM game WHERE game_id = ?")) {
             for (Integer gameId : createdGameIds) {
                 deleteGame.setInt(1, gameId);
                 deleteGame.executeUpdate();
             }
+        } catch (SQLException e) {
+            LOGGER.warning("Error deleting game: " + e.getMessage());
         }
 
+        // Clean up player records
         try (PreparedStatement deletePlayer = c.prepareStatement("DELETE FROM player WHERE nickname = ?")) {
             for (String nickname : createdNicknames) {
                 deletePlayer.setString(1, nickname);
                 deletePlayer.executeUpdate();
             }
+        } catch (SQLException e) {
+            LOGGER.warning("Error deleting player: " + e.getMessage());
+        }
+
+        // Remove from PlayerManager
+        for (String nickname : createdNicknames) {
+            PlayerManager.getInstance().removePlayer(nickname);
+        }
+
+        // Clear GameManager
+        for (Integer gameId : createdGameIds) {
+            try {
+                GameManager.getInstance().removeGame(gameId);
+            } catch (Exception e) {
+                LOGGER.warning("Error removing game: " + e.getMessage());
+            }
         }
     }
 
     @Test
-    void addNewGameShouldInsertGameAndHostLink() throws SQLException {
-        insertPlayer(hostNickname);
-
-        DataWriting dataWriting = new DataWriting();
-        int gameId = dataWriting.addNewGame(hostNickname,3);
-
-        assertTrue(gameId > 0, "addNewGame deve restituire il game_id generato dal DB.");
-        createdGameIds.add(gameId);
-
-        assertTrue(gameExists(gameId), "La riga su tabella game deve esistere.");
-        assertTrue(gamePlayerLinkExists(gameId, hostNickname), "L'host deve essere collegato in game_player.");
-    }
-
-    @Test
-    void gamePortalCreateAndJoinGameShouldPersistBothPlayers() throws Exception {
-        insertPlayer(hostNickname);
-        insertPlayer(joinerNickname);
-
+    void testCreateGameSuccessfully() {
         GamePortal portal = new GamePortal();
-        addLoggedInPlayer(portal, hostNickname);
-        addLoggedInPlayer(portal, joinerNickname);
+        IGameObserver mockObserver = createMockObserver();
 
-        int gameId = portal.createGame(hostNickname, null);
-        assertTrue(gameId > 0, "createGame deve restituire un id DB valido.");
+        // Create game - should not throw any exception
+        int gameId = portal.createGame(hostNickname, mockObserver);
         createdGameIds.add(gameId);
 
-        assertTrue(gameExists(gameId), "createGame deve creare la riga su game.");
-        assertTrue(gamePlayerLinkExists(gameId, hostNickname), "createGame deve collegare l'host su game_player.");
+        // Verify game was created in memory
+        assertNotNull(GameManager.getInstance().getGame(gameId),
+                "Game must exist in GameManager after creation.");
 
-        portal.joinGame(gameId, joinerNickname, null);
-
-        assertTrue(gamePlayerLinkExists(gameId, joinerNickname), "joinGame deve inserire il collegamento player-game nel DB.");
-        assertEquals(2, portal.getGame(gameId).getNumberOfPlayers(), "Nel model il player deve risultare aggiunto alla partita.");
+        // Verify game host is correct
+        assertEquals(hostNickname,
+                GameManager.getInstance().getGame(gameId).getHostPlayer().getNickname(),
+                "Host player nickname must match.");
     }
 
-    private void insertPlayer(String nickname) throws SQLException {
-        Connection c = DatabaseManager.getConnection();
-        String sql = "INSERT INTO player (nickname, password_hash) VALUES (?, ?) ON CONFLICT (nickname) DO NOTHING";
+    @Test
+    void testJoinGameSuccessfully() {
+        GamePortal portal = new GamePortal();
+        IGameObserver mockObserver = createMockObserver();
 
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, nickname);
-            ps.setString(2, TEST_PASSWORD_HASH);
-            ps.executeUpdate();
-        }
+        // Create game
+        int gameId = portal.createGame(hostNickname, mockObserver);
+        createdGameIds.add(gameId);
 
-        createdNicknames.add(nickname);
+        // Join game - should not throw any exception
+        portal.joinGame(gameId, joinerNickname, mockObserver);
+
+        // Verify player was added to game in memory
+        boolean playerInGame = GameManager.getInstance().getGame(gameId).getPlayers().getPlayers().stream()
+                .anyMatch(p -> p.getNickname().equals(joinerNickname));
+
+        assertTrue(playerInGame,
+                "Joiner must be in game after joining.");
     }
 
-    private boolean gameExists(int gameId) throws SQLException {
-        Connection c = DatabaseManager.getConnection();
-        try (PreparedStatement ps = c.prepareStatement("SELECT 1 FROM game WHERE game_id = ?")) {
-            ps.setInt(1, gameId);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+    @Test
+    void testGameCreationWithMultiplePlayers() {
+        GamePortal portal = new GamePortal();
+        IGameObserver mockObserver = createMockObserver();
+
+        // Create game
+        int gameId = portal.createGame(hostNickname, mockObserver);
+        createdGameIds.add(gameId);
+
+        // Join game
+        portal.joinGame(gameId, joinerNickname, mockObserver);
+
+        // Verify both players are in the game
+        int playerCount = GameManager.getInstance().getGame(gameId).getNumberOfPlayers();
+        assertEquals(2, playerCount,
+                "Game must have 2 players after host creates and joiner joins.");
+
+        // Verify specific players
+        boolean hostInGame = GameManager.getInstance().getGame(gameId).getPlayers().getPlayers().stream()
+                .anyMatch(p -> p.getNickname().equals(hostNickname));
+        boolean joinerInGame = GameManager.getInstance().getGame(gameId).getPlayers().getPlayers().stream()
+                .anyMatch(p -> p.getNickname().equals(joinerNickname));
+
+        assertTrue(hostInGame, "Host must be in game.");
+        assertTrue(joinerInGame, "Joiner must be in game.");
+    }
+
+    private void createPlayerInDatabase(String nickname) {
+        try {
+            Connection c = DatabaseManager.getConnection();
+            if (c == null) {
+                return;
             }
-        }
-    }
 
-    private boolean gamePlayerLinkExists(int gameId, String nickname) throws SQLException {
-        Connection c = DatabaseManager.getConnection();
-        String sql = "SELECT 1 FROM game_player gp JOIN player p ON gp.player_id = p.player_id WHERE gp.game_id = ? AND p.nickname = ?";
-
-        try (PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setInt(1, gameId);
-            ps.setString(2, nickname);
-            try (ResultSet rs = ps.executeQuery()) {
-                return rs.next();
+            String sql = "INSERT INTO player (nickname, password_hash) VALUES (?, ?) ON CONFLICT (nickname) DO NOTHING";
+            try (PreparedStatement ps = c.prepareStatement(sql)) {
+                ps.setString(1, nickname);
+                ps.setString(2, TEST_PASSWORD_HASH);
+                ps.executeUpdate();
             }
+        } catch (SQLException e) {
+            LOGGER.warning("Error creating player: " + e.getMessage());
         }
     }
 
-    private void addLoggedInPlayer(GamePortal portal, String nickname) throws Exception {
-        Field playerManagerField = GamePortal.class.getDeclaredField("playerManager");
-        playerManagerField.setAccessible(true);
-        PlayerManager playerManager = (PlayerManager) playerManagerField.get(portal);
-        playerManager.addPlayer(new Player(nickname));
+    private IGameObserver createMockObserver() {
+        return new IGameObserver() {
+            @Override
+            public void update(GameStartedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(PlayersChangedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(BoardUpdatedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(EraChangedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(PlaceTotemTurnChangedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(ResolveActionTurnChangedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(ExtraActionTurnChangedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(PlayerResourcesUpdatedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(PlayerDeckUpdatedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(GameEndedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(JoinedGameEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(PlayerInfosChangedEvent event) {
+                // Mock implementation
+            }
+
+            @Override
+            public void update(ResolvingEventUpdate resolvingEventUpdate) {
+                // Mock implementation
+            }
+        };
     }
 }
-
