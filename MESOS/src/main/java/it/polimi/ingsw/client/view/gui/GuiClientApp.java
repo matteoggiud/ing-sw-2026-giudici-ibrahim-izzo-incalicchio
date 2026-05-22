@@ -77,6 +77,17 @@ public class GuiClientApp extends Application {
             // Initialize client controller with network connection and the view
             ClientController controller = new ClientController(network);
             view.setGuiContext(new GuiContext(controller, clientState));
+
+            primaryStage.setOnCloseRequest(event -> {
+                try {
+                    controller.disconnect();
+                } catch (Exception ignored) {
+                }
+
+                Platform.exit();
+                System.exit(0);
+            });
+
             clientState.connect();
             view.showAuthenticator("Login required!");
             MusicManager.startBackgroundMusic();

@@ -153,7 +153,15 @@ public class GuiClientView implements ClientView {
      * @param message
      */
     @Override
-    public void showError(String message) {
+    public void showError(String message)
+    {
+        Platform.runLater(() -> {
+            try {
+                gameController.showTemporaryMessage(message);
+            }catch (Exception _){
+            }
+
+        });
         System.out.println("Error: " + message);
     }
 

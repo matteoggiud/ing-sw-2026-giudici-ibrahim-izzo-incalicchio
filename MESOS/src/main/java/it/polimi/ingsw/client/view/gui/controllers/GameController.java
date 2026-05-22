@@ -3,6 +3,7 @@ package it.polimi.ingsw.client.view.gui.controllers;
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.client.view.gui.ImageCache;
 import it.polimi.ingsw.server.model.observer.dto.*;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.geometry.Point2D;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.util.Duration;
 
 import java.util.*;
 
@@ -631,6 +633,17 @@ public class GameController {
         node.layoutYProperty().bind(gameOverlay.heightProperty()
                 .multiply(centerY)
                 .subtract(gameOverlay.heightProperty().multiply(height).divide(2.0)));
+    }
+
+    public void showTemporaryMessage(String message) {
+        Platform.runLater(() -> {
+            String previousText = gameInfoLabel.getText();
+            gameInfoLabel.setText(message);
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+            pause.setOnFinished(event -> gameInfoLabel.setText(previousText));
+            pause.play();
+        });
     }
 
 }
