@@ -41,4 +41,6 @@ public interface ClientView {
     void showAuthenticator(String message);
 
     void showResolvingEvent(int gameId, EventCardDTO eventCardDTO);
+
+    void shutdown(String reason);
 }

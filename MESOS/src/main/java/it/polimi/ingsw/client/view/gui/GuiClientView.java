@@ -381,6 +381,20 @@ public class GuiClientView implements ClientView {
         });
     }
 
+    @Override
+    public void shutdown(String reason) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.initOwner(stage);
+            alert.setTitle("MESOS");
+            alert.setHeaderText("Game ended");
+            alert.setContentText(reason);
+            alert.showAndWait();
+
+            stage.close();
+        });
+    }
+
     private void showNextResolvingEvent() {
 
         EventCardDTO next = guiContext.clientState().popEventCard();

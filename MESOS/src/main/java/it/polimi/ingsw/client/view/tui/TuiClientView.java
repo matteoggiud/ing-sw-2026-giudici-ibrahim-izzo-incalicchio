@@ -118,6 +118,11 @@ public class TuiClientView implements ClientView {
         renderer.render();
     }
 
+    @Override
+    public void shutdown(String reason) {
+        renderer.render();
+    }
+
 
     @Override
     public void showRankings(List<LeadBoardDTO> rankings) {
