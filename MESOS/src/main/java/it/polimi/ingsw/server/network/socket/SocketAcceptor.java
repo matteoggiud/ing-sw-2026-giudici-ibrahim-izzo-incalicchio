@@ -37,7 +37,7 @@ public class SocketAcceptor {
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
 
-            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this, new EventHandler(new SocketGenericVirtualView(outputStream)));
+            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this, new EventHandler(new SocketGenericVirtualView(clientSocket, outputStream)));
             clients.add(client);
             new Thread(client).start();
         }
