@@ -84,6 +84,9 @@ public class ScoreController {
     @FXML
     private Button backToMenuButton;
 
+    @FXML
+    private Label timeoutLabel;
+
     private final ObservableList<String> rankingItems = FXCollections.observableArrayList();
 
     public void setGuiContext(GuiContext guiContext) {
@@ -94,14 +97,21 @@ public class ScoreController {
     private void initialize() {
         rankingListView.setItems(rankingItems);
         bindScoreLayout();
+
+        if (timeoutLabel != null) {
+            timeoutLabel.setVisible(false);
+        }
     }
 
     public void showMatchRankings(Map<String, Integer> finalRanking) {
         Platform.runLater(() -> {
             if (finalRanking == null || finalRanking.isEmpty()) {
-                rankingItems.setAll("Rankings unavailable");
+                showReconnectTimeoutView();
                 return;
             }
+
+            // Otherwise show normal ranking view
+            showNormalRankingView();
 
             List<Map.Entry<String, Integer>> ordered = finalRanking.entrySet().stream()
                     .sorted((e1, e2) -> {
@@ -109,7 +119,7 @@ public class ScoreController {
                         if (cmp != 0) return cmp;
                         return e1.getKey().compareToIgnoreCase(e2.getKey());
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
             String me = guiContext != null && guiContext.clientState() != null
                     ? guiContext.clientState().getNickname()
@@ -130,6 +140,43 @@ public class ScoreController {
             }
 
             rankingItems.setAll(rows);
+        });
+    }
+
+    private void showReconnectTimeoutView() {
+        // Run on FX thread already in caller, but ensure safety
+        Platform.runLater(() -> {
+            // Hide ranking-related nodes
+            rankingTitleLabel.setVisible(false);
+            rankingListView.setVisible(false);
+            globalTitleLabel.setVisible(false);
+            playerPositionLabel.setVisible(false);
+
+            // Show timeout message
+            if (timeoutLabel != null) {
+                timeoutLabel.setVisible(true);
+            } else {
+                // fallback: show a single list entry stating the reason
+                rankingItems.setAll("Some players did not reconnect. The game has been closed.");
+                rankingListView.setVisible(true);
+            }
+
+            // Update title text if you want
+            titleLabel.setText("Game Closed");
+        });
+    }
+
+    private void showNormalRankingView() {
+        Platform.runLater(() -> {
+            rankingTitleLabel.setVisible(true);
+            rankingListView.setVisible(true);
+            globalTitleLabel.setVisible(true);
+            playerPositionLabel.setVisible(true);
+
+            if (timeoutLabel != null) {
+                timeoutLabel.setVisible(false);
+            }
+            titleLabel.setText("Final Results");
         });
     }
 

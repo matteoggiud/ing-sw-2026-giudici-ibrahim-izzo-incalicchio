@@ -81,12 +81,13 @@ public class GuiClientApp extends Application {
             ClientController controller = new ClientController(network);
             view.setGuiContext(new GuiContext(controller, clientState));
             clientState.connect();
+            view.showAuthenticator("Login required!");
+            MusicManager.startBackgroundMusic();
+
         } catch (Exception e) {
             System.out.println("Failed to connect to server: " + e.getMessage());
             view.showRoot(new Label("Failed to connect to server"));
         }
 
-        view.showAuthenticator("Login required!");
-        MusicManager.startBackgroundMusic();
     }
 }

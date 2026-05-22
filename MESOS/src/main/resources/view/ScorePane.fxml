@@ -21,7 +21,7 @@
                smooth="true"
                preserveRatio="false">
         <image>
-            <Image url="@../assets/backgrounds/leaderboardBg.PNG"/>
+            <Image url="@../assets/backgrounds/leaderboardBg.png"/>
         </image>
     </ImageView>
 
@@ -37,6 +37,12 @@
                text="Game Leaderboard"
                alignment="CENTER"
                styleClass="score-section-title"/>
+
+        <Label fx:id="timeoutLabel"
+               text="Some players didn't reconnect. The game has been closed."
+               alignment="CENTER"
+               styleClass="score-error"
+               visible="false"/>
 
         <ListView fx:id="rankingListView"
                   styleClass="score-list"/>
