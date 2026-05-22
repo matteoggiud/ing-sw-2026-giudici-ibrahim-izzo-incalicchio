@@ -16,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class RmiBootstrapServer implements RmiBootstrap {
 
     private final GameController gameController;
-    private final List<RmiServer> activeServers = new CopyOnWriteArrayList<>();
+    private final List<RmiServer> activeServers = new CopyOnWriteArrayList<>(); //TODO: remove unused objects
     final int serverPort = 0;
 
     public RmiBootstrapServer(GameController gameController) {

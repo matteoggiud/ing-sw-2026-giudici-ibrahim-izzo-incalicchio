@@ -116,7 +116,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onRegisterSuccess(String nickname, String message) {
-
+        try {
+            clientView.onRegisterSuccess(nickname, message);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
