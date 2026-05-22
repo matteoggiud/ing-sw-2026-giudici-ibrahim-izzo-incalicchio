@@ -18,6 +18,9 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class
 ServerMain {
@@ -49,6 +52,13 @@ ServerMain {
 
         GamePortal gamePortal = new GamePortal();
         GameController controller = new GameController(gamePortal);
+        ScheduledExecutorService disconnectionMonitor = Executors.newSingleThreadScheduledExecutor();
+        disconnectionMonitor.scheduleAtFixedRate(
+                controller::disconnectUnreachableSessions,
+                5,
+                5,
+                TimeUnit.SECONDS
+        );
 
         DataDepository dataDepo = new DataDepository();
 

@@ -5,6 +5,7 @@ import it.polimi.ingsw.client.view.gui.controllers.*;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -156,9 +157,19 @@ public class GuiClientView implements ClientView {
         Platform.runLater(() -> {
             System.err.println("Error: " + message);
 
-            if (authController != null) {
+            boolean showingAuth = authRoot != null && root.getChildren().contains(authRoot);
+
+            if (showingAuth && authController != null) {
                 authController.showErrorMessage(message);
+                return;
             }
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(stage);
+            alert.setTitle("MESOS");
+            alert.setHeaderText("Game ended");
+            alert.setContentText(message);
+            alert.show();
         });
     }
 

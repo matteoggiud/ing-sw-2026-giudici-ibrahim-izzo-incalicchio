@@ -1,6 +1,9 @@
 package it.polimi.ingsw.server.network;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class SessionRegistry {
@@ -65,5 +68,13 @@ public final class SessionRegistry {
 
     public synchronized ClientSession getSession(String nickname) {
         return loggedSessions.get(nickname);
+    }
+
+    /**
+     * Provides a snapshot of the current active sessions. This method returns a new list containing the current sessions,
+     * @return a list of active ClientSession instances. Modifications to this list will not affect the internal state of the SessionRegistry.
+     */
+   public synchronized List<ClientSession> getSessionsSnapshot() {
+        return new ArrayList<>(loggedSessions.values());
     }
 }

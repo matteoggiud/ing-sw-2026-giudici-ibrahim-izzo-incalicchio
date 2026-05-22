@@ -55,7 +55,9 @@ public class ClientHandler implements Runnable {
             System.out.println("Error in communication with client: " + e.getMessage());
         } finally {
             safeClose();
-            clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());
+            if (!clientVisitor.getClientSession().isRequestedDisconnection()) {
+                clientVisitor.getGameController().handleUnexpectedDisconnect(clientVisitor.getClientSession());
+            }
             socketAcceptor.removeClientHandler(this);
         }
     }

@@ -81,8 +81,9 @@ public class SocketServerListener implements Runnable {
 
     private void handleServerDisconnected(String message) {
         if (clientSession.isConnected()) {
-            clientView.showError(message);
             clientSession.disconnect();
+            clientSession.setErrorMessage(message);
+            clientView.showError(message);
         }
     }
 

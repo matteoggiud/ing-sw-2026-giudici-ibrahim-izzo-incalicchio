@@ -303,9 +303,12 @@ public class ViewController {
      * @param reason the reason for the game crash
      */
     public void onGameCrashed(String reason) {
+        String message = "Game ended: " + reason;
+
         clientState.clearGameState();
-        clientState.setErrorMessage("Game crashed: " + reason);
-        clientState.setStatusMessage("Game crashed: " + reason);
-        view.showError("Game crashed: " + reason);
+        clientState.setErrorMessage(message);
+        clientState.setStatusMessage(message);
+
+        view.showError(message);
     }
 }
