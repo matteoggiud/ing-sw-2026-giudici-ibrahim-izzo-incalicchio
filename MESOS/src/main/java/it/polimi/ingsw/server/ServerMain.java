@@ -5,16 +5,12 @@ import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
-import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
-// import it.polimi.ingsw.server.model.states.WaitingForReconnectState; // Assicurati di importarlo
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
@@ -58,7 +54,7 @@ ServerMain {
 
         List<Integer> pendingGames = dataDepo.getInProgressGames();
 
-        if (pendingGames.size() > 0) {
+        if (!pendingGames.isEmpty()) {
             System.out.println("Find " + pendingGames.size() + " games in progress. Do you want to restore them? (y/n)");
             String restoreChoice = scanner.nextLine().trim().toLowerCase();
             if (restoreChoice.equals("y")) {
@@ -96,7 +92,6 @@ ServerMain {
                     socketServer.run();
                 } catch (IOException e) {
                     System.err.println("[ERROR] Exception caught in ServerMain (Socket thread): " + e.getMessage());
-                    e.printStackTrace();
                     throw new RuntimeException(e);
                 }
             }).start();
@@ -115,7 +110,6 @@ ServerMain {
             System.out.println("[SERVER] Server rmi started at " + serverIp + ":" + rmiPort);
         } catch (Exception e) {
             System.err.println("[ERROR] Exception caught in ServerMain: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }
