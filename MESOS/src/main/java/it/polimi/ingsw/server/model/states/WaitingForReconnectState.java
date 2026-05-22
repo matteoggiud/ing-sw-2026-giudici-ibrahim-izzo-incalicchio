@@ -18,7 +18,7 @@ public class WaitingForReconnectState implements IGameState {
     private Timer timeoutTimer;
 
     // Timeout di 5 minuti
-    private static final long TIMEOUT_MS = 1 * 10 * 1000;
+    private static final long TIMEOUT_MS = 1 * 90 * 1000;
 
     public WaitingForReconnectState(String originalStateName, List<String> pendingPlayers) {
         if (originalStateName == null || originalStateName.isBlank()) {
