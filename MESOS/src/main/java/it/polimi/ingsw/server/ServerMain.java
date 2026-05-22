@@ -11,6 +11,7 @@ import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
@@ -22,8 +23,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class
-ServerMain {
+public class ServerMain {
+    private static Registry rmiRegistry;
+    private static RmiBootstrapServer rmiBootstrapServer;
+    private static RmiBootstrap rmiBootstrapStub;
+
     public static void main(String[] args) {
         final int socketPort = 12345;
 
@@ -107,15 +111,15 @@ ServerMain {
             }).start();
 
             //RMI
-            RmiBootstrap bootstrap = new RmiBootstrapServer(controller);
+            rmiBootstrapServer = new RmiBootstrapServer(controller);
 
             //We create a remote bootstrap object
-            RmiBootstrap stub = (RmiBootstrap) UnicastRemoteObject.exportObject(bootstrap, 0);
+            rmiBootstrapStub = (RmiBootstrap) UnicastRemoteObject.exportObject(rmiBootstrapServer, 0);
 
-            Registry registry = LocateRegistry.createRegistry(rmiPort);
+            rmiRegistry = LocateRegistry.createRegistry(rmiPort);
 
             //After we created the registry with the port, we bind to it the server name and the remote bootstrap
-            registry.rebind(rmiName, stub);
+            rmiRegistry.rebind(rmiName, rmiBootstrapStub);
 
             System.out.println("[SERVER] Server rmi started at " + serverIp + ":" + rmiPort);
         } catch (Exception e) {
