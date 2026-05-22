@@ -6,6 +6,7 @@ import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
+import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
 
 import java.util.*;
@@ -17,7 +18,7 @@ public class WaitingForReconnectState implements IGameState {
     private Timer timeoutTimer;
 
     // Timeout di 5 minuti
-    private static final long TIMEOUT_MS = 1 * 10 * 1000;
+    private static final long TIMEOUT_MS = 1 * 90 * 1000;
 
     public WaitingForReconnectState(String originalStateName, List<String> pendingPlayers) {
         if (originalStateName == null || originalStateName.isBlank()) {
@@ -49,6 +50,7 @@ public class WaitingForReconnectState implements IGameState {
 
                 Map<String, Integer> timeoutRanking = new HashMap<>();
                 game.getObserverManager().notifyObservers(new GameEndedEvent(game.getGameId(), timeoutRanking, 0, null));
+                GameManager.getInstance().removeGame(game.getGameId());
             }
         }, TIMEOUT_MS);
     }
