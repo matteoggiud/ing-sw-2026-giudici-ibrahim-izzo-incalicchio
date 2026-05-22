@@ -16,14 +16,17 @@ import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMes
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
 public class SocketGenericVirtualView implements GenericVirtualView {
+    private final Socket socket;
     private final ObjectOutputStream outputStream;
-    private boolean isReachable;
+    private volatile boolean isReachable;
 
-    SocketGenericVirtualView(ObjectOutputStream outputStream) {
+    SocketGenericVirtualView(Socket socket, ObjectOutputStream outputStream) {
+        this.socket = socket;
         this.outputStream = outputStream;
         isReachable = true;
     }
@@ -345,6 +348,6 @@ public class SocketGenericVirtualView implements GenericVirtualView {
 
     @Override
     public boolean isReachable() {
-        return isReachable;
+        return isReachable && socket != null && socket.isConnected() && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown();
     }
 }
