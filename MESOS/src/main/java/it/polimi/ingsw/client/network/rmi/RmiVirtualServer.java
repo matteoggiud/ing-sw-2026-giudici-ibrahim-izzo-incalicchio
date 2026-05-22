@@ -9,9 +9,11 @@ import java.rmi.RemoteException;
 public class RmiVirtualServer implements GenericVirtualServer {
 
     RemoteServer remoteServer;
+    private final RmiClient rmiClient;
 
-    public RmiVirtualServer(RemoteServer remoteServer) {
+    public RmiVirtualServer(RemoteServer remoteServer, RmiClient rmiClient) {
         this.remoteServer = remoteServer;
+        this.rmiClient = rmiClient;
     }
 
 

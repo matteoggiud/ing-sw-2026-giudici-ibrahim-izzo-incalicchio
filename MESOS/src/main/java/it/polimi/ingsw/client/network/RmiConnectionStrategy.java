@@ -35,7 +35,7 @@ public class RmiConnectionStrategy implements NetworkConnectionStrategy {
         RmiBootstrap bootstrap = (RmiBootstrap) registry.lookup(RMI_NAME);
         RemoteServer remoteServer = bootstrap.connect(clientStub);
 
-        return new RmiVirtualServer(remoteServer);
+        return new RmiVirtualServer(remoteServer,  rmiClient);
     }
 }
 

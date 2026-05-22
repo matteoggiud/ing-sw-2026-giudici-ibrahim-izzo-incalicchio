@@ -10,10 +10,13 @@ import it.polimi.ingsw.server.network.GenericVirtualView;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RmiBootstrapServer implements RmiBootstrap {
 
     private final GameController gameController;
+    private final List<RmiServer> activeServers = new CopyOnWriteArrayList<>();
     final int serverPort = 0;
 
     public RmiBootstrapServer(GameController gameController) {
@@ -28,6 +31,7 @@ public class RmiBootstrapServer implements RmiBootstrap {
         ClientSession session = new ClientSession(new EventHandler(virtualView));
 
         RmiServer server = new RmiServer(gameController, session);
+        activeServers.add(server);
 
         return (RemoteServer) UnicastRemoteObject.exportObject(server, serverPort);
     }
