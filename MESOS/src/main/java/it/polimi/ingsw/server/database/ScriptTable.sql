@@ -1,3 +1,8 @@
+-- SQL script to create the database tables for the game application.
+
+-- The character_card table contains all the character cards in the game, with their name, era, minimum number of players, character type, and effect parameters.
+-- The character_type field is a VARCHAR with a CHECK constraint to ensure it only contains valid character types.
+-- The effect_params field is a JSON object that can store any additional parameters needed for the character's effect.
 CREATE TABLE character_card
 (
     card_id         SERIAL PRIMARY KEY,
@@ -15,6 +20,9 @@ CREATE TABLE character_card
     effect_params   JSON
 );
 
+-- The building_card table contains all the building cards in the game, with their name, era, minimum number of players, food cost, end game prestige points, effect type, and effect parameters.
+-- The effect_id field is a VARCHAR with a CHECK constraint to ensure it only contains valid effect IDs.
+-- The min_num_players is used to determine in which player count configurations the card can be included in the game setup.
 CREATE TABLE building_card
 (
     card_id         SERIAL PRIMARY KEY,
@@ -42,6 +50,8 @@ CREATE TABLE building_card
     effect_params   JSON
 );
 
+-- The event_card table contains all the event cards in the game, with their name, era, minimum number of players, whether they are final events, event type, and effect parameters.
+-- The threshold field is used to determine when the event is triggered based on the current game state, and the gained/malus food and prestige points are used to apply the event's effects when it is triggered.
 CREATE TABLE event_card
 (
     card_id         SERIAL PRIMARY KEY,
@@ -57,6 +67,7 @@ CREATE TABLE event_card
     threshold       INTEGER NOT NULL CHECK (threshold >= 0)
 );
 
+-- The card table is a central table that links to the character_card, building_card, and event_card tables. Each card can be of only one type (character, building, or event), and this is enforced by the CHECK constraint on the num_nonnulls function.
 CREATE TABLE card(
     id                SERIAL PRIMARY KEY,
     character_card_id INTEGER,
@@ -86,7 +97,7 @@ CREATE TABLE card(
         CHECK (num_nonnulls(character_card_id, building_card_id, event_card_id) = 1)
 );
 
-
+-- The offer_box table contains the different offer boxes in the game, with their box ID, food reward, and the number of picks for the upper and lower rows.
 CREATE TABLE offer_box
 (
     box_id          VARCHAR(2) CHECK (box_id IN ('A', 'B', 'C', 'D', 'E', 'F', 'G')) PRIMARY KEY,
@@ -95,12 +106,14 @@ CREATE TABLE offer_box
     lower_row_picks INTEGER NOT NULL CHECK (lower_row_picks >= 0)
 );
 
+-- The turn_order_box and turn_order_slot tables define the turn order configurations for different player counts.
 CREATE TABLE turn_order_box
 (
     order_box_id SERIAL PRIMARY KEY,
     num_players  INTEGER NOT NULL CHECK (num_players BETWEEN 2 AND 5)
 );
 
+-- The turn_order_slot table contains the individual slots for each turn order box, with their position, food cost, and prestige point cost. Each slot is linked to a specific turn order box, and the combination of order_box_id and position must be unique.
 CREATE TABLE turn_order_slot
 (
     slot_id      SERIAL PRIMARY KEY,
@@ -112,6 +125,7 @@ CREATE TABLE turn_order_slot
     UNIQUE (order_box_id, position)
 );
 
+-- The player table contains the registered players in the game, with their player ID, nickname, password hash, and the timestamp of when they created their account.
 CREATE TABLE player
 (
     player_id     SERIAL PRIMARY KEY,
@@ -120,6 +134,9 @@ CREATE TABLE player
     created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- The game table contains the active and completed games in the system, with their game ID, which is incremental and serves as the primary key
+-- The parameter in_progress is a boolean that indicates whether the game is currently active or has finished
+-- The game_snapshot field is a JSONB object that stores the current state of the game for the persistence mechanism
 CREATE TABLE game (
     game_id    SERIAL PRIMARY KEY,
     expected_players INTEGER NOT NULL CHECK (expected_players BETWEEN 2 AND 5),
@@ -130,7 +147,8 @@ CREATE TABLE game (
     game_snapshot JSONB NOT NULL DEFAULT '{}'
 );
 
---Explicity asked to save the final score in the database
+-- The game_player table is a junction table that links the game and player tables, representing the players participating in each game.
+-- Explicity asked to save the final score in the database
 CREATE TABLE game_player (
     game_id   INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
@@ -140,16 +158,3 @@ CREATE TABLE game_player (
     FOREIGN KEY (game_id) REFERENCES game (game_id) ON DELETE CASCADE,
     FOREIGN KEY (player_id) REFERENCES player (player_id) ON DELETE CASCADE
 );
-
-CREATE VIEW player_leaderboard_simple AS
-SELECT
-    g.expected_players AS num_players,
-    p.player_id,
-    p.nickname,
-    COUNT(gp.game_id) AS games_played,
-    SUM(gp.final_score) AS total_score
-FROM player p
-         INNER JOIN game_player gp ON p.player_id = gp.player_id
-         INNER JOIN game g ON gp.game_id = g.game_id
-WHERE g.finished_at IS NOT NULL
-GROUP BY g.expected_players, p.player_id, p.nickname;
