@@ -39,7 +39,7 @@ public class RockPaintingEventEffect implements IEventEffect {
                 effectEventResults.add(new EffectEventResult(0, artistCount * eventCard.getGainedPP(), player));
             } else {
                 // If the player does not have enough Artists, they lose a flat amount of prestige points as indicated on the Event card
-                effectEventResults.add(new EffectEventResult(0, eventCard.getMalusPP(), player));
+                effectEventResults.add(new EffectEventResult(0, -eventCard.getMalusPP(), player));
             }
         }
 

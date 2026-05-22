@@ -64,10 +64,12 @@ ServerMain {
             if (restoreChoice.equals("y")) {
                 for (int pendingGamesId : pendingGames) {
                     GameSnapshotDTO snapshotDTO = dataDepo.loadGameSnapshot(pendingGamesId);
-                    Game restoredGame = GameBuilder.reconstructGame(snapshotDTO, dataDepo);
-                    //TODO: Understand if we can do it more safely
-                    gamePortal.restoreGame(restoredGame);
-                    System.out.println("Game " + pendingGamesId + " restored.");
+                    if (snapshotDTO != null) {
+                        Game restoredGame = GameBuilder.reconstructGame(snapshotDTO, dataDepo);
+                        //TODO: Understand if we can do it more safely
+                        gamePortal.restoreGame(restoredGame);
+                        System.out.println("Game " + pendingGamesId + " restored.");
+                    }
                 }
             } else {
                 // Set pending games as not in progress

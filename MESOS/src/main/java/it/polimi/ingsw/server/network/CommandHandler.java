@@ -135,7 +135,7 @@ public class CommandHandler {
         try {
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
             clientSession.getEventHandler().getView().onAvailableGames(games);
-            clientSession.clearActiveGameId();
+            //clientSession.clearActiveGameId();
         } catch (RuntimeException e) {
             System.err.println("[ERROR] Exception caught in CommandHandler (handleGetAvailableGames RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games: " + e.getMessage());
