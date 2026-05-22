@@ -601,7 +601,7 @@ public class GamePortal implements IGameModel {
         Player player = playerManager.getPlayer(username);
 
         addObserver(game, eventHandler);
-        game.getGameState().addPlayer(game, player);
+
 
         // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
         eventHandler.update(new GameStartedEvent(game));
@@ -617,6 +617,8 @@ public class GamePortal implements IGameModel {
                 gameId,
                BoardDTOMapper.toBoardDTO(game)
         ));
+
+        game.getGameState().addPlayer(game, player);
 
         // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 
         // non appena WaitingForReconnectState scatta su nextState()!

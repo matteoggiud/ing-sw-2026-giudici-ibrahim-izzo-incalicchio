@@ -347,7 +347,6 @@ public class GameBuilder {
                     // Add card in player deck and call onAddToPlayerDeck to update player deck
                     // stats
                     p.getPlayerDeck().addCard(card);
-                    card.onAddToPlayerDeck(p.getPlayerDeck());
                 }
             }
 

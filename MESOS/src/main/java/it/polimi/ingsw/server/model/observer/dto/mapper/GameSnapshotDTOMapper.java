@@ -18,7 +18,7 @@ public class GameSnapshotDTOMapper {
         int gameId = game.getGameId();
         int expectedPlayerCount = game.getExpectedPlayerCount();
         boolean lastRoundTriggered = game.isLastRoundTriggered();
-        String currentStateName = game.getGameState().getClass().getSimpleName();
+        String currentStateName = game.getGameState().getPersistenceName();
 
         List<PlayerInfoDTO> players = PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers());
         BoardDTO boardSnapshot = BoardDTOMapper.toBoardDTO(game);

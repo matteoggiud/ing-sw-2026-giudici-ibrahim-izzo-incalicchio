@@ -81,6 +81,7 @@ public abstract class CharacterCard extends TribeCard {
 
     /**
      * Hook method that can be overridden by subclasses to apply special effects when this character card is added to a player's deck.
+     * Is used inside PlayerDeck.addCharacterCard()
      *
      * @param playerDeck the player's deck to which this card is being added.
      */
