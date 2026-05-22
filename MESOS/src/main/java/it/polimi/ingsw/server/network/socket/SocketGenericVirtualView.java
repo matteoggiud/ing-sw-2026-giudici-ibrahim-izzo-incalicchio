@@ -21,9 +21,11 @@ import java.util.Map;
 
 public class SocketGenericVirtualView implements GenericVirtualView {
     private final ObjectOutputStream outputStream;
+    private boolean isReachable;
 
     SocketGenericVirtualView(ObjectOutputStream outputStream) {
         this.outputStream = outputStream;
+        isReachable = true;
     }
 
     /**
@@ -36,7 +38,9 @@ public class SocketGenericVirtualView implements GenericVirtualView {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
+            isReachable = true;
         } catch (Exception e) {
+            isReachable = false;
             throw new RuntimeException("Failed to send message to client: " + e.getMessage(), e);
         }
     }
@@ -338,5 +342,10 @@ public class SocketGenericVirtualView implements GenericVirtualView {
         ServerMessage serverMessage = new GameCrashedMessage(reason);
 
         sendMessage(serverMessage);
+    }
+
+    @Override
+    public boolean isReachable() {
+        return isReachable;
     }
 }
