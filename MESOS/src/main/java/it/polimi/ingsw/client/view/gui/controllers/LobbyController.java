@@ -50,7 +50,6 @@ public class LobbyController {
     private static final double LEAVE_BUTTON_H = 0.055;
 
     private GuiContext guiContext;
-    private GameInfoDTO currentGameInfo;
 
     @FXML
     private StackPane lobbyRoot;
@@ -94,7 +93,6 @@ public class LobbyController {
     }
 
     public void showGameInfo(GameInfoDTO gameInfo) {
-        this.currentGameInfo = gameInfo;
 
         Platform.runLater(() -> {
             gameIdLabel.setText("Game ID: " + gameInfo.gameId());

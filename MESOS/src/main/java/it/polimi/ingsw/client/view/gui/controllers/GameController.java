@@ -2,7 +2,6 @@ package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.client.view.gui.ImageCache;
-import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -15,8 +14,6 @@ import javafx.scene.layout.*;
 import javafx.geometry.Point2D;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-
-import java.util.Comparator;
 
 import java.util.*;
 
@@ -130,20 +127,20 @@ public class GameController {
         bindGameLayout();
 
         playersListView.setItems(playersItems);
-        playersListView.setCellFactory(lv -> new PlayerCell());
+        playersListView.setCellFactory(_ -> new PlayerCell());
     }
 
 
     private void configureCardNode(ImageView iv, int cardId, boolean isUpper) {
-        iv.setOnMouseEntered(e -> {
+        iv.setOnMouseEntered(_ -> {
             iv.setScaleX(1.05);
             iv.setScaleY(1.05);
         });
-        iv.setOnMouseExited(e -> {
+        iv.setOnMouseExited(_ -> {
             iv.setScaleX(1.0);
             iv.setScaleY(1.0);
         });
-        iv.setOnMouseClicked(e -> {
+        iv.setOnMouseClicked(_ -> {
             if (guiContext != null && guiContext.clientController() != null /*TODO: check if is the player turn and is the draw action*/) {
                 guiContext.clientController().drawCard(cardId, isUpper);
             }
@@ -186,7 +183,7 @@ public class GameController {
             }
         }
 
-        canvas.setOnMouseClicked(e -> {
+        canvas.setOnMouseClicked(_ -> {
             if (guiContext != null && guiContext.clientController() != null) {
                 guiContext.clientController().placeTotem(boxIndex);
             }
@@ -368,7 +365,7 @@ public class GameController {
         });
     }
 
-    public void showGameStarted(int gameId, List<String> playerNicknames) {
+    public void showGameStarted(List<String> playerNicknames) {
         Platform.runLater(() -> {
             gameInfoLabel.setText("Players: " + String.join(", ", playerNicknames));
             turnLabel.setText("Turn: waiting...");
@@ -381,34 +378,28 @@ public class GameController {
     }
 
     public void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn) {
-        Platform.runLater(() -> {
-            turnLabel.setText(isMyTurn
-                    ? "Turn: PLACE TOTEM — it's YOUR turn"
-                    : "Turn: PLACE TOTEM — " + currentPlayerNickname + "'s turn");
-        });
+        Platform.runLater(() -> turnLabel.setText(isMyTurn
+                ? "Turn: PLACE TOTEM — it's YOUR turn"
+                : "Turn: PLACE TOTEM — " + currentPlayerNickname + "'s turn"));
     }
 
     public void showResolveActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-        Platform.runLater(() -> {
-            turnLabel.setText(isMyTurn
-                    ? "Turn: RESOLVE ACTION — it's YOUR turn"
-                    : "Turn: RESOLVE ACTION — " + currentPlayerNickname + "'s turn");
-        });
+        Platform.runLater(() -> turnLabel.setText(isMyTurn
+                ? "Turn: RESOLVE ACTION — it's YOUR turn"
+                : "Turn: RESOLVE ACTION — " + currentPlayerNickname + "'s turn"));
     }
 
     public void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn) {
-        Platform.runLater(() -> {
-            turnLabel.setText(isMyTurn
-                    ? "Turn: EXTRA ACTION — it's YOUR turn"
-                    : "Turn: EXTRA ACTION — " + currentPlayerNickname + "'s turn");
-        });
+        Platform.runLater(() -> turnLabel.setText(isMyTurn
+                ? "Turn: EXTRA ACTION — it's YOUR turn"
+                : "Turn: EXTRA ACTION — " + currentPlayerNickname + "'s turn"));
     }
 
     /**
      * Aggiorna la lista dei PlayerInfoDTO (numero giocatori / stats).
      * Chiamato da ViewController.onPlayerInfosChanged -> view.showPlayersInfo(...)
      */
-    public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
+    public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo) {
         Platform.runLater(() -> {
             playersItems.setAll(playersInfo);
             playersListView.refresh();
@@ -429,7 +420,7 @@ public class GameController {
      * Aggiorna il deck di un singolo giocatore; ridisegna la listView per aggiornare la cella.
      * Chiamato da ViewController.onPlayerDeckUpdated -> view.showPlayerDeck(...)
      */
-    public void showPlayerDeck(String nickname, PlayerDeckDTO playerDeck, boolean isMe) {
+    public void showPlayerDeck(String nickname, PlayerDeckDTO playerDeck) {
         Platform.runLater(() -> {
             if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
                 populateMyDeck(playerDeck);
@@ -481,47 +472,10 @@ public class GameController {
         }
     }
 
-    public void clearDecks() {
-        Platform.runLater(() -> {
-            playerDecks.clear();
-            playersListView.refresh();
-        });
-    }
-
-
-    private String formatPlayerInfo(PlayerInfoDTO p) {
-        String me = (this.guiContext.clientState().getNickname() != null && p.nickname().equals(this.guiContext.clientState().getNickname())) ? " (you)" : "";
-        return p.nickname() + me +
-                " | food=" + p.food() +
-                " | pp=" + p.pp() +
-                " | totem=" + p.totem();
-    }
-
-    private String formatDeck(PlayerDeckDTO deck) {
-        if (deck == null) return "<no deck>";
-
-        return deck.toString();
-    }
-
-    private String formatBoard(BoardDTO board) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Current era: ").append(board.currentEra()).append("\n\n");
-        sb.append("Offer boxes: ").append(board.offerTrackBoxes().size()).append("\n");
-        sb.append("Turn slots: ").append(board.turnOrderSlots().size()).append("\n");
-        sb.append("Upper character cards: ").append(board.upperCharacterCards().size()).append("\n");
-        sb.append("Lower character cards: ").append(board.lowerCharacterCards().size()).append("\n");
-        sb.append("Upper event cards: ").append(board.upperEventCards().size()).append("\n");
-        sb.append("Lower event cards: ").append(board.lowerEventCards().size()).append("\n");
-        sb.append("Upper building cards: ").append(board.upperBuildingCards().size()).append("\n");
-        sb.append("Lower building cards: ").append(board.lowerBuildingCards().size()).append("\n");
-        return sb.toString();
-    }
 
     /* --- custom ListCell per mostrare stats + deck nello stesso pannello --- */
     private class PlayerCell extends ListCell<PlayerInfoDTO> {
         private final HBox root = new HBox(12);
-        private final VBox statsBox = new VBox(4);
-        private final HBox headerRow = new HBox(6);
         private final Label nicknameLabel = new Label();
         private final Label statsLabel = new Label();
         private final Label resourceLabel = new Label();
@@ -531,12 +485,14 @@ public class GameController {
         PlayerCell() {
             super();
 
+            HBox headerRow = new HBox(6);
             headerRow.setAlignment(Pos.CENTER_LEFT);
             headerRow.getChildren().addAll(totemImage, nicknameLabel);
 
             statsLabel.setWrapText(true);
             resourceLabel.setWrapText(true);
 
+            VBox statsBox = new VBox(4);
             statsBox.getChildren().addAll(headerRow, resourceLabel, statsLabel);
             HBox.setHgrow(statsBox, Priority.ALWAYS);
             root.getChildren().setAll(statsBox);

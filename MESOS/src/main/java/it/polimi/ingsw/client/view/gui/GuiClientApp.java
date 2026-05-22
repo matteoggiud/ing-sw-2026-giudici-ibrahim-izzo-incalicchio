@@ -19,9 +19,6 @@ import javafx.application.Platform;
 import java.util.List;
 
 public class GuiClientApp extends Application {
-    private ClientState clientState;
-
-    private ViewController viewController;
 
     /**
      * The main entry point for all JavaFX applications.
@@ -66,10 +63,10 @@ public class GuiClientApp extends Application {
         String host = args.size() > 1 ? args.get(1) : "localhost";
 
         // 2. Initialize client controller
-        this.clientState = new ClientState();
+        ClientState clientState = new ClientState();
         GuiClientView view = new GuiClientView(primaryStage, root);
         // this.guiClientView = view;
-        this.viewController = new ViewController(clientState, view);
+        ViewController viewController = new ViewController(clientState, view);
 
 
         NetworkConnectionStrategy connectionStrategy = "RMI".equals(protocol) ? new RmiConnectionStrategy() : new SocketConnectionStrategy();

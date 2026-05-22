@@ -17,11 +17,7 @@ public class SocketServerConnection {
     private final ClientState clientState;
     private final ClientView clientView;
 
-    private Socket socket;
-    private ObjectInputStream inputStream;
-    private ObjectOutputStream outputStream;
     private SocketServerListener clientHandler;
-    private Thread clientHandlerThread;
 
     public SocketServerConnection(String host, int port, ServerMessageVisitor serverVisitor, ClientState clientState, ClientView clientView) {
         this.host = host;
@@ -35,16 +31,16 @@ public class SocketServerConnection {
      * Opens the socket connection and starts the server receiver handler thread.
      */
     public void connect() throws IOException {
-        socket = new Socket(host, port);
+        Socket socket = new Socket(host, port);
 
         // Keep same stream creation order used on server side
-        outputStream = new ObjectOutputStream(socket.getOutputStream());
+        ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
         outputStream.flush();
-        inputStream = new ObjectInputStream(socket.getInputStream());
+        ObjectInputStream inputStream = new ObjectInputStream(socket.getInputStream());
 
         clientState.connect();
         clientHandler = new SocketServerListener(socket, inputStream, outputStream, serverVisitor, clientState, clientView);
-        clientHandlerThread = new Thread(clientHandler, "socket-client-handler");
+        Thread clientHandlerThread = new Thread(clientHandler, "socket-client-handler");
         clientHandlerThread.start();
     }
 
