@@ -5,7 +5,7 @@ import it.polimi.ingsw.client.view.gui.controllers.*;
 import it.polimi.ingsw.server.model.observer.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -153,13 +153,36 @@ public class GuiClientView implements ClientView {
      * @param message
      */
     @Override
-    public void showError(String message) {
+    public void showError(String message)
+    {
+        Platform.runLater(() -> {
+            try {
+                gameController.showTemporaryMessage(message);
+            }catch (Exception _){
+            }
+
+        });
+        System.out.println("Error: " + message);
+    }
+
+    @Override
+    public void showDisconnected(String message) {
         Platform.runLater(() -> {
             System.err.println("Error: " + message);
 
-            if (authController != null) {
+            boolean showingAuth = authRoot != null && root.getChildren().contains(authRoot);
+
+            if (showingAuth && authController != null) {
                 authController.showErrorMessage(message);
+                return;
             }
+
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(stage);
+            alert.setTitle("MESOS");
+            alert.setHeaderText("Game ended");
+            alert.setContentText(message);
+            alert.show();
         });
     }
 
@@ -213,7 +236,7 @@ public class GuiClientView implements ClientView {
 
                 ensureGameLoaded();
 
-                gameController.showGameStarted(gameId, playerNicknames);
+                gameController.showGameStarted(playerNicknames);
 
                 changeSceneIfNeeded(gameRoot);
             } catch (IOException e) {
@@ -293,7 +316,7 @@ public class GuiClientView implements ClientView {
     public void showPlayerDeck(String playerNickname, PlayerDeckDTO playerDeck, boolean isMe) {
         Platform.runLater(() -> {
             if (gameController != null) {
-                gameController.showPlayerDeck(playerNickname, playerDeck, isMe);
+                gameController.showPlayerDeck(playerNickname, playerDeck);
             }
         });
     }
@@ -307,7 +330,7 @@ public class GuiClientView implements ClientView {
     public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo, String myNickname) {
         Platform.runLater(() -> {
             if (gameController != null) {
-                gameController.showPlayersInfo(playersInfo, myNickname);
+                gameController.showPlayersInfo(playersInfo);
             }
         });
     }
@@ -355,6 +378,20 @@ public class GuiClientView implements ClientView {
                 resolvingShowing = true;
                 showNextResolvingEvent();
             }
+        });
+    }
+
+    @Override
+    public void shutdown(String reason) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.initOwner(stage);
+            alert.setTitle("MESOS");
+            alert.setHeaderText("Game ended");
+            alert.setContentText(reason);
+            alert.showAndWait();
+
+            stage.close();
         });
     }
 

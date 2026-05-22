@@ -11,6 +11,8 @@ public interface ClientView {
 
     void showError(String message);
 
+    void showDisconnected(String message);
+
     void showAvailableGames(List<GameInfoDTO> games);
 
     void showGameInfo(GameInfoDTO gameInfo);
@@ -39,4 +41,6 @@ public interface ClientView {
     void showAuthenticator(String message);
 
     void showResolvingEvent(int gameId, EventCardDTO eventCardDTO);
+
+    void shutdown(String reason);
 }

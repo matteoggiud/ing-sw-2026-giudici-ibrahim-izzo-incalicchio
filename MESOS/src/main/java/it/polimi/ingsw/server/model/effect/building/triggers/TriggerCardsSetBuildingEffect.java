@@ -74,8 +74,4 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
     }
 
 
-    @Override
-    public boolean isCardTrigger() {
-        return true;
-    }
 }

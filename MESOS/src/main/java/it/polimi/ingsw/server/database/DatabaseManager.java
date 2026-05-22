@@ -15,8 +15,7 @@ public class DatabaseManager {
             return DriverManager.getConnection(URL);
         } catch (SQLException e) {
             System.err.println("[ERROR] Exception caught in DatabaseManager: " + e.getMessage());
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException("Failed to connect to the database", e);
         }
     }
 }

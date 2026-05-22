@@ -51,12 +51,12 @@ public class SocketServerListener implements Runnable {
                 serverMessage.dispatch(serverVisitor);
             }
         } catch (EOFException | SocketException e) {
-
             handleServerDisconnected("Connection lost: server disconnected.");
         } catch (Exception e) {
             handleServerDisconnected("Connection lost: unexpected communication error.");
         } finally {
             safeClose();
+            clientView.shutdown("Connection lost");
         }
     }
 
@@ -81,8 +81,9 @@ public class SocketServerListener implements Runnable {
 
     private void handleServerDisconnected(String message) {
         if (clientSession.isConnected()) {
-            clientView.showError(message);
             clientSession.disconnect();
+            clientSession.setErrorMessage(message);
+            clientView.showError(message);
         }
     }
 

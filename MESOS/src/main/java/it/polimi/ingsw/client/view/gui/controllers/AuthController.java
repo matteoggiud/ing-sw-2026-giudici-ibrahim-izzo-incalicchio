@@ -122,6 +122,10 @@ public class AuthController {
         }
 
         clearMessage();
+        if (guiContext == null || guiContext.clientController() == null) {
+            showErrorMessage("Not connected to server yet. Please wait and try again.");
+            return;
+        }
         guiContext.clientController().submitLogin(new Credentials(nickname, password));
     }
 
@@ -136,6 +140,10 @@ public class AuthController {
         }
 
         clearMessage();
+        if (guiContext == null || guiContext.clientController() == null) {
+            showErrorMessage("Not connected to server yet. Please wait and try again.");
+            return;
+        }
         guiContext.clientController().submitRegistration(new Credentials(nickname, password));
     }
 
@@ -165,6 +173,10 @@ public class AuthController {
     @FXML
     private void handleKeyPress(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
+            if (guiContext == null || guiContext.clientController() == null) {
+                showErrorMessage("Not connected to server yet. Please wait and try again.");
+                return;
+            }
             handleLogin();
         }
     }

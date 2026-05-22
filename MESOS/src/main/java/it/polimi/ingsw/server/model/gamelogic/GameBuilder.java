@@ -347,7 +347,6 @@ public class GameBuilder {
                     // Add card in player deck and call onAddToPlayerDeck to update player deck
                     // stats
                     p.getPlayerDeck().addCard(card);
-                    card.onAddToPlayerDeck(p.getPlayerDeck());
                 }
             }
 
@@ -362,6 +361,9 @@ public class GameBuilder {
                     continue;
                 }
                 p.getPlayerDeck().addCard(card);
+
+                // If the building is already built, we need to apply its effect immediately
+                card.getEffect().getEventTrigger().ifPresent(trigger -> trigger.applyImmediateEffect(p));
             }
 
             playersObj.addPlayer(p);

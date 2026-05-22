@@ -135,7 +135,7 @@ public class CommandHandler {
         try {
             List<GameInfoDTO> games = gameController.getAvailableGames(clientSession);
             clientSession.getEventHandler().getView().onAvailableGames(games);
-            clientSession.clearActiveGameId();
+            //clientSession.clearActiveGameId();
         } catch (RuntimeException e) {
             System.err.println("[ERROR] Exception caught in CommandHandler (handleGetAvailableGames RuntimeException): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to retrieve available games: " + e.getMessage());
@@ -154,11 +154,12 @@ public class CommandHandler {
             String nickname = clientSession.isLoggedIn() ? clientSession.getNickname() : "";
             List<ClientSession> playersToNotifyGameLeft = gameController.handleDisconnect(clientSession);
 
-            clientSession.getEventHandler().getView().onDisconnectionSuccess("Goodbye " + nickname);
-            for (ClientSession playerToNotify : playersToNotifyGameLeft) {
-                playerToNotify.getEventHandler().getView().onGameCrashed(nickname + " has disconnected, the game is ended");
-                playerToNotify.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(playerToNotify));
-            }
+            gameController.notifyGameClosed(
+                    playersToNotifyGameLeft,
+                    nickname + " has disconnected, the game is ended"
+            );
+
+            //clientSession.getEventHandler().getView().onDisconnectionSuccess("Goodbye " + nickname);
         } catch (Exception e) {
             System.err.println("[ERROR] Exception caught in CommandHandler (handleDisconnection Exception): " + e.getMessage());
             clientSession.getEventHandler().getView().onGenericError("Failed to disconnect");
@@ -179,10 +180,10 @@ public class CommandHandler {
 
 
             // Notify all other players interested in the game that a player has left and the game will be closed
-            for (ClientSession player : playersInterested) {
-                player.getEventHandler().getView().onGameCrashed(clientSession.getNickname() + " has left the game");
-                player.getEventHandler().getView().onAvailableGames(gameController.getAvailableGames(player));
-            }
+            gameController.notifyGameClosed(
+                    playersInterested,
+                    clientSession.getNickname() + " has left the game, the game is ended"
+            );
 
         } catch (RuntimeException e) {
             System.err.println("[ERROR] Exception caught in CommandHandler (handleLeftGame RuntimeException): " + e.getMessage());

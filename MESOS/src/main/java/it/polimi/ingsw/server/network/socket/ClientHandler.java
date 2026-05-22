@@ -24,7 +24,6 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
-    private final EventHandler eventHandler;
     private final ClientVisitor clientVisitor;
     private final SocketAcceptor socketAcceptor;
 
@@ -33,7 +32,6 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
-        this.eventHandler = eventHandler;
         this.clientVisitor = new ClientVisitor(controller, new ClientSession(eventHandler));
         this.socketAcceptor = socketAcceptor;
     }
@@ -57,7 +55,9 @@ public class ClientHandler implements Runnable {
             System.out.println("Error in communication with client: " + e.getMessage());
         } finally {
             safeClose();
-            clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());
+            if (!clientVisitor.getClientSession().isRequestedDisconnection()) {
+                clientVisitor.getGameController().handleUnexpectedDisconnect(clientVisitor.getClientSession());
+            }
             socketAcceptor.removeClientHandler(this);
         }
     }

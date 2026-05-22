@@ -17,7 +17,7 @@ public class WaitingForReconnectState implements IGameState {
     private Timer timeoutTimer;
 
     // Timeout di 5 minuti
-    private static final long TIMEOUT_MS = 5 * 60 * 1000;
+    private static final long TIMEOUT_MS = 1 * 10 * 1000;
 
     public WaitingForReconnectState(String originalStateName, List<String> pendingPlayers) {
         if (originalStateName == null || originalStateName.isBlank()) {
@@ -47,7 +47,8 @@ public class WaitingForReconnectState implements IGameState {
 
                 new DataWriting().updateGameInProgress(game.getGameId(), false);
 
-                game.getObserverManager().notifyObservers(new GameEndedEvent(game.getGameId(), null, 0, null));
+                Map<String, Integer> timeoutRanking = new HashMap<>();
+                game.getObserverManager().notifyObservers(new GameEndedEvent(game.getGameId(), timeoutRanking, 0, null));
             }
         }, TIMEOUT_MS);
     }
@@ -129,6 +130,6 @@ public class WaitingForReconnectState implements IGameState {
 
     @Override
     public String getPersistenceName() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return "WaitingForReconnectState";
     }
 }

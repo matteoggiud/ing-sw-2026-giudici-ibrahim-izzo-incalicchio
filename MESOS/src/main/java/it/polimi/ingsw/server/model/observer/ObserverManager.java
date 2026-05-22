@@ -22,7 +22,11 @@ public class ObserverManager {
 
     public void notifyObservers(IGameEvent event) {
         for (IGameObserver observer : observers)
-            event.dispatch(observer);
+            try {
+                event.dispatch(observer);
+            } catch (Exception e) {
+                System.out.println("[WARN] Failed to notify observer: " + e.getMessage());
+            }
     }
 
     public void clearObservers() {

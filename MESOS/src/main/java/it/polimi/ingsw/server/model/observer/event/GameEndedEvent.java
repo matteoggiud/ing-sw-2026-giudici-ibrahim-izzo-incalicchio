@@ -23,7 +23,7 @@ public class GameEndedEvent implements IGameEvent {
     /**
      * Constructs a new game ended event.
      *
-     * @param gameId the unique identifier of the game
+     * @param gameId       the unique identifier of the game
      * @param finalRanking the final ranking using player nicknames as keys
      */
     public GameEndedEvent(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
@@ -33,14 +33,11 @@ public class GameEndedEvent implements IGameEvent {
         if (finalRanking == null) {
             throw new IllegalArgumentException("Final ranking cannot be null.");
         }
-        if (historicalLeaderboard == null) {
-            throw new IllegalArgumentException("Historical leaderboard cannot be null.");
-        }
 
         this.gameId = gameId;
         this.finalRanking = new LinkedHashMap<>(finalRanking);
         this.numPlayers = numPlayers;
-        this.historicalLeaderboard = List.copyOf(historicalLeaderboard);
+        this.historicalLeaderboard = historicalLeaderboard;
     }
 
     /**
@@ -69,7 +66,7 @@ public class GameEndedEvent implements IGameEvent {
         return historicalLeaderboard;
     }
 
-/**
+    /**
      * Dispatches this event to the observer.
      *
      * @param observer the observer to notify

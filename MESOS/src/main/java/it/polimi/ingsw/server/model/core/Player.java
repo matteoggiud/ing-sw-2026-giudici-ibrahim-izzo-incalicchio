@@ -152,6 +152,9 @@ public class Player {
         }
 
         playerDeck.addCard(buildingCard); // Add the building card to the player's deck
+
+        buildingCard.getEffect().getEventTrigger().ifPresent(trigger -> trigger.applyImmediateEffect(this));
+
         this.food -= Math.max((buildingCard.getFoodCost() - foodDiscount), 0); // Deduct the food cost from the player's total, ensuring it doesn't go negative
     }
 

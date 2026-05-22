@@ -19,9 +19,6 @@ import javafx.application.Platform;
 import java.util.List;
 
 public class GuiClientApp extends Application {
-    private ClientState clientState;
-
-    private ViewController viewController;
 
     /**
      * The main entry point for all JavaFX applications.
@@ -66,10 +63,10 @@ public class GuiClientApp extends Application {
         String host = args.size() > 1 ? args.get(1) : "localhost";
 
         // 2. Initialize client controller
-        this.clientState = new ClientState();
+        ClientState clientState = new ClientState();
         GuiClientView view = new GuiClientView(primaryStage, root);
         // this.guiClientView = view;
-        this.viewController = new ViewController(clientState, view);
+        ViewController viewController = new ViewController(clientState, view);
 
 
         NetworkConnectionStrategy connectionStrategy = "RMI".equals(protocol) ? new RmiConnectionStrategy() : new SocketConnectionStrategy();
@@ -80,12 +77,25 @@ public class GuiClientApp extends Application {
             // Initialize client controller with network connection and the view
             ClientController controller = new ClientController(network);
             view.setGuiContext(new GuiContext(controller, clientState));
+
+            primaryStage.setOnCloseRequest(event -> {
+                try {
+                    controller.disconnect();
+                } catch (Exception ignored) {
+                }
+
+                Platform.exit();
+                System.exit(0);
+            });
+
             clientState.connect();
+            view.showAuthenticator("Login required!");
+            MusicManager.startBackgroundMusic();
+
         } catch (Exception e) {
             System.out.println("Failed to connect to server: " + e.getMessage());
             view.showRoot(new Label("Failed to connect to server"));
         }
 
-        view.showAuthenticator("Login required!");
     }
 }

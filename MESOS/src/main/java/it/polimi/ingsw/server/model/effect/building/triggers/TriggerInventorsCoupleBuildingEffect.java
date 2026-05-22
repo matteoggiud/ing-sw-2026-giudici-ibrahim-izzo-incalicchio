@@ -79,8 +79,4 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
         return n_couple;
     }
 
-    @Override
-    public boolean isCardTrigger() {
-        return true;
-    }
 }

@@ -9,13 +9,9 @@ import java.rmi.RemoteException;
 
 public class RmiServer implements RemoteServer {
 
-    private final GameController gameController;
-    private final ClientSession clientSession;
     private final CommandHandler commandHandler;
 
     public RmiServer(GameController gameController, ClientSession clientSession) {
-        this.gameController = gameController;
-        this.clientSession = clientSession;
         this.commandHandler = new CommandHandler(gameController, clientSession);
     }
 

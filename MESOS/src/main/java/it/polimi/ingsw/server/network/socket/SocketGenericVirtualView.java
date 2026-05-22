@@ -16,14 +16,19 @@ import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMes
 import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
 
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
 public class SocketGenericVirtualView implements GenericVirtualView {
+    private final Socket socket;
     private final ObjectOutputStream outputStream;
+    private volatile boolean isReachable;
 
-    SocketGenericVirtualView(ObjectOutputStream outputStream) {
+    SocketGenericVirtualView(Socket socket, ObjectOutputStream outputStream) {
+        this.socket = socket;
         this.outputStream = outputStream;
+        isReachable = true;
     }
 
     /**
@@ -37,6 +42,7 @@ public class SocketGenericVirtualView implements GenericVirtualView {
             outputStream.writeObject(message);
             outputStream.flush();
         } catch (Exception e) {
+            isReachable = false;
             throw new RuntimeException("Failed to send message to client: " + e.getMessage(), e);
         }
     }
@@ -338,5 +344,10 @@ public class SocketGenericVirtualView implements GenericVirtualView {
         ServerMessage serverMessage = new GameCrashedMessage(reason);
 
         sendMessage(serverMessage);
+    }
+
+    @Override
+    public boolean isReachable() {
+        return isReachable && socket != null && socket.isConnected() && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown();
     }
 }

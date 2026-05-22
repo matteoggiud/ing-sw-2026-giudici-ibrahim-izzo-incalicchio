@@ -109,7 +109,7 @@ public class TuiClientApp {
         put("games", "games", "Show available games", args -> controller.getAvailableGames());
         put("create", "create <expectedNumOfPlayers>", "Create a new game", this::handleCreateGame);
         put("join", "join <gameId>", "Join an existing game", this::handleJoin);
-        put("left", "left", "Left the actual game in lobby", args -> controller.leftGame()); // to create
+        put("left", "left", "Leave the current lobby or game", args -> handleLeave());
 
         put("quit", "quit", "Exit the client", args -> quit());
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
@@ -317,6 +317,19 @@ public class TuiClientApp {
         }
 
         System.out.println(commands.get("deck").usage);
+    }
+
+    private void handleLeave() {
+        if (clientState.getActiveGameId() == null) {
+            System.out.println("You are not in a game.");
+            return;
+        }
+
+        if ("LOBBY".equals(clientState.getCurrentPhase())) {
+            controller.leftLobby();
+        } else {
+            controller.leftGame();
+        }
     }
 
 

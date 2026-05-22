@@ -24,6 +24,11 @@ public class TuiClientView implements ClientView {
         renderer.render();
     }
 
+    @Override
+    public void showDisconnected(String message) {
+        renderer.render();
+    }
+
 
     @Override
     public void showAvailableGames(List<GameInfoDTO> games) {
@@ -110,6 +115,11 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showResolvingEvent(int gameId, EventCardDTO eventCardDTO) {
+        renderer.render();
+    }
+
+    @Override
+    public void shutdown(String reason) {
         renderer.render();
     }
 

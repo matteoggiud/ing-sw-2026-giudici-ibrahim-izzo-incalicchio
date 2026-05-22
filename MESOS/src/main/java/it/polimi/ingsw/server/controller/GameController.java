@@ -354,4 +354,73 @@ public class GameController {
 
         return playersInterested;
     }
+
+    /**
+     * Handles the unexpected disconnection of a client session, ensuring that the player's state is properly
+     * updated in the game model and that any necessary cleanup is performed.
+     * @param clientSession the client session that has been unexpectedly disconnected
+     */
+    public void handleUnexpectedDisconnect(ClientSession clientSession) {
+        if (clientSession == null || clientSession.isRequestedDisconnection()) {
+            return;
+        }
+
+        String nickname = null;
+        if (clientSession.isLoggedIn()) {
+            try {
+                nickname = clientSession.getNickname();
+            } catch (Exception ignored) {
+            }
+        }
+
+        List<ClientSession> playersToNotify = handleDisconnect(clientSession);
+
+        if (nickname != null) {
+            notifyGameClosed(
+                    playersToNotify,
+                    nickname + " has disconnected, the game is ended"
+            );
+        }
+    }
+
+    /**
+     * Notifies a list of player sessions that a game has been closed, providing a reason for the closure and updating their available games list.
+     * @param playersToNotify the list of client sessions to notify about the game closure
+     * @param reason the reason for the game closure to be communicated to the players
+     */
+    public void notifyGameClosed(List<ClientSession> playersToNotify, String reason) {
+        for (ClientSession playerSession : playersToNotify) {
+            if (playerSession == null || !playerSession.isLoggedIn()) {
+                continue;
+            }
+
+            try {
+                playerSession.getEventHandler().getView().onGameCrashed(reason);
+                playerSession.getEventHandler().getView().onAvailableGames(getAvailableGames(playerSession));
+            } catch (Exception e) {
+                System.err.println("[WARN] Could not notify player about closed game: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Iterates through all active client sessions and disconnects any sessions that are found to be unreachable
+     */
+    public void disconnectUnreachableSessions() {
+        for (ClientSession session : SessionRegistry.getInstance().getSessionsSnapshot()) {
+            if (session == null || !session.isLoggedIn() || session.isRequestedDisconnection()) {
+                continue;
+            }
+
+            try {
+                if (!session.getEventHandler().getView().isReachable()) {
+                    handleUnexpectedDisconnect(session);
+                }
+            } catch (Exception e) {
+                handleUnexpectedDisconnect(session);
+            }
+        }
+    }
+
+
 }
