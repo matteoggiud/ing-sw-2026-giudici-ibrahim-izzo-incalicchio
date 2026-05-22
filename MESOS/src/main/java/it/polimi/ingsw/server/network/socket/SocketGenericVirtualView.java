@@ -38,7 +38,6 @@ public class SocketGenericVirtualView implements GenericVirtualView {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
-            isReachable = true;
         } catch (Exception e) {
             isReachable = false;
             throw new RuntimeException("Failed to send message to client: " + e.getMessage(), e);

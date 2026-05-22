@@ -7,10 +7,6 @@ import it.polimi.ingsw.server.model.core.Player;
 
 public interface IEventTrigger {
 
-    default boolean isCardTrigger() {
-        return false;
-    }
-
     /**
      * This method is called when the building with this effect is bought, to apply any immediate effect that it may have.
      *
@@ -18,7 +14,7 @@ public interface IEventTrigger {
      * @throws UnsupportedOperationException if the building effect does not have an immediate effect
      */
     default void applyImmediateEffect(Player player) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This building effect does not have an immediate effect");
+        // By default, there is no immediate effect
     }
 
     /**

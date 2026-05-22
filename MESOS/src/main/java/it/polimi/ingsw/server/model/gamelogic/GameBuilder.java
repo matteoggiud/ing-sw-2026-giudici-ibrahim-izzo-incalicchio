@@ -361,6 +361,9 @@ public class GameBuilder {
                     continue;
                 }
                 p.getPlayerDeck().addCard(card);
+
+                // If the building is already built, we need to apply its effect immediately
+                card.getEffect().getEventTrigger().ifPresent(trigger -> trigger.applyImmediateEffect(p));
             }
 
             playersObj.addPlayer(p);
