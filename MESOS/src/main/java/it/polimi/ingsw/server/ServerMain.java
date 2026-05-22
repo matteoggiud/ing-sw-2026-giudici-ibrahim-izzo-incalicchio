@@ -66,9 +66,11 @@ ServerMain {
                     GameSnapshotDTO snapshotDTO = dataDepo.loadGameSnapshot(pendingGamesId);
                     if (snapshotDTO != null) {
                         Game restoredGame = GameBuilder.reconstructGame(snapshotDTO, dataDepo);
-                        //TODO: Understand if we can do it more safely
                         gamePortal.restoreGame(restoredGame);
                         System.out.println("Game " + pendingGamesId + " restored.");
+                    } else {
+                        new DataWriting().updateGameInProgress(pendingGamesId, false);
+                        System.out.println("Game " + pendingGamesId + " could not be restored and was closed.");
                     }
                 }
             } else {
