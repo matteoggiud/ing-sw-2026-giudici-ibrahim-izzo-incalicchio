@@ -31,7 +31,7 @@ public class EndPpCardsSetBuildingEffect implements IBuildingEffect, IEndGameSco
     }
 
     /**
-     *  Indicates that this effect provides end game scoring.
+     * Indicates that this effect provides endgame scoring.
      * @return an Optional containing this instance as an IEndGameScoring effect
      */
     @Override
