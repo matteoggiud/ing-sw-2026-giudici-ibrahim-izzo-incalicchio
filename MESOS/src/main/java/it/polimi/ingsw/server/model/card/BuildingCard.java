@@ -109,7 +109,10 @@ public class BuildingCard extends TribeCard {
         return effectiveCost <= player.getFood();
     }
 
-
+    /**
+     * Validates that this building card can be selected from the given card row by the specified player.
+     * @param row the card row from which the player is attempting to select this building card
+     */
     @Override
     public void validateSelectableFrom(CardRow row) {
         if (!row.getBuildingRow().getBuildingCards().contains(this)) {
@@ -117,6 +120,11 @@ public class BuildingCard extends TribeCard {
         }
     }
 
+    /**
+     * Resolves the selection of this building card from the given card row by the specified player.
+     * @param player the player who has selected this building card
+     * @param row the card row from which the player has selected this building card
+     */
     @Override
     public void resolveFromOfferRow(Player player, CardRow row) {
         player.canBuyBuildingCard(this);
