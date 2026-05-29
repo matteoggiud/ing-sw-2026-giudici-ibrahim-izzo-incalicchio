@@ -67,7 +67,7 @@ public class GameEndedEvent implements IGameEvent {
 
     /**
      * Returns the historical leaderboard containing the top players and their scores.
-     * @return 
+     * @return the historical leaderboard
      */
     public List<LeadBoardDTO> getHistoricalLeaderboard() {
         return historicalLeaderboard;
