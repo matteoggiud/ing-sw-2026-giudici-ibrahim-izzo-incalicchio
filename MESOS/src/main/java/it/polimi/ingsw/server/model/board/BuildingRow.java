@@ -84,6 +84,11 @@ public class BuildingRow {
         return this.buildingCards.isEmpty();
     }
 
+    /**
+     * Gets the number of building cards in the building row.
+     *
+     * @return the number of building cards in the building row
+     */
     public int count() {
         return this.buildingCards.size();
     }
