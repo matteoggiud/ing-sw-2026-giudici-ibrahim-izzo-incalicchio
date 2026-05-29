@@ -1,12 +1,11 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Event emitted when the game reaches the final scoring phase

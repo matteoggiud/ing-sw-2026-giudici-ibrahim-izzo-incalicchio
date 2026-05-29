@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.network.socket;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 import it.polimi.ingsw.server.network.GenericVirtualView;
 import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;

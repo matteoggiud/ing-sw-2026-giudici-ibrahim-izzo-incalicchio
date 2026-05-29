@@ -1,8 +1,9 @@
 package it.polimi.ingsw.server.model.observer.dto.mapper;
 
+import it.polimi.ingsw.common.network.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

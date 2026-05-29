@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.network.socket.messages.game;
 
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
 public class BoardUpdatedMessage extends ServerMessage {

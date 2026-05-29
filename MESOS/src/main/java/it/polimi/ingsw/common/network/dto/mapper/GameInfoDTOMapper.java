@@ -1,7 +1,7 @@
-package it.polimi.ingsw.server.model.observer.dto.mapper;
+package it.polimi.ingsw.common.network.dto.mapper;
 
 import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
 
 import java.util.List;
 

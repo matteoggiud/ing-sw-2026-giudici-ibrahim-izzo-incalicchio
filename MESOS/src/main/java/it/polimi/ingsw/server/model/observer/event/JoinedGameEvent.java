@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
 
 public class JoinedGameEvent implements IGameEvent {
 

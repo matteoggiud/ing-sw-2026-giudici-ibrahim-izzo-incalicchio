@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.observer.dto;
+package it.polimi.ingsw.common.network.dto;
 
 import it.polimi.ingsw.server.model.era.Era;
 

@@ -3,8 +3,8 @@ package it.polimi.ingsw.server.model.gamemodel;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.network.EventHandler;
 
 import java.util.Map;

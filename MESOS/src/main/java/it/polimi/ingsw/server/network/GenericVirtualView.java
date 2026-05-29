@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.util.List;
 import java.util.Map;

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.network.socket.messages.menu;
 
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
 import java.util.List;

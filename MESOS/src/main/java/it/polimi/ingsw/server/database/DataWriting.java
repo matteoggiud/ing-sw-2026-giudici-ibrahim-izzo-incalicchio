@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
-import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 public class DataWriting {

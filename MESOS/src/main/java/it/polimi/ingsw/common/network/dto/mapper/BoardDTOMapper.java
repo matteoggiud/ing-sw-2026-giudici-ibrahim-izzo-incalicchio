@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.model.observer.dto.mapper;
+package it.polimi.ingsw.common.network.dto.mapper;
 
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
@@ -6,12 +6,12 @@ import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.BuildingCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.CharacterCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.OfferBoxDTO;
-import it.polimi.ingsw.server.model.observer.dto.TurnOrderSlotDTO;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
+import it.polimi.ingsw.common.network.dto.BuildingCardDTO;
+import it.polimi.ingsw.common.network.dto.CharacterCardDTO;
+import it.polimi.ingsw.common.network.dto.EventCardDTO;
+import it.polimi.ingsw.common.network.dto.OfferBoxDTO;
+import it.polimi.ingsw.common.network.dto.TurnOrderSlotDTO;
 
 import java.util.List;
 import java.util.stream.IntStream;

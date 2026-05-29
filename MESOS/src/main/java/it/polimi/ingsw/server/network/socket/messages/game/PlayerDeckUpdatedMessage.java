@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.network.socket.messages.game;
 
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 
 /**
  * Message indicating that a player's deck has been updated.

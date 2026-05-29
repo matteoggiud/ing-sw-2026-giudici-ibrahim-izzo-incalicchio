@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;

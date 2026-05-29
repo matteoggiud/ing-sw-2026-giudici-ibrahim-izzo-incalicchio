@@ -6,15 +6,13 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
-import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
-
-import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
 import java.util.List;

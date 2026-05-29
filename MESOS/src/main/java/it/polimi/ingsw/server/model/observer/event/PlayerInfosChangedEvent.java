@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.common.network.dto.PlayerInfoDTO;
 
 import java.util.List;
 

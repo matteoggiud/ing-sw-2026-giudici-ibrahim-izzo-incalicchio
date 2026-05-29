@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.network.socket.messages.game;
 
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
+import it.polimi.ingsw.common.network.dto.EventCardDTO;
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 
 public class ResolvingEventMessage extends ServerMessage {

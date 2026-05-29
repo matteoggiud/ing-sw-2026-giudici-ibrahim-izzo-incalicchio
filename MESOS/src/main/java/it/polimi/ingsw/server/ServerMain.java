@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
-import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;

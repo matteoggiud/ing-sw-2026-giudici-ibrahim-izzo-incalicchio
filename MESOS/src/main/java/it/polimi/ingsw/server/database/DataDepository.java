@@ -24,8 +24,8 @@ import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.era.Era2;
 import it.polimi.ingsw.server.model.era.Era3;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

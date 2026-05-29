@@ -1,9 +1,9 @@
 package it.polimi.ingsw.server.network.rmi;
 
 import it.polimi.ingsw.client.network.rmi.RemoteServer;
+import it.polimi.ingsw.common.network.dto.*;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
-import it.polimi.ingsw.server.model.observer.dto.*;
 import it.polimi.ingsw.server.network.ClientSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

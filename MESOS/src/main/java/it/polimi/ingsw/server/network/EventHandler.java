@@ -1,15 +1,12 @@
 package it.polimi.ingsw.server.network;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
+import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
-import it.polimi.ingsw.server.network.SessionRegistry;
 import it.polimi.ingsw.server.network.socket.messages.game.*;
 
 
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 

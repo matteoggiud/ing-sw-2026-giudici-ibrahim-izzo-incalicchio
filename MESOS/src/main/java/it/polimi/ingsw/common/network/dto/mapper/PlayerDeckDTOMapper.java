@@ -1,11 +1,11 @@
-package it.polimi.ingsw.server.model.observer.dto.mapper;
+package it.polimi.ingsw.common.network.dto.mapper;
 
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.CharacterCard;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.observer.dto.BuildingCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.CharacterCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.common.network.dto.BuildingCardDTO;
+import it.polimi.ingsw.common.network.dto.CharacterCardDTO;
+import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 
 import java.util.List;
 

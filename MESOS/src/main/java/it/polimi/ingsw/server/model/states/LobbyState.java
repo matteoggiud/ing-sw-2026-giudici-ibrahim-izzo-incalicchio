@@ -3,11 +3,9 @@ package it.polimi.ingsw.server.model.states;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
-import it.polimi.ingsw.server.model.observer.event.PlayersChangedEvent;
 
 public class LobbyState implements IGameState {
     /**

@@ -1,10 +1,9 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public interface ClientView {
     void showMessage(String message);

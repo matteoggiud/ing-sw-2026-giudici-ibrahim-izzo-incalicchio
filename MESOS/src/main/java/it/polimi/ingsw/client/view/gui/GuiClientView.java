@@ -2,7 +2,8 @@ package it.polimi.ingsw.client.view.gui;
 
 import it.polimi.ingsw.client.view.ClientView;
 import it.polimi.ingsw.client.view.gui.controllers.*;
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;

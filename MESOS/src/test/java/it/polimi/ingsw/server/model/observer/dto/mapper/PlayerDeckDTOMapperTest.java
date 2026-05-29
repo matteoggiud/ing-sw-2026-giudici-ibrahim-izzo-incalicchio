@@ -1,13 +1,14 @@
 package it.polimi.ingsw.server.model.observer.dto.mapper;
 
+import it.polimi.ingsw.common.network.dto.mapper.PlayerDeckDTOMapper;
 import it.polimi.ingsw.server.model.card.BuildingCard;
 import it.polimi.ingsw.server.model.card.characters.ArtistCharacterCard;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 import it.polimi.ingsw.server.model.era.Era1;
-import it.polimi.ingsw.server.model.observer.dto.BuildingCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.CharacterCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
+import it.polimi.ingsw.common.network.dto.BuildingCardDTO;
+import it.polimi.ingsw.common.network.dto.CharacterCardDTO;
+import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

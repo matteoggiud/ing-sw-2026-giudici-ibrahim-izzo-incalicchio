@@ -6,10 +6,7 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.building.triggers.IEventTrigger;
-import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.EventCardDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
-import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
+import it.polimi.ingsw.common.network.dto.mapper.EventCardDTOMapper;
 import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
 
 import java.util.ArrayList;

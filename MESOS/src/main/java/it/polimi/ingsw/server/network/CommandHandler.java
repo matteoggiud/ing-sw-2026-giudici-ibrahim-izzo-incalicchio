@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.network;
 
 import it.polimi.ingsw.server.controller.GameController;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 
 import java.util.List;
 

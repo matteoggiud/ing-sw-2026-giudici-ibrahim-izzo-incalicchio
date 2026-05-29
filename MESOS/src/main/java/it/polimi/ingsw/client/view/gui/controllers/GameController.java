@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
 import it.polimi.ingsw.client.view.gui.ImageCache;
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

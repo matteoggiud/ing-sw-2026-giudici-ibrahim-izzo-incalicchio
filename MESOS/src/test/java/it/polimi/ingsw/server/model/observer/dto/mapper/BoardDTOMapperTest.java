@@ -1,11 +1,12 @@
 package it.polimi.ingsw.server.model.observer.dto.mapper;
 
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
 import it.polimi.ingsw.server.model.card.characters.ArtistCharacterCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.era.Era1;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.CharacterCardDTO;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
+import it.polimi.ingsw.common.network.dto.CharacterCardDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

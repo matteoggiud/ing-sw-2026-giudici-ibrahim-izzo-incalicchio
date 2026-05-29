@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-
-import java.util.UUID;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
 
 /**
  * Event emitted whenever the visible board state changes.

@@ -2,7 +2,7 @@ package it.polimi.ingsw.server.network.socket.messages.game;
 
 import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 import java.util.List;
 
 import java.util.Map;

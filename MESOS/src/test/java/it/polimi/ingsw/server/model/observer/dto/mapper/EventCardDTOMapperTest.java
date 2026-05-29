@@ -1,12 +1,13 @@
 package it.polimi.ingsw.server.model.observer.dto.mapper;
 
+import it.polimi.ingsw.common.network.dto.mapper.EventCardDTOMapper;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.event.IEventEffect;
 import it.polimi.ingsw.server.model.era.Era1;
-import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
+import it.polimi.ingsw.common.network.dto.EventCardDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,21 +1,18 @@
 package it.polimi.ingsw.server.model.observer.dto.mapper;
 
+import it.polimi.ingsw.common.network.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.card.BuildingCard;
-import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.characters.ArtistCharacterCard;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.core.Totem;
-import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
-import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
-import it.polimi.ingsw.server.model.effect.event.IEventEffect;
 import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.era.Era2;
 import it.polimi.ingsw.server.model.era.Era3;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.PlayerInfoDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

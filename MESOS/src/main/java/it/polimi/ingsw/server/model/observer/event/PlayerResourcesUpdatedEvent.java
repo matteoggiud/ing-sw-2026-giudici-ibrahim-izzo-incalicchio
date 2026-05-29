@@ -1,9 +1,6 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
-
-import java.util.UUID;
 
 /**
  * Event emitted when one player's resources change.

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.tui;
 
 import it.polimi.ingsw.client.ClientState;
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.util.Collection;
 import java.util.List;

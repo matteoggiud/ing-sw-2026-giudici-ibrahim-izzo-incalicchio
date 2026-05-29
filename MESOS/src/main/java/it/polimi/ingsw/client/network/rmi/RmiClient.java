@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.network.rmi;
 
 import it.polimi.ingsw.client.controller.ViewController;
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 import it.polimi.ingsw.server.network.rmi.RemoteClientView;
 
 import java.rmi.RemoteException;

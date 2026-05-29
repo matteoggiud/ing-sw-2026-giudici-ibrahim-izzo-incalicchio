@@ -1,7 +1,7 @@
-package it.polimi.ingsw.server.model.observer.dto.mapper;
+package it.polimi.ingsw.common.network.dto.mapper;
 
 import it.polimi.ingsw.server.model.card.EventCard;
-import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
+import it.polimi.ingsw.common.network.dto.EventCardDTO;
 
 public class EventCardDTOMapper {
     private EventCardDTOMapper() {

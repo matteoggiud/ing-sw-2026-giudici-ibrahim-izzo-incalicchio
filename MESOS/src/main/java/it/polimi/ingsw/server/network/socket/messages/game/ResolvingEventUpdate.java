@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.network.socket.messages.game;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.EventCardDTO;
+import it.polimi.ingsw.common.network.dto.EventCardDTO;
 import it.polimi.ingsw.server.model.observer.event.IGameEvent;
 
 public class ResolvingEventUpdate implements IGameEvent{

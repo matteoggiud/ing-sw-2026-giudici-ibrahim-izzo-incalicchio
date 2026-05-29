@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.gui.controllers;
 
 import it.polimi.ingsw.client.view.gui.GuiContext;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
@@ -19,7 +19,6 @@ import javafx.scene.layout.StackPane;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ScoreController {
 

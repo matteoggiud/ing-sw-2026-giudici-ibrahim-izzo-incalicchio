@@ -4,11 +4,9 @@ import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
-import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
 import it.polimi.ingsw.server.database.DataDepository;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 
 import java.util.List;
 
