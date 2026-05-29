@@ -24,18 +24,6 @@ public class TribeDeck {
         this.tribeDeck = new LinkedList<>();
     }
 
-    /**
-     * Constructs a new TribeDeck with a given list of tribe cards.
-     *
-     * @param tribeDeck the list of tribe cards to initialize the deck with (must not be null)
-     * @throws IllegalArgumentException if the provided list of tribe cards is null
-     */
-    public TribeDeck(LinkedList<TribeCard> tribeDeck) throws IllegalArgumentException {
-        if (tribeDeck == null || tribeDeck.isEmpty()) {
-            throw new IllegalArgumentException("TribeDeck cannot be null.");
-        }
-        this.tribeDeck = tribeDeck;
-    }
 
     /**
      * This method allows a player to draw a tribe card from the tribe deck.
