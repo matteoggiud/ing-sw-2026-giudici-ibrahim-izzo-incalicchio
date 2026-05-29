@@ -12,6 +12,14 @@ import java.util.List;
  * Enumeration representing the three eras in the game: Era I, Era II, and Era III.
  */
 public abstract class Era {
+    /**
+     * Sorts the given tribe card into the appropriate era list based on its era and type.
+     * @param tribeCard the tribe card to be sorted into the correct era list.
+     * @param eraI the list of tribe cards belonging to Era I.
+     * @param eraII the list of tribe cards belonging to Era II.
+     * @param eraIII the list of tribe cards belonging to Era III.
+     * @param finalEvents the list of event cards that are added to the final events list, if applicable.
+     */
     public abstract void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents);
     public abstract HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks);
     public abstract int getOrder();
