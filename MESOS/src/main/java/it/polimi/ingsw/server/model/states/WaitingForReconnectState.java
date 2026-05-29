@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.states;
 
-import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.card.Card;
