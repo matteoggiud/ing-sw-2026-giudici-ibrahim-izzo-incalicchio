@@ -211,6 +211,10 @@ public class Player {
         this.playerDeck.reset();
     }
 
+    /**
+     * Sets the player's food to the specified amount.
+     * @param food the new amount of food for the player
+     */
     public void setFood(int food) {
         this.food = food;
     }
