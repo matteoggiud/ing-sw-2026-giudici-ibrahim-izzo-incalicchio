@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class SessionRegistry {
     private static final SessionRegistry INSTANCE = new SessionRegistry();
-    private final Map<String, ClientSession> loggedSessions = new HashMap<>();
+    private final Map<String, ClientSession> loggedSessions = new ConcurrentHashMap<>();
 
     private SessionRegistry() {
     }
