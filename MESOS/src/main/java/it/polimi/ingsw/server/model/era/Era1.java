@@ -38,6 +38,10 @@ public class Era1 extends Era{
      */
     public Era1() {}
 
+    /**
+     * Returns the name of the era as a string.
+     * @return the name of the era as a string.
+     */
     @Override
     public String getName() {
         return name;
