@@ -2,6 +2,9 @@ package it.polimi.ingsw.server.model.effect;
 
 import it.polimi.ingsw.server.model.core.Player;
 
+/**
+ * This class represents the result of applying an effect in the game, specifically for events.
+ */
 public class EffectEventResult {
     private final Player targetPlayer;
     private int foodChange;
