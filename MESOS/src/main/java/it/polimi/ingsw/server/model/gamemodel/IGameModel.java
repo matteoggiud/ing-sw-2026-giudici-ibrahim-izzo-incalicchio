@@ -184,10 +184,25 @@ public interface IGameModel {
      */
     Integer getActiveGameIdForPlayer(String nickname);
 
+    /**
+     * Retrieves the current ranking of players in a game based on their scores, sorted in descending order.
+     * @param numPlayer the number of players in the game.
+     * @return a list of LeadBoardDTO objects representing the current ranking of players in the game.
+     */
     List<LeadBoardDTO> getRanking(int numPlayer);
 
+    /**
+     * Allows a player to leave the lobby of a game they have joined using the game's unique identifier.
+     * @param player the player attempting to leave the lobby
+     * @param gameId the unique identifier of the game the player wants to leave the lobby of.
+     * @return a list of remaining players in the lobby after the player has left.
+     */
     List<String> leaveLobby(String player, int gameId);
 
+    /**
+     * Restores a game from a saved state, allowing players to resume a previously saved game session.
+     * @param restoredGame the game object representing the saved state of the game to be restored.
+     */
     void restoreGame(Game restoredGame);
 
     void reconnectToGame(Integer gameId, String username, EventHandler eventHandler);
