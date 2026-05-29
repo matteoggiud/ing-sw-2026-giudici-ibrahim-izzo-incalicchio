@@ -37,7 +37,7 @@ public class BuildingDeck {
      * @return the building deck.
      */
     public List<BuildingCard> getBuildingCards() {
-        return buildingDeck;
+        return new ArrayList<>(buildingDeck);
     }
 
     /**

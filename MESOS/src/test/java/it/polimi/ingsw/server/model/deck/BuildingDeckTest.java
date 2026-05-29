@@ -32,6 +32,10 @@ class BuildingDeckTest {
         org.junit.jupiter.api.Assertions.assertEquals(2, buildingDeck.getBuildingCards().size());
         org.junit.jupiter.api.Assertions.assertTrue(buildingDeck.getBuildingCards().contains(card1));
         org.junit.jupiter.api.Assertions.assertTrue(buildingDeck.getBuildingCards().contains(card2));
+
+        var cards = buildingDeck.getBuildingCards();
+        cards.clear();
+        org.junit.jupiter.api.Assertions.assertEquals(2, buildingDeck.getBuildingCards().size());
     }
 
     @org.junit.jupiter.api.Test

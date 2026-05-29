@@ -51,11 +51,11 @@ public class PlayerDeck {
     }
 
     public ArrayList<CharacterCard> getCharacters() {
-        return characters;
+        return new ArrayList<>(characters);
     }
 
     public ArrayList<BuildingCard> getBuildings() {
-        return buildings;
+        return new ArrayList<>(buildings);
     }
 
     /**
