@@ -146,6 +146,13 @@ public class ActionResolver {
         completeAction(game, player, box);
     }
 
+    /**
+     * Validates that the player can pick a card from the specified row
+     * based on the offer box's pick limits and the player's current progress in resolving the action.
+     * @param box the offer box being resolved.
+     * @param progress the player's current progress in resolving the action.
+     * @param fromUpperRow true if the player is trying to pick from the upper row, false if they are trying to pick from the lower row.
+     */
     private void validatePickLimit(OfferBox box, ActionResolutionProgress progress, boolean fromUpperRow) {
         if (fromUpperRow && progress.upperCardsResolved >= box.getUpperRowPicks()) {
             throw new IllegalStateException("You cannot pick more cards from the upper row.");
@@ -156,16 +163,28 @@ public class ActionResolver {
         }
     }
 
+    /**
+     * Checks if the player has resolved all required card picks for the offer box and completes the action if so.
+     * @param game the current game context
+     * @param player the player resolving the action
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     */
     private void completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
         if (!hasResolvedAllRequiredCards(box, progress)) {
             return;
         }
-
         resolutionProgressByPlayer.remove(player);
         completeAction(game, player, box);
     }
 
 
+    /**
+     * Completes the action for the player by removing them from the offer box, placing them in the first free turn order slot.
+     * @param game the current game context
+     * @param player the player whose action is being completed
+     * @param box the offer box from which the player is being removed
+     */
     private void completeAction(Game game, Player player, OfferBox box) {
         Board board = game.getBoard();
 
