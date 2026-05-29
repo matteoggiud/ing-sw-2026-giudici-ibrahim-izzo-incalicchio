@@ -18,6 +18,16 @@ import java.util.List;
 
 public class SustenanceEventEffect implements IEventEffect {
 
+    /**
+     * Calculates the base effect of the sustenance event card by determining
+     * the food cost for each player based on the number of Characters
+     * in their tribe and any applicable gatherer discounts.
+     * The base cost is equal to the number of Characters,
+     * and the total discount is subtracted from this cost to determine the final food cost for each player.
+     * @param game      the current game state.
+     * @param eventCard the event card for which the effect is being calculated.
+     * @return
+     */
     @Override
     public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
         List<EffectEventResult> effectEventResults = new ArrayList<>();
@@ -64,6 +74,7 @@ public class SustenanceEventEffect implements IEventEffect {
     }
 
     /**
+     * Accepts a visitor that can modify the effect result based on event-specific rules for the sustenance event.
      * @param eventModifier     the visitor that will apply modifications to the effect result.
      * @param effectEventResult the effect result that may be modified by the eventModifier.
      */
