@@ -21,6 +21,14 @@ public abstract class Era {
      * @param finalEvents the list of event cards that are added to the final events list, if applicable.
      */
     public abstract void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents);
+
+    /**
+     * Creates a building deck for the era by adding
+     * the appropriate building cards to the given building decks map.
+     * @param buildingDecks a map of eras to their corresponding building decks,
+     * which will be modified by adding the building cards for this era.
+     * @return
+     */
     public abstract HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks);
     public abstract int getOrder();
     public abstract Era eraTransition(Game game, Era newEra);
