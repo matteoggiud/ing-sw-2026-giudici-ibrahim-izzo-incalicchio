@@ -11,6 +11,11 @@ import java.util.Optional;
  */
 public class ShamanicImmunityBuildingEffect implements IBuildingEffect, IEventModifier {
 
+    /**
+     * This method returns an Optional containing this instance as an IEventModifier,
+     * indicating that this building effect modifies the Shamanic Ritual Event.
+     * @return An Optional containing this instance as an IEventModifier.
+     */
     @Override
     public Optional<IEventModifier> getEventModifier() {
         return Optional.of(this);
