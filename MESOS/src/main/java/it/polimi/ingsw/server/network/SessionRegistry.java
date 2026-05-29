@@ -52,7 +52,7 @@ public final class SessionRegistry {
 
     public synchronized void clearActiveGameIdForGame(int gameId) {
         for (ClientSession session : loggedSessions.values()) {
-            if (session.getActiveGameId() != null && session.getActiveGameId() == gameId) {
+            if (session.getActiveGameId() != null && session.getActiveGameId().equals(gameId)) {
                 session.clearActiveGameId();
             }
         }

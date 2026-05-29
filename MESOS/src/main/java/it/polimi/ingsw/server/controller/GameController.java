@@ -341,16 +341,30 @@ public class GameController {
         }
 
         List<ClientSession> playersInterested = new ArrayList<>();
-        if (clientSession.isInGame()) {
-            List<String> remainingPlayerNicknames = model.leaveLobby(clientSession.getNickname(), clientSession.getActiveGameId());
-            for (String remainingPlayerNickname : remainingPlayerNicknames) {
-                ClientSession playerSession = SessionRegistry.getInstance().getSession(remainingPlayerNickname);
-                playerSession.clearActiveGameId();
-                playersInterested.add(playerSession);
-            }
-            clientSession.clearActiveGameId();
+        if (!clientSession.isInGame()) {
+            return playersInterested;
         }
 
+        int gameId = clientSession.getActiveGameId();
+        boolean hostIsLeaving = model.getGame(gameId).getHostPlayer().getNickname().equals(clientSession.getNickname());
+
+        if (!hostIsLeaving) {
+            model.removeObserver(model.getGame(gameId), clientSession.getEventHandler());
+        }
+
+        List<String> remainingPlayerNicknames = model.leaveLobby(clientSession.getNickname(), gameId);
+
+        for (String remainingPlayerNickname : remainingPlayerNicknames) {
+            ClientSession playerSession = SessionRegistry.getInstance().getSession(remainingPlayerNickname);
+            if (playerSession == null) {
+                continue;
+            }
+
+            playerSession.clearActiveGameId();
+            playersInterested.add(playerSession);
+        }
+
+        clientSession.clearActiveGameId();
         return playersInterested;
     }
 
