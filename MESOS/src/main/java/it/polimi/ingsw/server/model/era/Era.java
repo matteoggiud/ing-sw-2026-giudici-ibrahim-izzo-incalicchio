@@ -50,9 +50,19 @@ public abstract class Era {
     /**
      * Returns the name of the era as a string,
      * which can be used for display purposes or to identify the era in other parts of the code.
-     * @return
+     * @return the name of the era as a string.
      */
     public abstract String getName();
+
+    /**
+     * Adds the given building card to the appropriate era list
+     * based on the current era and the number of players in the game.
+     * @param deckCompositionEra1 the list of building cards belonging to Era I, which may be modified by adding the given card if it belongs to this era.
+     * @param deckCompositionEra2 the list of building cards belonging to Era II, which may be modified by adding the given card if it belongs to this era.
+     * @param deckCompositionEra3 the list of building cards belonging to Era III, which may be modified by adding the given card if it belongs to this era.
+     * @param card the building card to be added to the appropriate era list based on the current era and the number of players in the game.
+     * @param numPlayers the number of players in the game, which may affect which era list the given card is added to based on the current era and the card's properties.
+     */
     public abstract void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers);
     public abstract BuildingDeck selectBuildingDeck(BuildingDeck buildingDecksEra1, BuildingDeck buildingDecksEra2, BuildingDeck buildingDecksEra3);
 }
