@@ -6,7 +6,9 @@ import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 
 import java.util.Optional;
 
-
+/**
+ *
+ */
 public class EndPpCardsSetBuildingEffect implements IBuildingEffect, IEndGameScoring {
 
     @Override
