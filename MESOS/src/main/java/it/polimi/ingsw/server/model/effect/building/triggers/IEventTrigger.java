@@ -25,6 +25,6 @@ public interface IEventTrigger {
      * @return the amount of food gained by this building effect
      *
      */
-    int getTrigger(Player player, Game game); //TODO: Instead of returning an int we return an EffectEventResult so it is more scalable in the future and more consistent with the rest of the code
+    int getTrigger(Player player, Game game);
 
 }

@@ -16,7 +16,6 @@ public class TribeDeck {
      * complexity of O(1), meanwhile the ArrayList O(n)
      */
     private final LinkedList<TribeCard> tribeDeck;
-    // TODO: use stack instead linked list
 
     /**
      * Constructor for the TribeDeck class, it initializes the tribe deck with an empty list of tribe cards.
