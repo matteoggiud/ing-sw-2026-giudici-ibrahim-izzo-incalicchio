@@ -5,13 +5,14 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameManager {
     private static GameManager instance;
     private final Map<Integer, Game> activeGames;
 
     private GameManager() {
-        activeGames = new HashMap<>();
+        activeGames = new ConcurrentHashMap<>();
     }
 
     public static synchronized GameManager getInstance() {
