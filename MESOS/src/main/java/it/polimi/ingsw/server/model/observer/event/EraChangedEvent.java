@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 
-import java.util.UUID;
 
 /**
  * Event emitted when the game transitions to a new era.
