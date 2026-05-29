@@ -7,7 +7,6 @@ import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.deck.BuildingDeck;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
