@@ -8,9 +8,10 @@ import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.client.network.socket.messages.ServerVisitor;
 import it.polimi.ingsw.client.view.ClientView;
+import it.polimi.ingsw.utils.ConfigurationManager;
 
 public class SocketConnectionStrategy implements NetworkConnectionStrategy {
-    private static final int SOCKET_PORT = 12345;
+    private static final int SOCKET_PORT = ConfigurationManager.getClientInstance().getIntProperty("server.port.socket", 12345);
 
     @Override
     public GenericVirtualServer connect(

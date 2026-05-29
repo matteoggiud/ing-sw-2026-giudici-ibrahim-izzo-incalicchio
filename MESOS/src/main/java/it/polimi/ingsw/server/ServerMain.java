@@ -4,6 +4,7 @@ import it.polimi.ingsw.client.network.InetAddressLookup;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
+import it.polimi.ingsw.server.database.DatabaseBootstrap;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.server.model.observer.dto.GameSnapshotDTO;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
+import it.polimi.ingsw.utils.ConfigurationManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -29,10 +31,11 @@ public class ServerMain {
     private static RmiBootstrap rmiBootstrapStub;
 
     public static void main(String[] args) {
-        final int socketPort = 12345;
+        ConfigurationManager config = ConfigurationManager.getServerInstance();
+        final int socketPort = config.getIntProperty("server.port.socket", 12345);
 
-        final int rmiPort = 1234;
-        final String rmiName = "MESOS_RMI";
+        final int rmiPort = config.getIntProperty("server.port.rmi", 1234);
+        final String rmiName = config.getProperty("server.rmi.name", "MESOS_RMI");
 
         String defaultServerIp = InetAddressLookup.getLocalHostAddress();
         String serverIp;
@@ -63,6 +66,8 @@ public class ServerMain {
                 5,
                 TimeUnit.SECONDS
         );
+
+        new DatabaseBootstrap().bootstrap();
 
         DataDepository dataDepo = new DataDepository();
 

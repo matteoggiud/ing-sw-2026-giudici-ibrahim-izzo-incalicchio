@@ -57,7 +57,6 @@ public class DataWriting {
                 //Creates the game and return the auto-generated game_id thanks to the java standard RuleSet of the PreparedStatement
                 int generatedGameId;
                 try (PreparedStatement psGame = c.prepareStatement(insertGameSql, Statement.RETURN_GENERATED_KEYS)) {
-                    //TODO: I think the statement might be against the rules of the project, so we need to review this
                     psGame.setInt(1, expectedPlayerCount);
                     psGame.setInt(2, hostId);
 

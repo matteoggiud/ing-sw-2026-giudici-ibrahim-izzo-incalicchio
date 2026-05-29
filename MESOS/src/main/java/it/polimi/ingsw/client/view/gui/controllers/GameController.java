@@ -143,7 +143,7 @@ public class GameController {
             iv.setScaleY(1.0);
         });
         iv.setOnMouseClicked(_ -> {
-            if (guiContext != null && guiContext.clientController() != null /*TODO: check if is the player turn and is the draw action*/) {
+            if (guiContext != null && guiContext.clientController() != null) {
                 guiContext.clientController().drawCard(cardId, isUpper);
             }
         });

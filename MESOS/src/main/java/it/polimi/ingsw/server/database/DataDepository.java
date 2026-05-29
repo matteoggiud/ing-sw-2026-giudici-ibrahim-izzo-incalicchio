@@ -414,7 +414,6 @@ public class DataDepository {
      * @return
      */
     private IBuildingEffect createBuildingEffect(String effectId, JsonNode params) {
-        //TODO: refactor effect id
         return switch (effectId) {
             case "DOUBLEBUILDERBUILDINGEFFECT" -> new DoubleBuilderBuildingEffect();
             case "ENDPPCARDSSETBUILDINGEFFECT" -> new EndPpCardsSetBuildingEffect();
