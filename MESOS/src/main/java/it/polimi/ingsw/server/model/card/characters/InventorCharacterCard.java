@@ -46,6 +46,11 @@ public class InventorCharacterCard extends CharacterCard {
         return Optional.ofNullable(inventorType);
     }
 
+    /**
+     * When this Inventor card is added to a player's deck,
+     * increment the count of Inventor cards in the player's deck.
+     * @param playerDeck the player's deck to which this card is being added.
+     */
     @Override
     public void onAddToPlayerDeck(PlayerDeck playerDeck) {
         playerDeck.incrementTypeCount(CharacterType.INVENTOR);
