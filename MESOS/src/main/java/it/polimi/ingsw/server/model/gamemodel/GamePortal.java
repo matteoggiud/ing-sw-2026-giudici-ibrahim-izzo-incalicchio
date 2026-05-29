@@ -50,20 +50,23 @@ public class GamePortal implements IGameModel {
         if (nickname == null || nickname.isBlank()) {
             throw new IllegalArgumentException("Nickname cannot be null or blank.");
         }
-
         Game currentGame = gameManager.getGame(gameId);
-        Player currentPlayer = playerManager.getPlayer(nickname);
+        currentGame.locked(()->{
 
-        if (currentPlayer == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
+            Player currentPlayer = playerManager.getPlayer(nickname);
 
-        CardRow row = fromUpperRow
-                ? currentGame.getBoard().getUpperRow()
-                : currentGame.getBoard().getLowerRow();
+            if (currentPlayer == null) {
+                throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+            }
 
-        Card card = row.getSelectableCardById(selectedCardId);
-        currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
+            CardRow row = fromUpperRow
+                    ? currentGame.getBoard().getUpperRow()
+                    : currentGame.getBoard().getLowerRow();
+
+            Card card = row.getSelectableCardById(selectedCardId);
+            currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
+
+        });
     }
 
     /**
@@ -83,17 +86,19 @@ public class GamePortal implements IGameModel {
         }
 
         Game currentGame = gameManager.getGame(gameId);
-        Player player = playerManager.getPlayer(nickname);
+        currentGame.locked(()->{
+            Player player = playerManager.getPlayer(nickname);
 
-        if (player == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
+            if (player == null) {
+                throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+            }
 
-        currentGame.getGameState().placeTotem(
-                currentGame,
-                player,
-                currentGame.getBoard().getOfferTrack().getBoxByPosition(offerBoxPosition)
-        );
+            currentGame.getGameState().placeTotem(
+                    currentGame,
+                    player,
+                    currentGame.getBoard().getOfferTrack().getBoxByPosition(offerBoxPosition)
+            );
+        });
     }
 
 
@@ -234,8 +239,9 @@ public class GamePortal implements IGameModel {
 
         // Notify the player's observer about the join so they can update their lobby view
         Game game = gameManager.getGame(gameId);
-        game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
-
+        game.locked(()->{
+            game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+        });
     }
 
     /**
@@ -252,20 +258,21 @@ public class GamePortal implements IGameModel {
 
         // We first retrieve the game
         Game game = gameManager.getGame(gameId);
+        return game.locked(()->{
 
-        // We save the players remaining in the game after the player leaves
-        List<String> playerNames = game.getPlayers().getPlayerNicknames();
-        playerNames = game.getPlayers().getPlayerNicknames().stream().filter(p -> !p.equals(player)).toList();
-
-
-        // We then execute the remove game logic, which deletes the game
-        gameManager.removeGame(gameId);
-
-        // Update db
-        new DataWriting().updateGameInProgress(gameId, false);
+            // We save the players remaining in the game after the player leaves
+            List<String> playerNames = game.getPlayers().getPlayerNicknames();
+            playerNames = game.getPlayers().getPlayerNicknames().stream().filter(p -> !p.equals(player)).toList();
 
 
-        return playerNames;
+            // We then execute the remove game logic, which deletes the game
+            gameManager.removeGame(gameId);
+
+            // Update db
+            new DataWriting().updateGameInProgress(gameId, false);
+
+            return playerNames;
+        });
     }
 
     /**
@@ -583,43 +590,47 @@ public class GamePortal implements IGameModel {
 
     @Override
     public void restoreGame(Game restoredGame) {
-        gameManager.restoreGame(restoredGame);
+        restoredGame.locked(()->{
+            gameManager.restoreGame(restoredGame);
 
-        for (Player player : restoredGame.getPlayers().getPlayers()) {
-            if (!playerManager.isLoggedIn(player.getNickname())) {
-                playerManager.addPlayer(player);
+            for (Player player : restoredGame.getPlayers().getPlayers()) {
+                if (!playerManager.isLoggedIn(player.getNickname())) {
+                    playerManager.addPlayer(player);
+                }
             }
-        }
 
-        restoredGame.getGameState().executePhase(restoredGame);
+            restoredGame.getGameState().executePhase(restoredGame);
+        });
     }
 
     @Override
     public void reconnectToGame(Integer gameId, String username, EventHandler eventHandler) {
         Game game = gameManager.getGame(gameId);
-        Player player = playerManager.getPlayer(username);
+        game.locked(()->{
+            Player player = playerManager.getPlayer(username);
 
-        addObserver(game, eventHandler);
+            addObserver(game, eventHandler);
 
 
-        // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
-        eventHandler.update(new GameStartedEvent(game));
+            // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
+            eventHandler.update(new GameStartedEvent(game));
 
-        // 2. Mandiamo PRIMA le info dei giocatori (così il client sa a chi appartengono i Totem e di che colore sono!)
-        eventHandler.update(new PlayerInfosChangedEvent(
-                gameId,
-                PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-        ));
+            // 2. Mandiamo PRIMA le info dei giocatori (così il client sa a chi appartengono i Totem e di che colore sono!)
+            eventHandler.update(new PlayerInfosChangedEvent(
+                    gameId,
+                    PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+            ));
 
-        // 3. POI gli mandiamo lo stato attuale di Board, così quando renderizza la Turn Order Track i Totem avranno il colore giusto
-        eventHandler.update(new BoardUpdatedEvent(
-                gameId,
-               BoardDTOMapper.toBoardDTO(game)
-        ));
+            // 3. POI gli mandiamo lo stato attuale di Board, così quando renderizza la Turn Order Track i Totem avranno il colore giusto
+            eventHandler.update(new BoardUpdatedEvent(
+                    gameId,
+                    BoardDTOMapper.toBoardDTO(game)
+            ));
 
-        game.getGameState().addPlayer(game, player);
+            game.getGameState().addPlayer(game, player);
 
-        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 
-        // non appena WaitingForReconnectState scatta su nextState()!
+            // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client
+            // non appena WaitingForReconnectState scatta su nextState()!
+        });
     }
 }

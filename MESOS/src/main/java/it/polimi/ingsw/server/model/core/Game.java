@@ -11,6 +11,9 @@ import it.polimi.ingsw.server.model.states.IGameState;
 import it.polimi.ingsw.server.model.states.LobbyState;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
 /**
  * This class represents the game instance
@@ -73,6 +76,32 @@ public class Game {
      */
     private final int expectedPlayerCount;
 
+    /**
+     * This lock is used to synchronize the access to the game state
+     */
+    private Lock gameLock = new ReentrantLock();
+
+    /**
+     * This method is used to execute an action while holding the game lock
+     * @param action the action to be executed while holding the lock
+     */
+    public void locked(Runnable action) {
+        gameLock.lock();
+        try {
+            action.run();
+        }finally {
+            gameLock.unlock();
+        }
+    }
+
+    public <T> T locked(Supplier<T> action) {
+        gameLock.lock();
+        try {
+            return action.get();
+        } finally {
+            gameLock.unlock();
+        }
+    }
 
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
