@@ -613,6 +613,11 @@ public class GamePortal implements IGameModel {
 
     }
 
+    /**
+     * Restores a game from a previously saved state, allowing players to resume a game that was interrupted or paused.
+     *
+     * @param restoredGame the game object representing the restored game state.
+     */
     @Override
     public void restoreGame(Game restoredGame) {
         gameManager.restoreGame(restoredGame);
@@ -626,6 +631,12 @@ public class GamePortal implements IGameModel {
         restoredGame.getGameState().executePhase(restoredGame);
     }
 
+    /**
+     * Allows a player to reconnect to an ongoing game by providing the game's unique identifier.
+     * @param gameId the unique identifier of the game to which the player wants to reconnect.
+     * @param username the nickname of the player attempting to reconnect to the game.
+     * @param eventHandler the event handler associated with the player's connection.
+     */
     @Override
     public void reconnectToGame(Integer gameId, String username, EventHandler eventHandler) {
         Game game = gameManager.getGame(gameId);
@@ -634,16 +645,16 @@ public class GamePortal implements IGameModel {
         addObserver(game, eventHandler);
 
 
-        // 1. Diciamo al client che la partita è iniziata, così passa alla schermata del Board
+        // 1. We tell the client that the game has started, so it switches to the Board screen
         eventHandler.update(new GameStartedEvent(game));
 
-        // 2. Mandiamo PRIMA le info dei giocatori (così il client sa a chi appartengono i Totem e di che colore sono!)
+        // 2. We send player info FIRST (so the client knows who the Totems belong to and what color they are!)
         eventHandler.update(new PlayerInfosChangedEvent(
                 gameId,
                 PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
         ));
 
-        // 3. POI gli mandiamo lo stato attuale di Board, così quando renderizza la Turn Order Track i Totem avranno il colore giusto
+        // 3. THEN we send him the current state of the Board, so when he renders the Turn Order Track the Totems will have the right color
         eventHandler.update(new BoardUpdatedEvent(
                 gameId,
                BoardDTOMapper.toBoardDTO(game)
@@ -651,7 +662,7 @@ public class GamePortal implements IGameModel {
 
         game.getGameState().addPlayer(game, player);
 
-        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 
-        // non appena WaitingForReconnectState scatta su nextState()!
+        // N.B: The exact shift will be automatically notified to ALL clients
+        // as soon as WaitingForReconnectState fires on nextState()!
     }
 }
