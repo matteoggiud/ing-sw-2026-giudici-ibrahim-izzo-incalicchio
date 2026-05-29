@@ -91,6 +91,12 @@ public class BuildingCard extends TribeCard {
         playerDeck.addBuildingCard(this);
     }
 
+    /**
+     * Determines if this building card can be selected from the given card row by the specified player.
+     * @param row the card row from which the player is attempting to select this building card
+     * @param player the player attempting to select this building card
+     * @return true if the player can select this building card from the row, false otherwise
+     */
     @Override
     public boolean canBeSelectedFrom(CardRow row, Player player) {
         if (!row.getBuildingRow().getBuildingCards().contains(this)) {
