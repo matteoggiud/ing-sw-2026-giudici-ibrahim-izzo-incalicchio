@@ -14,10 +14,11 @@ import it.polimi.ingsw.common.network.rmi.server.RmiBootstrap;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import it.polimi.ingsw.common.utils.ConfigurationManager;
 
 public class RmiConnectionStrategy implements NetworkConnectionStrategy {
-    private static final int RMI_PORT = 1234;
-    private static final String RMI_NAME = "MESOS_RMI";
+    private static final int RMI_PORT = ConfigurationManager.getClientInstance().getIntProperty("server.port.rmi", 1234);
+    private static final String RMI_NAME = ConfigurationManager.getClientInstance().getProperty("server.rmi.name", "MESOS_RMI");
 
     @Override
     public GenericVirtualServer connect(
