@@ -35,10 +35,20 @@ public abstract class TribeCard extends Card{
         return false;
     }
 
+    /**
+     * Indicates whether this card should be placed in the upper row of the board.
+     * By default, this returns false.
+     * @return
+     */
     public boolean goesInUpperRow(){
         return false;
     }
 
+    /**
+     * Adds this card to the provided character list.
+     * This is used when initializing the character row on the board.
+     * @param characterList
+     */
     public void addToCharacterList(List<CharacterCard> characterList){
         // default: do nothing
     }
