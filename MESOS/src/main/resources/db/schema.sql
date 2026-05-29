@@ -3,10 +3,10 @@
 -- The character_card table contains all the character cards in the game, with their name, era, minimum number of players, character type, and effect parameters.
 -- The character_type field is a VARCHAR with a CHECK constraint to ensure it only contains valid character types.
 -- The effect_params field is a JSON object that can store any additional parameters needed for the character's effect.
-CREATE TABLE character_card
+CREATE TABLE IF NOT EXISTS character_card
 (
     card_id         SERIAL PRIMARY KEY,
-    name            VARCHAR(16) NOT NULL,
+    name            VARCHAR(64) NOT NULL,
     era             VARCHAR(5) CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     min_num_players INTEGER CHECK (min_num_players BETWEEN 2 AND 5),
     character_type  VARCHAR(8) CHECK (character_type IN (
@@ -23,10 +23,10 @@ CREATE TABLE character_card
 -- The building_card table contains all the building cards in the game, with their name, era, minimum number of players, food cost, end game prestige points, effect type, and effect parameters.
 -- The effect_id field is a VARCHAR with a CHECK constraint to ensure it only contains valid effect IDs.
 -- The min_num_players is used to determine in which player count configurations the card can be included in the game setup.
-CREATE TABLE building_card
+CREATE TABLE IF NOT EXISTS building_card
 (
     card_id         SERIAL PRIMARY KEY,
-    name            VARCHAR(16),
+    name            VARCHAR(64),
     era             VARCHAR(5) NOT NULL CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     min_num_players INTEGER NOT NULL CHECK (min_num_players BETWEEN 2 AND 5),
     food_cost       INTEGER NOT NULL CHECK (food_cost >= 0),
@@ -52,10 +52,10 @@ CREATE TABLE building_card
 
 -- The event_card table contains all the event cards in the game, with their name, era, minimum number of players, whether they are final events, event type, and effect parameters.
 -- The threshold field is used to determine when the event is triggered based on the current game state, and the gained/malus food and prestige points are used to apply the event's effects when it is triggered.
-CREATE TABLE event_card
+CREATE TABLE IF NOT EXISTS event_card
 (
     card_id         SERIAL PRIMARY KEY,
-    name            VARCHAR(16) NOT NULL,
+    name            VARCHAR(64) NOT NULL,
     era             VARCHAR(5) CHECK (era IN ('ERA_1', 'ERA_2', 'ERA_3')),
     min_num_players INTEGER NOT NULL CHECK (min_num_players BETWEEN 2 AND 5),
     is_final_event  BOOLEAN NOT NULL DEFAULT FALSE,
@@ -68,7 +68,7 @@ CREATE TABLE event_card
 );
 
 -- The card table is a central table that links to the character_card, building_card, and event_card tables. Each card can be of only one type (character, building, or event), and this is enforced by the CHECK constraint on the num_nonnulls function.
-CREATE TABLE card(
+CREATE TABLE IF NOT EXISTS card(
     id                SERIAL PRIMARY KEY,
     character_card_id INTEGER,
     building_card_id  INTEGER,
@@ -97,36 +97,8 @@ CREATE TABLE card(
         CHECK (num_nonnulls(character_card_id, building_card_id, event_card_id) = 1)
 );
 
--- The offer_box table contains the different offer boxes in the game, with their box ID, food reward, and the number of picks for the upper and lower rows.
-CREATE TABLE offer_box
-(
-    box_id          VARCHAR(2) CHECK (box_id IN ('A', 'B', 'C', 'D', 'E', 'F', 'G')) PRIMARY KEY,
-    food_reward     INTEGER NOT NULL CHECK (food_reward >= 0),
-    upper_row_picks INTEGER NOT NULL CHECK (upper_row_picks >= 0),
-    lower_row_picks INTEGER NOT NULL CHECK (lower_row_picks >= 0)
-);
-
--- The turn_order_box and turn_order_slot tables define the turn order configurations for different player counts.
-CREATE TABLE turn_order_box
-(
-    order_box_id SERIAL PRIMARY KEY,
-    num_players  INTEGER NOT NULL CHECK (num_players BETWEEN 2 AND 5)
-);
-
--- The turn_order_slot table contains the individual slots for each turn order box, with their position, food cost, and prestige point cost. Each slot is linked to a specific turn order box, and the combination of order_box_id and position must be unique.
-CREATE TABLE turn_order_slot
-(
-    slot_id      SERIAL PRIMARY KEY,
-    order_box_id INTEGER NOT NULL,
-    position     INTEGER CHECK (position BETWEEN 0 AND 4),
-    food_cost    INTEGER NOT NULL,
-    pp_cost      INTEGER NOT NULL,
-    FOREIGN KEY (order_box_id) REFERENCES turn_order_box (order_box_id),
-    UNIQUE (order_box_id, position)
-);
-
 -- The player table contains the registered players in the game, with their player ID, nickname, password hash, and the timestamp of when they created their account.
-CREATE TABLE player
+CREATE TABLE IF NOT EXISTS player
 (
     player_id     SERIAL PRIMARY KEY,
     nickname      VARCHAR(255) NOT NULL UNIQUE,
@@ -137,7 +109,7 @@ CREATE TABLE player
 -- The game table contains the active and completed games in the system, with their game ID, which is incremental and serves as the primary key
 -- The parameter in_progress is a boolean that indicates whether the game is currently active or has finished
 -- The game_snapshot field is a JSONB object that stores the current state of the game for the persistence mechanism
-CREATE TABLE game (
+CREATE TABLE IF NOT EXISTS game (
     game_id    SERIAL PRIMARY KEY,
     expected_players INTEGER NOT NULL CHECK (expected_players BETWEEN 2 AND 5),
     host_id INTEGER NOT NULL REFERENCES player (player_id) ON DELETE SET NULL,
@@ -149,7 +121,7 @@ CREATE TABLE game (
 
 -- The game_player table is a junction table that links the game and player tables, representing the players participating in each game.
 -- Explicity asked to save the final score in the database
-CREATE TABLE game_player (
+CREATE TABLE IF NOT EXISTS game_player (
     game_id   INTEGER NOT NULL,
     player_id INTEGER NOT NULL,
     game_ranking INTEGER DEFAULT NULL,

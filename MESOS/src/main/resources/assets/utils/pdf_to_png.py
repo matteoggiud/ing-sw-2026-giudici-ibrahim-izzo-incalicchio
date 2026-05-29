@@ -8,7 +8,7 @@ from pathlib import Path
 import fitz  # pymupdf
 
 #pip install pymupdf
-#usage: python pdf_to_png.py "./graphics/Cards_total_front_NO PROMO.pdf" ./mapper.csv --temp-out ./temp --final-out ../cards --crop-border 32 --dpi 150
+#usage: python pdf_to_png.py "./graphics/Cards_total_front_NO PROMO.pdf" ./mapper.csv --temp-out ./temp --final-out ../cards --crop-border 32/80 --dpi 150/300
 
 def read_mapper(csv_path: Path) -> dict[int, str]:
     mapping: dict[int, str] = {}
