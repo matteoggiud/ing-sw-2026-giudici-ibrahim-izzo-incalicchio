@@ -75,6 +75,10 @@ public abstract class CharacterCard extends TribeCard {
         return row.getTribeRow().getCharacterCards().contains(this);
     }
 
+    /**
+     * Validates that this character card can be selected from the given card row. If not, throws an IllegalArgumentException.
+     * @param row the card row from which the player is attempting to select this card
+     */
     @Override
     public void validateSelectableFrom(CardRow row) {
         if (!row.getTribeRow().getCharacterCards().contains(this)) {
@@ -82,6 +86,12 @@ public abstract class CharacterCard extends TribeCard {
         }
     }
 
+    /**
+     * Resolves the selection of this character card from the given card row by the specified player.
+     * This involves moving the card from the row to the player's deck and applying any special effects.
+     * @param player the player who has selected this card
+     * @param row the card row from which the player has selected this card
+     */
     @Override
     public void resolveFromOfferRow(Player player, CardRow row) {
         row.getTribeRow().remove(this);
