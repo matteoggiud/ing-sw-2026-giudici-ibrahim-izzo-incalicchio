@@ -25,6 +25,12 @@ public abstract class TribeCard extends Card{
         super(cardId, name, era, minNumPlayers, imageKey);
     }
 
+    /**
+     * Indicates whether this card is a final event card, which should be placed at the end of the deck.
+     * By default, this returns false, but it can be overridden by subclasses (like EventCard)
+     * to indicate that they are final events.
+     * @return true if this card is a final event, false otherwise
+     */
     public boolean isFinalEvent(){
         return false;
     }
