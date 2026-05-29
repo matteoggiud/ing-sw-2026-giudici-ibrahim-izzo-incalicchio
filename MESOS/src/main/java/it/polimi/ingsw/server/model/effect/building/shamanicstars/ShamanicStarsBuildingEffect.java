@@ -10,6 +10,12 @@ import java.util.Optional;
 public class ShamanicStarsBuildingEffect implements IBuildingEffect, IShamanicStarsProvider {
     private static final int GAINED_SHAMANIC_STARS = 3;
 
+    /**
+     * This method returns an Optional containing this instance as an IShamanicStarsProvider,
+     * indicating that this building effect provides a bonus
+     * to the number of shamanic stars during the Shamanic Ritual Event.
+     * @return An Optional containing this instance as an IShamanicStarsProvider.
+     */
     @Override
     public Optional<IShamanicStarsProvider> getShamanicStarsProvider() {
         return Optional.of(this);
