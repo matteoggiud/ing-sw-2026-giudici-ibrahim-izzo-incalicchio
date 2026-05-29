@@ -37,7 +37,7 @@ public class SocketGenericVirtualView implements GenericVirtualView {
      * @param message the message to be sent to the client
      * @throws RuntimeException if there is an error while sending the message
      */
-    public void sendMessage(ServerMessage message) throws RuntimeException {
+    public synchronized void sendMessage(ServerMessage message) throws RuntimeException {
         try {
             outputStream.writeObject(message);
             outputStream.flush();

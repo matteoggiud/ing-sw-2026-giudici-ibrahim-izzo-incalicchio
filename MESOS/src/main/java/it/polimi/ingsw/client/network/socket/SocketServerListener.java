@@ -31,7 +31,7 @@ public class SocketServerListener implements Runnable {
     }
 
 
-    public void sendMessage(ClientMessage message) {
+    public synchronized void sendMessage(ClientMessage message) {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
