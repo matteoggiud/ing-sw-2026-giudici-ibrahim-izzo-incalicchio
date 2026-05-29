@@ -219,6 +219,10 @@ public class Player {
         this.food = food;
     }
 
+    /**
+     * Sets the player's prestige points to the specified amount.
+     * @param pp the new amount of prestige points for the player
+     */
     public void setPp(int pp) {
         this.PP = pp;
     }
