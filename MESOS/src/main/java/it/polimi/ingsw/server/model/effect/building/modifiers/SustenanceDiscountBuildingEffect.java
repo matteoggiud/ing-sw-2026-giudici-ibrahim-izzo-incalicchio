@@ -49,6 +49,12 @@ public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEvent
     }
 
 
+    /**
+     * This method modifies the effect of the Sustenance Event by applying a discount to the total Food cost
+     * based on the number of Character cards of the specified type in the player's tribe.
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
+     */
     @Override
     public void visitEvent(SustenanceEventEffect eventCard, EffectEventResult result) {
         Player p = result.getTargetPlayer();
