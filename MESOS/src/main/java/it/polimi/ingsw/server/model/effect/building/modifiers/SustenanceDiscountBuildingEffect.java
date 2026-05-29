@@ -48,11 +48,10 @@ public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEvent
     public void visitEvent(SustenanceEventEffect eventCard, EffectEventResult result) {
         Player p = result.getTargetPlayer();
 
-        // Count the number of specified character type in the player's tribe
         int numbersOfCharacters = p.getPlayerDeck().countCharactersByType(characterType);
+        int discountedFoodChange = result.getFoodChange() + numbersOfCharacters;
 
-        // For each character of the specified type, apply a discount of 1 Food
-        result.setFoodChange(result.getFoodChange() + numbersOfCharacters);
+        result.setFoodChange(Math.min(discountedFoodChange, 0));
     }
 }
 
