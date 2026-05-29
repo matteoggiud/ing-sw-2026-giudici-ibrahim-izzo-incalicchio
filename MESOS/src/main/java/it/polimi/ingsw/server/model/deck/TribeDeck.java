@@ -62,10 +62,18 @@ public class TribeDeck {
         this.tribeDeck.addAll(tribeDeck);
     }
 
+    /**
+     * This method checks if the tribe deck is empty.
+     * @return true if the tribe deck is empty, false otherwise.
+     */
     public boolean isEmpty(){
         return this.tribeDeck.isEmpty();
     }
 
+    /**
+     * Gets the tribe deck.
+     * @return  the tribe deck.
+     */
     public LinkedList<TribeCard> getTribeDeck() {
         return tribeDeck;
     }
