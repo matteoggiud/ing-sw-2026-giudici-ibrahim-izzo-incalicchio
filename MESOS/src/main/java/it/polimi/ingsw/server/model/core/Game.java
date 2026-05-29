@@ -273,6 +273,13 @@ public class Game {
         this.lastRoundTriggered = lastRoundTriggered;
     }
 
+    /**
+     * Sets the current era of the game to the specified era.
+     * This method is used to update the current era during the game,
+     * especially when transitioning between eras.
+     * @param currentEra
+     * @throws IllegalStateException
+     */
     public void setCurrentEra(Era currentEra) throws IllegalStateException {
         if (currentEra == null) {
             throw new IllegalArgumentException("The current era cannot be null");
@@ -289,48 +296,6 @@ public class Game {
         return gameState.isEnded();
     }
 
-
-    public void transferUpperTribeToLower() { // da portare nel game state
-        board.transferUpperTribeToLower();
-    }
-
-    /**
-     * This method is used to refill the upper row of the board with new tribe cards.
-     * It handles the transition between eras.
-     */
-   /* public void refillUpperRow(int upperRowSize) { // da portare nel game state
-        for (int i = 0; i < upperRowSize; i++) {
-            TribeCard tribeCard = tribeDeck.draw();
-
-            board.addTribeUpperRow(tribeCard);
-            if (tribeCard.getEra() != currentEra) {
-                changeEra(tribeCard.getEra());
-            }
-
-        }
-    }*/
-
-    /**
-     * This method is used when the era changes, it updates the board and the building cards according to the new era.
-     *
-     * @param newEra the new era to which the game is transitioning
-     * @throws IllegalArgumentException if the new era is null or if it is ERA_1.
-     */
-    /*public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
-        if (newEra == null || newEra == Era.ERA_1) {
-            throw new IllegalArgumentException("Invalid era transition: new era cannot be null or ERA_1");
-        }
-
-        this.currentEra = newEra; // Update the current era to the new era
-
-        if (currentEra == Era.ERA_3) {
-            board.clearLowerBuildingRow(); // Clear the lower building row if we are transitioning to Era III
-        }
-
-        board.transferUpperBuildingToLower(); // Move the upper building row to the lower building row
-        board.placeInUpperBuildingRow(buildingDecks.get(currentEra)); // Place new building cards in the upper building row based on the new era
-    }*/
-
     /**
      * This method checks if the current round is the last round of the game by verifying if the tribe deck is empty.
      *
@@ -339,16 +304,6 @@ public class Game {
     public boolean isLastRound() {
         return tribeDeck.isEmpty();
     }
-
-    /**
-     * WORK IN PROGRESS DO NOT TOUCH
-     */
-    public void advancePhase() { // da portare nel game state
-    }
-
-    public void advanceRound() { // da portare nel game state
-    }
-
 
     /**
      * This method is used to end the game, it changes the game state to the ended state.
