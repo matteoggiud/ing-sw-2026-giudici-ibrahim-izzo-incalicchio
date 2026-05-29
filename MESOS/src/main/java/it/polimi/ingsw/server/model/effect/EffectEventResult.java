@@ -46,8 +46,16 @@ public class EffectEventResult {
         return targetPlayer;
     }
 
+    /**
+     * Sets the change in the player's food resources as a result of applying the effect.
+     * @param foodChange the change in the player's food resources as a result of applying the effect.
+     */
     public void setFoodChange(int foodChange) { this.foodChange = foodChange; }
 
+    /**
+     * 
+     * @param ppChange
+     */
     public void setPpChange(int ppChange) { this.ppChange = ppChange; }
 
 }
