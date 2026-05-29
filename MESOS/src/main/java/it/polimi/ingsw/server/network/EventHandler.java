@@ -1,10 +1,11 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.common.network.socket_messages.server.game.EraChangedMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.game.ResolvingEventUpdate;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.common.network.dto.BoardDTO;
 import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
-import it.polimi.ingsw.server.network.socket.messages.game.*;
 
 
 import java.util.List;

@@ -1,19 +1,19 @@
 package it.polimi.ingsw.server.network.socket;
 
 import it.polimi.ingsw.common.network.dto.*;
+import it.polimi.ingsw.common.network.socket_messages.server.game.*;
 import it.polimi.ingsw.server.network.GenericVirtualView;
-import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
-import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.*;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
-import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
-import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.GenericErrorMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.login.LoginFailedMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.login.LoginNeededMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.login.LoginSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.AvailableGamesMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.DisconnectSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.LeftGameSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.RankingsMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.register.RegisterFailedMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.register.RegisterSuccessMessage;
 
 import java.io.ObjectOutputStream;
 import java.net.Socket;

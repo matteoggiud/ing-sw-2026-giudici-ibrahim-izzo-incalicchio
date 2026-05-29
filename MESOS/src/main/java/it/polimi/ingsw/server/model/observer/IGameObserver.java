@@ -1,7 +1,7 @@
 package it.polimi.ingsw.server.model.observer;
 
 import it.polimi.ingsw.server.model.observer.event.*;
-import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
+import it.polimi.ingsw.common.network.socket_messages.server.game.ResolvingEventUpdate;
 
 /**
  * Observer interface implemented by remote or local views.

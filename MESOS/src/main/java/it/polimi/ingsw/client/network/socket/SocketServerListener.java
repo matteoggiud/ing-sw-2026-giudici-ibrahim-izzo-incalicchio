@@ -4,7 +4,7 @@ import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;

@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 import it.polimi.ingsw.server.model.observer.event.*;
-import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
+import it.polimi.ingsw.common.network.socket_messages.server.game.ResolvingEventUpdate;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

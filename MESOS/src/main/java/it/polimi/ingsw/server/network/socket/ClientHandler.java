@@ -3,11 +3,8 @@ package it.polimi.ingsw.server.network.socket;
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;
-import it.polimi.ingsw.server.network.SessionRegistry;
 import it.polimi.ingsw.server.network.EventHandler;
-import it.polimi.ingsw.server.network.GenericVirtualView;
-import it.polimi.ingsw.server.network.socket.messages.ClientVisitor;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.ClientVisitor;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.network.socket.messages.login;
 
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
-import it.polimi.ingsw.server.network.socket.messages.ClientMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.server.ClientMessageVisitor;
 
 public class LoginSubmitMessage extends ClientMessage {
     private final String username;

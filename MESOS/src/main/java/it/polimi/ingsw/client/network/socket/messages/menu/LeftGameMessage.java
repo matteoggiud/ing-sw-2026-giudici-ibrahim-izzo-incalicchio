@@ -1,9 +1,7 @@
 package it.polimi.ingsw.client.network.socket.messages.menu;
 
 import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
-import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
-import it.polimi.ingsw.server.network.socket.messages.ClientMessageVisitor;
-import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.ClientMessageVisitor;
 
 public class LeftGameMessage extends ClientMessage {
 

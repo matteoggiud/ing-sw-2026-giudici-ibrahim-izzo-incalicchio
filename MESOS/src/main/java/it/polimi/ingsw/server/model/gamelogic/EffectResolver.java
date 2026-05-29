@@ -7,7 +7,7 @@ import it.polimi.ingsw.server.model.effect.EffectEventResult;
 import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 import it.polimi.ingsw.server.model.effect.building.triggers.IEventTrigger;
 import it.polimi.ingsw.common.network.dto.mapper.EventCardDTOMapper;
-import it.polimi.ingsw.server.network.socket.messages.game.ResolvingEventUpdate;
+import it.polimi.ingsw.common.network.socket_messages.server.game.ResolvingEventUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
