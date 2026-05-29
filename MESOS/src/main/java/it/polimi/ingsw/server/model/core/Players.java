@@ -9,6 +9,9 @@ import java.util.List;
 public class Players {
     private final List<Player> players;
 
+    /**
+     * Constructs a new Players object with an empty list of players.
+     */
     public Players() {
         this.players = new ArrayList<>();
     }
