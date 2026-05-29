@@ -1,6 +1,6 @@
 package it.polimi.ingsw.common.network.socket_messages.server;
 
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 
 public class GenericErrorMessage extends ServerMessage{
     public GenericErrorMessage(String message){

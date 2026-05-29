@@ -1,4 +1,4 @@
-package it.polimi.ingsw.common.network.socket_messages.client;
+package it.polimi.ingsw.common.network.socket_messages.visitors;
 
 import it.polimi.ingsw.common.network.socket_messages.server.GenericErrorMessage;
 import it.polimi.ingsw.common.network.socket_messages.server.game.*;

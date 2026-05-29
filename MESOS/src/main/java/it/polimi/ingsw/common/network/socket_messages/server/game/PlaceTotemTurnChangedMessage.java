@@ -1,6 +1,6 @@
 package it.polimi.ingsw.common.network.socket_messages.server.game;
 import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 
 /**
  * This class represents a message sent by the server to all clients when the turn changes to the next player in the game.

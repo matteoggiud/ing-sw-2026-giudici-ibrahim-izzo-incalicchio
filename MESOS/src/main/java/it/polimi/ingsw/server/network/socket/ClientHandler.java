@@ -4,7 +4,7 @@ import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;
 import it.polimi.ingsw.server.network.EventHandler;
-import it.polimi.ingsw.common.network.socket_messages.server.ClientVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ClientVisitor;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;

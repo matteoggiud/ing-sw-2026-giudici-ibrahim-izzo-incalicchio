@@ -1,7 +1,7 @@
 package it.polimi.ingsw.common.network.socket_messages.server.game;
 
 import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 
 /**
  * Message indicating that the turn has changed during an extra action phase.

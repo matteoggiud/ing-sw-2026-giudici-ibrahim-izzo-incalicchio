@@ -5,8 +5,8 @@ import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ViewController;
 import it.polimi.ingsw.client.network.socket.SocketServerConnection;
 import it.polimi.ingsw.client.network.socket.SocketVirtualServer;
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
-import it.polimi.ingsw.common.network.socket_messages.client.ServerVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerVisitor;
 import it.polimi.ingsw.client.view.ClientView;
 
 public class SocketConnectionStrategy implements NetworkConnectionStrategy {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.common.network.socket_messages.server.login;
 
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
 
 public class LoginNeededMessage extends ServerMessage {

@@ -1,6 +1,6 @@
 package it.polimi.ingsw.common.network.socket_messages.server.game;
 
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 import it.polimi.ingsw.common.network.dto.GameInfoDTO;
 import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
 

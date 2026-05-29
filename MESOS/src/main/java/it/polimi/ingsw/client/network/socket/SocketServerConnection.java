@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
-import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 import it.polimi.ingsw.client.view.ClientView;
 
 import java.io.IOException;

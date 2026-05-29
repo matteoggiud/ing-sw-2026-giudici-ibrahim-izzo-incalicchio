@@ -1,7 +1,7 @@
 package it.polimi.ingsw.common.network.socket_messages.client.registration;
 
 import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
-import it.polimi.ingsw.common.network.socket_messages.server.ClientMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ClientMessageVisitor;
 
 public class RegisterSubmitMessage extends ClientMessage {
     private final String username;

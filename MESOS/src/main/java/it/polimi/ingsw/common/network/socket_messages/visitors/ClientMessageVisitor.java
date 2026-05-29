@@ -1,4 +1,4 @@
-package it.polimi.ingsw.common.network.socket_messages.server;
+package it.polimi.ingsw.common.network.socket_messages.visitors;
 
 import it.polimi.ingsw.common.network.socket_messages.client.game.*;
 import it.polimi.ingsw.common.network.socket_messages.client.menu.*;
