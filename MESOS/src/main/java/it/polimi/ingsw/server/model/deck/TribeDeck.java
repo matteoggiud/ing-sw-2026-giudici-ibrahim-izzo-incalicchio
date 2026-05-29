@@ -47,7 +47,6 @@ public class TribeDeck {
         return this.tribeDeck.removeFirst();
     }
 
-
     /**
      * Sets the tribe deck with a new list of tribe cards.
      *
@@ -61,11 +60,6 @@ public class TribeDeck {
 
         this.tribeDeck.clear();
         this.tribeDeck.addAll(tribeDeck);
-    }
-
-
-    public void addCardToTop(TribeCard card) {
-        this.tribeDeck.addFirst(card);
     }
 
     public boolean isEmpty(){
