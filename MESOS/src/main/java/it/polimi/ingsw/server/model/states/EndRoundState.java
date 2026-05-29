@@ -83,6 +83,10 @@ public class EndRoundState implements IGameState {
         notifyPlayerInfos(game);
     }
 
+    /**
+     * Notifies observers about the updated player information, such as resources and points.
+     * @param game the current game context
+     */
     private void notifyPlayerInfos(Game game) {
         game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(
                 game.getGameId(),
@@ -179,11 +183,19 @@ public class EndRoundState implements IGameState {
         );
     }
 
+    /**
+     * Indicates whether the game has ended. In this state, the game is not considered ended until the next state is reached.
+     * @return false, as the game is not yet ended in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
     }
 
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     * @return the name of the persistence class for this game state
+     */
     @Override
     public String getPersistenceName() {
         return "EndRoundState";
