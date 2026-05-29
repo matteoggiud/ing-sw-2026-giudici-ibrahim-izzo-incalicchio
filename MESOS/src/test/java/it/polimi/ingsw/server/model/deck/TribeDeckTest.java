@@ -24,6 +24,10 @@ class TribeDeckTest {
         era1 = new Era1();
     }
 
+    /**
+     * Tests that drawing from the deck correctly returns the cards in the order they were added,
+     * and throws an IllegalStateException when attempting to draw from an empty deck.
+     */
     @Test
     void drawCard() {
         TribeCard first = newHunter();
@@ -36,6 +40,10 @@ class TribeDeckTest {
         assertThrows(IllegalStateException.class, () -> tribeDeck.drawCard());
     }
 
+    /**
+     * Tests adding multiple tribe cards to an empty deck, verifying that the deck is updated
+     * correctly and cards are available to be drawn in the expected order.
+     */
     @Test
     void addTribesCards() {
         TribeCard first = newHunter();
@@ -50,6 +58,10 @@ class TribeDeckTest {
         assertSame(second, tribeDeck.drawCard());
     }
 
+    /**
+     * Tests setting the entire tribe deck to a new list of cards, verifying the old cards
+     * are discarded, the new ones can be drawn, and null or empty lists throw exceptions.
+     */
     @Test
     void setTribeDeck() {
         TribeCard oldCard = newHunter();
@@ -68,6 +80,10 @@ class TribeDeckTest {
         assertThrows(IllegalArgumentException.class, () -> tribeDeck.setTribeDeck(List.of()));
     }
 
+    /**
+     * Tests adding a single tribe card directly to the top of the deck, ensuring it is drawn
+     * before any previously existing cards.
+     */
     @Test
     void addCardToTop() {
         TribeCard first = newHunter();
@@ -80,6 +96,10 @@ class TribeDeckTest {
         assertSame(first, tribeDeck.drawCard());
     }
 
+    /**
+     * Tests the isEmpty condition of the tribe deck across different states: initially empty,
+     * after adding a card, and after drawing the only available card.
+     */
     @Test
     void isEmpty() {
         assertTrue(tribeDeck.isEmpty());

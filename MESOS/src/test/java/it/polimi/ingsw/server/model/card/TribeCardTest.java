@@ -23,16 +23,28 @@ class TribeCardTest {
         tribeCard = new TestTribeCard(nextCardId++, "TribeA", era1, 2);
     }
 
+    /**
+     * Tests that a TribeCard is not considered a final event.
+     * Validates that {@link TribeCard#isFinalEvent()} returns false.
+     */
     @Test
     void isFinalEvent() {
         assertFalse(tribeCard.isFinalEvent());
     }
 
+    /**
+     * Tests that a TribeCard does not go in the upper row of the board.
+     * Validates that {@link TribeCard#goesInUpperRow()} returns false.
+     */
     @Test
     void goesInUpperRow() {
         assertFalse(tribeCard.goesInUpperRow());
     }
 
+    /**
+     * Tests adding a card to a character list using the TribeCard interface.
+     * Validates that {@link TribeCard#addToCharacterList(ArrayList)} successfully adds the character.
+     */
     @Test
     void addToCharacterList() {
         ArrayList<CharacterCard> characters = new ArrayList<>();
@@ -44,6 +56,10 @@ class TribeCardTest {
         assertEquals("CharacterX", characters.get(0).getName());
     }
 
+    /**
+     * Tests adding a card to an event list using the TribeCard interface.
+     * Validates that {@link TribeCard#addToEventList(ArrayList)} successfully adds the event.
+     */
     @Test
     void addToEventList() {
         ArrayList<EventCard> events = new ArrayList<>();

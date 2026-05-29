@@ -14,6 +14,10 @@ class EventDiscountTest {
         eventDiscount = new EventDiscount(2, 3);
     }
 
+    /**
+     * Tests adding positive and negative food values to the discount, verifying the
+     * food property updates cumulatively and correctly.
+     */
     @Test
     void addFood() {
         eventDiscount.addFood(4);
@@ -23,6 +27,10 @@ class EventDiscountTest {
         assertEquals(5, eventDiscount.getFood());
     }
 
+    /**
+     * Tests adding positive and negative prestige point values to the discount, verifying the
+     * prestige points property updates cumulatively and correctly.
+     */
     @Test
     void addPP() {
         eventDiscount.addPP(5);
@@ -32,6 +40,10 @@ class EventDiscountTest {
         assertEquals(4, eventDiscount.getPP());
     }
 
+    /**
+     * Tests retrieving the currently stored prestige points, including after subsequent additions
+     * to the discount tracker.
+     */
     @Test
     void getPP() {
         assertEquals(2, eventDiscount.getPP());
@@ -40,6 +52,10 @@ class EventDiscountTest {
         assertEquals(3, eventDiscount.getPP());
     }
 
+    /**
+     * Tests retrieving the currently stored food value, including after subsequent additions
+     * to the discount tracker.
+     */
     @Test
     void getFood() {
         assertEquals(3, eventDiscount.getFood());

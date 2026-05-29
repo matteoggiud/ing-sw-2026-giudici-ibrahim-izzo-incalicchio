@@ -28,21 +28,37 @@ class BuildingCardTest {
         buildingCard = new BuildingCard(nextCardId++, "BuildingA", era1, 2, 5, 3, effect,"");
     }
 
+    /**
+     * Tests getting the food cost of a building card.
+     * Validates that {@link BuildingCard#getFoodCost()} returns the correct cost.
+     */
     @Test
     void getFoodCost() {
         assertEquals(5, buildingCard.getFoodCost());
     }
 
+    /**
+     * Tests getting the end game prestige points provided by a building card.
+     * Validates that {@link BuildingCard#getEndGamePP()} returns the correct value.
+     */
     @Test
     void getEndGamePP() {
         assertEquals(3, buildingCard.getEndGamePP());
     }
 
+    /**
+     * Tests retrieving the building's effect.
+     * Validates that {@link BuildingCard#getEffect()} returns the assigned effect object.
+     */
     @Test
     void getEffect() {
         assertSame(effect, buildingCard.getEffect());
     }
 
+    /**
+     * Tests adding a building card to a player's deck.
+     * Validates that {@link BuildingCard#addTo(PlayerDeck)} correctly places it in the buildings list.
+     */
     @Test
     void addTo() {
         PlayerDeck deck = new PlayerDeck();
@@ -53,6 +69,10 @@ class BuildingCardTest {
         assertSame(buildingCard, deck.getBuildings().get(0));
     }
 
+    /**
+     * Tests whether a building card can be selected from a card row by a player.
+     * Validates that {@link BuildingCard#canBeSelectedFrom(CardRow, Player)} correctly accounts for presence in the row and player's food, including any builder discounts.
+     */
     @Test
     void canBeSelectedFrom() {
         CardRow row = new CardRow();
@@ -72,6 +92,10 @@ class BuildingCardTest {
         assertTrue(buildingCard.canBeSelectedFrom(row, discountedPlayer));
     }
 
+    /**
+     * Tests validation logic for selecting a building card.
+     * Validates that {@link BuildingCard#validateSelectableFrom(CardRow)} throws an exception if the card is not present in the row.
+     */
     @Test
     void validateSelectableFrom() {
         CardRow row = new CardRow();
@@ -83,6 +107,10 @@ class BuildingCardTest {
         assertDoesNotThrow(() -> buildingCard.validateSelectableFrom(row));
     }
 
+    /**
+     * Tests resolving the acquisition of a building card from the offer row.
+     * Validates that it is removed from the row, added to the player's deck, and that the player's food is correctly decremented, throwing if insufficient.
+     */
     @Test
     void resolveFromOfferRow() {
         CardRow row = new CardRow();

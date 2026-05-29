@@ -27,6 +27,11 @@ class CardRowTest {
         era1 = new Era1();
     }
 
+    /**
+     * Tests retrieving the inner {@link TribeRow}.
+     * Verifies that the retrieved instance is not null and is exactly the same instance 
+     * stored internally by the card row.
+     */
     @Test
     void getTribeRow() {
         TribeRow tribeRow = cardRow.getTribeRow();
@@ -35,6 +40,11 @@ class CardRowTest {
         assertSame(tribeRow, cardRow.getTribeRow());
     }
 
+    /**
+     * Tests retrieving the inner {@link BuildingRow}.
+     * Verifies that the retrieved instance is not null and is exactly the same instance 
+     * stored internally by the card row.
+     */
     @Test
     void getBuildingRow() {
         BuildingRow buildingRow = cardRow.getBuildingRow();
@@ -43,6 +53,11 @@ class CardRowTest {
         assertSame(buildingRow, cardRow.getBuildingRow());
     }
 
+    /**
+     * Tests adding a card to the row.
+     * Verifies that null cards are rejected with an exception, and valid cards
+     * are properly delegated and added to the underlying tribe row.
+     */
     @Test
     void addCard() {
         HunterCharacterCard hunter = newHunter();
@@ -55,6 +70,11 @@ class CardRowTest {
         assertTrue(cardRow.getTribeRow().getCharacterCards().contains(hunter));
     }
 
+    /**
+     * Tests clearing only the building row section of the card row.
+     * Populates both tribe and building sections, clears the building section,
+     * and verifies that buildings are removed but tribe cards remain.
+     */
     @Test
     void clearBuildings() {
         cardRow.getBuildingRow().add(newBuilding(3));
@@ -66,6 +86,10 @@ class CardRowTest {
         assertEquals(1, cardRow.getTribeRow().count());
     }
 
+    /**
+     * Tests transferring buildings from a source {@link CardRow} to this card row.
+     * Ensures that the source row's building row becomes empty and this row receives the buildings.
+     */
     @Test
     void transferBuildingRowFrom() {
         CardRow source = new CardRow();
@@ -78,6 +102,11 @@ class CardRowTest {
         assertTrue(source.getBuildingRow().isEmpty());
     }
 
+    /**
+     * Tests adding buildings directly from a {@link BuildingDeck}.
+     * Populates a deck and transfers its cards, verifying that this card row's 
+     * building row increases appropriately.
+     */
     @Test
     void addBuildingRowFrom() {
         BuildingDeck deck = new BuildingDeck();
@@ -89,6 +118,10 @@ class CardRowTest {
         assertEquals(2, cardRow.getBuildingRow().count());
     }
 
+    /**
+     * Tests transferring tribe cards from a source {@link CardRow} to this card row.
+     * Ensures that the source row's tribe row becomes empty and this row receives the cards.
+     */
     @Test
     void transferTribeRowFrom() {
         CardRow source = new CardRow();
@@ -101,6 +134,11 @@ class CardRowTest {
         assertTrue(source.getTribeRow().isEmpty());
     }
 
+    /**
+     * Tests fully clearing both sections of the card row.
+     * Populates both tribe and building sections, calls clear,
+     * and verifies that no cards remain in either section.
+     */
     @Test
     void clearRow() {
         cardRow.addCard(newHunter());
@@ -113,6 +151,10 @@ class CardRowTest {
         assertEquals(0, cardRow.countRow());
     }
 
+    /**
+     * Tests the aggregate count of the card row.
+     * Verifies that the row correctly sums the sizes of both the tribe row and building row.
+     */
     @Test
     void countRow() {
         cardRow.addCard(newHunter());
@@ -122,6 +164,12 @@ class CardRowTest {
         assertEquals(3, cardRow.countRow());
     }
 
+    /**
+     * Tests checking if there's any selectable card available for a specific player.
+     * Verifies that if no cards exist, or if the available building is too expensive
+     * compared to the player's food, it returns false. Adding enough food or adding
+     * a free tribe card makes it return true.
+     */
     @Test
     void hasSelectableCardFor() {
         Player player = new Player("p1");

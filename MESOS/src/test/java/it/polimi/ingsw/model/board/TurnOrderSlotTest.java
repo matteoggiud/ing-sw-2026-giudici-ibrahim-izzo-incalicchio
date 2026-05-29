@@ -25,6 +25,10 @@ class TurnOrderSlotTest {
         player2 = new Player("Player2");
     }
 
+    /**
+     * Tests retrieving the food bonus of the turn order slot.
+     * Verifies that the correctly initialized value (both positive and default negative values) is returned.
+     */
     @Test
     void getFoodBonus() {
         assertEquals(2, slot.getFoodBonus());
@@ -33,6 +37,10 @@ class TurnOrderSlotTest {
         assertEquals(TurnOrderSlot.DEFAULT_PP_MALUS, negativeSlot.getFoodBonus());
     }
 
+    /**
+     * Tests retrieving the player placed in the slot.
+     * Asserts that it initially returns null, and returns the correct player once placed.
+     */
     @Test
     void getPlacedPlayer() {
         assertNull(slot.getPlacedPlayer());
@@ -42,6 +50,10 @@ class TurnOrderSlotTest {
         assertSame(player1, slot.getPlacedPlayer());
     }
 
+    /**
+     * Tests the emptiness status of the turn order slot.
+     * Verifies that the slot correctly reports true when empty and false when occupied by a player.
+     */
     @Test
     void isFree() {
         assertTrue(slot.isFree());
@@ -51,6 +63,11 @@ class TurnOrderSlotTest {
         assertFalse(slot.isFree());
     }
 
+    /**
+     * Tests placing a player into the slot.
+     * Checks that placing null throws an exception, placing a valid player correctly assigns them and 
+     * marks the slot as not free, and placing another player in an already occupied slot throws an exception.
+     */
     @Test
     void placePlayer() {
         assertThrows(IllegalArgumentException.class, () -> slot.placePlayer(null));
@@ -63,6 +80,11 @@ class TurnOrderSlotTest {
         assertThrows(IllegalStateException.class, () -> slot.placePlayer(player2));
     }
 
+    /**
+     * Tests removing a player from the slot.
+     * Verifies that removing from an empty slot returns null, while removing from an occupied slot
+     * returns the correct player, frees the slot, and clears the player reference.
+     */
     @Test
     void removePlayer() {
         assertNull(slot.removePlayer());

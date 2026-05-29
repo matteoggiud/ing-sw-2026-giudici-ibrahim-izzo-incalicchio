@@ -2,8 +2,8 @@ package it.polimi.ingsw.server.model.menu;
 
 import it.polimi.ingsw.server.model.core.Player;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Singleton class that manages the logged-in players in the system.
@@ -25,7 +25,7 @@ public class PlayerManager {
      * Private constructor to prevent instantiation from outside the class. Initializes the loggedInPlayers map.
      */
     private PlayerManager() {
-        loggedInPlayers = new HashMap<>();
+        loggedInPlayers = new ConcurrentHashMap<>();
     }
 
 

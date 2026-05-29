@@ -3,6 +3,7 @@ package it.polimi.ingsw.server.model.menu;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Singleton class that manages the active games in the system.
@@ -23,7 +24,7 @@ public class GameManager {
      * Private constructor to prevent instantiation from outside the class. Initializes the activeGames map.
      */
     private GameManager() {
-        activeGames = new HashMap<>();
+        activeGames = new ConcurrentHashMap<>();
     }
 
     /**
@@ -96,8 +97,8 @@ public class GameManager {
      */
     public List<Game> getAvailableGames() {
         return activeGames.values().stream()
-                .filter(game -> !game.isEnded())
-                .filter(g -> g.getGameState().isJoinable(g))
+                .filter(game -> game.locked(() -> !game.isEnded()))
+                .filter(g -> g.locked(() -> g.getGameState().isJoinable(g)))
                 .toList();
     }
 
@@ -143,9 +144,9 @@ public class GameManager {
         }
 
         return activeGames.values().stream()
-                .filter(game -> !game.isEnded())
-                .filter(game -> game.getPlayers().getPlayers().stream()
-                        .anyMatch(player -> player.getNickname().equals(nickname)))
+                .filter(game -> game.locked(() -> !game.isEnded()))
+                .filter(game -> game.locked(() -> game.getPlayers().getPlayers().stream()
+                        .anyMatch(player -> player.getNickname().equals(nickname))))
                 .map(Game::getGameId)
                 .findFirst();
     }

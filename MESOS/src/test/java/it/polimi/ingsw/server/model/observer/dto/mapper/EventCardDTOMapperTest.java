@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EventCardDTOMapperTest {
 
+    /**
+     * Tests mapping a populated {@link EventCard} to an {@link EventCardDTO}.
+     * Verifies that the base properties such as ID, name, era, and image key are translated properly.
+     */
     @Test
     void toEventCardDTO_mapsFieldsCorrectly() {
         // Arrange
@@ -46,6 +50,10 @@ class EventCardDTOMapperTest {
         assertEquals("event_image", dto.imageKey());
     }
 
+    /**
+     * Tests the error handling of {@link EventCardDTOMapper#toEventCardDTO(EventCard)}.
+     * Expects an {@link IllegalArgumentException} when the provided event card is null.
+     */
     @Test
     void toEventCardDTO_nullEventCard_throwsException() {
         // Act & Assert

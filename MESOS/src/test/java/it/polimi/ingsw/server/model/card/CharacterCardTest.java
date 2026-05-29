@@ -26,31 +26,55 @@ class CharacterCardTest {
         characterCard = new TestCharacterCard(nextCardId++, "CharacterA", era1, 2);
     }
 
+    /**
+     * Tests the default builder food discount for a standard CharacterCard.
+     * Validates that {@link CharacterCard#getBuilderFoodDiscount()} returns 0.
+     */
     @Test
     void getBuilderFoodDiscount() {
         assertEquals(0, characterCard.getBuilderFoodDiscount());
     }
 
+    /**
+     * Tests the default shaman stars value for a standard CharacterCard.
+     * Validates that {@link CharacterCard#getShamanStars()} returns 0.
+     */
     @Test
     void getShamanStars() {
         assertEquals(0, characterCard.getShamanStars());
     }
 
+    /**
+     * Tests the default inventor type for a standard CharacterCard.
+     * Validates that {@link CharacterCard#getInventorType()} returns empty.
+     */
     @Test
     void getInventorType() {
         assertEquals(Optional.empty(), characterCard.getInventorType());
     }
 
+    /**
+     * Tests the default end game prestige points bonus for a standard CharacterCard.
+     * Validates that {@link CharacterCard#getEndGamePPBonus()} returns 0.
+     */
     @Test
     void getEndGamePPBonus() {
         assertEquals(0, characterCard.getEndGamePPBonus());
     }
 
+    /**
+     * Tests whether a standard CharacterCard has a food icon.
+     * Validates that {@link CharacterCard#hasFoodIcon()} returns false by default.
+     */
     @Test
     void hasFoodIcon() {
         assertFalse(characterCard.hasFoodIcon());
     }
 
+    /**
+     * Tests the behavior when a character card is added to a player.
+     * Validates that {@link CharacterCard#onAddedToPlayer(Player)} correctly gives food to the player.
+     */
     @Test
     void onAddedToPlayer() {
         Player player = new Player("p1");
@@ -64,6 +88,10 @@ class CharacterCardTest {
         assertEquals(2, player.getFood());
     }
 
+    /**
+     * Tests adding a character card to a player's deck.
+     * Validates that {@link CharacterCard#addTo(PlayerDeck)} correctly places it in the character list.
+     */
     @Test
     void addTo() {
         PlayerDeck deck = new PlayerDeck();
@@ -76,6 +104,10 @@ class CharacterCardTest {
         assertSame(deck, characterCard.getLastPlayerDeck());
     }
 
+    /**
+     * Tests adding a character card directly to a character list.
+     * Validates that {@link CharacterCard#addToCharacterList(ArrayList)} works properly.
+     */
     @Test
     void addToCharacterList() {
         ArrayList<CharacterCard> characterList = new ArrayList<>();
@@ -86,6 +118,10 @@ class CharacterCardTest {
         assertSame(characterCard, characterList.get(0));
     }
 
+    /**
+     * Tests if a character card can be selected from a given card row.
+     * Validates that {@link CharacterCard#canBeSelectedFrom(CardRow, Player)} checks the presence in the row.
+     */
     @Test
     void canBeSelectedFrom() {
         CardRow row = new CardRow();
@@ -97,6 +133,10 @@ class CharacterCardTest {
         assertTrue(characterCard.canBeSelectedFrom(row, player));
     }
 
+    /**
+     * Tests validation logic for selecting a character card.
+     * Validates that {@link CharacterCard#validateSelectableFrom(CardRow)} throws an exception if not present.
+     */
     @Test
     void validateSelectableFrom() {
         CardRow row = new CardRow();
@@ -107,6 +147,10 @@ class CharacterCardTest {
         assertDoesNotThrow(() -> characterCard.validateSelectableFrom(row));
     }
 
+    /**
+     * Tests resolving the acquisition of a character card from the offer row.
+     * Validates that it is removed from the row and added to the player's deck, resolving its effects.
+     */
     @Test
     void resolveFromOfferRow() {
         CardRow row = new CardRow();
@@ -123,6 +167,10 @@ class CharacterCardTest {
         assertEquals(1, characterCard.getOnAddToPlayerDeckCalls());
     }
 
+    /**
+     * Tests the callback method invoked when the card is added to a player deck.
+     * Validates that {@link CharacterCard#onAddToPlayerDeck(PlayerDeck)} gets called with the deck.
+     */
     @Test
     void onAddToPlayerDeck() {
         PlayerDeck deck = new PlayerDeck();

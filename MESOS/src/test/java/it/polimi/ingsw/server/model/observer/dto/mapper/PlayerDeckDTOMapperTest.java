@@ -15,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerDeckDTOMapperTest {
 
+    /**
+     * Tests that an empty deck of a newly created {@link Player} maps to a valid {@link PlayerDeckDTO}
+     * containing empty lists of character and building cards.
+     */
     @Test
     void toPlayerDeckDTO_mapsEmptyDeckCorrectly() {
         // Arrange
@@ -29,6 +33,10 @@ class PlayerDeckDTOMapperTest {
         assertTrue(dto.buildingCards().isEmpty());
     }
 
+    /**
+     * Tests that a player's deck populated with both character and building cards maps correctly.
+     * Validates that all relevant properties of individual cards are translated faithfully to their respective DTOs.
+     */
     @Test
     void toPlayerDeckDTO_mapsCharactersAndBuildingsCorrectly() {
         // Arrange
@@ -71,6 +79,10 @@ class PlayerDeckDTOMapperTest {
         );
     }
 
+    /**
+     * Tests the null safety of {@link PlayerDeckDTOMapper#toPlayerDeckDTO(Player)}.
+     * Expects an {@link IllegalArgumentException} to be thrown when a null player is provided.
+     */
     @Test
     void toPlayerDeckDTO_nullPlayer_throwsException() {
         // Act & Assert

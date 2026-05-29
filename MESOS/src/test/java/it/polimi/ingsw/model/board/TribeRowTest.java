@@ -26,6 +26,10 @@ class TribeRowTest {
         era1 = new Era1();
     }
 
+    /**
+     * Tests adding cards to the tribe row.
+     * Verifies that both character and event cards are successfully added and can be correctly retrieved by type.
+     */
     @Test
     void add() {
         HunterCharacterCard hunter = newHunter();
@@ -41,6 +45,11 @@ class TribeRowTest {
         assertTrue(tribeRow.getEventCards().contains(event));
     }
 
+    /**
+     * Tests removing cards from the tribe row.
+     * Adds multiple cards, then removes an event and a character card, verifying that the count
+     * and the specific type lists are properly updated after each removal.
+     */
     @Test
     void remove() {
         HunterCharacterCard hunter1 = newHunter();
@@ -64,6 +73,10 @@ class TribeRowTest {
         assertTrue(tribeRow.getCharacterCards().contains(hunter2));
     }
 
+    /**
+     * Tests clearing the tribe row.
+     * Adds cards and then calls clear, verifying that the row becomes completely empty.
+     */
     @Test
     void clear() {
         tribeRow.add(newHunter());
@@ -78,6 +91,11 @@ class TribeRowTest {
         assertTrue(tribeRow.getEventCards().isEmpty());
     }
 
+    /**
+     * Tests retrieving character cards from the tribe row.
+     * Ensures that only character cards are returned and verifies that the returned list
+     * is a defensive copy, so modifying it does not alter the tribe row's state.
+     */
     @Test
     void getCharacterCards() {
         HunterCharacterCard hunter1 = newHunter();
@@ -99,6 +117,11 @@ class TribeRowTest {
         assertEquals(2, tribeRow.getCharacterCards().size());
     }
 
+    /**
+     * Tests retrieving event cards from the tribe row.
+     * Ensures that only event cards are returned and verifies that the returned list
+     * is a defensive copy, so modifying it does not alter the tribe row's state.
+     */
     @Test
     void getEventCards() {
         HunterCharacterCard hunter = newHunter();
@@ -120,6 +143,11 @@ class TribeRowTest {
         assertEquals(2, tribeRow.getEventCards().size());
     }
 
+    /**
+     * Tests transferring cards from another tribe row.
+     * Verifies that cards are moved from the source row to this row,
+     * leaving the source row empty while increasing the count of this row appropriately.
+     */
     @Test
     void transferTribeCardsFrom() {
         TribeRow source = new TribeRow();
@@ -143,6 +171,11 @@ class TribeRowTest {
         assertEquals(0, source.count());
     }
 
+    /**
+     * Tests copying cards to another tribe row.
+     * Verifies that cards from this row are added to the target row without removing them
+     * from this row, effectively duplicating references in the target.
+     */
     @Test
     void copyTribeCardsTo() {
         TribeRow target = new TribeRow();
@@ -164,6 +197,10 @@ class TribeRowTest {
         assertTrue(target.getEventCards().contains(event));
     }
 
+    /**
+     * Tests the emptiness check of the tribe row.
+     * Verifies that it returns true when empty, false when cards are added, and true again after being cleared.
+     */
     @Test
     void isEmpty() {
         assertTrue(tribeRow.isEmpty());
@@ -175,6 +212,11 @@ class TribeRowTest {
         assertTrue(tribeRow.isEmpty());
     }
 
+    /**
+     * Tests counting the total number of cards in the tribe row.
+     * Verifies that the count increases as cards are added, decreases as they are removed,
+     * and returns to zero when the row is cleared.
+     */
     @Test
     void count() {
         assertEquals(0, tribeRow.count());

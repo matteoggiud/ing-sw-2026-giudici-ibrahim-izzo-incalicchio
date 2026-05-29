@@ -25,6 +25,10 @@ class BuildingRowTest {
         era1 = new Era1();
     }
 
+    /**
+     * Tests adding individual {@link BuildingCard}s to the building row.
+     * Verifies that the row updates its count and correctly stores the added cards.
+     */
     @Test
     void add() {
         assertTrue(buildingRow.isEmpty());
@@ -43,6 +47,10 @@ class BuildingRowTest {
         assertTrue(buildingRow.getBuildingCards().contains(card2));
     }
 
+    /**
+     * Tests adding multiple building cards directly from a {@link BuildingDeck}.
+     * Verifies that all cards from the deck are successfully transferred to the building row.
+     */
     @Test
     void testAdd() {
         BuildingDeck deck = new BuildingDeck();
@@ -64,6 +72,10 @@ class BuildingRowTest {
         assertTrue(buildingRow.getBuildingCards().contains(card3));
     }
 
+    /**
+     * Tests removing a specific {@link BuildingCard} from the building row.
+     * Verifies that the count decreases and only the specified card is removed while others remain.
+     */
     @Test
     void remove() {
         BuildingCard card1 = newBuilding(3);
@@ -89,6 +101,10 @@ class BuildingRowTest {
         assertTrue(buildingRow.getBuildingCards().contains(card3));
     }
 
+    /**
+     * Tests clearing the entire building row.
+     * Verifies that calling clear completely empties the row and resets the count to zero.
+     */
     @Test
     void clear() {
         buildingRow.add(newBuilding(3));
@@ -103,6 +119,11 @@ class BuildingRowTest {
         assertEquals(0, buildingRow.count());
     }
 
+    /**
+     * Tests retrieving the list of building cards currently in the row.
+     * Ensures that the retrieved list contains the correct cards and that it is
+     * returned as a defensive copy to prevent external modification of the internal state.
+     */
     @Test
     void getBuildingCards() {
         assertTrue(buildingRow.getBuildingCards().isEmpty());
@@ -123,6 +144,11 @@ class BuildingRowTest {
         assertEquals(2, buildingRow.count());
     }
 
+    /**
+     * Tests transferring building cards from another {@link BuildingRow}.
+     * Verifies that the target row receives all cards from the source row, 
+     * and that the source row becomes empty afterwards.
+     */
     @Test
     void transferBuildingCardsFrom() {
         BuildingRow sourceRow = new BuildingRow();
@@ -147,6 +173,11 @@ class BuildingRowTest {
         assertEquals(0, sourceRow.count());
     }
 
+    /**
+     * Tests copying building cards to another {@link BuildingRow}.
+     * Verifies that the cards from this row are added to the target row without being
+     * removed from the source row.
+     */
     @Test
     void copyBuildingCardsTo() {
         BuildingRow targetRow = new BuildingRow();
@@ -172,6 +203,10 @@ class BuildingRowTest {
         assertTrue(targetRow.getBuildingCards().contains(card3));
     }
 
+    /**
+     * Tests checking if the building row is empty.
+     * Verifies that it returns true initially, false after adding cards, and true again after clearing.
+     */
     @Test
     void isEmpty() {
         assertTrue(buildingRow.isEmpty());
@@ -183,6 +218,10 @@ class BuildingRowTest {
         assertTrue(buildingRow.isEmpty());
     }
 
+    /**
+     * Tests counting the total number of building cards in the row.
+     * Verifies that the count appropriately reflects additions, removals, and clearing of the row.
+     */
     @Test
     void count() {
         assertEquals(0, buildingRow.count());
