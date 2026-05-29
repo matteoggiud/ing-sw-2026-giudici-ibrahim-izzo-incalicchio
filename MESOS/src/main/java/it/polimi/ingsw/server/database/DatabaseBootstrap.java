@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.Map;
 import java.util.stream.Collectors;
-import it.polimi.ingsw.utils.ConfigurationManager;
+import it.polimi.ingsw.common.utils.ConfigurationManager;
 
 public class DatabaseBootstrap {
 

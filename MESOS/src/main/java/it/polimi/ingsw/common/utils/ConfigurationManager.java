@@ -1,4 +1,4 @@
-package it.polimi.ingsw.utils;
+package it.polimi.ingsw.common.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

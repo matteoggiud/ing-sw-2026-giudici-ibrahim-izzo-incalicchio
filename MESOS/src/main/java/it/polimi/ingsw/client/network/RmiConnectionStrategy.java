@@ -14,7 +14,7 @@ import it.polimi.ingsw.common.network.rmi.server.RmiBootstrap;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import it.polimi.ingsw.utils.ConfigurationManager;
+import it.polimi.ingsw.common.utils.ConfigurationManager;
 
 public class RmiConnectionStrategy implements NetworkConnectionStrategy {
     private static final int RMI_PORT = ConfigurationManager.getClientInstance().getIntProperty("server.port.rmi", 1234);

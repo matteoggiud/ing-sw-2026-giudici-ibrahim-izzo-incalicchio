@@ -3,7 +3,7 @@ package it.polimi.ingsw.client;
 import it.polimi.ingsw.client.view.gui.GuiClientApp;
 import it.polimi.ingsw.client.view.tui.TuiClientApp;
 import javafx.application.Application;
-import it.polimi.ingsw.utils.ConfigurationManager;
+import it.polimi.ingsw.common.utils.ConfigurationManager;
 
 import java.util.Scanner;
 

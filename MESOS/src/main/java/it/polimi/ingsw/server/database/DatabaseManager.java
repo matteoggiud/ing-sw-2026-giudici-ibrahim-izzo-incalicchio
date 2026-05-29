@@ -3,7 +3,7 @@ package it.polimi.ingsw.server.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import it.polimi.ingsw.utils.ConfigurationManager;
+import it.polimi.ingsw.common.utils.ConfigurationManager;
 
 public class DatabaseManager {
     // OLD private static final String URL = "jdbc:postgresql://ep-crimson-block-alo6l7uh-pooler.c-3.eu-central-1.aws.neon.tech/neondb?user=neondb_owner&password=npg_gI0ru4jahYAQ&sslmode=require&channelBinding=require";

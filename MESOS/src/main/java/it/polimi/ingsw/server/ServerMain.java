@@ -12,7 +12,7 @@ import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
 import it.polimi.ingsw.common.network.rmi.server.RmiBootstrap;
 import it.polimi.ingsw.server.network.rmi.RmiBootstrapServer;
 import it.polimi.ingsw.server.network.socket.SocketAcceptor;
-import it.polimi.ingsw.utils.ConfigurationManager;
+import it.polimi.ingsw.common.utils.ConfigurationManager;
 
 import java.io.IOException;
 import java.net.ServerSocket;
