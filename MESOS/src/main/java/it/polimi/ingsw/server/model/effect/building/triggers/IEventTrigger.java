@@ -4,7 +4,11 @@ package it.polimi.ingsw.server.model.effect.building.triggers;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 
-
+/**
+ * This interface represents a trigger for building effects that are activated by specific events in the game.
+ * Implementing classes can define the conditions under which the trigger is activated
+ * and the amount of food gained by the building effect when the trigger is activated.
+ */
 public interface IEventTrigger {
 
     /**
