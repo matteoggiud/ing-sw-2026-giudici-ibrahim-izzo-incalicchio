@@ -23,15 +23,6 @@ public abstract class Era {
     public abstract void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents);
 
     /**
-     * Creates a building deck for the era by adding
-     * the appropriate building cards to the given building decks map.
-     * @param buildingDecks a map of eras to their corresponding building decks,
-     * which will be modified by adding the building cards for this era.
-     * @return the updated map of eras to building decks after adding the building cards for this era
-     */
-    public abstract HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks);
-
-    /**
      * Returns the order of the era for sorting purposes,
      * with Era I having the lowest order and Era III having the highest order.
      * @return the order of the era.
@@ -64,6 +55,14 @@ public abstract class Era {
      * @param numPlayers the number of players in the game, which may affect which era list the given card is added to based on the current era and the card's properties.
      */
     public abstract void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers);
+
+    /**
+     * Selects the appropriate building deck for the current era based on the given building decks for each era.
+     * @param buildingDecksEra1 the building deck for Era I, which may be selected if the current era is Era I.
+     * @param buildingDecksEra2 the building deck for Era II, which may be selected if the current era is Era II.
+     * @param buildingDecksEra3 the building deck for Era III, which may be selected if the current era is Era III.
+     * @return the building deck that corresponds to the current era, which may be used for drawing building cards during the game or for other purposes related to the current era's gameplay mechanics.
+     */
     public abstract BuildingDeck selectBuildingDeck(BuildingDeck buildingDecksEra1, BuildingDeck buildingDecksEra2, BuildingDeck buildingDecksEra3);
 }
 

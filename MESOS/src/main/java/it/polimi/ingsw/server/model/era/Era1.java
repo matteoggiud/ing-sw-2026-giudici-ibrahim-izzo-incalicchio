@@ -69,6 +69,8 @@ public class Era1 extends Era{
         eraI.add(tribeCard);
     }
 
+
+
     @Override
     public Era eraTransition(Game game, Era newEra) {
         if (newEra == null) {
