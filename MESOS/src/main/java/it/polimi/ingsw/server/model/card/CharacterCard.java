@@ -55,11 +55,21 @@ public abstract class CharacterCard extends TribeCard {
         playerDeck.addCharacterCard(this);
     }
 
+    /**
+     * Adds this card to the provided character list. This is used when initializing the character row on the board.
+     * @param characterList the list to which this character card will be added
+     */
     @Override
     public void addToCharacterList(List<CharacterCard> characterList) {
         characterList.add(this);
     }
 
+    /**
+     * Determines if this character card can be selected from the given card row by the specified player.
+     * @param row the card row from which the player is attempting to select this card
+     * @param player the player attempting to select this card
+     * @return true if the player can select this character card from the row, false otherwise
+     */
     @Override
     public boolean canBeSelectedFrom(CardRow row, Player player) {
         return row.getTribeRow().getCharacterCards().contains(this);
