@@ -205,5 +205,11 @@ public interface IGameModel {
      */
     void restoreGame(Game restoredGame);
 
+    /**
+     * Allows a player to reconnect to an active game using the game's unique identifier, the player's username, and an event handler for handling game events.
+     * @param gameId the unique identifier of the game to which the player wants to reconnect.
+     * @param username the username of the player attempting to reconnect to the game.
+     * @param eventHandler the event handler that will be used to handle game events for the player during the reconnection process.
+     */
     void reconnectToGame(Integer gameId, String username, EventHandler eventHandler);
 }
