@@ -66,6 +66,13 @@ class RmiLayerIntegrationTest {
         }
     }
 
+    /**
+     * Test that logging in through the RMI layer properly authenticates the client, triggering a
+     * success notification and immediately sending the list of available games. It verifies that
+     * the RMI communication channel transmits the credentials and relays the expected responses back.
+     *
+     * @throws Exception if an error occurs during RMI connection or invocation
+     */
     @Test
     void loginThroughRmiNotifiesClientAndSendsAvailableGames() throws Exception {
         startRmiServer();
@@ -79,6 +86,13 @@ class RmiLayerIntegrationTest {
         assertTrue(client.view.availableGamesReceived);
     }
 
+    /**
+     * Test that registering a new account through the RMI layer properly registers the client,
+     * triggering a success notification and immediately sending the list of available games.
+     * It ensures the RMI handler correctly processes the registration request and populates the client's view.
+     *
+     * @throws Exception if an error occurs during RMI connection or invocation
+     */
     @Test
     void registerThroughRmiNotifiesClientAndSendsAvailableGames() throws Exception {
         startRmiServer();
@@ -92,6 +106,13 @@ class RmiLayerIntegrationTest {
         assertTrue(client.view.availableGamesReceived);
     }
 
+    /**
+     * Test verifying the robustness of the RMI server when dealing with multiple sequential connections.
+     * It checks that a second client can connect, authenticate, and receive data successfully even after
+     * a first client connects, disconnects, and a garbage collection cycle runs.
+     *
+     * @throws Exception if an error occurs during RMI connection or invocation
+     */
     @Test
     void secondClientCanConnectAfterFirstClientDisconnectsAndGarbageCollectionRuns() throws Exception {
         startRmiServer();
@@ -109,6 +130,13 @@ class RmiLayerIntegrationTest {
         assertTrue(secondClient.view.availableGamesReceived);
     }
 
+    /**
+     * Test that checks the persistence and stability of the RemoteServer stub.
+     * It verifies that the server stub assigned to a connected client remains valid and functional
+     * even if a garbage collection cycle occurs before the client issues a request.
+     *
+     * @throws Exception if an error occurs during RMI connection or invocation
+     */
     @Test
     void remoteServerStubSurvivesGarbageCollection() throws Exception {
         startRmiServer();
@@ -122,6 +150,13 @@ class RmiLayerIntegrationTest {
         assertEquals("gc_user", client.view.loginSuccessNickname);
     }
 
+    /**
+     * Test that ensures the {@code RmiGenericVirtualView} accurately detects when the actual RMI client
+     * becomes unreachable. It verifies that unexporting the remote client object correctly updates the
+     * reachable state within the virtual view wrap.
+     *
+     * @throws Exception if an error occurs during RMI connection or object unexporting
+     */
     @Test
     void rmiGenericVirtualViewDetectsUnreachableClientCallback() throws Exception {
         FakeRemoteClientView realClientView = new FakeRemoteClientView();
@@ -136,6 +171,13 @@ class RmiLayerIntegrationTest {
         assertFalse(virtualView.isReachable());
     }
 
+    /**
+     * Test that checks if game crash notifications correctly propagate to the client view over RMI.
+     * It simulates a game crash scenario (e.g., due to a disconnection) and validates that the
+     * exact crash reason is delivered to the remote client.
+     *
+     * @throws Exception if an error occurs during RMI connection or invocation
+     */
     @Test
     void gameCrashedCallbackArrivesToClient() throws Exception {
         startRmiServer();

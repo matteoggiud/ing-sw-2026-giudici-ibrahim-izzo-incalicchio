@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameSnapshotDTOMapperTest {
 
+    /**
+     * Tests the creation of a comprehensive game snapshot via {@link GameSnapshotDTOMapper#toGameSnapshotDTO(Game)}.
+     * Verifies that all components of the game state—including player information, board status, and remaining decks—are captured appropriately.
+     */
     @Test
     void toGameSnapshotDTO_mapsFullSnapshotCorrectly() {
         // Arrange
@@ -95,6 +99,10 @@ class GameSnapshotDTOMapperTest {
         assertEquals(List.of(12), dto.remainingEra3BuildingIds());
     }
 
+    /**
+     * Tests that attempting to map a null game state to a snapshot
+     * rightfully throws an {@link IllegalArgumentException}.
+     */
     @Test
     void toGameSnapshotDTO_nullGame_throwsException() {
         // Act & Assert

@@ -13,6 +13,10 @@ class ObserverManagerTest {
         manager = new ObserverManager();
     }
 
+    /**
+     * Placeholder test to verify that the ObserverManager correctly delivers 
+     * events to all registered observers.
+     */
     @Test
     void notifyObservers_deliversEventToAllRegistered() {
 

@@ -14,6 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GameInfoDTOMapperTest {
 
+    /**
+     * Tests mapping a single {@link Game} instance to a {@link GameInfoDTO}.
+     * Verifies that the game's core identifying information and player list are correctly captured.
+     */
     @Test
     void toGameInfoDTO_mapsFieldsCorrectly() {
         // Arrange
@@ -32,12 +36,20 @@ class GameInfoDTOMapperTest {
         assertEquals(3, dto.expectedPlayerCount());
     }
 
+    /**
+     * Tests the defensive behavior of {@link GameInfoDTOMapper#toGameInfoDTO(Game)}.
+     * Expects an {@link IllegalArgumentException} to be thrown when attempting to map a null game.
+     */
     @Test
     void toGameInfoDTO_nullGame_throwsException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> GameInfoDTOMapper.toGameInfoDTO(null));
     }
 
+    /**
+     * Tests mapping a list of multiple {@link Game} instances to a list of {@link GameInfoDTO}s.
+     * Verifies that each game in the list is mapped successfully.
+     */
     @Test
     void toGameInfoDTOs_mapsListCorrectly() {
         // Arrange
@@ -67,12 +79,20 @@ class GameInfoDTOMapperTest {
         assertEquals(3, second.expectedPlayerCount());
     }
 
+    /**
+     * Tests that mapping a null list of games via {@link GameInfoDTOMapper#toGameInfoDTOs(List)}
+     * safely throws an {@link IllegalArgumentException}.
+     */
     @Test
     void toGameInfoDTOs_nullList_throwsException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> GameInfoDTOMapper.toGameInfoDTOs(null));
     }
 
+    /**
+     * Tests that an {@link IllegalArgumentException} is thrown if the input list contains a null element.
+     * This prevents generating corrupted DTO lists.
+     */
     @Test
     void toGameInfoDTOs_listContainingNull_throwsException() {
         // Arrange

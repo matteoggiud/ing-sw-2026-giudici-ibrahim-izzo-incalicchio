@@ -14,6 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DBTest {
 
+    /**
+     * Test that verifies the database connection is successfully established and prints all cards
+     * retrieved from the database to standard output. It ensures that character, event, and building cards
+     * can be correctly loaded, validating their non-null presence and facilitating manual inspection
+     * of the loaded data.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Test
     void shouldConnectAndPrintAllCardsFromDatabase() throws SQLException {
         DataDepository dataDepository = new DataDepository();

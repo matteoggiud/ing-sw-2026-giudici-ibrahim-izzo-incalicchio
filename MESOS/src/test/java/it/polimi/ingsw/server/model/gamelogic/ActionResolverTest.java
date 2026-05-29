@@ -46,6 +46,11 @@ class ActionResolverTest {
         game.getBoard().getTurnOrderBox().initializeTurnOrderBox(slots);
     }
 
+    /**
+     * Tests if the resolver correctly determines that an extra action can be resolved
+     * when a selectable character card is available in the upper row for the player.
+     * Also verifies that an IllegalArgumentException is thrown for null arguments.
+     */
     @Test
     void canResolveExtraAction() {
         // arrange: put a selectable character in the upper row
@@ -62,6 +67,11 @@ class ActionResolverTest {
         assertThrows(IllegalArgumentException.class, () -> resolver.canResolveExtraAction(game, null));
     }
 
+    /**
+     * Tests the successful resolution of an extra action by removing the specified 
+     * character card from the upper row and adding it to the player's deck.
+     * Also validates that an exception is thrown if the card is not drawn from the upper row.
+     */
     @Test
     void resolveExtraAction_happyPathAndValidation() {
         // arrange: put a selectable character in the upper row
@@ -89,6 +99,11 @@ class ActionResolverTest {
         assertThrows(IllegalArgumentException.class, () -> resolver.resolveExtraAction(game, player, another, false));
     }
 
+    /**
+     * Tests the resolution of a regular action on a food-only OfferBox.
+     * Verifies that the player receives the food from the box plus any turn-order slot bonus,
+     * the box becomes free, and the player is assigned to a turn-order slot.
+     */
     @Test
     void resolveRegularAction_foodOnlyBox_placesPlayerAndGivesFood() {
         // arrange: create a food-only box as first box in the offer track
@@ -120,6 +135,11 @@ class ActionResolverTest {
         assertFalse(game.getBoard().getTurnOrderBox().isCompletelyEmpty());
     }
 
+    /**
+     * Tests the automatic skip resolution mechanism for a player placed on a box with picks
+     * but no selectable cards. Verifies that the action is automatically completed and the player
+     * is moved to a turn-order slot.
+     */
     @Test
     void resolveAutomaticSkips_marksPicksAndCompletesAction() {
         // arrange: offer box with 1 upper pick but no selectable cards in the upper row for player

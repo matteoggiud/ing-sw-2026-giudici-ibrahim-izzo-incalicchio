@@ -25,6 +25,10 @@ class PlayersTest {
         p3 = new Player("p3");
     }
 
+    /**
+     * Tests adding players to the Players collection.
+     * Validates that {@link Players#addPlayer(Player)} accurately adds valid players, respects the maximum capacity, and rejects nulls or duplicates.
+     */
     @Test
     void addPlayer() {
         assertTrue(players.isEmpty());
@@ -45,6 +49,10 @@ class PlayersTest {
         assertThrows(IllegalStateException.class, () -> players.addPlayer(new Player("overflow")));
     }
 
+    /**
+     * Tests retrieving the host player.
+     * Validates that {@link Players#getHost()} returns the first added player, or throws an exception if the collection is empty.
+     */
     @Test
     void getHost() {
         assertThrows(IllegalStateException.class, () -> players.getHost());
@@ -55,6 +63,10 @@ class PlayersTest {
         assertSame(p1, players.getHost());
     }
 
+    /**
+     * Tests removing players from the collection.
+     * Validates that {@link Players#removePlayer(Player)} correctly drops the player and handles invalid removal attempts gracefully.
+     */
     @Test
     void removePlayer() {
         players.addPlayer(p1);
@@ -74,6 +86,10 @@ class PlayersTest {
         assertSame(p1, players.getHost());
     }
 
+    /**
+     * Tests retrieving the current number of players.
+     * Validates that {@link Players#size()} accurately tracks the count as players are added and removed.
+     */
     @Test
     void size() {
         assertEquals(0, players.size());
@@ -86,6 +102,10 @@ class PlayersTest {
         assertEquals(1, players.size());
     }
 
+    /**
+     * Tests getting a snapshot of the player list.
+     * Validates that {@link Players#getPlayers()} returns a structurally unmodifiable or independent view of the current players.
+     */
     @Test
     void getPlayers() {
         players.addPlayer(p1);
@@ -101,6 +121,10 @@ class PlayersTest {
         assertEquals(2, players.size());
     }
 
+    /**
+     * Tests checking if the players collection is empty.
+     * Validates that {@link Players#isEmpty()} correctly reflects whether the collection holds any players.
+     */
     @Test
     void isEmpty() {
         assertTrue(players.isEmpty());
@@ -114,6 +138,10 @@ class PlayersTest {
         assertSame(p1, players.getHost());
     }
 
+    /**
+     * Tests checking if the players collection is full.
+     * Validates that {@link Players#isFull()} accurately identifies when the maximum player count is reached.
+     */
     @Test
     void isFull() {
         assertFalse(players.isFull());
@@ -129,6 +157,10 @@ class PlayersTest {
         assertEquals(StandardRuleSet.MAX_PLAYERS, players.size());
     }
 
+    /**
+     * Tests checking if a specific player is present in the collection.
+     * Validates that {@link Players#contains(Player)} operates correctly based on presence or absence.
+     */
     @Test
     void contains() {
         assertFalse(players.contains(p1));
@@ -138,6 +170,10 @@ class PlayersTest {
         assertFalse(players.contains(p2));
     }
 
+    /**
+     * Tests getting a list of player nicknames.
+     * Validates that {@link Players#getPlayerNicknames()} returns the expected sequence of string nicknames.
+     */
     @Test
     void getPlayerNicknames() {
         players.addPlayer(p1);
@@ -150,6 +186,10 @@ class PlayersTest {
         assertEquals(List.of("p1", "p2", "p3"), nicknames);
     }
 
+    /**
+     * Tests getting a shuffled list of the players.
+     * Validates that {@link Players#getShuffledPlayers()} returns all elements independently of the internal state ordering.
+     */
     @Test
     void getShuffledPlayers() {
         players.addPlayer(p1);

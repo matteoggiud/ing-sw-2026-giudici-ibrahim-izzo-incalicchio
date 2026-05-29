@@ -23,6 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
 */
 class ScoreCalculatorTest {
 
+    /**
+     * Tests the computation of a player's final score by calculating the total from their 
+     * base prestige points, character bonuses (Builders, Artists, Inventors), and building points,
+     * verifying that they sum up to the expected total score.
+     */
     @Test
     void computeFinalScore_basicCombinationOfCardsAndBuildings() {
         // Arrange
@@ -69,6 +74,10 @@ class ScoreCalculatorTest {
         assertEquals(33, total, "Compute final score must sum base PP + character bonuses + building points");
     }
 
+    /**
+     * Tests that the final ranking correctly returns players ordered by their final score
+     * in descending order, mapping their nicknames to their computed scores.
+     */
     @Test
     void getFinalRanking_returnsNicknamesSortedByScoreDescending() {
         // Arrange
@@ -98,6 +107,10 @@ class ScoreCalculatorTest {
         assertEquals(5, ranking.get("Host"));
     }
 
+    /**
+     * Tests the tie-breaker mechanism during player ranking. Ensures that when players have
+     * identical final scores, the player with a higher amount of food is ranked higher.
+     */
     @Test
     void rankPlayer_tieBreakByFoodDescending() {
         // Arrange

@@ -37,6 +37,10 @@ class PlayerDeckTest {
         era1 = new Era1();
     }
 
+    /**
+     * Tests the retrieval and modification of character cards in the player's deck,
+     * verifying that the list updates properly when characters are added.
+     */
     @Test
     void getCharacters() {
         assertNotNull(playerDeck.getCharacters());
@@ -50,6 +54,10 @@ class PlayerDeckTest {
         assertEquals(1, playerDeck.getCharacters().size());
     }
 
+    /**
+     * Tests the retrieval and modification of building cards in the player's deck,
+     * verifying that the list is populated correctly when a building is added.
+     */
     @Test
     void getBuildings() {
         assertNotNull(playerDeck.getBuildings());
@@ -63,6 +71,10 @@ class PlayerDeckTest {
         assertEquals(1, playerDeck.getBuildings().size());
     }
 
+    /**
+     * Tests counting characters by their specific CharacterType, verifying the count matches
+     * the number of characters of that exact type present in the deck.
+     */
     @Test
     void countCharactersByType() {
         assertEquals(0, playerDeck.countCharactersByType(CharacterType.GATHERER));
@@ -76,6 +88,10 @@ class PlayerDeckTest {
         assertEquals(0, playerDeck.countCharactersByType(CharacterType.SHAMAN));
     }
 
+    /**
+     * Tests the manual incrementing of the count for a specific CharacterType in the deck,
+     * verifying the internal counter updates properly.
+     */
     @Test
     void incrementTypeCount() {
         assertEquals(0, playerDeck.countCharactersByType(CharacterType.INVENTOR));
@@ -86,6 +102,10 @@ class PlayerDeckTest {
         assertEquals(2, playerDeck.countCharactersByType(CharacterType.INVENTOR));
     }
 
+    /**
+     * Tests adding a single building card to the deck, verifying it is securely placed
+     * into the internal building list.
+     */
     @Test
     void addBuildingCard() {
         BuildingCard buildingCard = newBuilding(new EmptyEffect());
@@ -96,6 +116,10 @@ class PlayerDeckTest {
         assertSame(buildingCard, playerDeck.getBuildings().get(0));
     }
 
+    /**
+     * Tests adding a specific character card, verifying it is placed into the character list
+     * and the count for its type is correctly incremented.
+     */
     @Test
     void addCharacterCard() {
         GathererCharacterCard gatherer = new GathererCharacterCard(nextCardId++, "Gatherer", era1, 2, "");
@@ -107,6 +131,10 @@ class PlayerDeckTest {
         assertEquals(1, playerDeck.countCharactersByType(CharacterType.GATHERER));
     }
 
+    /**
+     * Tests the general addCard method by passing both a building and a character card,
+     * verifying they are sorted into their respective lists correctly.
+     */
     @Test
     void addCard() {
         BuildingCard buildingCard = newBuilding(new EmptyEffect());
@@ -122,6 +150,10 @@ class PlayerDeckTest {
         assertEquals(1, playerDeck.countCharactersByType(CharacterType.BUILDER));
     }
 
+    /**
+     * Tests calculating the total building discount derived from all Builder character cards
+     * present in the player's deck.
+     */
     @Test
     void getTotalBuilderDiscount() {
         assertEquals(0, playerDeck.getTotalBuilderDiscount());
@@ -132,6 +164,10 @@ class PlayerDeckTest {
         assertEquals(5, playerDeck.getTotalBuilderDiscount());
     }
 
+    /**
+     * Tests calculating the total resource discount derived from all Gatherer character cards
+     * present in the player's deck.
+     */
     @Test
     void getTotalGathererDiscount() {
         assertEquals(0, playerDeck.getTotalGathererDiscount());
@@ -142,6 +178,10 @@ class PlayerDeckTest {
         assertEquals(6, playerDeck.getTotalGathererDiscount());
     }
 
+    /**
+     * Tests calculating the total Shaman stars obtained by summing base stars from Shaman
+     * character cards and any extra bonus stars provided by building cards.
+     */
     @Test
     void getTotalShamanStars() {
         playerDeck.addCharacterCard(new ShamanCharacterCard(nextCardId++, "S1", era1, 2, 2, ""));
@@ -151,6 +191,10 @@ class PlayerDeckTest {
         assertEquals(9, playerDeck.getTotalShamanStars());
     }
 
+    /**
+     * Tests the count of distinct inventor items present in the deck, verifying it correctly
+     * identifies and sums the unique InventorTypes collected.
+     */
     @Test
     void getDifferentInventorItem() {
         assertEquals(0, playerDeck.getDifferentInventorItem());
@@ -162,6 +206,10 @@ class PlayerDeckTest {
         assertEquals(2, playerDeck.getDifferentInventorItem());
     }
 
+    /**
+     * Tests filtering building cards to extract active event modifier effects,
+     * ensuring only cards providing this specific effect type are returned.
+     */
     @Test
     void getActiveBuildingEventModifiers() {
         ModifierEffect modifierEffect = new ModifierEffect();
@@ -174,6 +222,10 @@ class PlayerDeckTest {
         assertSame(modifierEffect, modifiers.get(0));
     }
 
+    /**
+     * Tests filtering building cards to extract active event triggers,
+     * ensuring only cards providing this specific effect type are returned.
+     */
     @Test
     void getActiveBuildingEventTriggers() {
         TriggerEffect triggerEffect = new TriggerEffect();
@@ -186,6 +238,10 @@ class PlayerDeckTest {
         assertSame(triggerEffect, triggers.get(0));
     }
 
+    /**
+     * Tests filtering building cards to extract active endgame scoring effects,
+     * ensuring only cards providing this specific effect type are returned.
+     */
     @Test
     void getActiveEndGameBuildingScorings() {
         EndGameEffect endGameEffect = new EndGameEffect();
@@ -198,6 +254,10 @@ class PlayerDeckTest {
         assertSame(endGameEffect, scorings.get(0));
     }
 
+    /**
+     * Tests filtering building cards to extract active extra action effects,
+     * ensuring only cards providing this specific effect type are returned.
+     */
     @Test
     void getActiveExtractionEffects() {
         ExtraActionEffect extraActionEffect = new ExtraActionEffect();

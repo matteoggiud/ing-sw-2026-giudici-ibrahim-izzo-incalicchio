@@ -20,6 +20,12 @@ class OfferBoxTest {
         player2 = new Player("Player2");
     }
 
+    /**
+     * Tests the validation logic in the {@link OfferBox} constructor.
+     * Ensures that exceptions are thrown for combinations that violate the rules 
+     * (e.g., negative values, combined food/card actions, or invalid total actions),
+     * and that valid configurations are created successfully.
+     */
     @Test
     void constructorValidation() {
         assertThrows(IllegalArgumentException.class, () ->
@@ -45,6 +51,10 @@ class OfferBoxTest {
         assertNotNull(validFoodBox);
     }
 
+    /**
+     * Tests retrieving the food reward of an offer box.
+     * Verifies that the correct initialized value is returned across various valid configurations.
+     */
     @Test
     void getFoodReward() {
         assertEquals(0, offerBox.getFoodReward());
@@ -56,6 +66,10 @@ class OfferBoxTest {
         assertEquals(3, threeRewardBox.getFoodReward());
     }
 
+    /**
+     * Tests retrieving the upper row pick amount from the offer box.
+     * Verifies that the initialized upper row picks are properly stored and returned.
+     */
     @Test
     void getUpperRowPicks() {
         assertEquals(2, offerBox.getUpperRowPicks());
@@ -67,6 +81,10 @@ class OfferBoxTest {
         assertEquals(3, threePicks.getUpperRowPicks());
     }
 
+    /**
+     * Tests retrieving the lower row pick amount from the offer box.
+     * Verifies that the initialized lower row picks are properly stored and returned.
+     */
     @Test
     void getLowerRowPicks() {
         assertEquals(1, offerBox.getLowerRowPicks());
@@ -78,6 +96,11 @@ class OfferBoxTest {
         assertEquals(3, threePicks.getLowerRowPicks());
     }
 
+    /**
+     * Tests the evaluation of whether an offer box provides any card picks.
+     * Verifies it returns true if there is at least one pick from either the upper or lower row,
+     * and false otherwise.
+     */
     @Test
     void hasCardPicks() {
         assertTrue(new OfferBox(0, 1, 0).hasCardPicks());
@@ -85,6 +108,10 @@ class OfferBoxTest {
         assertFalse(new OfferBox(3, 0, 0).hasCardPicks());
     }
 
+    /**
+     * Tests the evaluation of whether an offer box provides only a food reward.
+     * Verifies it returns true when there are food rewards and no card picks, and false otherwise.
+     */
     @Test
     void isFoodOnlyAction() {
         assertTrue(new OfferBox(3, 0, 0).isFoodOnlyAction());
@@ -92,6 +119,11 @@ class OfferBoxTest {
         assertFalse(new OfferBox(0, 0, 1).isFoodOnlyAction());
     }
 
+    /**
+     * Tests retrieving the player placed on the offer box.
+     * Checks that it is initially null, properly returns the placed player, and reverts
+     * to null after the player is removed.
+     */
     @Test
     void getPlacedPlayer() {
         assertNull(offerBox.getPlacedPlayer());
@@ -104,6 +136,10 @@ class OfferBoxTest {
         assertNull(offerBox.getPlacedPlayer());
     }
 
+    /**
+     * Tests the free/occupied status of the offer box.
+     * Verifies that the box returns true when unoccupied and false when a player is currently placed on it.
+     */
     @Test
     void isFree() {
         assertTrue(offerBox.isFree());
@@ -118,6 +154,11 @@ class OfferBoxTest {
         assertFalse(offerBox.isFree());
     }
 
+    /**
+     * Tests placing a player on the offer box.
+     * Checks that a free box can accept a player, and an occupied box rejects further placements
+     * by throwing an {@link IllegalStateException}.
+     */
     @Test
     void placePlayer() {
         assertTrue(offerBox.isFree());
@@ -133,6 +174,10 @@ class OfferBoxTest {
         assertSame(player1, offerBox.getPlacedPlayer());
     }
 
+    /**
+     * Tests placing a null player on the offer box.
+     * Ensures that an {@link IllegalArgumentException} is thrown and the box remains free.
+     */
     @Test
     void placePlayerNull() {
         assertThrows(IllegalArgumentException.class, () ->
@@ -142,6 +187,11 @@ class OfferBoxTest {
         assertTrue(offerBox.isFree());
     }
 
+    /**
+     * Tests removing a player from the offer box.
+     * Verifies that calling it on an empty box safely returns null, while calling it on an
+     * occupied box returns the correct player and marks the box as free again.
+     */
     @Test
     void removePlayer() {
         assertNull(offerBox.removePlayer());
@@ -160,6 +210,10 @@ class OfferBoxTest {
         assertTrue(offerBox.isFree());
     }
 
+    /**
+     * Tests multiple consecutive sequences of placing and removing players.
+     * Ensures the internal state of the offer box remains consistent across multiple state changes.
+     */
     @Test
     void multipleOperations() {
         assertTrue(offerBox.isFree());

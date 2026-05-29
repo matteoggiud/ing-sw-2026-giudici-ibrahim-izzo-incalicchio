@@ -32,6 +32,10 @@ class BoardDTOMapperTest {
         game.getBoard().getUpperRow().addCard(upperCharacter);
     }
 
+    /**
+     * Tests that a minimally populated board state is correctly translated into a {@link BoardDTO}.
+     * Ensures that individual cards on the board are mapped while empty areas remain empty.
+     */
     @Test
     void toBoardDTO_mapsMinimalBoardStateCorrectly() {
         // Act
@@ -61,12 +65,19 @@ class BoardDTOMapperTest {
         assertEquals("", upperCharacter.inventorType());
     }
 
+    /**
+     * Tests that an {@link IllegalArgumentException} is thrown if the provided game reference is null.
+     */
     @Test
     void toBoardDTO_nullGame_throwsException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> BoardDTOMapper.toBoardDTO(null));
     }
 
+    /**
+     * Tests that mapping fails with an {@link IllegalStateException} if the current era of the game is not yet set.
+     * This enforces the invariant that an actively playing board must be associated with an era.
+     */
     @Test
     void toBoardDTO_withoutCurrentEra_throwsException() {
         // Arrange

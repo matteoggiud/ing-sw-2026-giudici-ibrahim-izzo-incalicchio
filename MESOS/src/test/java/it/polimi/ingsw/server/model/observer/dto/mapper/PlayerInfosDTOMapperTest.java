@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerInfosDTOMapperTest {
 
+    /**
+     * Tests that a {@link Player} with assorted stats and cards is correctly mapped to a {@link PlayerInfoDTO}.
+     * This verifies that basic properties, deck contents, and derived statistics are all accurately populated.
+     */
     @Test
     void toPlayerInfoDTO_mapsPlayerFieldsDeckAndStatsCorrectly() {
         // Arrange
@@ -77,6 +81,10 @@ class PlayerInfosDTOMapperTest {
         assertEquals(1, stats.inventorCount());
     }
 
+    /**
+     * Tests mapping a list of multiple {@link Player} instances to a list of {@link PlayerInfoDTO}s.
+     * Ensures that all players are mapped and their original ordering is preserved.
+     */
     @Test
     void toPlayerInfoDTOList_mapsPlayersInOrder() {
         // Arrange

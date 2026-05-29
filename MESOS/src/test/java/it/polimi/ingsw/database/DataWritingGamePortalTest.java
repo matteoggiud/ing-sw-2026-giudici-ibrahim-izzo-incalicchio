@@ -104,6 +104,11 @@ class DataWritingGamePortalTest {
         }
     }
 
+    /**
+     * Test that a game is successfully created via the {@code GamePortal}.
+     * It verifies that calling the creation method records the game in memory via the
+     * {@code GameManager} and that the created game correctly sets the host player.
+     */
     @Test
     void testCreateGameSuccessfully() {
         GamePortal portal = new GamePortal();
@@ -123,6 +128,11 @@ class DataWritingGamePortalTest {
                 "Host player nickname must match.");
     }
 
+    /**
+     * Test that a player can successfully join an existing game using the {@code GamePortal}.
+     * After creating a game with a host, this method simulates another player joining and checks
+     * whether the joiner is correctly added to the game's player list in memory.
+     */
     @Test
     void testJoinGameSuccessfully() {
         GamePortal portal = new GamePortal();
@@ -143,6 +153,12 @@ class DataWritingGamePortalTest {
                 "Joiner must be in game after joining.");
     }
 
+    /**
+     * Test that verifies the game correctly handles multiple players.
+     * This test ensures that when a game is created by a host and subsequently joined by
+     * another player, the total number of players correctly updates to 2, and both the host
+     * and the joiner are properly registered as participants in the game.
+     */
     @Test
     void testGameCreationWithMultiplePlayers() {
         GamePortal portal = new GamePortal();
