@@ -159,27 +159,6 @@ public interface IGameModel {
      */
     Map<Player, Integer> getFinalRanking(int gameId);
 
-    /**
-     * Checks whether the specified player has a pending extra action in the given game.
-     *
-     * @param gameId   the unique identifier of the game
-     * @param nickname the nickname of the player to check
-     * @return true if the player has a pending extra action, false otherwise
-     * @throws IllegalArgumentException if any argument is null or invalid
-     * @throws IllegalStateException    if the player is not logged in
-     */
-    boolean hasPendingExtraAction(int gameId, String nickname);
-
-    /**
-     * Retrieves the final ranking of a game using player nicknames as keys.
-     * This representation is more suitable for TUI and controller code.
-     *
-     * @param gameId the unique identifier of the game
-     * @return a map of player nicknames and their final scores sorted by ranking
-     * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
-     */
-    Map<String, Integer> getFinalRankingByNickname(int gameId);
 
     /**
      * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
@@ -196,14 +175,6 @@ public interface IGameModel {
      * @param virtualView the virtual view to be removed as an observer from the specified game
      */
     void removeObserver(Game game, IGameObserver virtualView);
-
-    /**
-     * Marks a player as disconnected
-     *
-     * @param gameId   the unique identifier of the game in which the player is participating
-     * @param nickname the nickname of the player to be marked as disconnected
-     */
-    void markPlayerDisconnected(int gameId, String nickname);
 
     /**
      * Marks a player as reconnected
