@@ -231,6 +231,11 @@ public class ActionResolver {
     }
 
 
+    /**
+     * Marks a card pick as resolved for the player, incrementing the appropriate counter in the action resolution progress based on whether the pick was from the upper or lower row.
+     * @param progress the player's current progress in resolving the action.
+     * @param fromUpperRow true if the resolved card pick was from the upper row, false if it was from the lower row.
+     */
     private void markCardPickResolved(ActionResolutionProgress progress, boolean fromUpperRow) {
         if (fromUpperRow) {
             progress.upperCardsResolved++;
