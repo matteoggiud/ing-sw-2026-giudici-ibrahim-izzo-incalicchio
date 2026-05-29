@@ -32,16 +32,33 @@ import java.sql.SQLException;
  */
 public class GamePortal implements IGameModel {
 
+    /**
+     * The PlayerManager instance used for managing player-related operations such as login, logout, and player retrieval.
+     */
     private final PlayerManager playerManager;
 
+    /**
+     * The GameManager instance used for managing game-related operations such as creating games, joining games, and retrieving game information.
+     */
     private final GameManager gameManager;
 
+
+    /**
+     * Constructor for the GamePortal class, which initializes the player manager and game manager instances.
+     */
     public GamePortal() {
         this.playerManager = PlayerManager.getInstance();
         this.gameManager = GameManager.getInstance();
     }
 
 
+    /**
+     * Allows a player to draw a card from either the upper or lower row of the game board.
+     * @param gameId         the current game context
+     * @param nickname       the player attempting to draw the card
+     * @param selectedCardId the card the player has selected to draw
+     * @param fromUpperRow   a boolean indicating whether the card is being drawn from the upper row (true) or lower row (false)
+     */
     @Override
     public void drawCard(int gameId, String nickname, int selectedCardId, boolean fromUpperRow) {
         if (gameId < 0) {
@@ -143,6 +160,10 @@ public class GamePortal implements IGameModel {
         return gameId;
     }
 
+    /**
+     *
+     * @param gameId the unique identifier of the game to check and potentially start
+     */
     @Override
     public void startGameIfReady(int gameId) {
         if (gameId < 0) {
