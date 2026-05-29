@@ -47,11 +47,23 @@ public class Era1 extends Era{
         return name;
     }
 
+    /**
+     *  Returns the order of the era.
+     * @return the order of the era.
+     */
     @Override
     public int getOrder() {
         return order;
     }
 
+    /**
+     * Sorts the given tribe card into the appropriate era list based on its era and type.
+     * @param tribeCard the tribe card to be sorted into the correct era list.
+     * @param eraI the list of tribe cards belonging to Era I.
+     * @param eraII the list of tribe cards belonging to Era II.
+     * @param eraIII the list of tribe cards belonging to Era III.
+     * @param finalEvents the list of event cards that are added to the final events list, if applicable.
+     */
     @Override
     public void selfSortByEra(TribeCard tribeCard, List<TribeCard> eraI, List<TribeCard> eraII, List<TribeCard> eraIII, List<TribeCard> finalEvents) {
         eraI.add(tribeCard);
