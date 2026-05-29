@@ -105,9 +105,9 @@ public class ActionResolver {
     }
 
     /**
-     * Validates the arguments for resolving a regular action, ensuring that the game and player are not null and that it is the player's turn to resolve an action.
-     * @param game
-     * @param player
+     * Validates the arguments for resolving a regular action.
+     * @param game the current game context, which must not be null
+     * @param player the player resolving the action, which must not be null and must be the current player in the offer track
      */
     private void validateArguments(Game game, Player player) {
         if (game == null || player == null) {
