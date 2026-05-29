@@ -81,7 +81,13 @@ public class TurnOrderBox {
         return slots.stream().allMatch(TurnOrderSlot::isFree);
     }
 
-
+    /**
+     * Gets the slot in which the specified player is placed.
+     * @param player the player whose slot is to be retrieved
+     * @return the slot in which the specified player is placed
+     * @throws IllegalStateException if the player is not found in any slot of the box
+     * @throws IllegalArgumentException if the player is null
+     */
     public TurnOrderSlot getSlotByPlayer(Player player) {
         if (player == null) throw new IllegalArgumentException("Player cannot be null");
 
