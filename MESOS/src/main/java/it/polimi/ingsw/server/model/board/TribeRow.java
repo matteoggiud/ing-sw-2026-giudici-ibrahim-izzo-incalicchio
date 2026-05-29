@@ -97,6 +97,10 @@ public class TribeRow {
         return this.tribeCards.isEmpty();
     }
 
+    /**
+     * Gets the number of tribe cards in the tribe row.
+     * @return the number of tribe cards in the tribe row
+     */
     public int count(){
         return this.tribeCards.size();
     }
