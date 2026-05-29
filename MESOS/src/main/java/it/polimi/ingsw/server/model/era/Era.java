@@ -27,10 +27,16 @@ public abstract class Era {
      * the appropriate building cards to the given building decks map.
      * @param buildingDecks a map of eras to their corresponding building decks,
      * which will be modified by adding the building cards for this era.
-     * @return
+     * @return the updated map of eras to building decks after adding the building cards for this era
      */
     public abstract HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks);
+
+    /**
+     * 
+     * @return
+     */
     public abstract int getOrder();
+
     public abstract Era eraTransition(Game game, Era newEra);
     public abstract String getName();
     public abstract void selfAdd(List<BuildingCard> deckCompositionEra1, List<BuildingCard> deckCompositionEra2, List<BuildingCard> deckCompositionEra3, BuildingCard card, int numPlayers);
