@@ -277,8 +277,8 @@ public class Game {
      * Sets the current era of the game to the specified era.
      * This method is used to update the current era during the game,
      * especially when transitioning between eras.
-     * @param currentEra
-     * @throws IllegalStateException
+     * @param currentEra the new current era to set for the game
+     * @throws IllegalStateException if the provided current era is null, which indicates an invalid state for the game.
      */
     public void setCurrentEra(Era currentEra) throws IllegalStateException {
         if (currentEra == null) {
@@ -303,14 +303,6 @@ public class Game {
      */
     public boolean isLastRound() {
         return tribeDeck.isEmpty();
-    }
-
-    /**
-     * This method is used to end the game, it changes the game state to the ended state.
-     * The rest will be managed by the state pattern.
-     */
-    public void endGame(Map<Player, Integer> finalRanking) {
-        this.gameState = new EndedState(finalRanking);
     }
 
     /**
