@@ -244,61 +244,7 @@ public class GameBuilder {
         }
     }
 
-    /**
-     * Creates the list of players for the game based on the provided nicknames and
-     * rule set.
-     *
-     * @param nicknames a list of player nicknames to be used for creating Player
-     *                  objects.
-     *                  The size of this list determines the number of players in
-     *                  the game.
-     * @param ruleSet   the game rule set used to validate the number of players
-     *                  and determine initial food amounts.
-     * @return a list of Player objects initialized with the provided nicknames,
-     *         assigned Totems, and starting food according to the rule set.
-     */
-    /*
-     * public static List<Player> createPlayers(List<String> nicknames, IGameRuleSet
-     * ruleSet) {
-     * if (nicknames == null || ruleSet == null) {
-     * throw new IllegalArgumentException("Nicknames and rule set cannot be null");
-     * }
-     * 
-     * int numPlayers = nicknames.size();
-     * if (numPlayers < StandardRuleSet.MIN_PLAYERS || numPlayers >
-     * StandardRuleSet.MAX_PLAYERS) {
-     * throw new IllegalArgumentException(
-     * "Number of players not valid: " + numPlayers +
-     * " (has to be between " + StandardRuleSet.MIN_PLAYERS + " and " +
-     * StandardRuleSet.MAX_PLAYERS + ")"
-     * );
-     * }
-     * 
-     * Totem[] availableTotems = Totem.values();
-     * if (numPlayers > availableTotems.length) {
-     * throw new IllegalStateException("Insufficient Totems for " + numPlayers +
-     * " players");
-     * }
-     * 
-     * List<Player> players = new ArrayList<>(numPlayers);
-     * 
-     * for (int i = 0; i < numPlayers; i++) {
-     * String nickname = nicknames.get(i);
-     * if (nickname == null || nickname.isBlank()) {
-     * throw new IllegalArgumentException("Not valid nicknames in position " + i);
-     * }
-     * players.add(new Player(nickname, availableTotems[i]));
-     * }
-     * 
-     * Collections.shuffle(players);
-     * 
-     * for (int i = 0; i < players.size(); i++) {
-     * players.get(i).addFood(ruleSet.getInitialFood(i));
-     * }
-     * 
-     * return players;
-     * }
-     */
+
 
     /**
      * Fills the lower and upper card row for the game according to the rules
@@ -333,19 +279,24 @@ public class GameBuilder {
         upperRow.addBuildingRowFrom(initialBuildingDeck);
     }
 
+    /**
+     * Reconstructs a Game instance from a given GameSnapshotDTO and a DataDepository for retrieving card information.
+     * @param snapshot the GameSnapshotDTO containing the saved state of the game to be reconstructed.
+     * @param depository the DataDepository used to retrieve card information based on card IDs during the reconstruction process.
+     * @return
+     */
     public static Game reconstructGame(GameSnapshotDTO snapshot, DataDepository depository) {
 
-        // 1. RICOSTRUISCI I PLAYERS
+        // 1. rebild players
         Players playersObj = new Players();
         for (PlayerInfoDTO pDto : snapshot.players()) {
             Player p = new Player(pDto.nickname());
-            p.disconnect(); // I players ricostruiti partono tutti disconnected, poi quando si riconnettono
-                            // vengono messi online
+            p.disconnect(); // all player start disconnected, than they'be online when they'll reconnect.
             p.setFood(pDto.food());
             p.setPp(pDto.pp());
             p.setTotem(Totem.valueOf(pDto.totem()));
 
-            // Ricrea il deck personale
+            // recreate deck
             // Character cards
             List<CharacterCardDTO> characterCards = pDto.deck().characterCards();
             if (characterCards != null) {
@@ -382,7 +333,7 @@ public class GameBuilder {
             playersObj.addPlayer(p);
         }
 
-        // 2. RICOSTRUISCI LA BOARD E L'OFFER BOX
+        // 2. Rebuild Board
         Board board = new Board();
         BoardDTO boardDTO = snapshot.board();
 
@@ -514,9 +465,9 @@ public class GameBuilder {
             board.getTurnOrderBox().initializeTurnOrderBox(slots);
         }
 
-        // 3. RICOSTRUISCI I DECK GLOBALI
+        // 3. Rebuild global deck
         TribeDeck tribeDeck = new TribeDeck();
-        // Svuoti il deck creato di default e ci metti le carte salvate
+        // Clear the default created deck and put the saved cards in it
         tribeDeck.getTribeDeck().clear();
         for (int id : snapshot.remainingTribeCardIds()) {
             try {
@@ -556,7 +507,7 @@ public class GameBuilder {
         }
 
         BuildingDecks buildingDecks = new BuildingDecks(buildingsEra1, buildingsEra2, buildingsEra3);
-        // 4. CREA LO STATO INIZIALE (WaitingForReconnectState)
+        // 4. create initial state (WaitingForReconnectState)
         List<String> pendingNicks = snapshot.players().stream().map(PlayerInfoDTO::nickname)
                 .collect(Collectors.toList());
         WaitingForReconnectState waitState = new WaitingForReconnectState(snapshot.currentStateName(), pendingNicks);
@@ -567,9 +518,8 @@ public class GameBuilder {
             case "Era III" -> new Era3();
             default -> throw new IllegalStateException("Unexpected value: " + snapshot.board().currentEra());
         };
-        // 5. ASSEMBLA IL GIOCO
-        // (Assumiamo che se non avevi salvato l'Era e il lastRound, li ricavi o usi dei
-        // valori di default per ora)
+        // 5. Assemble the game
+        // (We assume that if you didn't save the Era and lastRound, you get them or use default values for now)
         Game game = new Game(snapshot.gameId(), snapshot.expectedPlayerCount(), playersObj, board, waitState, tribeDeck,
                 buildingDecks, currentEra, snapshot.lastRoundTriggered());
         return game;
