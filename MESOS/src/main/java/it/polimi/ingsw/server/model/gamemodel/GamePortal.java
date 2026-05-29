@@ -161,7 +161,7 @@ public class GamePortal implements IGameModel {
     }
 
     /**
-     *
+     * Checks if the game with the specified id is ready to start.
      * @param gameId the unique identifier of the game to check and potentially start
      */
     @Override
@@ -558,6 +558,11 @@ public class GamePortal implements IGameModel {
         return gameId.orElse(null);
     }
 
+    /**
+     * Retrieves the leaderboard ranking for a specified number of players.
+     * @param numPlayer the number of players for which to retrieve the leaderboard ranking.
+     * @return a list of LeadBoardDTO objects representing the leaderboard ranking for the specified number of players.
+     */
     @Override
     public List<LeadBoardDTO> getRanking(int numPlayer) {
         if (numPlayer < 2 || numPlayer > 5) {
