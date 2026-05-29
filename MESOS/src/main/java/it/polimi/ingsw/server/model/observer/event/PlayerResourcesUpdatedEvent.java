@@ -46,14 +46,6 @@ public class PlayerResourcesUpdatedEvent implements IGameEvent {
         return gameId;
     }
 
-    /**
-     * Returns the nickname of the player whose resources changed.
-     *
-     * @return the player nickname
-     */
-    public String getPlayerNickname() {
-        return playerNickname;
-    }
 
     /**
      * Returns the player's current food amount.
@@ -64,14 +56,6 @@ public class PlayerResourcesUpdatedEvent implements IGameEvent {
         return food;
     }
 
-    /**
-     * Returns the player's current prestige points amount.
-     *
-     * @return the prestige points amount
-     */
-    public int getPrestigePoints() {
-        return prestigePoints;
-    }
 
     /**
      * Dispatches this event to the observer.
