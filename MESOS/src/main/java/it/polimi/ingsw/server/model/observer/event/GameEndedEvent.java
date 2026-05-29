@@ -57,10 +57,18 @@ public class GameEndedEvent implements IGameEvent {
         return new LinkedHashMap<>(finalRanking);
     }
 
+    /**
+     * Returns the number of players in the game.
+     * @return the number of players
+     */
     public int getNumPlayers() {
         return numPlayers;
     }
 
+    /**
+     * Returns the historical leaderboard containing the top players and their scores.
+     * @return 
+     */
     public List<LeadBoardDTO> getHistoricalLeaderboard() {
         return historicalLeaderboard;
     }
