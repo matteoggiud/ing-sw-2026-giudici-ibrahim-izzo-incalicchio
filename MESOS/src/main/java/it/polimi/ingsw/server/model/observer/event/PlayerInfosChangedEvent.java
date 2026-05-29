@@ -14,10 +14,19 @@ public class PlayerInfosChangedEvent implements IGameEvent {
         this.playerInfos = playerInfos;
     }
 
+    /**
+     * Returns the list of player information DTOs representing the current state of all players in the game.
+     * @return the list of player information DTOs, never null
+     */
     public List<PlayerInfoDTO> getPlayerInfos() {
         return playerInfos;
     }
 
+
+    /**
+     * Returns the unique identifier of the game to which this event pertains.
+     * @return the game id
+     */
     public int getGameId() {
         return gameId;
     }
