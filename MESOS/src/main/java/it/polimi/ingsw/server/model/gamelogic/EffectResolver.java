@@ -100,8 +100,6 @@ public class EffectResolver {
             change.getTargetPlayer().addPP(change.getPpChange());
         }
 
-        // Notify observers about the resolved triggers and the resulting changes to player resources
-        // game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
 
     }
 
