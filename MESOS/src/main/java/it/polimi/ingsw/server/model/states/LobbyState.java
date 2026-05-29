@@ -7,6 +7,9 @@ import it.polimi.ingsw.common.network.dto.mapper.GameInfoDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
 
+/**
+ * The LobbyState class represents the state of the game where players can join or leave the lobby before the game starts.
+ */
 public class LobbyState implements IGameState {
     /**
      * Transitions the game from the lobby state to the setup state, allowing the game to start.
@@ -100,11 +103,19 @@ public class LobbyState implements IGameState {
         );
     }
 
+    /**
+     * Indicates whether the game has ended. In the lobby state, the game is not considered ended until it transitions to the next state.
+     * @return false, as the game is not yet ended in the lobby state
+     */
     @Override
     public boolean isEnded() {
         return false;
     }
 
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     * @return the name of the persistence class for this game state
+     */
     @Override
     public String getPersistenceName() {
         return "LobbyState";
