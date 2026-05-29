@@ -16,6 +16,19 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameManagerConcurrencyTest {
 
+    /**
+     * Tests concurrent read and write operations on the GameManager's active games collection.
+     * <p>
+     * 50 threads are spawned. Half of the threads attempt to join an active game
+     * concurrently, thereby modifying the game state and potentially the players list.
+     * The other half continuously read the available games list and search for players
+     * by nickname.
+     * <p>
+     * The purpose of this test is to verify that reading methods like getAvailableGames()
+     * and findGameIdByPlayerNickname() do not throw ConcurrentModificationException
+     * when other threads are modifying the game state or joining the game.
+     * It ensures the ConcurrentHashMap and internal Game locking correctly protect iteration.
+     */
     @Test
     void testConcurrentGetAvailableGamesAndJoin() throws InterruptedException {
         GameManager gameManager = GameManager.getInstance();

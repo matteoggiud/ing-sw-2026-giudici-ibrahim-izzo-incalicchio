@@ -11,6 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GameConcurrencyTest {
 
+    /**
+     * Tests the ReentrantLock mutual exclusion provided by the Game.locked() method.
+     * <p>
+     * 100 threads are spawned, and all of them attempt to enter the game.locked()
+     * block at exactly the same time. Inside the locked block, each thread increments
+     * a simple, non-atomic integer array.
+     * <p>
+     * A thread.sleep is intentionally used inside the locked block to force context switches.
+     * If the ReentrantLock mechanism in game.locked() were to fail or allow multiple threads,
+     * race conditions would corrupt the increment operations, resulting in a final count
+     * less than 100. The test asserts that exactly 100 increments were successfully and safely performed.
+     */
     @Test
     void testLockedMutualExclusion() throws InterruptedException {
         // We create a basic game

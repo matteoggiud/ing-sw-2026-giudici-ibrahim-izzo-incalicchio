@@ -15,6 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClientStateConcurrencyTest {
 
+    /**
+     * Tests concurrent read and write operations on the ClientState's player info list.
+     * <p>
+     * 10 writer threads simulate incoming network RMI/Socket updates that frequently
+     * push new player lists to the client state.
+     * 10 reader threads simulate the JavaFX GUI thread constantly iterating over
+     * the player list to render the UI components.
+     * <p>
+     * The test verifies that the "Copy-On-Write" pattern applied to ClientState
+     * protects the UI from throwing a ConcurrentModificationException when iterating
+     * over the list while it gets updated by the network threads.
+     */
     @Test
     void testConcurrentReadAndWritePlayersInfo() throws InterruptedException {
         ClientState clientState = new ClientState("tester", 1);
