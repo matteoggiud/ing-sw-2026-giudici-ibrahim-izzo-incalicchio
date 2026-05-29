@@ -130,36 +130,34 @@ public class DataWriting {
         try (Connection c = DatabaseManager.getConnection()) {
             c.setAutoCommit(false);
 
-            try (PreparedStatement psUpdateGame = c.prepareStatement(updateGameSql)) {
-                psUpdateGame.setInt(1, game.getGameId());
-                psUpdateGame.executeUpdate();
-            } catch (SQLException e) {
-                System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
-                e.printStackTrace();
-                throw new RuntimeException(e);
-            }
-            Map<Player, Integer> rankings = ScoreCalculator.rankPlayer(game);
-
-            int position = 1;
-
-            for (Player player : rankings.keySet()) {
-                int final_score = rankings.get(player);
-                try (PreparedStatement psUpdateRank = c.prepareStatement(updateGamePlayerSql)) {
-                    psUpdateRank.setInt(1, final_score);
-                    psUpdateRank.setInt(2, position);
-                    psUpdateRank.setInt(3, game.getGameId());
-                    psUpdateRank.setString(4, player.getNickname());
-                    psUpdateRank.executeUpdate();
-                    position++;
-                } catch (SQLException e) {
-                    c.rollback();
-                    throw new SQLException("Updating player ranking failed for player: " + player.getNickname(), e);
+            try {
+                try (PreparedStatement psUpdateGame = c.prepareStatement(updateGameSql)) {
+                    psUpdateGame.setInt(1, game.getGameId());
+                    psUpdateGame.executeUpdate();
                 }
+
+                Map<Player, Integer> rankings = ScoreCalculator.rankPlayer(game);
+                int position = 1;
+
+                for (Player player : rankings.keySet()) {
+                    int final_score = rankings.get(player);
+                    try (PreparedStatement psUpdateRank = c.prepareStatement(updateGamePlayerSql)) {
+                        psUpdateRank.setInt(1, final_score);
+                        psUpdateRank.setInt(2, position);
+                        psUpdateRank.setInt(3, game.getGameId());
+                        psUpdateRank.setString(4, player.getNickname());
+                        psUpdateRank.executeUpdate();
+                        position++;
+                    }
+                }
+
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
             }
-            c.commit();
         } catch (SQLException e) {
             System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

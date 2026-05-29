@@ -82,11 +82,8 @@ public class DataDepository {
      * @throws SQLException
      */
     public boolean testConnection() throws SQLException {
-        Connection c = DatabaseManager.getConnection();
-        if (c != null && !c.isClosed() && c.isValid(3)) {
-            return true;
-        } else {
-            return false;
+        try (Connection c = DatabaseManager.getConnection()) {
+            return c != null && !c.isClosed() && c.isValid(3);
         }
     }
 
@@ -473,21 +470,6 @@ public class DataDepository {
             loadCache();
         }
         return eventCardCache.get(cardId);
-    }
-
-    public OfferBox getOfferBoxbyId(String OfferBoxId) {
-        String query = "SELECT * FROM offer_box WHERE box_id = ?";
-        OfferBox offerBox = null;
-        try (Connection c = DatabaseManager.getConnection();
-             PreparedStatement ps = c.prepareStatement(query)) {
-
-            ps.setString(1, OfferBoxId);
-
-        } catch (SQLException e) {
-            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return offerBox;
     }
 
     private Era createEra(String era) {
