@@ -106,6 +106,11 @@ public class CardRow {
         return tribeRow.count() + buildingRow.count();
     }
 
+    /**
+     * Checks if there is at least one card in this card row that can be selected by the specified player.
+     * @param player the player for whom to check if there is at least one selectable card in this card row
+     * @return true if there is at least one card in this card row that can be selected by the specified player, false otherwise
+     */
     public boolean hasSelectableCardFor(Player player) {
         for (CharacterCard characterCard : tribeRow.getCharacterCards()) {
             if (characterCard.canBeSelectedFrom(this, player)) {
