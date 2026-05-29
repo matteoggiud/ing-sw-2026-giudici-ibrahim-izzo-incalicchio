@@ -54,6 +54,7 @@ public class GamePortal implements IGameModel {
 
     /**
      * Allows a player to draw a card from either the upper or lower row of the game board.
+     *
      * @param gameId         the current game context
      * @param nickname       the player attempting to draw the card
      * @param selectedCardId the card the player has selected to draw
@@ -68,7 +69,7 @@ public class GamePortal implements IGameModel {
             throw new IllegalArgumentException("Nickname cannot be null or blank.");
         }
         Game currentGame = gameManager.getGame(gameId);
-        currentGame.locked(()->{
+        currentGame.locked(() -> {
 
             Player currentPlayer = playerManager.getPlayer(nickname);
 
@@ -103,7 +104,7 @@ public class GamePortal implements IGameModel {
         }
 
         Game currentGame = gameManager.getGame(gameId);
-        currentGame.locked(()->{
+        currentGame.locked(() -> {
             Player player = playerManager.getPlayer(nickname);
 
             if (player == null) {
@@ -160,7 +161,7 @@ public class GamePortal implements IGameModel {
 
         // Notify the host player's observer about the game creation so they can update their lobby view
         Game game = gameManager.getGame(gameId);
-        return game.locked(()->{
+        return game.locked(() -> {
             game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
 
             return gameId;
@@ -169,6 +170,7 @@ public class GamePortal implements IGameModel {
 
     /**
      * Checks if the game with the specified id is ready to start.
+     *
      * @param gameId the unique identifier of the game to check and potentially start
      */
     @Override
@@ -178,7 +180,7 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-        game.locked(()->{
+        game.locked(() -> {
             if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
                 game.getGameState().startGame(game);
             }
@@ -197,7 +199,6 @@ public class GamePortal implements IGameModel {
     public Game getGame(int gameId) {
         return gameManager.getGame(gameId);
     }
-
 
 
     /**
@@ -225,7 +226,7 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-        game.locked(()->{
+        game.locked(() -> {
             gameManager.joinGame(gameId, playerToJoin);
 
             // Add the observer for the player to the newly joined game
@@ -250,7 +251,7 @@ public class GamePortal implements IGameModel {
 
         // We first retrieve the game
         Game game = gameManager.getGame(gameId);
-        return game.locked(()->{
+        return game.locked(() -> {
 
             // We save the players remaining in the game after the player leaves
             List<String> playerNames = game.getPlayers().getPlayerNicknames();
@@ -365,7 +366,7 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-        return game.locked(()->{
+        return game.locked(() -> {
             return game.getFinalRanking();
         });
     }
@@ -385,7 +386,7 @@ public class GamePortal implements IGameModel {
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
-        game.locked(()->{
+        game.locked(() -> {
             game.getObserverManager().addObserver(virtualView);
         });
     }
@@ -404,7 +405,7 @@ public class GamePortal implements IGameModel {
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
-        game.locked(()->{
+        game.locked(() -> {
             game.getObserverManager().removeObserver(virtualView);
         });
     }
@@ -427,6 +428,7 @@ public class GamePortal implements IGameModel {
 
     /**
      * Retrieves the leaderboard ranking for a specified number of players.
+     *
      * @param numPlayer the number of players for which to retrieve the leaderboard ranking.
      * @return a list of LeadBoardDTO objects representing the leaderboard ranking for the specified number of players.
      */
@@ -441,6 +443,7 @@ public class GamePortal implements IGameModel {
 
     /**
      * Allows a player to leave the lobby of a game they have joined using the game's unique identifier.
+     *
      * @param player the nickname of the player attempting to leave the lobby
      * @param gameId the unique identifier of the game whose lobby the player wants to leave
      * @return a list of the remaining players' nicknames in the lobby after the player leaves
@@ -459,7 +462,7 @@ public class GamePortal implements IGameModel {
 
         Game game = gameManager.getGame(gameId);
 
-        return game.locked(()->{
+        return game.locked(() -> {
             if (!game.getGameState().isJoinable(game)) {
                 throw new IllegalStateException("leaveLobby is allowed only while game is in lobby.");
             }
@@ -488,7 +491,7 @@ public class GamePortal implements IGameModel {
      */
     @Override
     public void restoreGame(Game restoredGame) {
-        restoredGame.locked(()->{
+        restoredGame.locked(() -> {
             gameManager.restoreGame(restoredGame);
 
             for (Player player : restoredGame.getPlayers().getPlayers()) {
@@ -503,37 +506,37 @@ public class GamePortal implements IGameModel {
 
     /**
      * Allows a player to reconnect to an ongoing game by providing the game's unique identifier.
-     * @param gameId the unique identifier of the game to which the player wants to reconnect.
-     * @param username the nickname of the player attempting to reconnect to the game.
+     *
+     * @param gameId       the unique identifier of the game to which the player wants to reconnect.
+     * @param username     the nickname of the player attempting to reconnect to the game.
      * @param eventHandler the event handler associated with the player's connection.
      */
     @Override
     public void reconnectToGame(Integer gameId, String username, EventHandler eventHandler) {
         Game game = gameManager.getGame(gameId);
-        game.locked(()->{
+        game.locked(() -> {
             Player player = playerManager.getPlayer(username);
 
             addObserver(game, eventHandler);
 
 
-        // 1. We tell the client that the game has started, so it switches to the Board screen
-        eventHandler.update(new GameStartedEvent(game));
+            // 1. We tell the client that the game has started, so it switches to the Board screen
+            eventHandler.update(new GameStartedEvent(game));
 
-        // 2. We send player info FIRST (so the client knows who the Totems belong to and what color they are!)
-        eventHandler.update(new PlayerInfosChangedEvent(
-                gameId,
-                PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-        ));
+            // 2. We send player info FIRST (so the client knows who the Totems belong to and what color they are!)
+            eventHandler.update(new PlayerInfosChangedEvent(
+                    gameId,
+                    PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+            ));
 
-        // 3. THEN we send him the current state of the Board, so when he renders the Turn Order Track the Totems will have the right color
-        eventHandler.update(new BoardUpdatedEvent(
-                gameId,
-               BoardDTOMapper.toBoardDTO(game)
-        ));
+            // 3. THEN we send him the current state of the Board, so when he renders the Turn Order Track the Totems will have the right color
+            eventHandler.update(new BoardUpdatedEvent(
+                    gameId,
+                    BoardDTOMapper.toBoardDTO(game)
+            ));
 
             game.getGameState().addPlayer(game, player);
 
-        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client 
-        // non appena WaitingForReconnectState scatta su nextState()!
+        });
     }
 }

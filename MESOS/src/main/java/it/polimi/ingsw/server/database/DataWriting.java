@@ -96,8 +96,6 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
-            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -117,8 +115,6 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
-            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -157,7 +153,6 @@ public class DataWriting {
                 throw e;
             }
         } catch (SQLException e) {
-            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -193,7 +188,6 @@ public class DataWriting {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Error updating game snapshot for game ID: " + gameId, e);
         }
     }
@@ -214,8 +208,6 @@ public class DataWriting {
             }
 
         } catch (SQLException e) {
-            System.err.println("[ERROR] Exception caught in DataWriting: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException("Error updating game in_progress", e);
         }
     }

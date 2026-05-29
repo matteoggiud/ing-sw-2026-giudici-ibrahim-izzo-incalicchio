@@ -35,7 +35,8 @@ public class GameManagerConcurrencyTest {
         
         // Setup a game
         Player host = new Player("hostPlayer");
-        int gameId = gameManager.createGame(host, 1000);
+        int gameId = 1000;
+        gameManager.createGame(host, gameId, 4);
         Game game = gameManager.getGame(gameId);
 
         int numThreads = 50;

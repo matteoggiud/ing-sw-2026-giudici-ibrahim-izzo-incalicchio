@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.deck;
 
-import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.card.characters.HunterCharacterCard;
@@ -33,7 +32,7 @@ class TribeDeckTest {
         TribeCard first = newHunter();
         TribeCard second = newHunter();
 
-        tribeDeck.addTribesCards(List.of(first, second));
+        tribeDeck.getTribeDeck().addAll(List.of(first, second));
 
         assertSame(first, tribeDeck.drawCard());
         assertSame(second, tribeDeck.drawCard());
@@ -51,7 +50,7 @@ class TribeDeckTest {
 
         assertTrue(tribeDeck.isEmpty());
 
-        tribeDeck.addTribesCards(List.of(first, second));
+        tribeDeck.getTribeDeck().addAll(List.of(first, second));
 
         assertFalse(tribeDeck.isEmpty());
         assertSame(first, tribeDeck.drawCard());
@@ -65,7 +64,7 @@ class TribeDeckTest {
     @Test
     void setTribeDeck() {
         TribeCard oldCard = newHunter();
-        tribeDeck.addTribesCards(List.of(oldCard));
+        tribeDeck.getTribeDeck().addAll(List.of(oldCard));
 
         TribeCard newFirst = newHunter();
         TribeCard newSecond = newHunter();
@@ -89,8 +88,8 @@ class TribeDeckTest {
         TribeCard first = newHunter();
         TribeCard top = newHunter();
 
-        tribeDeck.addTribesCards(List.of(first));
-        tribeDeck.addCardToTop(top);
+        tribeDeck.getTribeDeck().addAll(List.of(first));
+        tribeDeck.getTribeDeck().addFirst(top);
 
         assertSame(top, tribeDeck.drawCard());
         assertSame(first, tribeDeck.drawCard());
@@ -104,7 +103,7 @@ class TribeDeckTest {
     void isEmpty() {
         assertTrue(tribeDeck.isEmpty());
 
-        tribeDeck.addCardToTop(newHunter());
+        tribeDeck.getTribeDeck().addFirst(newHunter());
         assertFalse(tribeDeck.isEmpty());
 
         tribeDeck.drawCard();
