@@ -2,18 +2,34 @@ package it.polimi.ingsw.server.model.menu;
 
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
-
 import java.util.*;
 
+/**
+ * Singleton class that manages the active games in the system.
+ */
 public class GameManager {
+
+    /**
+     * The singleton instance of the GameManager class.
+     */
     private static GameManager instance;
+
+    /**
+     * A map that holds the active games, where the key is the unique identifier of the game and the value is the Game object.
+     */
     private final Map<Integer, Game> activeGames;
 
+    /**
+     * Private constructor to prevent instantiation from outside the class. Initializes the activeGames map.
+     */
     private GameManager() {
         activeGames = new HashMap<>();
     }
 
+    /**
+     * Returns the singleton instance of the GameManager class. If the instance does not exist, it creates a new one.
+     * @return
+     */
     public static synchronized GameManager getInstance() {
         if (instance == null) {
             instance = new GameManager();
@@ -21,16 +37,6 @@ public class GameManager {
         return instance;
     }
 
-    /**
-     * Creates a new game with the specified host player and game id
-     *
-     * @param host   the player who will host the game
-     * @param gameId the unique identifier for the game
-     * @return the unique identifier of the created game
-     */
-    public int createGame(Player host, int gameId) {
-        return createGame(host, gameId, StandardRuleSet.MIN_PLAYERS);
-    }
 
     /**
      * Creates a new game with the specified host player, game id, and expected player count.
