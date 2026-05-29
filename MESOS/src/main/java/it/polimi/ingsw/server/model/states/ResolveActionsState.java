@@ -99,15 +99,27 @@ public class ResolveActionsState implements IGameState {
     }
 
 
+    /**
+     * Notifies observers about the updated player information, such as resources and decks.
+     * @param game the current game context
+     */
     private void notifyPlayerInfosUpdate(Game game) {
         game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
     }
 
+    /**
+     * Checks if the game has ended. In this state, the game cannot end, so it always returns false.
+     * @return false, as the game cannot end in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
     }
 
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     * @return the name of the persistence class for this game state
+     */
     @Override
     public String getPersistenceName() {
         return "ResolveActionsState";
