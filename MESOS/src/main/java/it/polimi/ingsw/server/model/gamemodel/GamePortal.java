@@ -515,7 +515,7 @@ public class GamePortal implements IGameModel {
 
         game.getGameState().addPlayer(game, player);
 
-        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client
-        // non appena WaitingForReconnectState scatta su nextState()!
+        // N.B: The exact shift will be automatically notified to ALL clients
+        // as soon as WaitingForReconnectState fires on nextState()!
     }
 }
