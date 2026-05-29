@@ -12,6 +12,10 @@ public class PlayersChangedEvent implements IGameEvent {
 
     private final List<String> playerNicknames;
 
+    /**
+     * Constructs a new PlayersChangedEvent with the given game context, extracting the player nicknames from the game
+     * @param playerNicknames the list of player nicknames participating in the game, must not be null or empty
+     */
     public PlayersChangedEvent(List<String> playerNicknames) {
         this.playerNicknames = playerNicknames;
     }
