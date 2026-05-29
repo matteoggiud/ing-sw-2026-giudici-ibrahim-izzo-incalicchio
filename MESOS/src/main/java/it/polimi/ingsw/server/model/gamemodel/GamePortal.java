@@ -572,6 +572,12 @@ public class GamePortal implements IGameModel {
         return db.getLeadBoard(numPlayer);
     }
 
+    /**
+     * Allows a player to leave the lobby of a game they have joined using the game's unique identifier.
+     * @param player the nickname of the player attempting to leave the lobby
+     * @param gameId the unique identifier of the game whose lobby the player wants to leave
+     * @return a list of the remaining players' nicknames in the lobby after the player leaves
+     */
     @Override
     public List<String> leaveLobby(String player, int gameId) {
         if (gameId < 0) {
