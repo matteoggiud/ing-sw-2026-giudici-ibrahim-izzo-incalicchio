@@ -72,12 +72,13 @@ public class TerminalRenderer {
     }
 
     private void printMessages() {
-        if (state.getErrorMessage() != null && !state.getErrorMessage().isBlank()) {
-            System.out.println("[ERROR] " + state.getErrorMessage());
-        }
+        String errorMessage = state.consumeErrorMessage();
+        String statusMessage = state.consumeStatusMessage();
 
-        if (state.getStatusMessage() != null && !state.getStatusMessage().isBlank()) {
-            System.out.println(state.getStatusMessage());
+        if (errorMessage != null && !errorMessage.isBlank()) {
+            System.out.println("[ERROR] " + errorMessage);
+        } else if (statusMessage != null && !statusMessage.isBlank()) {
+            System.out.println(statusMessage);
         }
 
         if (state.getResolvingEventName() != null && !state.getResolvingEventName().isBlank()) {
@@ -486,5 +487,14 @@ public class TerminalRenderer {
 
     private void printLine(int length) {
         System.out.println("-".repeat(length));
+    }
+    public void renderError(String message) {
+        clearTerminal();
+
+        if (message != null && !message.isBlank()) {
+            System.out.println("[ERROR] " + message);
+        }
+
+        printPromptHelp();
     }
 }

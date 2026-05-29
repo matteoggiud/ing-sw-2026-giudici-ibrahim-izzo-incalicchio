@@ -121,7 +121,8 @@ public class EndRoundState implements IGameState {
         int targetUpperRowSize = game.getRuleSet().getUpperRowSize(game.getNumberOfPlayers());
         Era currentEra = game.getCurrentEra();
 
-        while (board.getUpperRow().getTribeRow().count() < targetUpperRowSize) {
+        while (board.getUpperRow().getTribeRow().count() < targetUpperRowSize
+                && !game.getTribeDeck().isEmpty()) {
             TribeCard drawnCard = game.getTribeDeck().drawCard();
             board.getUpperRow().addCard(drawnCard);
 
