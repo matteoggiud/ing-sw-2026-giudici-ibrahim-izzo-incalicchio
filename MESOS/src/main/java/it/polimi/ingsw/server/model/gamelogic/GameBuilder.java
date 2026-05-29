@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 public class GameBuilder {
 
     private final Game game;
@@ -48,6 +49,10 @@ public class GameBuilder {
         this.game = game;
     }
 
+    /**
+     * Prepares the game by initializing the tribe deck, building decks, offer track, turn order box, and filling the card rows according to the game rules and the
+     * available cards.
+     */
     public void prepareGame() {
         DataDepository db = new DataDepository();
         List<TribeCard> allTribeCards;
@@ -78,6 +83,9 @@ public class GameBuilder {
 
     }
 
+    /**
+     * Initializes the player stats by resetting each player's state to the default values at the start of the game.
+     */
     private void initializePlayerStats() {
         for (Player player : game.getPlayers().getPlayers()) {
             player.reset();
