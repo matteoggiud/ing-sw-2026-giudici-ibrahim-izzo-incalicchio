@@ -8,8 +8,8 @@ import java.util.Properties;
 
 public class ConfigurationManager {
 
-    private static final ConfigurationManager SERVER_INSTANCE = new ConfigurationManager("server.properties");
-    private static final ConfigurationManager CLIENT_INSTANCE = new ConfigurationManager("client.properties");
+    private static ConfigurationManager serverInstance;
+    private static ConfigurationManager clientInstance;
 
     private final Properties properties = new Properties();
 
@@ -17,28 +17,22 @@ public class ConfigurationManager {
         loadProperties(fileName);
     }
 
-    public static ConfigurationManager getServerInstance() {
-        return SERVER_INSTANCE;
+    public static synchronized ConfigurationManager getServerInstance() {
+        if (serverInstance == null) {
+            serverInstance = new ConfigurationManager("server.properties");
+        }
+        return serverInstance;
     }
 
-    public static ConfigurationManager getClientInstance() {
-        return CLIENT_INSTANCE;
+    public static synchronized ConfigurationManager getClientInstance() {
+        if (clientInstance == null) {
+            clientInstance = new ConfigurationManager("client.properties");
+        }
+        return clientInstance;
     }
 
     private void loadProperties(String fileName) {
-        // First try to load from an external file in the current working directory
-        File externalFile = new File(fileName);
-        if (externalFile.exists() && externalFile.isFile()) {
-            try (InputStream input = new FileInputStream(externalFile)) {
-                properties.load(input);
-                System.out.println("[CONFIG] Loaded external " + fileName);
-                return;
-            } catch (IOException e) {
-                System.err.println("[CONFIG] Failed to load external " + fileName + ", falling back to internal: " + e.getMessage());
-            }
-        }
-
-        // Fallback to internal properties file inside the jar
+        // 1. Load internal properties file inside the jar (as default baseline)
         try (InputStream input = ConfigurationManager.class.getClassLoader().getResourceAsStream(fileName)) {
             if (input == null) {
                 System.err.println("[CONFIG] Internal " + fileName + " not found");
@@ -47,7 +41,18 @@ public class ConfigurationManager {
                 System.out.println("[CONFIG] Loaded internal " + fileName);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("[CONFIG] Failed to load internal " + fileName + ": " + e.getMessage());
+        }
+
+        // 2. Try to load from an external file in the current working directory (overrides internal ones)
+        File externalFile = new File(fileName);
+        if (externalFile.exists() && externalFile.isFile()) {
+            try (InputStream input = new FileInputStream(externalFile)) {
+                properties.load(input);
+                System.out.println("[CONFIG] Loaded external " + fileName + " (overriding defaults)");
+            } catch (IOException e) {
+                System.err.println("[CONFIG] Failed to load external " + fileName + ": " + e.getMessage());
+            }
         }
     }
 

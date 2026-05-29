@@ -38,21 +38,24 @@ public class ServerMain {
         final String rmiName = config.getProperty("server.rmi.name", "MESOS_RMI");
 
         String defaultServerIp = InetAddressLookup.getLocalHostAddress();
-        String serverIp;
+        String serverIp = defaultServerIp;
         Scanner scanner = new Scanner(System.in);
 
 
+        boolean fastStart = config.getBooleanProperty("server.fast_start", false);
+
         if (args.length >= 1 && !args[0].isBlank()) {
             serverIp = args[0];
-        } else {
+        } else if (!fastStart) {
             System.out.print("Server ip [" + defaultServerIp + "]: ");
             String line = scanner.nextLine().trim();
-            if (line.isEmpty()) {
-                serverIp = defaultServerIp;
-            } else {
+            if (!line.isBlank()) {
                 serverIp = line;
             }
+        } else {
+            System.out.println("Fast start enabled. Using default server ip: " + defaultServerIp);
         }
+
 
         System.setProperty("java.rmi.server.hostname", serverIp);
 
@@ -60,12 +63,7 @@ public class ServerMain {
         GamePortal gamePortal = new GamePortal();
         GameController controller = new GameController(gamePortal);
         ScheduledExecutorService disconnectionMonitor = Executors.newSingleThreadScheduledExecutor();
-        disconnectionMonitor.scheduleAtFixedRate(
-                controller::disconnectUnreachableSessions,
-                5,
-                5,
-                TimeUnit.SECONDS
-        );
+        disconnectionMonitor.scheduleAtFixedRate(controller::disconnectUnreachableSessions, 5, 5, TimeUnit.SECONDS);
 
         new DatabaseBootstrap().bootstrap();
 
@@ -74,9 +72,17 @@ public class ServerMain {
         List<Integer> pendingGames = dataDepo.getInProgressGames();
 
         if (!pendingGames.isEmpty()) {
-            System.out.println("Find " + pendingGames.size() + " games in progress. Do you want to restore them? (y/n)");
-            String restoreChoice = scanner.nextLine().trim().toLowerCase();
-            if (restoreChoice.equals("y")) {
+            boolean restore;
+            if (fastStart) {
+                restore = config.getBooleanProperty("server.reload_games_on_start", false);
+                System.out.println("Fast start: reloading " + pendingGames.size() + " games in progress = " + restore);
+            } else {
+                System.out.println("Find " + pendingGames.size() + " games in progress. Do you want to restore them? (y/n)");
+                String restoreChoice = scanner.nextLine().trim().toLowerCase();
+                restore = restoreChoice.equals("y");
+            }
+
+            if (restore) {
                 for (int pendingGamesId : pendingGames) {
                     GameSnapshotDTO snapshotDTO = dataDepo.loadGameSnapshot(pendingGamesId);
                     if (snapshotDTO != null) {
