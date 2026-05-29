@@ -222,6 +222,11 @@ public class GameBuilder {
         }
     }
 
+    /**
+     * Initializes the players' positions in the turn order box by placing each player in the first free slot
+     * and giving them the initial amount of food according to the game rules.
+     * @param turnOrderBox the TurnOrderBox in which the players will be placed.
+     */
     private void initializePlacedPlayers(TurnOrderBox turnOrderBox) {
         Random random = new Random();
         List<Player> players = game.getPlayers().getPlayers();
