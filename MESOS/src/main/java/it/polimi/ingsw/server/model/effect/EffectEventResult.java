@@ -22,10 +22,18 @@ public class EffectEventResult {
         this.targetPlayer = targetPlayer;
     }
 
+    /**
+     * Gets the change in the player's food resources as a result of applying the effect.
+     * @return the change in the player's food resources as a result of applying the effect.
+     */
     public int getFoodChange() {
         return foodChange;
     }
 
+    /**
+     * Gets the change in the player's PP score as a result of applying the effect.
+     * @return the change in the player's PP score as a result of applying the effect.
+     */
     public int getPpChange() {
         return ppChange;
     }
