@@ -22,7 +22,7 @@ public class ClientState {
     private Map<String, Integer> finalRanking;
     private List<LeadBoardDTO> historicalRankings;
 
-    private final Map<String, PlayerInfoDTO> playersInfo;
+    private Map<String, PlayerInfoDTO> playersInfo;
 
     public ClientState(String nickname, Integer activeGameId) {
         this.nickname = nickname;
@@ -141,13 +141,15 @@ public class ClientState {
             return;
         }
 
-        playersInfo.clear();
+        Map<String, PlayerInfoDTO> newMap = new LinkedHashMap<>();
 
         for (PlayerInfoDTO playerInfo : playerInfos) {
             if (playerInfo != null && playerInfo.nickname() != null) {
-                playersInfo.put(playerInfo.nickname(), playerInfo);
+                newMap.put(playerInfo.nickname(), playerInfo);
             }
         }
+        
+        this.playersInfo = newMap;
     }
 
     public Collection<PlayerInfoDTO> getPlayersInfo() {
@@ -155,7 +157,7 @@ public class ClientState {
     }
 
     public void clearPlayersInfo() {
-        playersInfo.clear();
+        this.playersInfo = new LinkedHashMap<>();
     }
 
     public void clearGameState() {
@@ -166,7 +168,7 @@ public class ClientState {
         currentPlayerNickname = null;
         resolvingEventName = null;
         finalRanking = Map.of();
-        playersInfo.clear();
+        playersInfo = new LinkedHashMap<>();
         historicalRankings = List.of();
     }
 
