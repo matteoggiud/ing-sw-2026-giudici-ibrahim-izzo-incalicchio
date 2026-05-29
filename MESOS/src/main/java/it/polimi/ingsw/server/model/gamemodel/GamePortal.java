@@ -143,9 +143,11 @@ public class GamePortal implements IGameModel {
 
         // Notify the host player's observer about the game creation so they can update their lobby view
         Game game = gameManager.getGame(gameId);
-        game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+        return game.locked(()->{
+            game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
 
-        return gameId;
+            return gameId;
+        });
     }
 
     @Override
@@ -155,10 +157,11 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-
-        if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
-            game.getGameState().startGame(game);
-        }
+        game.locked(()->{
+            if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
+                game.getGameState().startGame(game);
+            }
+        });
     }
 
 
@@ -195,16 +198,17 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
+        game.locked(()->{
+            if (!game.getHostPlayer().getNickname().equals(hostNickname)) {
+                throw new IllegalStateException("Only the host can start the game.");
+            }
 
-        if (!game.getHostPlayer().getNickname().equals(hostNickname)) {
-            throw new IllegalStateException("Only the host can start the game.");
-        }
+            if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS) {
+                throw new IllegalStateException("Not enough players to start the game.");
+            }
 
-        if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS) {
-            throw new IllegalStateException("Not enough players to start the game.");
-        }
-
-        game.getGameState().startGame(game);
+            game.getGameState().startGame(game);
+        });
     }
 
 
@@ -411,7 +415,9 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-        return game.getFinalRanking();
+        return game.locked(()->{
+            return game.getFinalRanking();
+        });
     }
 
     /**
@@ -433,13 +439,14 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
+        return game.locked(()->{
+            Player player = playerManager.getPlayer(nickname);
+            if (player == null) {
+                throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+            }
 
-        Player player = playerManager.getPlayer(nickname);
-        if (player == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
-
-        return game.getGameState().getExtraAction(player);
+            return game.getGameState().getExtraAction(player);
+        });
     }
 
     /**
@@ -481,8 +488,9 @@ public class GamePortal implements IGameModel {
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
-
-        game.getObserverManager().addObserver(virtualView);
+        game.locked(()->{
+            game.getObserverManager().addObserver(virtualView);
+        });
     }
 
     /**
@@ -499,8 +507,9 @@ public class GamePortal implements IGameModel {
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
-
-        game.getObserverManager().removeObserver(virtualView);
+        game.locked(()->{
+            game.getObserverManager().removeObserver(virtualView);
+        });
     }
 
     /**
@@ -519,13 +528,14 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-
-        Player player = game.getPlayers().getPlayers().stream()
+        game.locked(()->{
+            Player player = game.getPlayers().getPlayers().stream()
                 .filter(p -> p.getNickname().equals(nickname))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Player " + nickname + " is not in game " + gameId + "."));
 
-        player.disconnect();
+            player.disconnect();
+        });
     }
 
     /**
