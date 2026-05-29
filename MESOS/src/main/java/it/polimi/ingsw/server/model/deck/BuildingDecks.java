@@ -23,6 +23,13 @@ public class BuildingDecks {
         this.buildingDecksEra3 = new BuildingDeck();
     }
 
+    /**
+     * Constructs a new BuildingDecks object,
+     * initializing the building decks map with the provided lists of building cards for each era.
+     * @param buildingsEra1 the list of building cards for era 1 to be added to the building deck.
+     * @param buildingsEra2 the list of building cards for era 2 to be added to the building deck.
+     * @param buildingsEra3 the list of building cards for era 3 to be added to the building deck.
+     */
     public BuildingDecks(List<BuildingCard> buildingsEra1, List<BuildingCard> buildingsEra2, List<BuildingCard> buildingsEra3) {
         if (buildingsEra1 == null || buildingsEra2 == null || buildingsEra3 == null) {
             throw new IllegalArgumentException("Building card lists cannot be null");
