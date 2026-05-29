@@ -22,6 +22,10 @@ import java.util.concurrent.CompletableFuture;
  */
 public class EndRoundState implements IGameState {
 
+    /**
+     * Transitions the game to the next state after the end round phase.
+     * @param game the current game context
+     */
     @Override
     public void nextState(Game game) {
         if (game == null) {
