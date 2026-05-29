@@ -225,7 +225,10 @@ public class PlayerDeck {
         return extraActionEffects;
     }
 
-
+    /**
+     * This method resets the player's deck by clearing the lists of character and building cards,
+     * and resetting the counts of character types to zero.
+     */
     public void reset() {
         this.characters.clear();
         this.buildings.clear();
