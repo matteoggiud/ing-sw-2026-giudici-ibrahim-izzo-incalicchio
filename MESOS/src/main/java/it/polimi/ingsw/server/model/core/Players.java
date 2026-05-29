@@ -47,10 +47,13 @@ public class Players {
     /**
      * Removes a player from the lobby.
      *
-     * @throws IllegalArgumentException if the player is not in the lobby
+     * @throws IllegalArgumentException if the player is null, not in the lobby, or is the host
      */
     public void removePlayer(Player player) throws IllegalArgumentException {
-        if(!players.contains(player) && getHost().equals(player)) {
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null");
+        }
+        if (!players.contains(player) || getHost().equals(player)) {
             throw new IllegalArgumentException("Player not in the lobby or is the host");
         }
 

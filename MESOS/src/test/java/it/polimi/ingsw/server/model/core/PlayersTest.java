@@ -67,9 +67,11 @@ class PlayersTest {
         assertTrue(players.contains(p1));
         assertTrue(players.contains(p3));
 
-        // Current implementation does not throw when removing an absent non-host player.
-        assertDoesNotThrow(() -> players.removePlayer(new Player("not-present")));
+        assertThrows(IllegalArgumentException.class, () -> players.removePlayer(null));
+        assertThrows(IllegalArgumentException.class, () -> players.removePlayer(new Player("not-present")));
+        assertThrows(IllegalArgumentException.class, () -> players.removePlayer(p1));
         assertEquals(2, players.size());
+        assertSame(p1, players.getHost());
     }
 
     @Test
@@ -106,8 +108,10 @@ class PlayersTest {
         players.addPlayer(p1);
         assertFalse(players.isEmpty());
 
-        players.removePlayer(p1);
-        assertTrue(players.isEmpty());
+        players.addPlayer(p2);
+        players.removePlayer(p2);
+        assertFalse(players.isEmpty());
+        assertSame(p1, players.getHost());
     }
 
     @Test

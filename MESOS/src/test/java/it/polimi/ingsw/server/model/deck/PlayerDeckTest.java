@@ -44,6 +44,10 @@ class PlayerDeckTest {
 
         playerDeck.addCharacterCard(new GathererCharacterCard(nextCardId++, "Gatherer", era1, 2, ""));
         assertEquals(1, playerDeck.getCharacters().size());
+
+        var characters = playerDeck.getCharacters();
+        characters.clear();
+        assertEquals(1, playerDeck.getCharacters().size());
     }
 
     @Test
@@ -52,6 +56,10 @@ class PlayerDeckTest {
         assertTrue(playerDeck.getBuildings().isEmpty());
 
         playerDeck.addBuildingCard(newBuilding(new EmptyEffect()));
+        assertEquals(1, playerDeck.getBuildings().size());
+
+        var buildings = playerDeck.getBuildings();
+        buildings.clear();
         assertEquals(1, playerDeck.getBuildings().size());
     }
 
