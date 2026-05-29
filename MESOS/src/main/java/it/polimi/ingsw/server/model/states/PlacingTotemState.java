@@ -14,14 +14,25 @@ import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * The PlacingTotemState class represents the state of the game where players take turns placing their totems on the offer boxes.
+ */
 public class PlacingTotemState implements IGameState {
 
+    /**
+     * Transitions the game to the ResolveActionsState after all players have placed their totems.
+     * @param game the current game context
+     */
     @Override
     public void nextState(Game game) {
         game.setGameState(new ResolveActionsState());
         game.getGameState().executePhase(game);
     }
 
+    /**
+     * Executes the placing totem phase by saving the game snapshot for persistence and notifying the first player to place their totem.
+     * @param game the current game context
+     */
     @Override
     public void executePhase(Game game) {
         // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
@@ -115,6 +126,10 @@ public class PlacingTotemState implements IGameState {
         );
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public boolean isEnded() {
         return false;
