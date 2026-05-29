@@ -70,12 +70,6 @@ public class Era1 extends Era{
     }
 
     @Override
-    public HashMap<Era, BuildingDeck> createBuildingDeck(HashMap<Era, BuildingDeck> buildingDecks) {
-        buildingDecks.put(this, new BuildingDeck());
-        return buildingDecks;
-    }
-
-    @Override
     public Era eraTransition(Game game, Era newEra) {
         if (newEra == null) {
             throw new IllegalArgumentException("New era cannot be null");
