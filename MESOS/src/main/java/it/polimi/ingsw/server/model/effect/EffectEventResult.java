@@ -53,8 +53,8 @@ public class EffectEventResult {
     public void setFoodChange(int foodChange) { this.foodChange = foodChange; }
 
     /**
-     * 
-     * @param ppChange
+     * Sets the change in the player's PP score as a result of applying the effect.
+     * @param ppChange the change in the player's PP score as a result of applying the effect.
      */
     public void setPpChange(int ppChange) { this.ppChange = ppChange; }
 
