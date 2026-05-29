@@ -3,13 +3,13 @@ package it.polimi.ingsw.client.network;
 import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ViewController;
-import it.polimi.ingsw.client.network.rmi.RemoteServer;
+import it.polimi.ingsw.common.network.rmi.client.RemoteServer;
 import it.polimi.ingsw.client.network.rmi.RmiClient;
 import it.polimi.ingsw.client.network.rmi.RmiVirtualServer;
 
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.server.network.rmi.RemoteClientView;
-import it.polimi.ingsw.server.network.rmi.RmiBootstrap;
+import it.polimi.ingsw.common.network.rmi.server.RemoteClientView;
+import it.polimi.ingsw.common.network.rmi.server.RmiBootstrap;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

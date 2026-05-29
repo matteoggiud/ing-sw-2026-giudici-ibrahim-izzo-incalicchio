@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.network.rmi;
 
 import it.polimi.ingsw.common.network.dto.*;
+import it.polimi.ingsw.common.network.rmi.server.RemoteClientView;
 import it.polimi.ingsw.server.network.GenericVirtualView;
 
 import java.rmi.RemoteException;

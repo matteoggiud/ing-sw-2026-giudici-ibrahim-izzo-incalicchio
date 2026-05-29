@@ -2,7 +2,7 @@ package it.polimi.ingsw.client.network.rmi;
 
 import it.polimi.ingsw.client.GenericVirtualServer;
 
-import it.polimi.ingsw.client.network.rmi.RemoteServer;
+import it.polimi.ingsw.common.network.rmi.client.RemoteServer;
 
 import java.rmi.RemoteException;
 

@@ -1,4 +1,4 @@
-package it.polimi.ingsw.server.network.rmi;
+package it.polimi.ingsw.common.network.rmi.server;
 
 import it.polimi.ingsw.common.network.dto.*;
 

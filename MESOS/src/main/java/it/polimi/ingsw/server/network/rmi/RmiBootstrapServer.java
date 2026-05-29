@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.network.rmi;
 
-import it.polimi.ingsw.client.GenericVirtualServer;
-import it.polimi.ingsw.client.network.rmi.RemoteServer;
-import it.polimi.ingsw.client.network.rmi.RmiVirtualServer;
+import it.polimi.ingsw.common.network.rmi.client.RemoteServer;
+import it.polimi.ingsw.common.network.rmi.server.RemoteClientView;
+import it.polimi.ingsw.common.network.rmi.server.RmiBootstrap;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;
 import it.polimi.ingsw.server.network.EventHandler;
