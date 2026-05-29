@@ -62,7 +62,8 @@ public abstract class TribeCard extends Card{
     }
 
     /**
-     * Sorts this card into the appropriate era list based on its era. This is used when initializing the card rows on the board.
+     * Sorts this card into the appropriate era list based on its era.
+     * This is used when initializing the card rows on the board.
      * @param eraI
      * @param eraIi
      * @param eraIii
