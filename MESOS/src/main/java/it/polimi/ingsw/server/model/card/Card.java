@@ -143,12 +143,17 @@ public abstract class Card {
 
     /**
      * Validates if this card can be selected from the given card row by the specified player.
-     * @param row
+     * @param row the card row from which the player is attempting to select this card
      */
     public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }
 
+    /**
+     * Resolves the effects of this card when selected from the given card row by the specified player.
+     * @param player the player who has selected this card
+     * @param row the card row from which the player has selected this card
+     */
     public void resolveFromOfferRow(Player player, CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }
