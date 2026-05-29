@@ -47,17 +47,27 @@ public abstract class TribeCard extends Card{
     /**
      * Adds this card to the provided character list.
      * This is used when initializing the character row on the board.
-     * @param characterList
+     * @param characterList the list to which this character card will be added
      */
     public void addToCharacterList(List<CharacterCard> characterList){
         // default: do nothing
     }
 
+    /**
+     * Adds this card to the provided event list.
+     * @param eventList the list to which this event card will be added
+     */
     public void addToEventList(List<EventCard> eventList){
         // default: do nothing
     }
 
-
+    /**
+     * Sorts this card into the appropriate era list based on its era. This is used when initializing the card rows on the board.
+     * @param eraI
+     * @param eraIi
+     * @param eraIii
+     * @param finalEvents
+     */
     public void selfSort(List<TribeCard> eraI, List<TribeCard> eraIi, List<TribeCard> eraIii, List<TribeCard> finalEvents) {
         getEra().selfSortByEra(this, eraI, eraIi, eraIii, finalEvents);
     }
