@@ -100,6 +100,10 @@ public class BuildingDecks {
         return buildingDecksEra2;
     }
 
+    /**
+     * This method allows to get the building deck corresponding to era 3.
+     * @return the building deck corresponding to era 3.
+     */
     public BuildingDeck getBuildingDecksEra3() {
         return buildingDecksEra3;
     }
