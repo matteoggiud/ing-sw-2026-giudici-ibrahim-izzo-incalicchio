@@ -38,6 +38,10 @@ public class EffectEventResult {
         return ppChange;
     }
 
+    /**
+     * Gets the player who is the target of the effect being applied.
+     * @return the player who is the target of the effect being applied.
+     */
     public Player getTargetPlayer() {
         return targetPlayer;
     }
