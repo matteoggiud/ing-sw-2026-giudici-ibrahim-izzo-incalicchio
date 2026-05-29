@@ -236,14 +236,14 @@ public class GamePortal implements IGameModel {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
 
-        gameManager.joinGame(gameId, playerToJoin);
-
-        // Add the observer for the player to the newly joined game
-        addObserver(gameManager.getGame(gameId), observer);
-
-        // Notify the player's observer about the join so they can update their lobby view
         Game game = gameManager.getGame(gameId);
         game.locked(()->{
+            gameManager.joinGame(gameId, playerToJoin);
+
+            // Add the observer for the player to the newly joined game
+            addObserver(game, observer);
+
+            // Notify the player's observer about the join so they can update their lobby view
             game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
         });
     }
@@ -575,27 +575,28 @@ public class GamePortal implements IGameModel {
             throw new IllegalArgumentException("Player with nickname " + player + " is not logged in.");
         }
 
-        // We first retrieve the game and the players in the game, then we save the players remaining in the game after the player leaves
-        List<String> playerNames = new ArrayList<>();
-
-        // If the leaving player is the host, we need to save the names of the other players before deleting the game
-        if (player.equals(gameManager.getGame(gameId).getHostPlayer().getNickname())) {
-            playerNames = gameManager.getGame(gameId).getPlayers().getPlayerNicknames().stream()
-                    .filter(p -> !p.equals(player))
-                    .toList();
-        }
-
         Game game = gameManager.getGame(gameId);
+        
+        return game.locked(()->{
+            if (!game.getGameState().isJoinable(game)) {
+                throw new IllegalStateException("leaveLobby is allowed only while game is in lobby.");
+            }
 
-        if (!game.getGameState().isJoinable(game)) {
-            throw new IllegalStateException("leaveLobby is allowed only while game is in lobby.");
-        }
+            // We first retrieve the game and the players in the game, then we save the players remaining in the game after the player leaves
+            List<String> playerNames = new ArrayList<>();
 
-        // Leave the game and if he's the host delete the game from the game manager
-        gameManager.leaveGame(gameId, leavingPlayer);
+            // If the leaving player is the host, we need to save the names of the other players before deleting the game
+            if (player.equals(game.getHostPlayer().getNickname())) {
+                playerNames = game.getPlayers().getPlayerNicknames().stream()
+                        .filter(p -> !p.equals(player))
+                        .toList();
+            }
 
-        return playerNames;
+            // Leave the game and if he's the host delete the game from the game manager
+            gameManager.leaveGame(gameId, leavingPlayer);
 
+            return playerNames;
+        });
     }
 
     @Override
