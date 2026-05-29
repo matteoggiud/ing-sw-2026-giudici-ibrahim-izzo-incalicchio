@@ -43,6 +43,11 @@ public class ShamanCharacterCard extends CharacterCard {
         return shamanStars;
     }
 
+    /**
+     * When this card is added to a player's deck,
+     * it increments the count of Shaman type cards in the player's deck.
+     * @param playerDeck the player's deck to which this card is being added.
+     */
     @Override
     public void onAddToPlayerDeck(PlayerDeck playerDeck) {
         playerDeck.incrementTypeCount(CharacterType.SHAMAN);
