@@ -7,6 +7,10 @@ import it.polimi.ingsw.server.model.effect.building.modifiers.IEventModifier;
 
 import java.util.List;
 
+/**
+ * Interface representing the effect of an Event card in the game.
+ * Implementing classes will define specific event effects and how they interact with modifiers and the game state.
+ */
 public interface IEventEffect {
 
     /**
