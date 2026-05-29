@@ -99,7 +99,11 @@ public class TurnOrderBox {
         throw new IllegalStateException("Player not found in any slot of the TurnOrderBox");
     }
 
-
+    /**
+     * Gets the index of the specified slot in the box.
+     * @param slot the slot whose index is to be retrieved
+     * @return the index of the specified slot in the box, or -1 if the slot is not found in the box
+     */
     public int getIndexBySlot(TurnOrderSlot slot) {
         return slots.indexOf(slot);
     }
