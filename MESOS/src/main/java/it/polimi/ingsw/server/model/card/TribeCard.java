@@ -38,7 +38,7 @@ public abstract class TribeCard extends Card{
     /**
      * Indicates whether this card should be placed in the upper row of the board.
      * By default, this returns false.
-     * @return
+     * @return true if this card goes in the upper row, false otherwise
      */
     public boolean goesInUpperRow(){
         return false;
@@ -64,10 +64,10 @@ public abstract class TribeCard extends Card{
     /**
      * Sorts this card into the appropriate era list based on its era.
      * This is used when initializing the card rows on the board.
-     * @param eraI
-     * @param eraIi
-     * @param eraIii
-     * @param finalEvents
+     * @param eraI the list of cards for era I
+     * @param eraIi the list of cards for era II
+     * @param eraIii the list of cards for era III
+     * @param finalEvents the list of final event cards that should be placed at the end of the deck
      */
     public void selfSort(List<TribeCard> eraI, List<TribeCard> eraIi, List<TribeCard> eraIii, List<TribeCard> finalEvents) {
         getEra().selfSortByEra(this, eraI, eraIi, eraIii, finalEvents);
