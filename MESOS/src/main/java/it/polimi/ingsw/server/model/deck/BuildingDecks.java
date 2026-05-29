@@ -84,6 +84,10 @@ public class BuildingDecks {
 
     }
 
+    /**
+     * This method allows to get the building deck corresponding to era 1.
+     * @return
+     */
     public BuildingDeck getBuildingDecksEra1() {
         return buildingDecksEra1;
     }
