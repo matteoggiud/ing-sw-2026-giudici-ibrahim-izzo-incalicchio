@@ -39,6 +39,10 @@ public class EventDiscount {
         return PP;
     }
 
+    /**
+     * This method allows to get the food discount value of the event discount.
+     * @return the food discount value of the event discount.
+     */
     public int getFood() {
         return food;
     }
