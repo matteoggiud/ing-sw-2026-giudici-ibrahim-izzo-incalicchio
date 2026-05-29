@@ -198,6 +198,11 @@ public class ActionResolver {
         new EffectResolver(game).resolveTrigger(player);
     }
 
+    /**
+     * Applies the effect of the turn order slot to the player.
+     * @param player the player to whom the turn order slot effect will be applied
+     * @param turnOrderSlot the turn order slot whose effect will be applied to the player
+     */
     private void applyTurnOrderSlotEffect(Player player, TurnOrderSlot turnOrderSlot) {
         int foodBonus = turnOrderSlot.getFoodBonus();
 
