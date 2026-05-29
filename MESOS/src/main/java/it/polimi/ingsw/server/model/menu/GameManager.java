@@ -28,7 +28,7 @@ public class GameManager {
 
     /**
      * Returns the singleton instance of the GameManager class. If the instance does not exist, it creates a new one.
-     * @return
+     * @return the singleton instance of the GameManager class
      */
     public static synchronized GameManager getInstance() {
         if (instance == null) {
