@@ -307,6 +307,10 @@ public class ActionResolver {
     }
 
 
+    /**
+     * Resolves any automatic skips for the current player in the offer track, allowing the game to progress smoothly without requiring player input for actions that have no valid choices.
+     * @param game the current game context.
+     */
     public void resolveAutomaticSkips(Game game) {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null.");
