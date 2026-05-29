@@ -1,6 +1,6 @@
-package it.polimi.ingsw.client.network.socket.messages.login;
+package it.polimi.ingsw.common.network.socket_messages.client.login;
 
-import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
 import it.polimi.ingsw.common.network.socket_messages.server.ClientMessageVisitor;
 
 public class LoginSubmitMessage extends ClientMessage {

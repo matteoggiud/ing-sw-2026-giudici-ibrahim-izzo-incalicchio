@@ -1,6 +1,6 @@
-package it.polimi.ingsw.client.network.socket.messages.game;
+package it.polimi.ingsw.common.network.socket_messages.client.game;
 
-import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
 import it.polimi.ingsw.common.network.socket_messages.server.ClientMessageVisitor;
 
 public class DrawCardMessage extends ClientMessage {

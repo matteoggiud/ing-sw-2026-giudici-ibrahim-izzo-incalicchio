@@ -1,6 +1,6 @@
 package it.polimi.ingsw.common.network.socket_messages.server;
 
-import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
+import it.polimi.ingsw.common.network.socket_messages.client.ServerMessageVisitor;
 
 import java.io.Serializable;
 

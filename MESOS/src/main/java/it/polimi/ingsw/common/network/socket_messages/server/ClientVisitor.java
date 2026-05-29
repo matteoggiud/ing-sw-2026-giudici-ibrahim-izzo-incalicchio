@@ -1,9 +1,9 @@
 package it.polimi.ingsw.common.network.socket_messages.server;
 
-import it.polimi.ingsw.client.network.socket.messages.game.*;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.*;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.game.*;
+import it.polimi.ingsw.common.network.socket_messages.client.menu.*;
+import it.polimi.ingsw.common.network.socket_messages.client.login.LoginSubmitMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.registration.RegisterSubmitMessage;
 import it.polimi.ingsw.server.network.CommandHandler;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.common.network.socket_messages.server;
 
-import it.polimi.ingsw.client.network.socket.messages.game.*;
-import it.polimi.ingsw.client.network.socket.messages.login.*;
-import it.polimi.ingsw.client.network.socket.messages.menu.*;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.game.*;
+import it.polimi.ingsw.common.network.socket_messages.client.menu.*;
+import it.polimi.ingsw.common.network.socket_messages.client.login.LoginSubmitMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.registration.RegisterSubmitMessage;
 
 public interface ClientMessageVisitor {
     void visit(LoginSubmitMessage message);

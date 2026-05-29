@@ -1,6 +1,6 @@
-package it.polimi.ingsw.client.network.socket.messages.menu;
+package it.polimi.ingsw.common.network.socket_messages.client.menu;
 
-import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
 import it.polimi.ingsw.common.network.socket_messages.server.ClientMessageVisitor;
 
 public class DisconnectMessage extends ClientMessage {
