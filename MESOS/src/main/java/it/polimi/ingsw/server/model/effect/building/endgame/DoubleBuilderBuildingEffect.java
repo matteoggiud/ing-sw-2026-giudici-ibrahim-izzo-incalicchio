@@ -27,6 +27,10 @@ public class DoubleBuilderBuildingEffect implements IBuildingEffect, IEndGameSco
                 .sum();
     }
 
+    /**
+     * Indicates that this effect is an endgame scoring effect by returning an Optional containing this instance.
+     * @return an Optional containing this instance, indicating that it is an endgame scoring effect
+     */
     @Override
     public Optional<IEndGameScoring> getEndGameScoring() {
         return Optional.of(this);
