@@ -29,10 +29,13 @@ public class Era1 extends Era{
     private final static int order = 1;
 
     /**
-     *
+     * The name of the era as a string.
      */
     private final static String name = "Era I";
 
+    /**
+     * Constructor for the Era1 class, which initializes the era with its specific properties and behavior.
+     */
     public Era1() {}
 
     @Override
