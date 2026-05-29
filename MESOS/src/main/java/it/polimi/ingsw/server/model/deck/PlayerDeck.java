@@ -191,6 +191,11 @@ public class PlayerDeck {
         return activeTriggers;
     }
 
+
+    /**
+     * This method retrieves a list of active endgame scorings from the player's building cards.
+     * @return a list of active endgame scorings from the player's building cards.
+     */
     public List<IEndGameScoring> getActiveEndGameBuildingScorings() {
         List<IEndGameScoring> endGameScorings = new ArrayList<>();
 
@@ -204,6 +209,10 @@ public class PlayerDeck {
         return endGameScorings;
     }
 
+    /**
+     * This method retrieves a list of active extra action effects from the player's building cards.
+     * @return a list of active extra action effects from the player's building cards.
+     */
     public List<IExtraActionEffect> getActiveExtractionEffects() {
         List<IExtraActionEffect> extraActionEffects = new ArrayList<>();
 
