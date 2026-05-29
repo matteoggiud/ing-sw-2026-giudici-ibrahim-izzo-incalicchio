@@ -33,22 +33,22 @@ public class ResolveActionsState implements IGameState {
      */
     @Override
     public void executePhase(Game game) {
-        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
         CompletableFuture.runAsync(() -> {
             GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
             new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
         });
 
         actionResolver.resolveAutomaticSkips(game);
-        notifyPlayerInfosUpdate(game);
 
         if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
             notifyBoardUpdate(game);
+            notifyPlayerInfosUpdate(game);
             nextState(game);
             return;
         }
 
         notifyBoardUpdate(game);
+        notifyPlayerInfosUpdate(game);
         notifyCurrentResolvingPlayer(game);
     }
 
@@ -74,8 +74,6 @@ public class ResolveActionsState implements IGameState {
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
-
-        notifyPlayerInfosUpdate(game);
 
         executePhase(game);
     }
