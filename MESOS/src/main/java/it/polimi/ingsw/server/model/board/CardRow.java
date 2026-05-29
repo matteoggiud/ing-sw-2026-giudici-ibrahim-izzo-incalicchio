@@ -73,20 +73,35 @@ public class CardRow {
         buildingRow.transferBuildingCardsFrom(other.getBuildingRow());
     }
 
-
+    /**
+     * Adds all the building cards from a building deck to the building row of this card row.
+     * @param buildingDeck the building deck from which to add the building cards to the building row
+     */
     public void addBuildingRowFrom(BuildingDeck buildingDeck) {
         buildingRow.add(buildingDeck);
     }
 
+    /**
+     * Transfers all the tribe cards from another card row to this card row.
+     *
+     * @param other the card row from which to transfer the tribe cards
+     */
     public void transferTribeRowFrom(CardRow other) {
         this.tribeRow.transferTribeCardsFrom(other.getTribeRow());
     }
 
+    /**
+     * Clears all the cards from this card row, including both the tribe row and the building row.
+     */
     public void clearRow() {
         tribeRow.clear();
         buildingRow.clear();
     }
 
+    /**
+     * Counts the total number of cards in this card row, including both the tribe row and the building row.
+     * @return the total number of cards in this card row
+     */
     public int countRow() {
         return tribeRow.count() + buildingRow.count();
     }
