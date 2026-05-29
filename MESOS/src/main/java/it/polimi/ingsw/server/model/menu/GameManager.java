@@ -57,9 +57,9 @@ public class GameManager {
     }
 
     /**
-     * Inserisce una partita già esistente (recuperata dal DB) nella mappa delle partite attive.
+     * Inserts an existing game (retrieved from the DB) into the active game map.
      *
-     * @param game la partita ricostruita
+     * @param game the reconstructed game
      */
     public void restoreGame(Game game) {
         if (game == null) {
@@ -90,6 +90,10 @@ public class GameManager {
     }
 
 
+    /**
+     * Returns a list of all available games that are not ended and are joinable.
+     * @return a list of available games
+     */
     public List<Game> getAvailableGames() {
         return activeGames.values().stream()
                 .filter(game -> !game.isEnded())
@@ -147,6 +151,10 @@ public class GameManager {
     }
 
 
+    /**
+     * Removes a game from the active games map by its unique identifier. Before removing the game, it clears all observers associated with the game to prevent memory leaks and ensure proper cleanup of resources.
+     * @param gameId the unique identifier of the game to be removed
+     */
     public void removeGame(int gameId) {
         getGame(gameId).getObserverManager().clearObservers();
         activeGames.remove(gameId);
