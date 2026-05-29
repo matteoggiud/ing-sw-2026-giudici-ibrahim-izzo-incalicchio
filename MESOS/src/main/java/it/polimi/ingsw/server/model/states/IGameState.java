@@ -82,18 +82,44 @@ public interface IGameState {
     }
 
 
+    /**
+     * Returns the final ranking of the players at the end of the game.
+     * @param game the current game context
+     * @return a map of players and their corresponding final scores, sorted by rank
+     */
     default Map<Player, Integer> getFinalRanking(Game game) {
         throw new IllegalStateException("You cannot get final ranking during this phase of the game.");
     }
 
+    /**
+     * Checks if the game is in a state where new players can join.
+     * @param game the current game context
+     * @return true if the game is joinable, false otherwise
+     */
     default boolean isJoinable(Game game) {
         return false;
     }
 
+
+    /**
+     *
+     * Starts the game by transitioning from the lobby state to the first phase of the game.
+     * @param game the current game context
+     */
     default void startGame(Game game) {
         throw new IllegalStateException("You cannot start this phase of the game.");
     }
+
+    /**
+     * Checks if the game has ended.
+     * @return true if the game has ended, false otherwise
+     */
     boolean isEnded();
 
+
+    /**
+     * Returns the name of the state for persistence purposes.
+     * @return the name of the persistence class for this game state
+     */
     String getPersistenceName();
 }
