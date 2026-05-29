@@ -190,38 +190,6 @@ public class GamePortal implements IGameModel {
         return gameManager.getGame(gameId);
     }
 
-    /**
-     * Starts an existing game.
-     * Only the host player can start the game, and the game must have enough players.
-     * Starting the game first moves it from LobbyState to SetupState, then executes
-     * the setup phase so the board, decks, turn order, and totems are initialized.
-     *
-     * @param gameId       the unique identifier of the game to start
-     * @param hostNickname the nickname of the player requesting the start
-     * @throws IllegalArgumentException if any argument is null
-     * @throws IllegalStateException    if the requester is not the host or there are not enough players
-     */
-    @Override
-    public void startGame(int gameId, String hostNickname) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be null.");
-        }
-        if (hostNickname == null) {
-            throw new IllegalArgumentException("Host nickname cannot be null.");
-        }
-
-        Game game = gameManager.getGame(gameId);
-
-        if (!game.getHostPlayer().getNickname().equals(hostNickname)) {
-            throw new IllegalStateException("Only the host can start the game.");
-        }
-
-        if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS) {
-            throw new IllegalStateException("Not enough players to start the game.");
-        }
-
-        game.getGameState().startGame(game);
-    }
 
 
     /**
@@ -428,58 +396,6 @@ public class GamePortal implements IGameModel {
         return game.getFinalRanking();
     }
 
-    /**
-     * Checks whether the specified player has a pending extra action in the given game.
-     *
-     * @param gameId   the unique identifier of the game
-     * @param nickname the nickname of the player to check
-     * @return true if the player has a pending extra action, false otherwise
-     * @throws IllegalArgumentException if any argument is null or invalid
-     * @throws IllegalStateException    if the player is not logged in
-     */
-    @Override
-    public boolean hasPendingExtraAction(int gameId, String nickname) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be null.");
-        }
-        if (nickname == null) {
-            throw new IllegalArgumentException("Nickname cannot be null.");
-        }
-
-        Game game = gameManager.getGame(gameId);
-
-        Player player = playerManager.getPlayer(nickname);
-        if (player == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
-
-        return game.getGameState().getExtraAction(player);
-    }
-
-    /**
-     * Retrieves the final ranking of a game using player nicknames as keys.
-     * This representation is more suitable for TUI and controller code.
-     *
-     * @param gameId the unique identifier of the game
-     * @return a map of player nicknames and their final scores sorted by ranking
-     * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
-     */
-    @Override
-    public Map<String, Integer> getFinalRankingByNickname(int gameId) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be null.");
-        }
-
-        Map<Player, Integer> ranking = getFinalRanking(gameId);
-        Map<String, Integer> rankingByNickname = new LinkedHashMap<>();
-
-        for (Map.Entry<Player, Integer> entry : ranking.entrySet()) {
-            rankingByNickname.put(entry.getKey().getNickname(), entry.getValue());
-        }
-
-        return rankingByNickname;
-    }
 
     /**
      * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
@@ -515,31 +431,6 @@ public class GamePortal implements IGameModel {
         }
 
         game.getObserverManager().removeObserver(virtualView);
-    }
-
-    /**
-     * Marks a player as disconnected in the specified game
-     *
-     * @param gameId   the unique identifier of the game in which the player is participating
-     * @param nickname the nickname of the player to be marked as disconnected
-     */
-    @Override
-    public void markPlayerDisconnected(int gameId, String nickname) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be negative.");
-        }
-        if (nickname == null || nickname.isBlank()) {
-            throw new IllegalArgumentException("Nickname cannot be null or blank.");
-        }
-
-        Game game = gameManager.getGame(gameId);
-
-        Player player = game.getPlayers().getPlayers().stream()
-                .filter(p -> p.getNickname().equals(nickname))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Player " + nickname + " is not in game " + gameId + "."));
-
-        player.disconnect();
     }
 
     /**
@@ -662,7 +553,7 @@ public class GamePortal implements IGameModel {
 
         game.getGameState().addPlayer(game, player);
 
-        // N.B: The exact shift will be automatically notified to ALL clients
-        // as soon as WaitingForReconnectState fires on nextState()!
+        // N.B: Il turno esatto verrà notificato automaticamente a TUTTI i client
+        // non appena WaitingForReconnectState scatta su nextState()!
     }
 }
