@@ -44,6 +44,10 @@ public class PpPerCharacterBuildingEffect implements IBuildingEffect, IEndGameSc
         return PPGained * player.getPlayerDeck().countCharactersByType(characterType);
     }
 
+    /**
+     * Indicates that this effect provides endgame scoring.
+     * @return an Optional containing this instance as an IEndGameScoring effect.
+     */
     @Override
     public Optional<IEndGameScoring> getEndGameScoring(){
         return Optional.of(this);
