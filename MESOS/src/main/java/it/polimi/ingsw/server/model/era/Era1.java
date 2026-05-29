@@ -11,10 +11,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Class representing the first era of the game,
+ * which implements the Era interface and defines the specific behavior and properties of Era I.
+ */
 public class Era1 extends Era{
 
+    /**
+     * A map that defines the building limits for each number of players in Era I,
+     *
+     */
     private final static Map<Integer, Integer> numPlayersBuildingLimit = StandardRuleSet.getEra1BuildingLimits();
+
+    /**
+     * The order of the era for sorting purposes, with Era I having the lowest order of 1.
+     */
     private final static int order = 1;
+
+    /**
+     *
+     */
     private final static String name = "Era I";
 
     public Era1() {}
