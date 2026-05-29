@@ -16,7 +16,6 @@ public class TribeDeck {
      * complexity of O(1), meanwhile the ArrayList O(n)
      */
     private final LinkedList<TribeCard> tribeDeck;
-    // TODO: use stack instead linked list
 
     /**
      * Constructor for the TribeDeck class, it initializes the tribe deck with an empty list of tribe cards.
@@ -48,9 +47,6 @@ public class TribeDeck {
         return this.tribeDeck.removeFirst();
     }
 
-    public void addTribesCards(List<TribeCard> cards) {
-        this.tribeDeck.addAll(cards);
-    }
 
     /**
      * Sets the tribe deck with a new list of tribe cards.
