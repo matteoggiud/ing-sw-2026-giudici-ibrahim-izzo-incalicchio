@@ -244,19 +244,45 @@ public class ActionResolver {
         }
     }
 
+    /**
+     * Checks if the player has pending card picks for the offer box.
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     * @return true if the player has pending card picks for the offer box, false otherwise
+     */
     private boolean hasPendingUpperPick(OfferBox box, ActionResolutionProgress progress) {
         return progress.upperCardsResolved < box.getUpperRowPicks();
     }
 
+    /**
+     * Checks if the player has pending card picks for the offer box.
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     * @return true if the player has pending card picks for the offer box, false otherwise
+     */
     private boolean hasPendingLowerPick(OfferBox box, ActionResolutionProgress progress) {
         return progress.lowerCardsResolved < box.getLowerRowPicks();
     }
 
+    /**
+     * Checks if the player has resolved all required card picks for the offer box based on their current progress and the box's pick limits.
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     * @return true if the player has resolved all required card picks for the offer box, false otherwise
+     */
     private boolean hasResolvedAllRequiredCards(OfferBox box, ActionResolutionProgress progress) {
         return progress.upperCardsResolved == box.getUpperRowPicks()
                 && progress.lowerCardsResolved == box.getLowerRowPicks();
     }
 
+    /**
+     * Checks if the player has any selectable cards in the offer rows for pending picks based on their current progress and the box's pick limits.
+     * @param board the current game board.
+     * @param player the player for whom to check for selectable cards.
+     * @param box the offer box being resolved.
+     * @param progress the player's current progress in resolving the action.
+     * @return true if the player has at least one selectable card in the appropriate row for any pending picks, false otherwise
+     */
     private boolean hasSelectableCardForPendingPick(Board board, Player player, OfferBox box, ActionResolutionProgress progress) {
         return hasPendingUpperPick(box, progress) && board.getUpperRow().hasSelectableCardFor(player)
                 || hasPendingLowerPick(box, progress) && board.getLowerRow().hasSelectableCardFor(player);
