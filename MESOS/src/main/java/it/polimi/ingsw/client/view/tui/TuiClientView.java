@@ -22,7 +22,7 @@ public class TuiClientView implements ClientView {
 
     @Override
     public void showError(String message) {
-        renderer.render();
+        renderer.renderError(message);
     }
 
     @Override

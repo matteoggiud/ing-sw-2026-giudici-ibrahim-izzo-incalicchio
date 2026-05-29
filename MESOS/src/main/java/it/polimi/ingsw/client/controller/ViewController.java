@@ -25,12 +25,15 @@ public class ViewController {
      * @throws RemoteException if a remote communication error occurs
      */
     public void onGameStarted(int gameId, List<String> playerNicknames) {
+        clientState.clearGameState();
+
         clientState.setFinalRanking(Map.of());
+        clientState.setHistoricalRankings(List.of());
         clientState.setActiveGameId(gameId);
         clientState.clearPlayersInfo();
         clientState.setCurrentPhase("STARTED");
         clientState.setStatusMessage("Game started.");
-        clientState.clearGameState();
+
         view.showGameStarted(gameId, playerNicknames);
     }
 

@@ -212,6 +212,7 @@ public class TuiClientApp {
 
     private void quit() {
         controller.disconnect();
+        clientState.disconnect();
     }
 
     private void printWelcome() {

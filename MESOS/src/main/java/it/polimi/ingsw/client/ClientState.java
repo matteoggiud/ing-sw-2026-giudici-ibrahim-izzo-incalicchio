@@ -117,6 +117,7 @@ public class ClientState {
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
+        this.statusMessage = null;
     }
 
     public String getResolvingEventName() {
@@ -200,5 +201,17 @@ public class ClientState {
         synchronized (resolvingQueue) {
             return resolvingQueue.pollFirst();
         }
+    }
+
+    public String consumeStatusMessage() {
+        String message = statusMessage;
+        statusMessage = null;
+        return message;
+    }
+
+    public String consumeErrorMessage() {
+        String message = errorMessage;
+        errorMessage = null;
+        return message;
     }
 }

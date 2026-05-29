@@ -19,6 +19,10 @@ public class PlayerInfosDTOMapper {
      * @return a PlayerInfoDTO containing the player's information
      */
     public static PlayerInfoDTO toPlayerInfoDTO(Player player) {
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
+
         PlayerDeck deck = player.getPlayerDeck();
         PlayerStatsDTO stats = new PlayerStatsDTO(
                 player.getPP(),
@@ -35,11 +39,14 @@ public class PlayerInfosDTOMapper {
                 deck.countCharactersByType(CharacterType.ARTIST),
                 deck.countCharactersByType(CharacterType.INVENTOR)
         );
+
+        String totem = player.getTotem() == null ? "" : player.getTotem().toString();
+
         return new PlayerInfoDTO(
                 player.getNickname(),
                 player.getFood(),
                 player.getPP(),
-                player.getTotem().toString(),
+                totem,
                 PlayerDeckDTOMapper.toPlayerDeckDTO(player),
                 stats
         );
