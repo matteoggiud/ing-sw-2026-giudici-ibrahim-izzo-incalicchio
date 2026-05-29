@@ -88,6 +88,11 @@ public class ActionResolver {
 
     }
 
+    /**
+     * Retrieves the action resolution progress for the given player, creating a new progress object if one does not already exist.
+     * @param player the player for whom to retrieve the action resolution progress
+     * @return the action resolution progress for the given player
+     */
     private ActionResolutionProgress getProgress(Player player) {
         ActionResolutionProgress progress = resolutionProgressByPlayer.get(player);
 
@@ -99,6 +104,11 @@ public class ActionResolver {
         return progress;
     }
 
+    /**
+     * Validates the arguments for resolving a regular action, ensuring that the game and player are not null and that it is the player's turn to resolve an action.
+     * @param game
+     * @param player
+     */
     private void validateArguments(Game game, Player player) {
         if (game == null || player == null) {
             throw new IllegalArgumentException("Game and player cannot be null.");
