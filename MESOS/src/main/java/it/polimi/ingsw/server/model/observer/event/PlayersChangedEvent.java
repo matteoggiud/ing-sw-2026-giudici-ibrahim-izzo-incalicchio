@@ -1,6 +1,5 @@
 package it.polimi.ingsw.server.model.observer.event;
 
-import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 
 import java.util.List;
