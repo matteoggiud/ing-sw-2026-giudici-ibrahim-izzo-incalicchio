@@ -537,6 +537,8 @@ public class GamePortal implements IGameModel {
 
             game.getGameState().addPlayer(game, player);
 
+            // N.B: The exact shift will be automatically notified to ALL clients
+            // as soon as WaitingForReconnectState fires on nextState()!
         });
     }
 }
