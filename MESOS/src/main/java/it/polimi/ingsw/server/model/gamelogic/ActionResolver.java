@@ -11,8 +11,13 @@ import it.polimi.ingsw.server.model.core.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ActionResolver {
 
+    /**
+     * A map that tracks the progress of action resolution for each player,
+     * allowing the resolver to manage multiple players resolving actions simultaneously.
+     */
     private final Map<Player, ActionResolutionProgress> resolutionProgressByPlayer = new HashMap<>();
 
     /**
@@ -45,7 +50,13 @@ public class ActionResolver {
         new EffectResolver(game).resolveTrigger(player);
     }
 
-
+    /**
+     * Resolves a regular action for a player, allowing them to pick cards from the offer rows according to the rules of the offer box they are in.
+     * @param game the current game context
+     * @param player the player resolving the action
+     * @param selectedCard the card selected by the player to resolve, which must be from the appropriate row based on the fromUpperRow parameter
+     * @param fromUpperRow true if the selected card is from the upper row, false if it's from the lower row
+     */
     public void resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         validateArguments(game, player); // checks for null and if it's the player's turn to resolve an action
 
