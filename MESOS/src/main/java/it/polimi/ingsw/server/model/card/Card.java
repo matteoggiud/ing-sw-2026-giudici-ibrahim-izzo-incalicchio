@@ -150,7 +150,7 @@ public abstract class Card {
     }
 
     /**
-     * Resolves the effects of this card when selected from the given card row by the specified player.
+     * Moves the card from the row to the player's deck
      * @param player the player who has selected this card
      * @param row the card row from which the player has selected this card
      */
