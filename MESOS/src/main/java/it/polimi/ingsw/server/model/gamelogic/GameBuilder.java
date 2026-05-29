@@ -149,7 +149,6 @@ public class GameBuilder {
             throw new IllegalArgumentException("allBuildings and game cannot be null");
         }
 
-        IGameRuleSet ruleSet = game.getRuleSet();
 
         // Filter buildings by player count.
         List<BuildingCard> validBuildings = new ArrayList<>(
@@ -283,7 +282,7 @@ public class GameBuilder {
      * Reconstructs a Game instance from a given GameSnapshotDTO and a DataDepository for retrieving card information.
      * @param snapshot the GameSnapshotDTO containing the saved state of the game to be reconstructed.
      * @param depository the DataDepository used to retrieve card information based on card IDs during the reconstruction process.
-     * @return
+     * @return a Game instance reconstructed from the provided snapshot and depository, representing the saved state of the game.
      */
     public static Game reconstructGame(GameSnapshotDTO snapshot, DataDepository depository) {
 
