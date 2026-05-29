@@ -121,6 +121,11 @@ public class ActionResolver {
         }
     }
 
+    /**
+     * Checks if the given offer box is a food-only box.
+     * @param box the offer box to check
+     * @return true if the box is a food-only box, false otherwise
+     */
     private boolean isFoodOnlyBox(OfferBox box) {
         return box.isFoodOnlyAction();
     }
