@@ -130,6 +130,13 @@ public class ActionResolver {
         return box.isFoodOnlyAction();
     }
 
+    /**
+     * Resolves an action for a food-only offer box.
+     * @param game the current game context
+     * @param player the player resolving the action, who will receive the food reward
+     * @param box the food-only offer box being resolved
+     * @param selectedCard the selected card.
+     */
     private void resolveFoodOnlyAction(Game game, Player player, OfferBox box, Card selectedCard) {
         if (selectedCard != null) {
             throw new IllegalArgumentException("This offer box gives only food and does not allow card picks.");
