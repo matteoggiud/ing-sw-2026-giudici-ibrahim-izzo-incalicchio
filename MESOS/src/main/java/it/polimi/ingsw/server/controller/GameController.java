@@ -152,24 +152,6 @@ public class GameController {
     }
 
     /**
-     * Allows a player to log out of the game, ending their session and disconnecting them from the server
-     *
-     * @param clientSession the client session of the player
-     */
-    public void logout(ClientSession clientSession) {
-        if (!clientSession.isLoggedIn()) {
-            throw new IllegalStateException("Player must be logged in to logout.");
-        }
-        if (clientSession.isInGame()) {
-            throw new IllegalStateException("Player is currently in a game and cannot logout.");
-        }
-
-        // Unregister the client session from the session registry to ensure proper cleanup and prevent memory leaks
-        SessionRegistry.getInstance().unregisterSession(clientSession);
-        model.logout(clientSession.getNickname());
-    }
-
-    /**
      * Allows a player to create a new game with a specified expected player count, which they will host
      *
      * @param clientSession       the client session of the player
@@ -273,33 +255,6 @@ public class GameController {
         return playersInterested;
     }
 
-    /**
-     * Refreshes the active game ID for a client session by comparing the current active game ID in the session with the actual active game ID from the model.
-     *
-     * @param clientSession the client session for which to refresh the active game ID
-     */
-    private void refreshActiveGameIdFromModel(ClientSession clientSession) {
-        if (!clientSession.isLoggedIn()) {
-            return;
-        }
-
-        Integer actualActiveGameId = model.getActiveGameIdForPlayer(clientSession.getNickname());
-        Integer sessionActiveGameId = clientSession.getActiveGameId();
-
-        if (actualActiveGameId == null) {
-            if (sessionActiveGameId != null) {
-                clientSession.clearActiveGameId();
-            }
-            return;
-        }
-
-        if (!actualActiveGameId.equals(sessionActiveGameId)) {
-            if (sessionActiveGameId != null) {
-                clientSession.clearActiveGameId();
-            }
-            clientSession.setActiveGameId(actualActiveGameId);
-        }
-    }
 
     /**
      * Checks for an existing client session associated with the given nickname and disconnects it if it is found to be stale
