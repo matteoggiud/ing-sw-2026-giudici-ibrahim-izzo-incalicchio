@@ -344,10 +344,7 @@ public class GameController {
         List<ClientSession> playersToNotify = handleDisconnect(clientSession);
 
         if (nickname != null) {
-            notifyGameClosed(
-                    playersToNotify,
-                    nickname + " has disconnected, the game is ended"
-            );
+            notifyGameClosed(playersToNotify,nickname + " has disconnected, the game is ended");
         }
     }
 
