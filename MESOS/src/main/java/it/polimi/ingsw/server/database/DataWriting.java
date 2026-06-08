@@ -13,6 +13,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
+/**
+ * The DataWriting class is responsible for handling all database write operations related to the game management.
+ * It provides methods to create new games, allow players to join existing games, update game snapshots
+ * for recovery purposes, and update game rankings at the end of a game.
+ *
+ */
 public class DataWriting {
 
     /**
