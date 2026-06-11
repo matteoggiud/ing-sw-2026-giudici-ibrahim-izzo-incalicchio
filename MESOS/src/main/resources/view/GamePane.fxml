@@ -25,7 +25,7 @@
                smooth="true"
                preserveRatio="false">
         <image>
-            <Image url="@../assets/backgrounds/gameBg.PNG"/>
+            <Image url="@../assets/backgrounds/gameBg.png"/>
         </image>
     </ImageView>
 
