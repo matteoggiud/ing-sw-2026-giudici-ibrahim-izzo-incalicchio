@@ -19,7 +19,22 @@ public class MusicManager {
             return;
         }
 
-        Media media = new Media(resource.toExternalForm());
+        String mediaUri;
+        if (resource.toExternalForm().startsWith("jar:")) {
+            try (java.io.InputStream is = MusicManager.class.getResourceAsStream("/assets/music/tribal.mp3")) {
+                java.nio.file.Path tempAudio = java.nio.file.Files.createTempFile("mesos_music", ".mp3");
+                tempAudio.toFile().deleteOnExit();
+                java.nio.file.Files.copy(is, tempAudio, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                mediaUri = tempAudio.toUri().toString();
+            } catch (Exception e) {
+                System.err.println("Failed to extract music from JAR: " + e.getMessage());
+                return;
+            }
+        } else {
+            mediaUri = resource.toExternalForm();
+        }
+
+        Media media = new Media(mediaUri);
         backgroundPlayer = new MediaPlayer(media);
         backgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         backgroundPlayer.setVolume(0.3);
