@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ *  This class represents the collection of players in a game lobby. It manages the players, their order, and provides methods to add, remove, and retrieve players.
+ */
 public class Players {
     private final List<Player> players;
 

@@ -31,7 +31,7 @@ public class ClientSession {
     private boolean isRequestedDisconnection;
 
     /**
-     *
+     * Lock to ensure thread-safe access to the client's session data (nickname, active game ID, and disconnection status).
      */
     private final Lock sessionLock = new ReentrantLock();
     /**
