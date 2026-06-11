@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.client.network.InetAddressLookup;
+import it.polimi.ingsw.common.network.InetAddressLookup;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;

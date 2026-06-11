@@ -1,4 +1,4 @@
-package it.polimi.ingsw.client.network;
+package it.polimi.ingsw.common.network;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
