@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Enumeration representing the three eras in the game: Era I, Era II, and Era III.
+ * This abstract class represents an era in the game, which is a distinct period of time that has its own unique characteristics and gameplay mechanics.
  */
 public abstract class Era {
     /**
