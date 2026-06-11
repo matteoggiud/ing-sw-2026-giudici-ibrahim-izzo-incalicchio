@@ -1,32 +1,32 @@
-# Progetto Ingegneria del Software - MESOS
+# Software Engineering Project - MESOS
 
-## Componenti del gruppo
+## Team Members
 
 * Matteo Giudici
 * Pula Ibrahim
 * Andrea Izzo
 * Francesco Incalicchio
 
-## Funzionalità implementate
+## Implemented Features
 
-* **Regole:** regole complete del gioco.
-* **Interfacce:** TUI e GUI.
-* **Connessione:** Socket e RMI.
-* **Partite multiple:** gestione di più partite in parallelo tramite lobby.
-* **Persistenza:** salvataggio e ripristino delle partite tramite database PostgreSQL.
-* **Rankings:** classifiche dei giocatori.
+* **Rules:** complete game rules.
+* **Interfaces:** TUI and GUI.
+* **Connection:** Socket and RMI.
+* **Multiple games:** parallel game management through lobbies.
+* **Persistence:** game saving and restoration through a PostgreSQL database.
+* **Rankings:** player leaderboards.
 
-## Requisiti
+## Requirements
 
-Per eseguire il progetto dai JAR sono necessari:
+To run the project from the JAR files, the following are required:
 
-* **Java 25** o superiore.
-* **PostgreSQL** avviato sulla macchina del server.
-* Credenziali PostgreSQL valide configurate in `server.properties`; non è necessario creare manualmente il database, perché il server lo crea e lo inizializza automaticamente all'avvio se assente.
+* **Java 25** or later.
+* **PostgreSQL** running on the server machine.
+* Valid PostgreSQL credentials configured in `server.properties`; the database does not need to be created manually, because the server creates and initializes it automatically at startup if it is missing.
 
-## Struttura dei JAR
+## JAR Structure
 
-I JAR finali si trovano in:
+The final JAR files are located in:
 
 ```text
 deliverables/final/jar/
@@ -39,121 +39,120 @@ deliverables/final/jar/
     └── server.properties
 ```
 
-`Client-mac-aarch64.jar` è il client per Mac Apple Silicon, quindi Mac M1/M2/M3.
+`Client-mac-aarch64.jar` is the client for Apple Silicon Macs, such as M1/M2/M3 Macs.
 
-`Client-win.jar` è il client per Windows.
+`Client-win.jar` is the client for Windows.
 
-`Server.jar` è il server da usare, adatto per entrambe le piattaforme.
+`Server.jar` is the server JAR, suitable for both client platforms.
 
-## Configurazione
+## Configuration
 
-Server e client hanno già una configurazione di default inclusa nei rispettivi JAR.
+The server and client already include a default configuration inside their respective JAR files.
 
-All'avvio, il programma carica prima le proprietà interne al JAR e poi cerca un file esterno nella cartella da cui viene eseguito il comando `java -jar`:
+At startup, the program first loads the internal properties from the JAR, then looks for an external file in the directory from which the `java -jar` command is executed:
 
-* `server.properties` per il server;
-* `client.properties` per il client.
+* `server.properties` for the server;
+* `client.properties` for the client.
 
-Se il file esterno esiste, le proprietà definite al suo interno sovrascrivono quelle di default.
+If the external file exists, the properties defined in it override the default ones.
 
-I file `.properties` forniti nei deliverables possono essere modificati direttamente per personalizzare l'esecuzione.
+The `.properties` files provided in the deliverables can be edited directly to customize the execution.
 
-### Configurazione del server
+### Server Configuration
 
-| Proprietà | Default                                  | Descrizione |
-| --- |------------------------------------------| --- |
-| `server.fast_start` | `true`                                   | Se `true`, il server usa la configurazione senza chiedere input da terminale. |
-| `server.reload_games_on_start` | `true`                                   | Se `true`, il server ripristina automaticamente le partite salvate e ancora in corso. |
-| `server.port.socket` | `12345`                                  | Porta usata per la connessione Socket. |
-| `server.port.rmi` | `1234`                                   | Porta usata per il registro RMI. |
-| `server.rmi.name` | `MESOS_RMI`                              | Nome con cui il servizio RMI viene registrato. |
-| `db.url` | `jdbc:postgresql://localhost:5432/mesos` | URL del database usato dal server. |
-| `db.user` | `postgres`                               | Utente PostgreSQL. |
-| `db.password` | `postgres`                               | Password dell'utente PostgreSQL. |
-
-All'avvio il server crea il database se assente, inizializza lo schema e inserisce i dati iniziali. L'utente PostgreSQL configurato deve quindi poter accedere a PostgreSQL e creare/usare il database indicato.
-
-### Configurazione del client
-
-| Proprietà | Default | Descrizione |
+| Property | Default | Description |
 | --- | --- | --- |
-| `client.fast_start` | `true` | Se `true`, il client usa la configurazione senza chiedere input da terminale. |
-| `server.host` | `localhost` | Indirizzo IP o hostname del server. Usare `localhost` solo se client e server sono sulla stessa macchina. |
-| `connection.protocol` | `SOCKET` | Protocollo di connessione: `SOCKET` oppure `RMI`. |
-| `client.ui` | `GUI` | Interfaccia da avviare: `GUI` oppure `TUI`. |
+| `server.fast_start` | `true` | If `true`, the server uses the configuration without asking for terminal input. |
+| `server.reload_games_on_start` | `true` | If `true`, the server automatically restores saved games that are still in progress. |
+| `server.port.socket` | `12345` | Port used for Socket connections. |
+| `server.port.rmi` | `1234` | Port used for the RMI registry. |
+| `server.rmi.name` | `MESOS_RMI` | Name used to register the RMI service. |
+| `db.url` | `jdbc:postgresql://localhost:5432/mesos` | URL of the database used by the server. |
+| `db.user` | `postgres` | PostgreSQL user. |
+| `db.password` | `postgres` | PostgreSQL user password. |
 
-Per scegliere manualmente interfaccia, protocollo e indirizzo server all'avvio, impostare `client.fast_start=false`.
+At startup, the server creates the database if it is missing, initializes the schema, and inserts the initial data. The configured PostgreSQL user must therefore be able to access PostgreSQL and create/use the configured database.
 
-## Avvio da JAR
+### Client Configuration
 
-### 1. Configurare PostgreSQL
+| Property | Default | Description |
+| --- | --- | --- |
+| `client.fast_start` | `true` | If `true`, the client uses the configuration without asking for terminal input. |
+| `server.host` | `localhost` | Server IP address or hostname. Use `localhost` only if the client and server run on the same machine. |
+| `connection.protocol` | `SOCKET` | Connection protocol: `SOCKET` or `RMI`. |
+| `client.ui` | `GUI` | Interface to start: `GUI` or `TUI`. |
 
-Prima di avviare il server, assicurarsi che PostgreSQL sia in esecuzione e che le credenziali in `server.properties` siano corrette.
+To manually choose the interface, protocol, and server address at startup, set `client.fast_start=false`.
 
-Con la configurazione di default il server prova a usare:
+## Running From JAR
+
+### 1. Configure PostgreSQL
+
+Before starting the server, make sure PostgreSQL is running and that the credentials in `server.properties` are correct.
+
+With the default configuration, the server tries to use:
 
 ```text
 jdbc:postgresql://localhost:5432/mesos
-utente: postgres
+user: postgres
 password: postgres
 ```
 
-### 2. Avviare il server
+### 2. Start the Server
 
-Aprire un terminale nella cartella del server:
+Open a terminal in the server directory:
 
 ```bash
 cd deliverables/final/jar/server
 java -jar Server.jar
 ```
 
-Il server avvia sia Socket sia RMI. Di default:
+The server starts both Socket and RMI. By default:
 
 ```text
-Socket: porta 12345
-RMI: porta 1234, nome MESOS_RMI
+Socket: port 12345
+RMI: port 1234, name MESOS_RMI
 ```
 
-Se si vuole forzare l'indirizzo IP usato dal server per RMI, è possibile passarlo come primo argomento:
+To force the IP address used by the server for RMI, pass it as the first argument:
 
 ```bash
 java -jar Server.jar <server-ip>
 ```
 
-### 3. Avviare il client su Mac Apple Silicon
+### 3. Start the Client on Apple Silicon Macs
 
-Aprire un nuovo terminale nella cartella del client:
+Open a new terminal in the client directory:
 
 ```bash
 cd deliverables/final/jar/client
 java -jar Client-mac-aarch64.jar
 ```
 
-### 4. Avviare il client su Windows
+### 4. Start the Client on Windows
 
-Aprire un nuovo terminale nella cartella del client:
+Open a new terminal in the client directory:
 
 ```bash
 cd deliverables/final/jar/client
 java -jar Client-win.jar
 ```
 
-### 5. Avviare più client
+### 5. Start Multiple Clients
 
-Per giocare in più persone, avviare un client per ogni giocatore, ciascuno in un terminale separato o su macchine diverse.
+To play with multiple players, start one client for each player, either in separate terminals or on different machines.
 
-Tutti i client devono puntare allo stesso server tramite `server.host`.
+All clients must point to the same server through `server.host`.
 
+## Building the JAR Files
 
-## Build dei JAR
-
-Per rigenerare tutti i JAR da sorgente, eseguire dalla root del progetto:
+To regenerate all JAR files from source, run the following command from the project root:
 
 ```bash
 mvn clean package
 ```
 
-Il comando genera:
+The command generates:
 
 ```text
 target/Server.jar
@@ -161,41 +160,41 @@ target/Client-mac-aarch64.jar
 target/Client-win.jar
 ```
 
-## Problemi comuni
+## Common Issues
 
 ### UnsupportedClassVersionError
 
-Il progetto è compilato con Java 25. Se compare un errore simile a `UnsupportedClassVersionError`, verificare la versione di Java:
+The project is compiled with Java 25. If an error similar to `UnsupportedClassVersionError` appears, check the Java version:
 
 ```bash
 java -version
 ```
 
-### Il client non si connette al server
+### The Client Does Not Connect to the Server
 
-Controllare che:
+Check that:
 
-* il server sia avviato;
-* `server.host` in `client.properties` punti all'IP corretto;
-* il protocollo scelto in `connection.protocol` sia `SOCKET` oppure `RMI`;
-* le porte del server non siano bloccate da firewall o già occupate.
+* the server is running;
+* `server.host` in `client.properties` points to the correct IP address;
+* the selected protocol in `connection.protocol` is either `SOCKET` or `RMI`;
+* the server ports are not blocked by a firewall or already in use.
 
-### Il server non parte per errori PostgreSQL
+### The Server Does Not Start Due to PostgreSQL Errors
 
-Controllare che:
+Check that:
 
-* PostgreSQL sia avviato;
-* `db.url`, `db.user` e `db.password` siano corretti;
-* l'utente PostgreSQL abbia i permessi necessari per creare e usare il database `mesos`.
+* PostgreSQL is running;
+* `db.url`, `db.user`, and `db.password` are correct;
+* the PostgreSQL user has the permissions required to create and use the `mesos` database.
 
-### Il client grafico non parte
+### The Graphical Client Does Not Start
 
-Usare il JAR corretto per la piattaforma:
+Use the correct JAR file for the platform:
 
-* Mac Apple Silicon: `Client-mac-aarch64.jar`.
+* Apple Silicon Mac: `Client-mac-aarch64.jar`.
 * Windows: `Client-win.jar`.
 
-In caso di problemi con la GUI è comunque possibile usare la TUI impostando:
+In case of GUI issues, the TUI can still be used by setting:
 
 ```properties
 client.ui=TUI
