@@ -57,7 +57,7 @@ public class ActionResolver {
      * @param selectedCard the card selected by the player to resolve, which must be from the appropriate row based on the fromUpperRow parameter
      * @param fromUpperRow true if the selected card is from the upper row, false if it's from the lower row
      */
-    public void resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+    public boolean resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         validateArguments(game, player); // checks for null and if it's the player's turn to resolve an action
 
         Board board = game.getBoard();
@@ -66,7 +66,7 @@ public class ActionResolver {
 
         if (isFoodOnlyBox(box)) {
             resolveFoodOnlyAction(game, player, box, selectedCard);
-            return;
+            return true;
         }
 
         ActionResolutionProgress progress = getProgress(player);
@@ -84,7 +84,7 @@ public class ActionResolver {
 
         markCardPickResolved(progress, fromUpperRow);
 
-        completeActionIfNeeded(game, player, box, progress);
+        return completeActionIfNeeded(game, player, box, progress);
 
     }
 
@@ -170,12 +170,13 @@ public class ActionResolver {
      * @param box the offer box being resolved
      * @param progress the player's current progress in resolving the action
      */
-    private void completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
+    private boolean completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
         if (!hasResolvedAllRequiredCards(box, progress)) {
-            return;
+            return false;
         }
         resolutionProgressByPlayer.remove(player);
         completeAction(game, player, box);
+        return true;
     }
 
 

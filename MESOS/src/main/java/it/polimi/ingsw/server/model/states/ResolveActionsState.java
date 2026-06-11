@@ -33,11 +33,6 @@ public class ResolveActionsState implements IGameState {
      */
     @Override
     public void executePhase(Game game) {
-        CompletableFuture.runAsync(() -> {
-            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
-            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
-        });
-
         actionResolver.resolveAutomaticSkips(game);
 
         if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
@@ -73,8 +68,14 @@ public class ResolveActionsState implements IGameState {
      */
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
+        boolean actionCompleted = actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
 
+        if (actionCompleted) {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            CompletableFuture.runAsync(() ->
+                    new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO)
+            );
+        }
         executePhase(game);
     }
 
@@ -101,6 +102,7 @@ public class ResolveActionsState implements IGameState {
 
     /**
      * Notifies observers about the updated player information, such as resources and decks.
+     *
      * @param game the current game context
      */
     private void notifyPlayerInfosUpdate(Game game) {
@@ -109,6 +111,7 @@ public class ResolveActionsState implements IGameState {
 
     /**
      * Checks if the game has ended. In this state, the game cannot end, so it always returns false.
+     *
      * @return false, as the game cannot end in this state
      */
     @Override
@@ -118,6 +121,7 @@ public class ResolveActionsState implements IGameState {
 
     /**
      * Returns the name of the persistence class associated with this game state for database storage purposes.
+     *
      * @return the name of the persistence class for this game state
      */
     @Override

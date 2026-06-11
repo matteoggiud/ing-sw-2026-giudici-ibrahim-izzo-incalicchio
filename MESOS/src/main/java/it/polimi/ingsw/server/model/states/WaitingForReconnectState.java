@@ -18,6 +18,7 @@ public class WaitingForReconnectState implements IGameState {
     private final ArrayList<String> pendingPlayers;
     private final IGameState originalStateInstance;
     private Timer timeoutTimer;
+    private boolean resumed = false;
 
     // Timeout of 5 minutes
     private static final long TIMEOUT_MS = 1 * 90 * 1000;
@@ -51,6 +52,12 @@ public class WaitingForReconnectState implements IGameState {
         timeoutTimer.schedule(new TimerTask() {
             @Override
             public void run() {
+                game.locked(() -> {
+                    // If the timer expires but the game has already resumed, do nothing
+                    if (resumed) {
+                        return;
+                    }
+
                 System.out.println("Time out is over for " + game.getGameId() + ". Closing game.");
 
                 new DataWriting().updateGameInProgress(game.getGameId(), false);
@@ -58,6 +65,7 @@ public class WaitingForReconnectState implements IGameState {
                 Map<String, Integer> timeoutRanking = new HashMap<>();
                 game.getObserverManager().notifyObservers(new GameEndedEvent(game.getGameId(), timeoutRanking, 0, null));
                 GameManager.getInstance().removeGame(game.getGameId());
+                });
             }
         }, TIMEOUT_MS);
     }
@@ -109,6 +117,7 @@ public class WaitingForReconnectState implements IGameState {
      */
     @Override
     public void nextState(Game game) {
+        this.resumed = true;
         game.setGameState(originalStateInstance);
         originalStateInstance.executePhase(game);
     }

@@ -53,8 +53,8 @@ public class ExtraActionState implements IGameState {
         }
 
         // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
         CompletableFuture.runAsync(() -> {
-            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
             new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
         });
 
@@ -182,6 +182,7 @@ public class ExtraActionState implements IGameState {
 
     /**
      * Indicates whether the game has ended. In this state, the game is not considered ended until the next state is reached.
+     *
      * @return false, as the game is not yet ended in this state
      */
     @Override
@@ -191,6 +192,7 @@ public class ExtraActionState implements IGameState {
 
     /**
      * Returns the name of the persistence class associated with this game state for database storage purposes.
+     *
      * @return the name of the persistence class for this game state
      */
     @Override
