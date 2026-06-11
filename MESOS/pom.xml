@@ -97,7 +97,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>25</source> <target>25</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -113,11 +114,33 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>Server</finalName> <transformers>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>it.polimi.ingsw.server.ServerMain</mainClass>
-                            </transformer>
-                        </transformers>
+                            <finalName>Server</finalName>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.openjfx:*</exclude>
+                                    <exclude>org.controlsfx:controlsfx</exclude>
+                                </excludes>
+                            </artifactSet>
+
+                            <filters>
+                                <filter>
+                                    <artifact>it.polimi.ingsw:PSP12</artifact>
+                                    <excludes>
+                                        <exclude>it/polimi/ingsw/client/**</exclude>
+                                        <exclude>assets/**</exclude>
+                                        <exclude>view/**</exclude>
+                                        <exclude>styles/**</exclude>
+                                        <exclude>client.properties</exclude>
+                                        <exclude>utils/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>it.polimi.ingsw.server.ServerMain</mainClass>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
 
@@ -128,11 +151,34 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <finalName>Client</finalName> <transformers>
-                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                <mainClass>it.polimi.ingsw.client.ClientMain</mainClass>
-                            </transformer>
-                        </transformers>
+                            <finalName>Client</finalName>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.postgresql:postgresql</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-databind</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-core</exclude>
+                                    <exclude>com.fasterxml.jackson.core:jackson-annotations</exclude>
+                                </excludes>
+                            </artifactSet>
+
+                            <filters>
+                                <filter>
+                                    <artifact>it.polimi.ingsw:PSP12</artifact>
+                                    <excludes>
+                                        <exclude>it/polimi/ingsw/server/**</exclude>
+                                        <exclude>db/**</exclude>
+                                        <exclude>server.properties</exclude>
+                                        <exclude>assets.zip</exclude>
+                                        <exclude>utils/**</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>it.polimi.ingsw.client.ClientMain</mainClass>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
