@@ -1,8 +1,16 @@
 package it.polimi.ingsw.client.view.tui;
 
+import it.polimi.ingsw.client.GenericVirtualServer;
 import it.polimi.ingsw.client.controller.ClientController;
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.controller.ViewController;
+import it.polimi.ingsw.client.network.NetworkBuilder;
+import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.client.network.NetworkConnectionStrategy;
+import it.polimi.ingsw.client.network.RmiConnectionStrategy;
+import it.polimi.ingsw.client.network.SocketConnectionStrategy;
 import it.polimi.ingsw.client.view.Credentials;
+import it.polimi.ingsw.client.view.gui.GuiContext;
+import javafx.scene.control.Label;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,20 +25,45 @@ import java.util.function.Consumer;
  * The commands are registered in a map, allowing for easy addition of new commands in the future.
  */
 public class TuiClientApp {
-    private final ClientController controller;
+    private ClientController controller;
     private final Scanner scanner;
     private final Map<String, CommandDefinition> commands;
-    private final ClientState sessionState;
-    private final TuiClientView view;
+    private ClientState clientState;
+    private TuiClientView view;
 
-    public TuiClientApp(ClientController controller, ClientState sessionState, Scanner scanner, TuiClientView view) {
-        this.controller = controller;
-        this.view = view;
-        this.scanner = scanner;
+    public TuiClientApp(Scanner scanner) {
         this.commands = new LinkedHashMap<>();
-        this.sessionState = sessionState;
+        this.scanner = scanner;
 
         registerCommands();
+    }
+
+    public void start(String[] args) {
+        String protocol = args.length > 0 ? args[0] : "SOCKET";
+        String host = args.length > 1 ? args[1] : "localhost";
+
+        this.clientState = new ClientState();
+        this.view = new TuiClientView(clientState);
+
+        ViewController viewController = new ViewController(clientState, view);
+
+        NetworkConnectionStrategy connectionStrategy = "RMI".equals(protocol) ? new RmiConnectionStrategy() : new SocketConnectionStrategy();
+        try {
+            // Connect to server and get virtual server proxy
+            GenericVirtualServer network = connectionStrategy.connect(host, viewController, clientState, view);
+
+            // Initialize client controller with network connection and the view
+            this.controller = new ClientController(network);
+            clientState.connect();
+            clientState.setStatusMessage("Login required!");
+            view.showAuthenticator("Login required!");
+        } catch (Exception e) {
+            System.out.println("Failed to connect to server: " + e.getMessage());
+            view.showError("Failed to connect to server: " + e.getMessage());
+        }
+
+
+        this.run();
     }
 
     /**
@@ -39,7 +72,7 @@ public class TuiClientApp {
     public void run() {
         printWelcome();
 
-        while (sessionState.isConnected()) {
+        while (clientState.isConnected()) {
             System.out.print("\nmesos> ");
             String line = scanner.nextLine().trim();
 
@@ -68,7 +101,7 @@ public class TuiClientApp {
      * Registers the available commands for the TUI client application.
      */
     private void registerCommands() {
-        put("help", "help", "Show this help menu", args -> printHelp());
+        put("help", "help", "Show this help menu", this::printHelp);
 
         put("login", "login <nickname> <password>", "Login with username and password", this::handleLogin);
         put("register", "register <nickname> <password>", "Create a new account", this::handleRegistration);
@@ -76,7 +109,7 @@ public class TuiClientApp {
         put("games", "games", "Show available games", args -> controller.getAvailableGames());
         put("create", "create <expectedNumOfPlayers>", "Create a new game", this::handleCreateGame);
         put("join", "join <gameId>", "Join an existing game", this::handleJoin);
-        put("left", "left", "Left the actual game in lobby", args -> controller.leftGame()); // to create
+        put("left", "left", "Leave the current lobby or game", args -> handleLeave());
 
         put("quit", "quit", "Exit the client", args -> quit());
         put("place", "place <position>", "Place your totem on an offer box position", this::handlePlaceTotem);
@@ -179,6 +212,7 @@ public class TuiClientApp {
 
     private void quit() {
         controller.disconnect();
+        clientState.disconnect();
     }
 
     private void printWelcome() {
@@ -186,11 +220,15 @@ public class TuiClientApp {
         //System.out.println(commands.get("help").usage);
     }
 
-    private void printHelp() {
+    private void printHelp(String[] parts) {
         System.out.println("Commands:");
         for (CommandDefinition cmd : commands.values()) {
             System.out.printf("  %-16s %s%n", cmd.usage(), cmd.description());
         }
+    }
+
+    public void setController(ClientController clientController) {
+        this.controller = clientController;
     }
 
     private record CommandDefinition(
@@ -280,6 +318,19 @@ public class TuiClientApp {
         }
 
         System.out.println(commands.get("deck").usage);
+    }
+
+    private void handleLeave() {
+        if (clientState.getActiveGameId() == null) {
+            System.out.println("You are not in a game.");
+            return;
+        }
+
+        if ("LOBBY".equals(clientState.getCurrentPhase())) {
+            controller.leftLobby();
+        } else {
+            controller.leftGame();
+        }
     }
 
 

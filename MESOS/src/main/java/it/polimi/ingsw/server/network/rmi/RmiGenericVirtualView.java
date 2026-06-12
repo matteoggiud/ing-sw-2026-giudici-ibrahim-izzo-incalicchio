@@ -1,6 +1,7 @@
 package it.polimi.ingsw.server.network.rmi;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
+import it.polimi.ingsw.common.network.rmi.server.RemoteClientView;
 import it.polimi.ingsw.server.network.GenericVirtualView;
 
 import java.rmi.RemoteException;
@@ -116,7 +117,11 @@ public class RmiGenericVirtualView implements GenericVirtualView {
      */
     @Override
     public void onRegisterSuccess(String nickname, String message) {
-
+        try {
+            clientView.onRegisterSuccess(nickname, message);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -384,5 +389,13 @@ public class RmiGenericVirtualView implements GenericVirtualView {
         }
     }
 
+    @Override
+    public boolean isReachable() {
+        try {
+            return clientView.isAlive();
+        } catch (RemoteException e) {
+            return false;
+        }
+    }
 
 }

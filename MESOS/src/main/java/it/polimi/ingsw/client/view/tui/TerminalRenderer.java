@@ -1,7 +1,7 @@
 package it.polimi.ingsw.client.view.tui;
 
-import it.polimi.ingsw.client.network.socket.ClientState;
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -72,12 +72,13 @@ public class TerminalRenderer {
     }
 
     private void printMessages() {
-        if (state.getErrorMessage() != null && !state.getErrorMessage().isBlank()) {
-            System.out.println("[ERROR] " + state.getErrorMessage());
-        }
+        String errorMessage = state.consumeErrorMessage();
+        String statusMessage = state.consumeStatusMessage();
 
-        if (state.getStatusMessage() != null && !state.getStatusMessage().isBlank()) {
-            System.out.println(state.getStatusMessage());
+        if (errorMessage != null && !errorMessage.isBlank()) {
+            System.out.println("[ERROR] " + errorMessage);
+        } else if (statusMessage != null && !statusMessage.isBlank()) {
+            System.out.println(statusMessage);
         }
 
         if (state.getResolvingEventName() != null && !state.getResolvingEventName().isBlank()) {
@@ -375,19 +376,17 @@ public class TerminalRenderer {
     private void printHistoricalRankings(List<LeadBoardDTO> rankings) {
         printSection("Historical leaderboard");
 
-        System.out.printf("%-4s %-18s %-8s %-20s%n", "Pos", "Player", "Score", "Finished at");
-        printLine(56);
+        System.out.printf("%-4s %-18s %-8s%n", "Pos", "Player", "Score");
+        printLine(36);
 
         for (LeadBoardDTO dto : rankings) {
             String nickname = dto.nickname() == null ? "-" : dto.nickname();
-            String finishedAt = dto.finished_at() == null ? "-" : dto.finished_at();
 
             System.out.printf(
-                    "%-4d %-18s %-8d %-20s%n",
+                    "%-4d %-18s %-8d%n",
                     dto.position(),
                     nickname,
-                    dto.finalScore(),
-                    finishedAt
+                    dto.finalScore()
             );
         }
     }
@@ -488,5 +487,14 @@ public class TerminalRenderer {
 
     private void printLine(int length) {
         System.out.println("-".repeat(length));
+    }
+    public void renderError(String message) {
+        clearTerminal();
+
+        if (message != null && !message.isBlank()) {
+            System.out.println("[ERROR] " + message);
+        }
+
+        printPromptHelp();
     }
 }

@@ -1,16 +1,24 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.core.Game;
-import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.GameBuilder;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 
+import java.util.concurrent.CompletableFuture;
 
+/**
+ * The SetupState class represents the initial state of the game where the board, decks, turn order, and initial resources are prepared.
+ */
 public class SetupState implements IGameState {
 
+    /**
+     * Transitions the game to the PlacingTotemState after the setup phase is complete.
+     * @param game the current game context
+     */
     @Override
     public void nextState(Game game) {
         game.setGameState(new PlacingTotemState());
@@ -32,6 +40,10 @@ public class SetupState implements IGameState {
         // Prepare the board, decks, turn order and initial resources.
         builder.prepareGame();
 
+        // Update the database to set the game as in progress in a thread
+        CompletableFuture.runAsync(() -> new DataWriting().updateGameInProgress(game.getGameId(), true));
+
+
         // Notify observers about the board initialized
         notifyAll(game);
 
@@ -52,9 +64,21 @@ public class SetupState implements IGameState {
         game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 
+    /**
+     * Indicates whether the game has ended. In the setup state, the game is not ended, so this method always returns false.
+     * @return false, since the game is not ended during the setup phase
+     */
     @Override
     public boolean isEnded() {
         return false;
     }
 
+    /**
+     * Returns the name of this state for persistence purposes.
+     * @return the name of the persistence class associated with this game state
+     */
+    @Override
+    public String getPersistenceName() {
+        return "SetupState";
+    }
 }

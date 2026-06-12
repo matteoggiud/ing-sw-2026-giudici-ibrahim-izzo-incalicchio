@@ -49,7 +49,6 @@ public class Player {
     private boolean connected;
 
 
-
     /**
      * Constructs a new Player with the specified nickname and totem.
      *
@@ -153,6 +152,9 @@ public class Player {
         }
 
         playerDeck.addCard(buildingCard); // Add the building card to the player's deck
+
+        buildingCard.getEffect().getEventTrigger().ifPresent(trigger -> trigger.applyImmediateEffect(this));
+
         this.food -= Math.max((buildingCard.getFoodCost() - foodDiscount), 0); // Deduct the food cost from the player's total, ensuring it doesn't go negative
     }
 
@@ -199,4 +201,29 @@ public class Player {
         this.connected = true;
     }
 
+    /**
+     * Resets the player's state to the initial conditions
+     */
+    public void reset() {
+        this.food = 0;
+        this.PP = 0;
+        this.totem = null;
+        this.playerDeck.reset();
+    }
+
+    /**
+     * Sets the player's food to the specified amount.
+     * @param food the new amount of food for the player
+     */
+    public void setFood(int food) {
+        this.food = food;
+    }
+
+    /**
+     * Sets the player's prestige points to the specified amount.
+     * @param pp the new amount of prestige points for the player
+     */
+    public void setPp(int pp) {
+        this.PP = pp;
+    }
 }

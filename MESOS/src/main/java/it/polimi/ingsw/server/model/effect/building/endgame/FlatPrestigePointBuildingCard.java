@@ -6,6 +6,10 @@ import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 
 import java.util.Optional;
 
+/**
+ * This class represents the effect of a building card that grants
+ * a flat amount of prestige points at the end of the game.
+ */
 public class FlatPrestigePointBuildingCard implements IBuildingEffect, IEndGameScoring {
 
     /**
@@ -19,6 +23,10 @@ public class FlatPrestigePointBuildingCard implements IBuildingEffect, IEndGameS
         return 25;
     }
 
+    /**
+     * Indicates that this effect provides endgame scoring.
+     * @return an Optional containing this instance as an IEndGameScoring effect
+     */
     @Override
     public Optional<IEndGameScoring> getEndGameScoring(){
         return Optional.of(this);

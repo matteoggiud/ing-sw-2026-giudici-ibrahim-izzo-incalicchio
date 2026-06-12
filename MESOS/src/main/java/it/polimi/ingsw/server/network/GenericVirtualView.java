@@ -1,6 +1,6 @@
 package it.polimi.ingsw.server.network;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.util.List;
 import java.util.Map;
@@ -186,4 +186,14 @@ public interface GenericVirtualView {
      * @param reason the reason for the game crash, which can be used to inform the client about the issue and allow them to handle the situation accordingly (e.g., displaying an error message, returning to the main menu, etc.).
      */
     void onGameCrashed(String reason);
+
+    /**
+     * Called to check if the virtual view is still reachable, which can be used to determine
+     * if the client is still connected and able to receive updates from the server.
+     *
+     * @return true if the virtual view is still reachable
+     */
+    default boolean isReachable() {
+        return true;
+    }
 }

@@ -2,6 +2,11 @@ package it.polimi.ingsw.server.model.effect.building.endgame;
 
 import it.polimi.ingsw.server.model.core.Player;
 
+/**
+ * This interface represents an endgame scoring effect provided by a building card.
+ * Implementing classes will define how to calculate the endgame bonus
+ * for a player based on the specific effect of the building card.
+ */
 public interface IEndGameScoring {
     /**
      * Calculate the end game bonus provided by this end game scoring effect for the given player.

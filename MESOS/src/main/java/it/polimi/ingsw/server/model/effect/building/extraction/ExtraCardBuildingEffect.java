@@ -4,6 +4,11 @@ import it.polimi.ingsw.server.model.effect.building.IBuildingEffect;
 
 import java.util.Optional;
 
+/**
+ * This class represents a building effect that grants an extra action to the player.
+ * It implements both IBuildingEffect and IExtraActionEffect interfaces,
+ * indicating that it is a building effect that provides an extra action to the player when activated.
+ */
 public class ExtraCardBuildingEffect implements IBuildingEffect, IExtraActionEffect {
 
     /**

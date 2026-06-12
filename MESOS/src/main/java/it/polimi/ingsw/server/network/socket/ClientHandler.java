@@ -1,13 +1,10 @@
 package it.polimi.ingsw.server.network.socket;
 
-import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
 import it.polimi.ingsw.server.controller.GameController;
 import it.polimi.ingsw.server.network.ClientSession;
-import it.polimi.ingsw.server.network.SessionRegistry;
 import it.polimi.ingsw.server.network.EventHandler;
-import it.polimi.ingsw.server.network.GenericVirtualView;
-import it.polimi.ingsw.server.network.socket.messages.ClientVisitor;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ClientVisitor;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -24,7 +21,6 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
-    private final EventHandler eventHandler;
     private final ClientVisitor clientVisitor;
     private final SocketAcceptor socketAcceptor;
 
@@ -33,7 +29,6 @@ public class ClientHandler implements Runnable {
         this.clientSocket = clientSocket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
-        this.eventHandler = eventHandler;
         this.clientVisitor = new ClientVisitor(controller, new ClientSession(eventHandler));
         this.socketAcceptor = socketAcceptor;
     }
@@ -41,7 +36,6 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            sendWelcome();
 
             while (!clientSocket.isClosed() && !clientVisitor.getClientSession().isRequestedDisconnection()) {
                 // Read a message from the client
@@ -52,20 +46,19 @@ public class ClientHandler implements Runnable {
             }
         } catch (EOFException | SocketException e) {
             //Normal disconnection
+            System.out.println("Client disconnected: " + e.getMessage());
         } catch (Exception e) {
             //Unexpected error during communication with the client
-            e.printStackTrace();
+            System.out.println("Error in communication with client: " + e.getMessage());
         } finally {
             safeClose();
-            clientVisitor.getGameController().handleDisconnect(clientVisitor.getClientSession());
+            if (!clientVisitor.getClientSession().isRequestedDisconnection()) {
+                clientVisitor.getGameController().handleUnexpectedDisconnect(clientVisitor.getClientSession());
+            }
             socketAcceptor.removeClientHandler(this);
         }
     }
 
-
-    private void sendWelcome() {
-        eventHandler.getView().onAuthenticationNeeded("Welcome! Please log in or register to continue.");
-    }
 
     private void safeClose() {
         try {

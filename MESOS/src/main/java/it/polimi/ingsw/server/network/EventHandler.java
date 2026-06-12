@@ -1,15 +1,13 @@
 package it.polimi.ingsw.server.network;
 
+import it.polimi.ingsw.common.network.socket_messages.server.game.EraChangedMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.game.ResolvingEventUpdate;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.BoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
-import it.polimi.ingsw.server.model.observer.dto.PlayerInfoDTO;
+import it.polimi.ingsw.common.network.dto.BoardDTO;
+import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 import it.polimi.ingsw.server.model.observer.event.*;
-import it.polimi.ingsw.server.network.SessionRegistry;
-import it.polimi.ingsw.server.network.socket.messages.game.*;
 
 
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -149,8 +147,6 @@ public class EventHandler implements IGameObserver {
      */
     @Override
     public void update(JoinedGameEvent event) {
-        GameInfoMessage message = new GameInfoMessage(event.getGameInfo());
-
         view.onJoinedGame(event.getGameInfo());
     }
 
@@ -160,8 +156,6 @@ public class EventHandler implements IGameObserver {
      */
     @Override
     public void update(PlayerInfosChangedEvent event) {
-        PlayerInfoChangedMessage message = new PlayerInfoChangedMessage(event.getGameId(), event.getPlayerInfos());
-
         view.onPlayerInfosChanged(event.getGameId(), event.getPlayerInfos());
     }
 
@@ -171,8 +165,6 @@ public class EventHandler implements IGameObserver {
      */
     @Override
     public void update(ResolvingEventUpdate resolvingEventUpdate) {
-        ResolvingEventMessage message = new ResolvingEventMessage(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
-
         view.onResolvingEvent(resolvingEventUpdate.getGameId(), resolvingEventUpdate.getEventCard());
     }
 }

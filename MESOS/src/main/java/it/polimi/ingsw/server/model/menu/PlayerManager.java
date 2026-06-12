@@ -2,15 +2,44 @@ package it.polimi.ingsw.server.model.menu;
 
 import it.polimi.ingsw.server.model.core.Player;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Singleton class that manages the logged-in players in the system.
+ */
 public class PlayerManager {
+
+    /**
+     * The singleton instance of the PlayerManager class.
+     */
+    private static PlayerManager instance;
+
+    /**
+     * A map that holds the logged-in players, where the key is the player's nickname and the value is the Player object.
+     */
     private final Map<String, Player> loggedInPlayers;
 
-    public PlayerManager() {
-        loggedInPlayers = new HashMap<>();
+
+    /**
+     * Private constructor to prevent instantiation from outside the class. Initializes the loggedInPlayers map.
+     */
+    private PlayerManager() {
+        loggedInPlayers = new ConcurrentHashMap<>();
     }
+
+
+    /**
+     * Returns the singleton instance of the PlayerManager class. If the instance does not exist, it creates a new one.
+     * @return the singleton instance of the PlayerManager class
+     */
+    public static synchronized PlayerManager getInstance() {
+        if (instance == null) {
+            instance = new PlayerManager();
+        }
+        return instance;
+    }
+
 
     /**
      * Adds a player to the logged-in players map.

@@ -1,14 +1,19 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameSnapshotDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 import it.polimi.ingsw.server.model.observer.event.ResolveActionTurnChangedEvent;
+
+import java.util.concurrent.CompletableFuture;
 
 
 /**
@@ -29,14 +34,16 @@ public class ResolveActionsState implements IGameState {
     @Override
     public void executePhase(Game game) {
         actionResolver.resolveAutomaticSkips(game);
-        notifyPlayerInfosUpdate(game);
 
         if (game.getBoard().getOfferTrack().getBoxes().stream().allMatch(box -> box.isFree())) {
+            notifyBoardUpdate(game);
+            notifyPlayerInfosUpdate(game);
             nextState(game);
             return;
         }
 
         notifyBoardUpdate(game);
+        notifyPlayerInfosUpdate(game);
         notifyCurrentResolvingPlayer(game);
     }
 
@@ -61,10 +68,14 @@ public class ResolveActionsState implements IGameState {
      */
     @Override
     public void resolveAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
-        actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
+        boolean actionCompleted = actionResolver.resolveRegularAction(game, player, selectedCard, fromUpperRow);
 
-        notifyPlayerInfosUpdate(game);
-
+        if (actionCompleted) {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            CompletableFuture.runAsync(() ->
+                    new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO)
+            );
+        }
         executePhase(game);
     }
 
@@ -75,9 +86,7 @@ public class ResolveActionsState implements IGameState {
      * @param game the current game context
      */
     private void notifyBoardUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
-        );
+        game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 
     /**
@@ -87,24 +96,36 @@ public class ResolveActionsState implements IGameState {
      */
     private void notifyCurrentResolvingPlayer(Game game) {
         Player currentPlayer = game.getBoard().getOfferTrack().getCurrentPlayer();
-        game.getObserverManager().notifyObservers(
-                new ResolveActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
+        game.getObserverManager().notifyObservers(new ResolveActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname()));
     }
 
 
+    /**
+     * Notifies observers about the updated player information, such as resources and decks.
+     *
+     * @param game the current game context
+     */
     private void notifyPlayerInfosUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new PlayerInfosChangedEvent(
-                        game.getGameId(),
-                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-                )
-        );
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
     }
 
+    /**
+     * Checks if the game has ended. In this state, the game cannot end, so it always returns false.
+     *
+     * @return false, as the game cannot end in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
     }
 
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     *
+     * @return the name of the persistence class for this game state
+     */
+    @Override
+    public String getPersistenceName() {
+        return "ResolveActionsState";
+    }
 }

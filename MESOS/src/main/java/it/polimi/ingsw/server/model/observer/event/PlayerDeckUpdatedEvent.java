@@ -1,9 +1,7 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.PlayerDeckDTO;
-
-import java.util.UUID;
+import it.polimi.ingsw.common.network.dto.PlayerDeckDTO;
 
 /**
  * Event emitted when one player's deck changes.

@@ -1,12 +1,11 @@
 package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Event emitted when the game reaches the final scoring phase
@@ -23,7 +22,7 @@ public class GameEndedEvent implements IGameEvent {
     /**
      * Constructs a new game ended event.
      *
-     * @param gameId the unique identifier of the game
+     * @param gameId       the unique identifier of the game
      * @param finalRanking the final ranking using player nicknames as keys
      */
     public GameEndedEvent(int gameId, Map<String, Integer> finalRanking, int numPlayers, List<LeadBoardDTO> historicalLeaderboard) {
@@ -33,14 +32,11 @@ public class GameEndedEvent implements IGameEvent {
         if (finalRanking == null) {
             throw new IllegalArgumentException("Final ranking cannot be null.");
         }
-        if (historicalLeaderboard == null) {
-            throw new IllegalArgumentException("Historical leaderboard cannot be null.");
-        }
 
         this.gameId = gameId;
         this.finalRanking = new LinkedHashMap<>(finalRanking);
         this.numPlayers = numPlayers;
-        this.historicalLeaderboard = List.copyOf(historicalLeaderboard);
+        this.historicalLeaderboard = historicalLeaderboard;
     }
 
     /**
@@ -61,15 +57,23 @@ public class GameEndedEvent implements IGameEvent {
         return new LinkedHashMap<>(finalRanking);
     }
 
+    /**
+     * Returns the number of players in the game.
+     * @return the number of players
+     */
     public int getNumPlayers() {
         return numPlayers;
     }
 
+    /**
+     * Returns the historical leaderboard containing the top players and their scores.
+     * @return the historical leaderboard
+     */
     public List<LeadBoardDTO> getHistoricalLeaderboard() {
         return historicalLeaderboard;
     }
 
-/**
+    /**
      * Dispatches this event to the observer.
      *
      * @param observer the observer to notify

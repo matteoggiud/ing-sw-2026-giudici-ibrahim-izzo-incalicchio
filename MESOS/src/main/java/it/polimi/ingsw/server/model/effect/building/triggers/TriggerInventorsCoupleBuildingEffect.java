@@ -27,6 +27,11 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
      */
     private int payedCouples = 0;
 
+    /**
+     * If the building implements IEventTrigger it returns an Optional containing himself.
+     *
+     * @return an Optional containing the IEventTrigger provided by this building effect.
+     */
     @Override
     public Optional<IEventTrigger> getEventTrigger() {
         return Optional.of(this);
@@ -79,8 +84,4 @@ public class TriggerInventorsCoupleBuildingEffect implements IBuildingEffect, IE
         return n_couple;
     }
 
-    @Override
-    public boolean isCardTrigger() {
-        return true;
-    }
 }

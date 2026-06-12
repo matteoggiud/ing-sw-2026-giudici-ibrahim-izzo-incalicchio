@@ -2,8 +2,6 @@ package it.polimi.ingsw.server.model.observer.event;
 
 import it.polimi.ingsw.server.model.observer.IGameObserver;
 
-import java.util.UUID;
-
 /**
  * Event emitted when the current player for the extra action phase changes.
  */

@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client.network.rmi;
 
 import it.polimi.ingsw.client.controller.ViewController;
-import it.polimi.ingsw.server.model.observer.dto.*;
-import it.polimi.ingsw.server.network.rmi.RemoteClientView;
+import it.polimi.ingsw.common.network.dto.*;
+import it.polimi.ingsw.common.network.rmi.server.RemoteClientView;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -271,6 +271,16 @@ public class RmiClient implements RemoteClientView {
     @Override
     public void onGameCrashed(String reason) {
         viewController.onGameCrashed(reason);
+    }
+
+    /**
+     * Called to check if the client is still alive and responsive.
+     * @return true if the client is alive and responsive
+     * @throws RemoteException
+     */
+    @Override
+    public boolean isAlive() throws RemoteException {
+        return true;
     }
 
 

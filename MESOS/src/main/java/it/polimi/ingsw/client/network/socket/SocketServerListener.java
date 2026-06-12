@@ -1,9 +1,10 @@
 package it.polimi.ingsw.client.network.socket;
 
-import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
-import it.polimi.ingsw.client.network.socket.messages.ServerMessageVisitor;
+import it.polimi.ingsw.client.ClientState;
+import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
+import it.polimi.ingsw.common.network.socket_messages.visitors.ServerMessageVisitor;
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
 
 import java.io.EOFException;
 import java.io.ObjectInputStream;
@@ -30,7 +31,7 @@ public class SocketServerListener implements Runnable {
     }
 
 
-    public void sendMessage(ClientMessage message) {
+    public synchronized void sendMessage(ClientMessage message) {
         try {
             outputStream.writeObject(message);
             outputStream.flush();
@@ -50,12 +51,12 @@ public class SocketServerListener implements Runnable {
                 serverMessage.dispatch(serverVisitor);
             }
         } catch (EOFException | SocketException e) {
-
             handleServerDisconnected("Connection lost: server disconnected.");
         } catch (Exception e) {
             handleServerDisconnected("Connection lost: unexpected communication error.");
         } finally {
             safeClose();
+            clientView.shutdown("Connection lost");
         }
     }
 
@@ -80,8 +81,9 @@ public class SocketServerListener implements Runnable {
 
     private void handleServerDisconnected(String message) {
         if (clientSession.isConnected()) {
-            clientView.showError(message);
             clientSession.disconnect();
+            clientSession.setErrorMessage(message);
+            clientView.showError(message);
         }
     }
 

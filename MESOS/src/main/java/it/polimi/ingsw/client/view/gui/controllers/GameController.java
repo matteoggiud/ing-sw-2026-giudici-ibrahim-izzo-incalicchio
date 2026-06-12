@@ -1,0 +1,649 @@
+package it.polimi.ingsw.client.view.gui.controllers;
+
+import it.polimi.ingsw.client.view.gui.GuiContext;
+import it.polimi.ingsw.client.view.gui.ImageCache;
+import it.polimi.ingsw.common.network.dto.*;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.geometry.Point2D;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
+import javafx.util.Duration;
+
+import java.util.*;
+
+public class GameController {
+    private GuiContext guiContext;
+    private Runnable SeeResultsRequested;
+
+    private static final int IMG_WIDTH = 100;
+    private static final int IMG_HEIGHT = 160;
+
+    private static final int CARD_DECK_WIDTH = 87;
+    private static final int CARD_DECK_HEIGHT = 140;
+
+    private static final int TOTEM_HEIGHT = 50;
+    private static final int TOTEM_WIDTH = 26;
+
+    private static final double INFO_Y = 0.200;
+    private static final double INFO_W = 0.165;
+    private static final double INFO_H = 0.050;
+    private static final double ERA_X = 0.245;
+    private static final double TURN_X = 0.435;
+    private static final double GAME_INFO_X = 0.625;
+
+    private static final double UPPER_ROW_X = 0.405;
+    private static final double UPPER_ROW_Y = 0.330;
+    private static final double UPPER_ROW_W = 0.655;
+    private static final double UPPER_ROW_H = 0.190;
+
+    private static final double MIDDLE_ROW_X = 0.405;
+    private static final double MIDDLE_ROW_Y = 0.545;
+    private static final double MIDDLE_ROW_W = 0.655;
+    private static final double MIDDLE_ROW_H = 0.190;
+
+    private static final double LOWER_ROW_X = 0.405;
+    private static final double LOWER_ROW_Y = 0.785;
+    private static final double LOWER_ROW_W = 0.655;
+    private static final double LOWER_ROW_H = 0.190;
+
+    private static final double STATS_X = 0.870;
+    private static final double STATS_Y = 0.600;
+    private static final double STATS_W = 0.205;
+    private static final double STATS_H = 0.710;
+
+    private static final double LEAVE_X = 0.945;
+    private static final double LEAVE_Y = 0.068;
+    private static final double LEAVE_W = 0.055;
+    private static final double LEAVE_H = 0.045;
+
+    private static final double RESULTS_X = 0.825;
+    private static final double RESULTS_Y = 0.068;
+    private static final double RESULTS_W = 0.100;
+    private static final double RESULTS_H = 0.045;
+
+
+
+    @FXML
+    private Button seeResults;
+    @FXML
+    private Button leaveGameButton;
+    @FXML
+    private HBox myDeckBox;
+    @FXML
+    private Label eraLabel;
+    @FXML
+    private Label turnLabel;
+    @FXML
+    private Label gameInfoLabel;
+    @FXML
+    private ListView<PlayerInfoDTO> playersListView;
+    @FXML
+    private HBox upperRow;
+    @FXML
+    private HBox offerTrack;
+    @FXML
+    private HBox turnOrderBox;
+    @FXML
+    private HBox lowerRow;
+    @FXML
+    private StackPane gameRoot;
+    @FXML
+    private ImageView backgroundImage;
+    @FXML
+    private Pane gameOverlay;
+    @FXML
+    private ScrollPane upperRowArea;
+    @FXML
+    private HBox middleRowArea;
+    @FXML
+    private ScrollPane lowerRowArea;
+    @FXML
+    private VBox statsPanel;
+
+
+
+
+    private final ObservableList<PlayerInfoDTO> playersItems = FXCollections.observableArrayList();
+
+    // it maps nickname with his player deck
+    private final Map<String, PlayerDeckDTO> playerDecks = new HashMap<>();
+
+    public void setGuiContext(GuiContext guiContext) {
+        this.guiContext = guiContext;
+    }
+    public void setSeeResultsRequested(Runnable onSeeResultsRequested) {
+        this.SeeResultsRequested = onSeeResultsRequested;
+    }
+
+    @FXML
+    private void initialize() {
+        bindBackgroundContain();
+        bindGameLayout();
+
+        playersListView.setItems(playersItems);
+        playersListView.setCellFactory(_ -> new PlayerCell());
+    }
+
+
+    private void configureCardNode(ImageView iv, int cardId, boolean isUpper) {
+        iv.setOnMouseEntered(_ -> {
+            iv.setScaleX(1.05);
+            iv.setScaleY(1.05);
+        });
+        iv.setOnMouseExited(_ -> {
+            iv.setScaleX(1.0);
+            iv.setScaleY(1.0);
+        });
+        iv.setOnMouseClicked(_ -> {
+            if (guiContext != null && guiContext.clientController() != null) {
+                guiContext.clientController().drawCard(cardId, isUpper);
+            }
+        });
+    }
+
+    private Pane createOfferBoxNode(int boxIndex, String imageKey, String placedPlayerNickname) {
+        String img = "/assets/offer/" + imageKey + ".png";
+        ImageView boxView;
+        try {
+            boxView = ImageCache.view(img, IMG_WIDTH, IMG_HEIGHT);
+        } catch (IllegalArgumentException e) {
+            // if image not found, create an empty placeholder
+            boxView = new ImageView();
+            boxView.setFitWidth(IMG_WIDTH);
+            boxView.setFitHeight(IMG_HEIGHT);
+        }
+
+        Pane canvas = new Pane();
+        canvas.setPrefSize(boxView.getFitWidth(), boxView.getFitHeight());
+
+        boxView.setLayoutX(0);
+        boxView.setLayoutY(0);
+        canvas.getChildren().add(boxView);
+
+        //  show totem when box has a player
+        if (placedPlayerNickname != null) {
+            // return player's totem from playersItems
+            String totemKey = getTotemKeyForPlayer(placedPlayerNickname);
+            // import and show totem's picture
+            String totemPath = "/assets/totem/TOTEM_" + totemKey + ".png";
+
+            try {
+                ImageView totemView = ImageCache.view(totemPath, TOTEM_WIDTH, TOTEM_HEIGHT);
+                canvas.getChildren().add(totemView);
+                totemView.setLayoutX(0.5 * boxView.getFitWidth() - 0.5 * totemView.getFitWidth());
+                totemView.setLayoutY(0.32 * boxView.getFitHeight() - totemView.getFitHeight());
+            } catch (IllegalArgumentException e) {
+                System.err.println("Errore caricamento totem per " + placedPlayerNickname + ": " + e.getMessage());
+            }
+        }
+
+        canvas.setOnMouseClicked(_ -> {
+            if (guiContext != null && guiContext.clientController() != null) {
+                guiContext.clientController().placeTotem(boxIndex);
+            }
+        });
+        return canvas;
+    }
+
+    // given a player nickname, return the totem key (lowercase) from playersItems; if not found, throw an exception
+    private String getTotemKeyForPlayer(String nickname) {
+        return playersItems.stream()
+                .filter(p -> p.nickname().equals(nickname))
+                .map(PlayerInfoDTO::totem)
+                .findFirst()
+                .map(String::toUpperCase)
+                .orElse("WHITE");
+    }
+
+    // given a list of TurnOrderSlotDTO, create a StackPane with the turn order image and totems of players in the correct positions
+    private Pane createTurnBox(List<TurnOrderSlotDTO> slots) {
+        int numSlots = slots.size();
+
+        String img = "/assets/turn/TURN_" + numSlots + ".png";
+        ImageView boardView = ImageCache.view(img, IMG_WIDTH, IMG_HEIGHT);
+
+        Pane canvas = new Pane();
+        canvas.setPrefSize(boardView.getFitWidth(), boardView.getFitHeight());
+        boardView.setLayoutX(0);
+        boardView.setLayoutY(0);
+        canvas.getChildren().add(boardView);
+
+        /*List<TurnOrderSlotDTO> ordered = slots.stream()
+                .sorted(Comparator.comparingInt(TurnOrderSlotDTO::position))
+                .toList();*/
+
+        for (TurnOrderSlotDTO slot : slots) {
+            if (slot.placedPlayerNickname() == null) {
+                continue;
+            }
+
+            String totemKey = getTotemKeyForPlayer(slot.placedPlayerNickname());
+            ImageView totemView = ImageCache.view("/assets/totem/TOTEM_" + totemKey + ".png", TOTEM_WIDTH, TOTEM_HEIGHT);
+            canvas.getChildren().add(totemView);
+            Point2D anchor = getTurnSlotAnchor(numSlots, slot.position());
+
+            totemView.setLayoutX(anchor.getX() * boardView.getFitWidth() - totemView.getFitWidth() / 2);
+            totemView.setLayoutY((anchor.getY()) * boardView.getFitHeight() - totemView.getFitHeight());
+
+        }
+
+        return canvas;
+    }
+
+    // returns the anchor point for a totem in the turn order image based on the number of slots and the slot position; coordinates are normalized (0 to 1) relative to the image size
+    private Point2D getTurnSlotAnchor(int numSlots, int slotPosition) {
+        // these coordinates are normalized (0 to 1) relative to the turn order image; adjust as needed based on the actual image design
+        return switch (numSlots) {
+            case 2 -> switch (slotPosition) {
+                case 0 -> new Point2D(0.50, 0.36); //0.33 -> 0.5
+                case 1 -> new Point2D(0.50, 0.54);
+                default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
+            };
+            case 3 -> switch (slotPosition) {
+                case 0 -> new Point2D(0.50, 0.305);
+                case 1 -> new Point2D(0.50, 0.49);
+                case 2 -> new Point2D(0.50, 0.67);
+                default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
+            };
+            case 4 -> switch (slotPosition) {
+                case 0 -> new Point2D(0.50, 0.26);
+                case 1 -> new Point2D(0.50, 0.44);
+                case 2 -> new Point2D(0.50, 0.63);
+                case 3 -> new Point2D(0.50, 0.82);
+                default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
+            };
+            case 5 -> switch (slotPosition) {
+                case 0 -> new Point2D(0.50, 0.19);
+                case 1 -> new Point2D(0.50, 0.38);
+                case 2 -> new Point2D(0.50, 0.56);
+                case 3 -> new Point2D(0.50, 0.75);
+                case 4 -> new Point2D(0.50, 0.93);
+                default -> throw new IllegalArgumentException("slotPosition non valida: " + slotPosition);
+            };
+            default -> throw new IllegalArgumentException("Numero slot non supportato: " + numSlots);
+        };
+    }
+
+
+    private void populateBoard(BoardDTO board) {
+        Platform.runLater(() -> {
+            // header
+            eraLabel.setText("Era: " + board.currentEra());
+
+            // UPPER: for each card in upperCharacterCards, create an ImageView and add to upperRow
+            upperRow.getChildren().clear();
+            board.upperCharacterCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), true);
+                upperRow.getChildren().add(imageView);
+            });
+            board.upperEventCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                //configureCardNode(imageView, cardDto.cardId(), true);
+                upperRow.getChildren().add(imageView);
+            });
+            board.upperBuildingCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), true);
+                upperRow.getChildren().add(imageView);
+            });
+
+
+            // OFFER TRACK: iterate on all offer boxes and show offerboxes with totem
+            offerTrack.getChildren().clear();
+            board.offerTrackBoxes().forEach(boxDto -> {
+                Pane boxNode = createOfferBoxNode(boxDto.position(), boxDto.imageKey(), boxDto.placedPlayerNickname());
+                offerTrack.getChildren().add(boxNode);
+            });
+
+// TURN ORDER: create the turn order box with totems in the correct positions
+            turnOrderBox.getChildren().clear();
+            Pane slotNode = createTurnBox(board.turnOrderSlots());
+            turnOrderBox.getChildren().add(slotNode);
+
+
+            // LOWER: for each card in lowerCharacterCards, create an ImageView and add to lowerRow
+            lowerRow.getChildren().clear();
+            board.lowerCharacterCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), false);
+                lowerRow.getChildren().add(imageView);
+            });
+            board.lowerEventCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                //configureCardNode(imageView, cardDto.cardId(), false);
+                lowerRow.getChildren().add(imageView);
+            });
+            board.lowerBuildingCards().forEach(cardDto -> {
+                // creates an image view for the card; adjust path and size as needed
+                ImageView imageView = new ImageView();
+                try {
+                    imageView = ImageCache.view("/assets/cards/" + cardDto.imageKey() + ".png", IMG_WIDTH, IMG_HEIGHT);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error loading image for card " + cardDto.cardId() + ": " + e.getMessage());
+                }
+                configureCardNode(imageView, cardDto.cardId(), false);
+                lowerRow.getChildren().add(imageView);
+            });
+
+        });
+    }
+
+    public void showGameStarted(List<String> playerNicknames) {
+        Platform.runLater(() -> {
+            gameInfoLabel.setText("Players: " + String.join(", ", playerNicknames));
+            turnLabel.setText("Turn: waiting...");
+            eraLabel.setText("Era: -");
+        });
+    }
+
+    public void showBoard(BoardDTO board) {
+        populateBoard(board);
+    }
+
+    public void showPlaceTotemTurn(String currentPlayerNickname, boolean isMyTurn) {
+        Platform.runLater(() -> turnLabel.setText(isMyTurn
+                ? "Turn: PLACE TOTEM — it's YOUR turn"
+                : "Turn: PLACE TOTEM — " + currentPlayerNickname + "'s turn"));
+    }
+
+    public void showResolveActionTurn(String currentPlayerNickname, boolean isMyTurn) {
+        Platform.runLater(() -> turnLabel.setText(isMyTurn
+                ? "Turn: RESOLVE ACTION — it's YOUR turn"
+                : "Turn: RESOLVE ACTION — " + currentPlayerNickname + "'s turn"));
+    }
+
+    public void showExtraActionTurn(String currentPlayerNickname, boolean isMyTurn) {
+        Platform.runLater(() -> turnLabel.setText(isMyTurn
+                ? "Turn: EXTRA ACTION — it's YOUR turn"
+                : "Turn: EXTRA ACTION — " + currentPlayerNickname + "'s turn"));
+    }
+
+    /**
+     * Aggiorna la lista dei PlayerInfoDTO (numero giocatori / stats).
+     * Chiamato da ViewController.onPlayerInfosChanged -> view.showPlayersInfo(...)
+     */
+    public void showPlayersInfo(Collection<PlayerInfoDTO> playersInfo) {
+        Platform.runLater(() -> {
+            playersItems.setAll(playersInfo);
+            playersListView.refresh();
+
+            PlayerDeckDTO personalDeck = null;
+            for (PlayerInfoDTO playerInfoDTO : playersInfo) {
+                if (playerInfoDTO.nickname().equals(guiContext.clientState().getNickname())) {
+                    personalDeck = playerInfoDTO.deck();
+                    break;
+                }
+            }
+            populateMyDeck(personalDeck);
+
+        });
+    }
+
+    /**
+     * Aggiorna il deck di un singolo giocatore; ridisegna la listView per aggiornare la cella.
+     * Chiamato da ViewController.onPlayerDeckUpdated -> view.showPlayerDeck(...)
+     */
+    public void showPlayerDeck(String nickname, PlayerDeckDTO playerDeck) {
+        Platform.runLater(() -> {
+            if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
+                populateMyDeck(playerDeck);
+            }
+            if (playerDeck == null) {
+                playerDecks.remove(nickname);
+            } else {
+                playerDecks.put(nickname, playerDeck);
+            }
+
+            if (guiContext.clientState().getNickname() != null && nickname.equals(guiContext.clientState().getNickname())) {
+                // refresh my bottom deck
+                populateMyDeck(playerDeck);
+            }
+
+            playersListView.refresh();
+        });
+    }
+
+    private void populateMyDeck(PlayerDeckDTO deck) {
+        myDeckBox.getChildren().clear();
+
+        if (deck == null) {
+            return;
+        }
+
+        for (CharacterCardDTO card : deck.characterCards()) {
+            String key = card.imageKey();
+            String path = "/assets/cards/" + key + ".png";
+
+            try {
+                ImageView thumb = ImageCache.view(path, CARD_DECK_WIDTH, CARD_DECK_HEIGHT);
+                myDeckBox.getChildren().add(thumb);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Failed to load character card " + key + ": " + e.getMessage());
+            }
+        }
+
+        for (BuildingCardDTO card : deck.buildingCards()) {
+            String key = card.imageKey();
+            String path = "/assets/cards/" + key + ".png";
+
+            try {
+                ImageView thumb = ImageCache.view(path, CARD_DECK_WIDTH, CARD_DECK_HEIGHT);
+                myDeckBox.getChildren().add(thumb);
+            } catch (Exception e) {
+                System.out.println("[ERROR] Failed to load building card " + key + ": " + e.getMessage());
+            }
+        }
+    }
+
+
+    /* --- custom ListCell per mostrare stats + deck nello stesso pannello --- */
+    private class PlayerCell extends ListCell<PlayerInfoDTO> {
+        private final HBox root = new HBox(12);
+        private final Label nicknameLabel = new Label();
+        private final Label statsLabel = new Label();
+        private final Label resourceLabel = new Label();
+        private final Pane totemImage = new Pane();
+
+
+        PlayerCell() {
+            super();
+
+            HBox headerRow = new HBox(6);
+            headerRow.setAlignment(Pos.CENTER_LEFT);
+            headerRow.getChildren().addAll(totemImage, nicknameLabel);
+
+            statsLabel.setWrapText(true);
+            resourceLabel.setWrapText(true);
+
+            VBox statsBox = new VBox(4);
+            statsBox.getChildren().addAll(headerRow, resourceLabel, statsLabel);
+            HBox.setHgrow(statsBox, Priority.ALWAYS);
+            root.getChildren().setAll(statsBox);
+        }
+
+        @Override
+        protected void updateItem(PlayerInfoDTO item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+                return;
+            }
+
+            String myNick = null;
+            if (guiContext != null && guiContext.clientState() != null) {
+                myNick = guiContext.clientState().getNickname();
+            }
+
+            boolean isMe = myNick != null && myNick.equals(item.nickname());
+
+            // Totem
+            try {
+                totemImage.getChildren().setAll(
+                        ImageCache.view("/assets/totem/TOTEM_" + item.totem().toUpperCase() + ".png", 10, 20)
+                );
+            } catch (Exception e) {
+                totemImage.getChildren().clear();
+            }
+
+            nicknameLabel.setText(item.nickname() + (isMe ? " (you)" : ""));
+
+            // Prima riga: risorse base
+            resourceLabel.setText("PP=" + item.pp() + " | Food=" + item.food());
+
+            // Riga stats come TUI
+            PlayerStatsDTO s = item.stats();
+            if (s == null) {
+                statsLabel.setText("No stats yet");
+            } else {
+                String line1 = "Cards=" + s.characterCount()
+                        + " | SustDisc=" + s.sustenanceDiscount()
+                        + " | ShamStars=" + s.shamanStars()
+                        + " | BuildDisc=" + s.builderDiscount()
+                        + " | InvIcons=" + s.differentInventorIcons();
+
+                String line2 = "Gath=" + s.gathererCount()
+                        + " Hunt=" + s.hunterCount()
+                        + " Build=" + s.builderCount()
+                        + " Sham=" + s.shamanCount()
+                        + " Art=" + s.artistCount()
+                        + " Inv=" + s.inventorCount();
+
+                statsLabel.setText(line1 + "\n" + line2);
+            }
+
+            setGraphic(root);
+        }
+    }
+
+    public void showSeeResultsButton() {
+        Platform.runLater(() -> {
+            if (seeResults != null) {
+                seeResults.setVisible(true);
+                seeResults.setManaged(true);
+            }
+        });
+    }
+
+    @FXML
+    private void handleSeeResults() {
+        if (SeeResultsRequested != null) {
+            SeeResultsRequested.run();
+        }
+    }
+
+    @FXML
+    private void handleLeaveGame(){
+        if(guiContext == null || guiContext.clientState() == null){
+            return;
+        }
+        guiContext.clientController().leftGame();
+    }
+
+    private void bindBackgroundContain() {
+        double imageRatio = backgroundImage.getImage().getWidth() / backgroundImage.getImage().getHeight();
+
+        DoubleBinding imageWidth = Bindings.createDoubleBinding(
+                () -> Math.min(gameRoot.getWidth(), gameRoot.getHeight() * imageRatio),
+                gameRoot.widthProperty(),
+                gameRoot.heightProperty()
+        );
+
+        DoubleBinding imageHeight = Bindings.createDoubleBinding(
+                () -> Math.min(gameRoot.getHeight(), gameRoot.getWidth() / imageRatio),
+                gameRoot.widthProperty(),
+                gameRoot.heightProperty()
+        );
+
+        backgroundImage.fitWidthProperty().bind(imageWidth);
+        backgroundImage.fitHeightProperty().bind(imageHeight);
+
+        gameOverlay.minWidthProperty().bind(imageWidth);
+        gameOverlay.prefWidthProperty().bind(imageWidth);
+        gameOverlay.maxWidthProperty().bind(imageWidth);
+
+        gameOverlay.minHeightProperty().bind(imageHeight);
+        gameOverlay.prefHeightProperty().bind(imageHeight);
+        gameOverlay.maxHeightProperty().bind(imageHeight);
+    }
+
+    private void bindGameLayout() {
+        bindNode(eraLabel, ERA_X, INFO_Y, INFO_W, INFO_H);
+        bindNode(turnLabel, TURN_X, INFO_Y, INFO_W, INFO_H);
+        bindNode(gameInfoLabel, GAME_INFO_X, INFO_Y, INFO_W, INFO_H);
+
+        bindNode(upperRowArea, UPPER_ROW_X, UPPER_ROW_Y, UPPER_ROW_W, UPPER_ROW_H);
+        bindNode(middleRowArea, MIDDLE_ROW_X, MIDDLE_ROW_Y, MIDDLE_ROW_W, MIDDLE_ROW_H);
+        bindNode(lowerRowArea, LOWER_ROW_X, LOWER_ROW_Y, LOWER_ROW_W, LOWER_ROW_H);
+
+        bindNode(statsPanel, STATS_X, STATS_Y, STATS_W, STATS_H);
+
+        bindNode(leaveGameButton, LEAVE_X, LEAVE_Y, LEAVE_W, LEAVE_H);
+        bindNode(seeResults, RESULTS_X, RESULTS_Y, RESULTS_W, RESULTS_H);
+    }
+
+    private void bindNode(Region node, double centerX, double centerY, double width, double height) {
+        node.prefWidthProperty().bind(gameOverlay.widthProperty().multiply(width));
+        node.prefHeightProperty().bind(gameOverlay.heightProperty().multiply(height));
+
+        node.layoutXProperty().bind(gameOverlay.widthProperty()
+                .multiply(centerX)
+                .subtract(gameOverlay.widthProperty().multiply(width).divide(2.0)));
+
+        node.layoutYProperty().bind(gameOverlay.heightProperty()
+                .multiply(centerY)
+                .subtract(gameOverlay.heightProperty().multiply(height).divide(2.0)));
+    }
+
+    public void showTemporaryMessage(String message) {
+        Platform.runLater(() -> {
+            String previousText = gameInfoLabel.getText();
+            gameInfoLabel.setText(message);
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(3));
+            pause.setOnFinished(event -> gameInfoLabel.setText(previousText));
+            pause.play();
+        });
+    }
+
+}

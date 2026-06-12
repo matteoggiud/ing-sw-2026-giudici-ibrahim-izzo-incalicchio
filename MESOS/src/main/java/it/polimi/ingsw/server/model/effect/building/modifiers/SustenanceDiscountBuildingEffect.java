@@ -26,6 +26,11 @@ public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEvent
      */
     private final CharacterType characterType;
 
+    /**
+     * This method returns an Optional containing this instance as an IEventModifier,
+     * indicating that this building effect modifies the Sustenance Event.
+     * @return An Optional containing this instance as an IEventModifier.
+     */
     @Override
     public Optional<IEventModifier> getEventModifier() {
         return Optional.of(this);
@@ -44,15 +49,20 @@ public class SustenanceDiscountBuildingEffect implements IBuildingEffect, IEvent
     }
 
 
+    /**
+     * This method modifies the effect of the Sustenance Event by applying a discount to the total Food cost
+     * based on the number of Character cards of the specified type in the player's tribe.
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
+     */
     @Override
     public void visitEvent(SustenanceEventEffect eventCard, EffectEventResult result) {
         Player p = result.getTargetPlayer();
 
-        // Count the number of specified character type in the player's tribe
         int numbersOfCharacters = p.getPlayerDeck().countCharactersByType(characterType);
+        int discountedFoodChange = result.getFoodChange() + numbersOfCharacters;
 
-        // For each character of the specified type, apply a discount of 1 Food
-        result.setFoodChange(result.getFoodChange() + numbersOfCharacters);
+        result.setFoodChange(Math.min(discountedFoodChange, 0));
     }
 }
 

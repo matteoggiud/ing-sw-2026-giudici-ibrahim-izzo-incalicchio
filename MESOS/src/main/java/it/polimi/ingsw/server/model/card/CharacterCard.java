@@ -55,16 +55,30 @@ public abstract class CharacterCard extends TribeCard {
         playerDeck.addCharacterCard(this);
     }
 
+    /**
+     * Adds this card to the provided character list. This is used when initializing the character row on the board.
+     * @param characterList the list to which this character card will be added
+     */
     @Override
     public void addToCharacterList(List<CharacterCard> characterList) {
         characterList.add(this);
     }
 
+    /**
+     * Determines if this character card can be selected from the given card row by the specified player.
+     * @param row the card row from which the player is attempting to select this card
+     * @param player the player attempting to select this card
+     * @return true if the player can select this character card from the row, false otherwise
+     */
     @Override
     public boolean canBeSelectedFrom(CardRow row, Player player) {
         return row.getTribeRow().getCharacterCards().contains(this);
     }
 
+    /**
+     * Validates that this character card can be selected from the given card row. If not, throws an IllegalArgumentException.
+     * @param row the card row from which the player is attempting to select this card
+     */
     @Override
     public void validateSelectableFrom(CardRow row) {
         if (!row.getTribeRow().getCharacterCards().contains(this)) {
@@ -72,6 +86,12 @@ public abstract class CharacterCard extends TribeCard {
         }
     }
 
+    /**
+     * Resolves the selection of this character card from the given card row by the specified player.
+     * This involves moving the card from the row to the player's deck and applying any special effects.
+     * @param player the player who has selected this card
+     * @param row the card row from which the player has selected this card
+     */
     @Override
     public void resolveFromOfferRow(Player player, CardRow row) {
         row.getTribeRow().remove(this);
@@ -81,6 +101,7 @@ public abstract class CharacterCard extends TribeCard {
 
     /**
      * Hook method that can be overridden by subclasses to apply special effects when this character card is added to a player's deck.
+     * Is used inside PlayerDeck.addCharacterCard()
      *
      * @param playerDeck the player's deck to which this card is being added.
      */

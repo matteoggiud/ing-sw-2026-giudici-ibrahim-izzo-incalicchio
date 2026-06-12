@@ -33,6 +33,11 @@ class OfferTrackTest {
         offerTrack.initializeOfferTrack(Arrays.asList(box1, box2, box3));
     }
 
+    /**
+     * Tests the initialization of the offer track.
+     * Verifies that initializing with null or invalid lists throws exceptions,
+     * and that valid lists correctly set the initial boxes for the track.
+     */
     @Test
     void initializeOfferTrack() {
         OfferTrack track = new OfferTrack();
@@ -51,6 +56,11 @@ class OfferTrackTest {
         assertSame(box3, track.getBoxes().get(0));
     }
 
+    /**
+     * Tests retrieving an offer box placed by a specific player.
+     * Places a totem and then queries the track by player to ensure the correct box is returned.
+     * Checks that an exception is thrown if the player has not placed a totem on any box.
+     */
     @Test
     void getBoxByPlayer() {
         offerTrack.placeTotem(player1, box2);
@@ -61,6 +71,11 @@ class OfferTrackTest {
         assertThrows(IllegalArgumentException.class, () -> offerTrack.getBoxByPlayer(player2));
     }
 
+    /**
+     * Tests retrieving an offer box based on its 1-indexed position.
+     * Asserts that the correct boxes are returned for valid indices (1, 2, 3),
+     * and exceptions are thrown for invalid indices (0, 4).
+     */
     @Test
     void getBoxByPosition() {
         assertSame(box1, offerTrack.getBoxByPosition(1));
@@ -71,6 +86,11 @@ class OfferTrackTest {
         assertThrows(IllegalArgumentException.class, () -> offerTrack.getBoxByPosition(4));
     }
 
+    /**
+     * Tests retrieving all boxes from the offer track.
+     * Verifies that the correct boxes are present and ensures the returned list
+     * is a defensive copy, so modifying it doesn't affect the internal state of the track.
+     */
     @Test
     void getBoxes() {
         ArrayList<OfferBox> boxes = offerTrack.getBoxes();
@@ -84,6 +104,11 @@ class OfferTrackTest {
         assertEquals(3, offerTrack.getBoxes().size());
     }
 
+    /**
+     * Tests retrieving only the available boxes (boxes without a placed player).
+     * Places a totem on a box and verifies that the placed box is no longer in the list
+     * of available boxes, while the others remain.
+     */
     @Test
     void getAvailableBoxes() {
         assertEquals(3, offerTrack.getAvailableBoxes().size());
@@ -97,6 +122,12 @@ class OfferTrackTest {
         assertTrue(available.contains(box3));
     }
 
+    /**
+     * Tests the logic of placing a player's totem on an offer box.
+     * Checks that null inputs or external boxes throw exceptions,
+     * verifies a successful placement sets the player on the box,
+     * and ensures that placing multiple totems for the same player or on an occupied box throws exceptions.
+     */
     @Test
     void placeTotem() {
         OfferBox externalBox = new OfferBox(0, 1, 1);
@@ -112,6 +143,11 @@ class OfferTrackTest {
         assertThrows(IllegalStateException.class, () -> offerTrack.placeTotem(player2, box1));
     }
 
+    /**
+     * Tests retrieving the current player from the offer track.
+     * Checks that calling this on an empty track throws an exception,
+     * and verifies that the player who occupies the first non-empty box is correctly returned.
+     */
     @Test
     void getCurrentPlayer() {
         OfferTrack emptyTrack = new OfferTrack();

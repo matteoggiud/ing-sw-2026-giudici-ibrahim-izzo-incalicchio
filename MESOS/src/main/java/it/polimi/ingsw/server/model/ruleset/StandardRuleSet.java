@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.ruleset;
 
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
-import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 
 import java.util.*;

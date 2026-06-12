@@ -1,15 +1,16 @@
 package it.polimi.ingsw.client.view;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public interface ClientView {
     void showMessage(String message);
 
     void showError(String message);
+
+    void showDisconnected(String message);
 
     void showAvailableGames(List<GameInfoDTO> games);
 
@@ -37,4 +38,8 @@ public interface ClientView {
     void showRankings(List<LeadBoardDTO> rankings);
 
     void showAuthenticator(String message);
+
+    void showResolvingEvent(int gameId, EventCardDTO eventCardDTO);
+
+    void shutdown(String reason);
 }

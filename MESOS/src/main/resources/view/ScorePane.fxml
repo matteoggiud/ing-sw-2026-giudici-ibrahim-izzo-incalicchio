@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane fx:id="scoreRoot"
+           xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.polimi.ingsw.client.view.gui.controllers.ScoreController"
+           prefWidth="1600.0"
+           prefHeight="900.0"
+           stylesheets="@../styles/score.css"
+           styleClass="score-root">
+
+    <ImageView fx:id="backgroundImage"
+               smooth="true"
+               preserveRatio="false">
+        <image>
+            <Image url="@../assets/backgrounds/leaderboardBg.png"/>
+        </image>
+    </ImageView>
+
+    <Pane fx:id="scoreOverlay"
+          pickOnBounds="false">
+
+        <Label fx:id="titleLabel"
+               text="Final Results"
+               alignment="CENTER"
+               styleClass="score-title"/>
+
+        <Label fx:id="rankingTitleLabel"
+               text="Game Leaderboard"
+               alignment="CENTER"
+               styleClass="score-section-title"/>
+
+        <Label fx:id="timeoutLabel"
+               text="Some players didn't reconnect. The game has been closed."
+               alignment="CENTER"
+               styleClass="score-error"
+               visible="false"/>
+
+        <ListView fx:id="rankingListView"
+                  styleClass="score-list"/>
+
+        <Label fx:id="globalTitleLabel"
+               text="Global Position"
+               alignment="CENTER"
+               styleClass="score-section-title"/>
+
+        <Label fx:id="playerPositionLabel"
+               text="Loading position..."
+               alignment="CENTER"
+               styleClass="score-position"/>
+
+        <Button fx:id="backToMenuButton"
+                text="Back to Menu"
+                onAction="#handleBackToMenu"
+                styleClass="score-button"/>
+    </Pane>
+</StackPane>

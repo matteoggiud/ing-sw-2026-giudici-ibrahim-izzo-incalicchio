@@ -26,6 +26,11 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
      */
     private int payedSets = 0;
 
+    /**
+     * If the building implements IEventTrigger it returns an Optional containing himself.
+     *
+     * @return an Optional containing the IEventTrigger provided by this building effect.
+     */
     @Override
     public Optional<IEventTrigger> getEventTrigger() {
         return Optional.of(this);
@@ -74,8 +79,4 @@ public class TriggerCardsSetBuildingEffect implements IBuildingEffect, IEventTri
     }
 
 
-    @Override
-    public boolean isCardTrigger() {
-        return true;
-    }
 }

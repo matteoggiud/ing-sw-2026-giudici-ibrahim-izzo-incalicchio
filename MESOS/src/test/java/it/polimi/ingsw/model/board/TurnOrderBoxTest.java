@@ -38,6 +38,11 @@ class TurnOrderBoxTest {
         slot2.placePlayer(player2);
     }
 
+    /**
+     * Tests initializing the turn order box.
+     * Verifies that valid lists properly set the slots and that exceptions are thrown
+     * if the list is null, empty, or contains null elements.
+     */
     @Test
     void initializeTurnOrderBox() {
         TurnOrderBox box = new TurnOrderBox();
@@ -55,6 +60,11 @@ class TurnOrderBoxTest {
         assertThrows(IllegalArgumentException.class, () -> box.initializeTurnOrderBox(Arrays.asList(first, null)));
     }
 
+    /**
+     * Tests retrieving the list of slots in the turn order box.
+     * Verifies that the correct slots are returned in order, and that a defensive copy
+     * is provided so external modifications do not affect the internal state.
+     */
     @Test
     void getSlots() {
         List<TurnOrderSlot> slots = turnOrderBox.getSlots();
@@ -70,6 +80,11 @@ class TurnOrderBoxTest {
         assertSame(slot1, turnOrderBox.getSlots().getFirst());
     }
 
+    /**
+     * Tests finding the first available free slot.
+     * Verifies that it correctly skips occupied slots, returns the first free one, 
+     * and throws an exception if all slots are occupied.
+     */
     @Test
     void getFirstFreeSlot() {
         assertSame(slot3, turnOrderBox.getFirstFreeSlot());
@@ -79,6 +94,11 @@ class TurnOrderBoxTest {
         assertThrows(IllegalStateException.class, () -> turnOrderBox.getFirstFreeSlot());
     }
 
+    /**
+     * Tests removing a specific player from their slot in the turn order box.
+     * Checks that the correct player is removed and their slot is freed, and that exceptions
+     * are thrown for null players or players who are not currently in any slot.
+     */
     @Test
     void removePlayer() {
         assertSame(player1, turnOrderBox.removePlayer(player1));
@@ -89,6 +109,10 @@ class TurnOrderBoxTest {
         assertThrows(IllegalStateException.class, () -> turnOrderBox.removePlayer(player3));
     }
 
+    /**
+     * Tests checking if the turn order box is completely empty.
+     * Verifies it returns true when no players occupy any slot, and false if at least one slot is filled.
+     */
     @Test
     void isCompletelyEmpty() {
         assertFalse(turnOrderBox.isCompletelyEmpty());
@@ -104,6 +128,11 @@ class TurnOrderBoxTest {
         assertFalse(emptyBox.isCompletelyEmpty());
     }
 
+    /**
+     * Tests retrieving the specific slot occupied by a given player.
+     * Verifies that the correct slot is returned, and exceptions are thrown for null input
+     * or for players not present in the turn order box.
+     */
     @Test
     void getSlotByPlayer() {
         assertSame(slot1, turnOrderBox.getSlotByPlayer(player1));
@@ -113,6 +142,10 @@ class TurnOrderBoxTest {
         assertThrows(IllegalStateException.class, () -> turnOrderBox.getSlotByPlayer(player3));
     }
 
+    /**
+     * Tests finding the zero-based index of a specific slot within the box.
+     * Verifies that correct indices are returned for valid slots, and -1 is returned for unknown slots.
+     */
     @Test
     void getIndexBySlot() {
         assertEquals(0, turnOrderBox.getIndexBySlot(slot1));

@@ -17,6 +17,7 @@ import java.util.List;
 
 public class ShamanicRitualEventEffect implements IEventEffect {
     /**
+     * Accept a visitor that can modify the effect result based on event-specific rules.
      * @param eventModifier     the visitor that will apply modifications to the effect result.
      * @param effectEventResult the effect result that may be modified by the eventModifier.
      */
@@ -26,6 +27,16 @@ public class ShamanicRitualEventEffect implements IEventEffect {
 
     }
 
+    /**
+     * Calculates the base effect of the Shamanic Ritual event card by determining which player(s)
+     * have the most and least star icons in their tribe.
+     * Players with the most star icons gain PP, while players with the least star icons lose PP.
+     * In case of a tie for either category, all tied players are affected accordingly.
+     * @param game      the current game state.
+     * @param eventCard the event card for which the effect is being calculated.
+     * @return a list of EffectEventResult representing the base effect of the Shamanic Ritual event card,
+     * including PP gains and losses for the affected players.
+     */
     @Override
     public List<EffectEventResult> calculateBaseEffect(Game game, EventCard eventCard) {
         List<EffectEventResult> effectEventResults = new ArrayList<>();

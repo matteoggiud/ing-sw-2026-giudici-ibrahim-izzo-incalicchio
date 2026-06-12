@@ -6,11 +6,13 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.gamelogic.ScoreCalculator;
 import it.polimi.ingsw.server.model.observer.event.GameEndedEvent;
 import it.polimi.ingsw.server.database.DataDepository;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
+
 import java.util.List;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * The ComputeFinalScoreState class represents the state of the game where the final scores
@@ -41,6 +43,9 @@ public class ComputeFinalScoreState implements IGameState {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null.");
         }
+
+        // Set the game as finished in the database in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> new DataWriting().updateGameInProgress(game.getGameId(), false));
 
         if (finalRankingNotified) {
             return;
@@ -82,13 +87,25 @@ public class ComputeFinalScoreState implements IGameState {
         dw.rankingsUpdate(game);
         DataDepository dataDepository = new DataDepository();
         List<LeadBoardDTO> historicalLeaderboard = dataDepository.getLeadBoard(game.getExpectedPlayerCount());
-        game.getObserverManager().notifyObservers(
-                new GameEndedEvent(game.getGameId(), rankingByNickname, game.getExpectedPlayerCount(), historicalLeaderboard)
-        );
+        game.getObserverManager().notifyObservers(new GameEndedEvent(game.getGameId(), rankingByNickname, game.getExpectedPlayerCount(), historicalLeaderboard));
     }
 
+    /**
+     * Indicates whether the game has ended. In this state, the game is not considered ended until the next state is reached.
+     * @return false, as the game is not yet ended in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
+    }
+
+
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     * @return the name of the persistence class for this game state
+     */
+    @Override
+    public String getPersistenceName() {
+        return "ComputeFinalScoreState";
     }
 }

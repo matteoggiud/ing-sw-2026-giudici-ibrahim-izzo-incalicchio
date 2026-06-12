@@ -13,12 +13,22 @@ import java.util.Optional;
  */
 public class RockPaintingsBonusBuildingEffect implements IBuildingEffect, IEventModifier {
 
+    /**
+     * This method returns an Optional containing this instance as an IEventModifier,
+     * indicating that this building effect modifies the Rock Painting Event.
+     * @return An Optional containing this instance as an IEventModifier.
+     */
     @Override
     public Optional<IEventModifier> getEventModifier() {
         return Optional.of(this);
     }
 
-
+    /**
+     * This method modifies the effect of the Rock Painting Event
+     * based on the number of Artists in the player's tribe.
+     * @param eventCard the event card that triggered the event
+     * @param result    the effect result that may be modified by this event modifier
+     */
     @Override
     public void visitEvent(RockPaintingEventEffect eventCard, EffectEventResult result) {
         Player p = result.getTargetPlayer();

@@ -1,29 +1,34 @@
 package it.polimi.ingsw.server.network.socket;
 
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
+import it.polimi.ingsw.common.network.socket_messages.server.game.*;
 import it.polimi.ingsw.server.network.GenericVirtualView;
-import it.polimi.ingsw.server.network.socket.messages.GenericErrorMessage;
-import it.polimi.ingsw.server.network.socket.messages.ServerMessage;
-import it.polimi.ingsw.server.network.socket.messages.game.*;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginFailedMessage;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginNeededMessage;
-import it.polimi.ingsw.server.network.socket.messages.login.LoginSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.AvailableGamesMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.DisconnectSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.LeftGameSuccessMessage;
-import it.polimi.ingsw.server.network.socket.messages.menu.RankingsMessage;
-import it.polimi.ingsw.server.network.socket.messages.register.RegisterFailedMessage;
-import it.polimi.ingsw.server.network.socket.messages.register.RegisterSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.GenericErrorMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.ServerMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.login.LoginFailedMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.login.LoginNeededMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.login.LoginSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.AvailableGamesMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.DisconnectSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.LeftGameSuccessMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.menu.RankingsMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.register.RegisterFailedMessage;
+import it.polimi.ingsw.common.network.socket_messages.server.register.RegisterSuccessMessage;
 
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
 public class SocketGenericVirtualView implements GenericVirtualView {
+    private final Socket socket;
     private final ObjectOutputStream outputStream;
+    private volatile boolean isReachable;
 
-    SocketGenericVirtualView(ObjectOutputStream outputStream) {
+    SocketGenericVirtualView(Socket socket, ObjectOutputStream outputStream) {
+        this.socket = socket;
         this.outputStream = outputStream;
+        isReachable = true;
     }
 
     /**
@@ -32,11 +37,14 @@ public class SocketGenericVirtualView implements GenericVirtualView {
      * @param message the message to be sent to the client
      * @throws RuntimeException if there is an error while sending the message
      */
-    public void sendMessage(ServerMessage message) throws RuntimeException {
+    public synchronized void sendMessage(ServerMessage message) throws RuntimeException {
         try {
-            outputStream.writeObject(message);
-            outputStream.flush();
+            synchronized (outputStream){
+                outputStream.writeObject(message);
+                outputStream.flush();
+            }
         } catch (Exception e) {
+            isReachable = false;
             throw new RuntimeException("Failed to send message to client: " + e.getMessage(), e);
         }
     }
@@ -338,5 +346,10 @@ public class SocketGenericVirtualView implements GenericVirtualView {
         ServerMessage serverMessage = new GameCrashedMessage(reason);
 
         sendMessage(serverMessage);
+    }
+
+    @Override
+    public boolean isReachable() {
+        return isReachable && socket != null && socket.isConnected() && !socket.isClosed() && !socket.isInputShutdown() && !socket.isOutputShutdown();
     }
 }

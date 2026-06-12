@@ -1,14 +1,11 @@
 package it.polimi.ingsw.client.network.socket;
 
 import it.polimi.ingsw.client.GenericVirtualServer;
-import it.polimi.ingsw.client.network.socket.messages.ClientMessage;
-import it.polimi.ingsw.client.network.socket.messages.game.*;
-import it.polimi.ingsw.client.network.socket.messages.login.LoginSubmitMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.DisconnectMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetAvailableGamesMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.GetRankingsMessage;
-import it.polimi.ingsw.client.network.socket.messages.menu.LeftGameMessage;
-import it.polimi.ingsw.client.network.socket.messages.registration.RegisterSubmitMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.ClientMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.game.*;
+import it.polimi.ingsw.common.network.socket_messages.client.menu.*;
+import it.polimi.ingsw.common.network.socket_messages.client.login.LoginSubmitMessage;
+import it.polimi.ingsw.common.network.socket_messages.client.registration.RegisterSubmitMessage;
 
 
 public class SocketVirtualServer implements GenericVirtualServer {
@@ -76,5 +73,10 @@ public class SocketVirtualServer implements GenericVirtualServer {
     @Override
     public void onGetRankings(int numPlayers) {
         sendMessage(new GetRankingsMessage(numPlayers));
+    }
+
+    @Override
+    public void onLeftLobbyMessage() {
+        sendMessage(new LeftLobbyMessage());
     }
 }

@@ -6,9 +6,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ *  This class represents the collection of players in a game lobby. It manages the players, their order, and provides methods to add, remove, and retrieve players.
+ */
 public class Players {
     private final List<Player> players;
 
+    /**
+     * Constructs a new Players object with an empty list of players.
+     */
     public Players() {
         this.players = new ArrayList<>();
     }
@@ -47,10 +53,13 @@ public class Players {
     /**
      * Removes a player from the lobby.
      *
-     * @throws IllegalArgumentException if the player is not in the lobby
+     * @throws IllegalArgumentException if the player is null, not in the lobby, or is the host
      */
     public void removePlayer(Player player) throws IllegalArgumentException {
-        if(!players.contains(player) && getHost().equals(player)) {
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null");
+        }
+        if (!players.contains(player) || getHost().equals(player)) {
             throw new IllegalArgumentException("Player not in the lobby or is the host");
         }
 

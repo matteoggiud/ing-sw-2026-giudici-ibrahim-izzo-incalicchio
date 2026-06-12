@@ -29,6 +29,11 @@ class StandardRuleSetTest {
         era3 = new Era3();
     }
 
+    /**
+     * Tests the {@link StandardRuleSet#getUpperRowSize(int)} method.
+     * Verifies that the correct upper row size is returned for valid player counts (2 to 5),
+     * and ensures that an {@link IllegalArgumentException} is thrown for invalid player counts.
+     */
     @Test
     void getUpperRowSize() {
         // valid values
@@ -42,6 +47,11 @@ class StandardRuleSetTest {
         assertThrows(IllegalArgumentException.class, () -> ruleSet.getUpperRowSize(6));
     }
 
+    /**
+     * Tests the {@link StandardRuleSet#getLowerRowSize(int)} method.
+     * Verifies that the correct lower row size is returned for valid player counts (2 to 5),
+     * and ensures that an {@link IllegalArgumentException} is thrown for invalid player counts.
+     */
     @Test
     void getLowerRowSize() {
         // valid values
@@ -55,6 +65,11 @@ class StandardRuleSetTest {
         assertThrows(IllegalArgumentException.class, () -> ruleSet.getLowerRowSize(6));
     }
 
+    /**
+     * Tests the {@link StandardRuleSet#getInitialFood(int)} method.
+     * Verifies that the correct initial food amount is assigned based on the player's starting order index (0 to 4).
+     * Ensures that an {@link IllegalArgumentException} is thrown for invalid indices.
+     */
     @Test
     void getInitialFood() {
         // valid values
@@ -69,6 +84,12 @@ class StandardRuleSetTest {
         assertThrows(IllegalArgumentException.class, () -> ruleSet.getInitialFood(5));
     }
 
+    /**
+     * Tests the {@link StandardRuleSet#createTurnOrderSlots(int)} method.
+     * Checks if the correct number of turn order slots is generated for 2, 3, 4, and 5 players.
+     * Also validates that each generated slot has the correct food bonus value according to the standard rules.
+     * Ensures that an {@link IllegalArgumentException} is thrown for invalid player counts.
+     */
     @Test
     void createTurnOrderSlots() {
         // Test 2 players
@@ -106,6 +127,13 @@ class StandardRuleSetTest {
         assertThrows(IllegalArgumentException.class, () -> ruleSet.createTurnOrderSlots(6));
     }
 
+    /**
+     * Tests the building limits configurations for all three eras.
+     * Verifies that the maps returned by {@link StandardRuleSet#getEra1BuildingLimits()}, 
+     * {@link StandardRuleSet#getEra2BuildingLimits()}, and {@link StandardRuleSet#getEra3BuildingLimits()}
+     * contain the correct maximum building counts per player count (2 to 5).
+     * Also checks that invalid player counts return null.
+     */
     @Test
     void buildingLimitMapsContainExpectedValues() {
         assertEquals(1, StandardRuleSet.getEra1BuildingLimits().get(2));
@@ -164,6 +192,12 @@ class StandardRuleSetTest {
 //        assertThrows(IllegalArgumentException.class, () -> ruleSet.sortEventCards(null));
 //    }
 
+    /**
+     * Tests the {@link StandardRuleSet#createOfferBoxes(int)} method.
+     * Checks if the correct number of offer boxes is generated for 2, 3, 4, and 5 players.
+     * Validates each box's attributes (food reward, upper row picks, lower row picks) against the standard rules.
+     * Ensures that an {@link IllegalArgumentException} is thrown for invalid player counts.
+     */
     @Test
     void createOfferBoxes() {
         List<OfferBox> boxes2 = ruleSet.createOfferBoxes(2);
@@ -211,6 +245,11 @@ class StandardRuleSetTest {
     }
 
 
+    /**
+     * Tests boundary conditions for player count validation.
+     * Uses {@link StandardRuleSet#getUpperRowSize(int)} to verify that edge case player counts
+     * (e.g., minimum, maximum, zeroes, negatives, very large numbers) are properly accepted or rejected.
+     */
     @Test
     void validatePlayerCount_BoundsTesting() {
         // Test min (2)

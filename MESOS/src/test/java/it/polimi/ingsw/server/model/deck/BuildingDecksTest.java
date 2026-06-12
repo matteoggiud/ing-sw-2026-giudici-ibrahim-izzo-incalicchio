@@ -30,6 +30,10 @@ class BuildingDecksTest {
         era3 = new Era3();
     }
 
+    /**
+     * Tests that retrieving the building deck for different eras returns distinct, 
+     * non-null building decks, and that identical eras return the same deck instance.
+     */
     @Test
     void getBuildingDeckReturnsOneDeckForEachEra() {
         BuildingDeck era1Deck = buildingDecks.getBuildingDeck(era1);
@@ -49,11 +53,19 @@ class BuildingDecksTest {
         assertSame(era3Deck, buildingDecks.getBuildingDeck(new Era3()));
     }
 
+    /**
+     * Tests that attempting to get a building deck with a null era argument throws
+     * an IllegalArgumentException.
+     */
     @Test
     void getBuildingDeckRejectsNullEra() {
         assertThrows(IllegalArgumentException.class, () -> buildingDecks.getBuildingDeck(null));
     }
 
+    /**
+     * Tests that adding separate lists of building cards correctly distributes them 
+     * into the corresponding building decks for Era 1, Era 2, and Era 3.
+     */
     @Test
     void addBuildingCardsAddsEachListToTheCorrectEraDeck() {
         BuildingCard era1a = newBuilding(era1, 3);
@@ -72,6 +84,10 @@ class BuildingDecksTest {
         assertEquals(List.of(era3a), buildingDecks.getBuildingDeck(era3).getBuildingCards());
     }
 
+    /**
+     * Tests that providing null lists for any era when adding building cards throws
+     * an IllegalArgumentException.
+     */
     @Test
     void addBuildingCardsRejectsNullLists() {
         assertThrows(IllegalArgumentException.class,
@@ -84,6 +100,10 @@ class BuildingDecksTest {
                 () -> buildingDecks.addBuildingCards(List.of(), List.of(), null));
     }
 
+    /**
+     * Tests that replacing the entire building decks updates the internal era-specific decks
+     * accurately based on the provided valid lists of building cards.
+     */
     @Test
     void setBuildingDeckSetsTheThreeEraDecks() {
         BuildingCard era1a = newBuilding(era1, 3);
@@ -102,6 +122,10 @@ class BuildingDecksTest {
         assertEquals(List.of(era3a, era3b), buildingDecks.getBuildingDeck(era3).getBuildingCards());
     }
 
+    /**
+     * Tests that calling setBuildingDeck with any null or empty card lists throws
+     * an IllegalArgumentException.
+     */
     @Test
     void setBuildingDeckRejectsNullOrEmptyLists() {
         BuildingCard era1a = newBuilding(era1, 3);

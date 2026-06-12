@@ -11,6 +11,9 @@ import it.polimi.ingsw.server.model.states.IGameState;
 import it.polimi.ingsw.server.model.states.LobbyState;
 
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
 /**
  * This class represents the game instance
@@ -73,6 +76,32 @@ public class Game {
      */
     private final int expectedPlayerCount;
 
+    /**
+     * This lock is used to synchronize the access to the game state
+     */
+    private Lock gameLock = new ReentrantLock();
+
+    /**
+     * This method is used to execute an action while holding the game lock
+     * @param action the action to be executed while holding the lock
+     */
+    public void locked(Runnable action) {
+        gameLock.lock();
+        try {
+            action.run();
+        }finally {
+            gameLock.unlock();
+        }
+    }
+
+    public <T> T locked(Supplier<T> action) {
+        gameLock.lock();
+        try {
+            return action.get();
+        } finally {
+            gameLock.unlock();
+        }
+    }
 
     /**
      * Constructor for the Game class, it initializes the game state, the players, the board and the decks.
@@ -113,6 +142,26 @@ public class Game {
         this.observerManager = new ObserverManager();
 
         players.addPlayer(hostPlayer);
+    }
+
+    /**
+     * Constructor for GameBuilder to reconstruct a game from a snapshot.
+     * Takes all state parameters explicitly.
+     */
+    public Game(int gameId, int expectedPlayerCount, Players players, Board board, IGameState gameState, 
+                TribeDeck tribeDeck, BuildingDecks buildingDecks, Era currentEra, boolean lastRoundTriggered) {
+        this.gameId = gameId;
+        this.expectedPlayerCount = expectedPlayerCount;
+        this.players = players;
+        this.board = board;
+        this.gameState = gameState;
+        this.tribeDeck = tribeDeck;
+        this.buildingDecks = buildingDecks;
+        this.currentEra = currentEra;
+        this.lastRoundTriggered = lastRoundTriggered;
+        
+        this.ruleSet = new StandardRuleSet();
+        this.observerManager = new ObserverManager();
     }
 
 
@@ -253,6 +302,13 @@ public class Game {
         this.lastRoundTriggered = lastRoundTriggered;
     }
 
+    /**
+     * Sets the current era of the game to the specified era.
+     * This method is used to update the current era during the game,
+     * especially when transitioning between eras.
+     * @param currentEra the new current era to set for the game
+     * @throws IllegalStateException if the provided current era is null, which indicates an invalid state for the game.
+     */
     public void setCurrentEra(Era currentEra) throws IllegalStateException {
         if (currentEra == null) {
             throw new IllegalArgumentException("The current era cannot be null");
@@ -269,48 +325,6 @@ public class Game {
         return gameState.isEnded();
     }
 
-
-    public void transferUpperTribeToLower() { // da portare nel game state
-        board.transferUpperTribeToLower();
-    }
-
-    /**
-     * This method is used to refill the upper row of the board with new tribe cards.
-     * It handles the transition between eras.
-     */
-   /* public void refillUpperRow(int upperRowSize) { // da portare nel game state
-        for (int i = 0; i < upperRowSize; i++) {
-            TribeCard tribeCard = tribeDeck.draw();
-
-            board.addTribeUpperRow(tribeCard);
-            if (tribeCard.getEra() != currentEra) {
-                changeEra(tribeCard.getEra());
-            }
-
-        }
-    }*/
-
-    /**
-     * This method is used when the era changes, it updates the board and the building cards according to the new era.
-     *
-     * @param newEra the new era to which the game is transitioning
-     * @throws IllegalArgumentException if the new era is null or if it is ERA_1.
-     */
-    /*public void changeEra(Era newEra) throws IllegalArgumentException { // da portare nel game state
-        if (newEra == null || newEra == Era.ERA_1) {
-            throw new IllegalArgumentException("Invalid era transition: new era cannot be null or ERA_1");
-        }
-
-        this.currentEra = newEra; // Update the current era to the new era
-
-        if (currentEra == Era.ERA_3) {
-            board.clearLowerBuildingRow(); // Clear the lower building row if we are transitioning to Era III
-        }
-
-        board.transferUpperBuildingToLower(); // Move the upper building row to the lower building row
-        board.placeInUpperBuildingRow(buildingDecks.get(currentEra)); // Place new building cards in the upper building row based on the new era
-    }*/
-
     /**
      * This method checks if the current round is the last round of the game by verifying if the tribe deck is empty.
      *
@@ -318,24 +332,6 @@ public class Game {
      */
     public boolean isLastRound() {
         return tribeDeck.isEmpty();
-    }
-
-    /**
-     * WORK IN PROGRESS DO NOT TOUCH
-     */
-    public void advancePhase() { // da portare nel game state
-    }
-
-    public void advanceRound() { // da portare nel game state
-    }
-
-
-    /**
-     * This method is used to end the game, it changes the game state to the ended state.
-     * The rest will be managed by the state pattern.
-     */
-    public void endGame(Map<Player, Integer> finalRanking) {
-        this.gameState = new EndedState(finalRanking);
     }
 
     /**

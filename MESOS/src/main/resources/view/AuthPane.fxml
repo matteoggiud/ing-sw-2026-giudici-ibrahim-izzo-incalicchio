@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="authRoot"
+           xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="it.polimi.ingsw.client.view.gui.controllers.AuthController"
+           prefWidth="1600.0"
+           prefHeight="900.0"
+           stylesheets="@../styles/auth.css"
+           styleClass="auth-root">
+
+    <ImageView fx:id="backgroundImage"
+               smooth="true"
+               preserveRatio="false">
+
+        <image>
+            <Image url="@../assets/backgrounds/authBg.png"/>
+        </image>
+    </ImageView>
+
+    <Pane fx:id="authOverlay"
+          pickOnBounds="false">
+
+        <VBox fx:id="authPanel"
+              alignment="CENTER_LEFT"
+              spacing="14.0"
+              styleClass="auth-panel">
+
+            <Label text="Access to village" styleClass="auth-heading"/>
+
+            <Label text="Insert credentials to enter MESOS"
+                   styleClass="auth-subtitle"
+                   wrapText="true"/>
+
+            <TextField fx:id="nicknameField"
+                       promptText="Nickname"
+                       onKeyPressed="#handleKeyPress"
+                       maxWidth="Infinity"
+                       styleClass="auth-field"/>
+
+            <PasswordField fx:id="passwordField"
+                           promptText="Password"
+                           onKeyPressed="#handleKeyPress"
+                           maxWidth="Infinity"
+                           styleClass="auth-field"/>
+
+            <Label fx:id="messageLabel"
+                   text=""
+                   visible="false"
+                   managed="false"
+                   maxWidth="Infinity"
+                   styleClass="auth-message"/>
+
+            <HBox alignment="CENTER" spacing="12.0" styleClass="auth-actions">
+                <Button id="loginButton"
+                        text="Login"
+                        onAction="#handleLogin"
+                        maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="auth-button"/>
+
+                <Button id="registerButton"
+                        text="Register"
+                        onAction="#handleRegistration"
+                        maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS"
+                        styleClass="auth-button"/>
+            </HBox>
+        </VBox>
+    </Pane>
+</StackPane>

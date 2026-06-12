@@ -51,11 +51,11 @@ public class PlayerDeck {
     }
 
     public ArrayList<CharacterCard> getCharacters() {
-        return characters;
+        return new ArrayList<>(characters);
     }
 
     public ArrayList<BuildingCard> getBuildings() {
-        return buildings;
+        return new ArrayList<>(buildings);
     }
 
     /**
@@ -191,6 +191,11 @@ public class PlayerDeck {
         return activeTriggers;
     }
 
+
+    /**
+     * This method retrieves a list of active endgame scorings from the player's building cards.
+     * @return a list of active endgame scorings from the player's building cards.
+     */
     public List<IEndGameScoring> getActiveEndGameBuildingScorings() {
         List<IEndGameScoring> endGameScorings = new ArrayList<>();
 
@@ -204,6 +209,10 @@ public class PlayerDeck {
         return endGameScorings;
     }
 
+    /**
+     * This method retrieves a list of active extra action effects from the player's building cards.
+     * @return a list of active extra action effects from the player's building cards.
+     */
     public List<IExtraActionEffect> getActiveExtractionEffects() {
         List<IExtraActionEffect> extraActionEffects = new ArrayList<>();
 
@@ -216,7 +225,16 @@ public class PlayerDeck {
         return extraActionEffects;
     }
 
-
-
+    /**
+     * This method resets the player's deck by clearing the lists of character and building cards,
+     * and resetting the counts of character types to zero.
+     */
+    public void reset() {
+        this.characters.clear();
+        this.buildings.clear();
+        for (CharacterType characterType : CharacterType.values()) {
+            characterTypeCounts.put(characterType, 0);
+        }
+    }
 }
 

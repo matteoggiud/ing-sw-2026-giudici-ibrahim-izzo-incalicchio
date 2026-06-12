@@ -16,7 +16,6 @@ public class TribeDeck {
      * complexity of O(1), meanwhile the ArrayList O(n)
      */
     private final LinkedList<TribeCard> tribeDeck;
-    // TODO: use stack instead linked list
 
     /**
      * Constructor for the TribeDeck class, it initializes the tribe deck with an empty list of tribe cards.
@@ -25,18 +24,6 @@ public class TribeDeck {
         this.tribeDeck = new LinkedList<>();
     }
 
-    /**
-     * Constructs a new TribeDeck with a given list of tribe cards.
-     *
-     * @param tribeDeck the list of tribe cards to initialize the deck with (must not be null)
-     * @throws IllegalArgumentException if the provided list of tribe cards is null
-     */
-    public TribeDeck(LinkedList<TribeCard> tribeDeck) throws IllegalArgumentException {
-        if (tribeDeck == null || tribeDeck.isEmpty()) {
-            throw new IllegalArgumentException("TribeDeck cannot be null.");
-        }
-        this.tribeDeck = tribeDeck;
-    }
 
     /**
      * This method allows a player to draw a tribe card from the tribe deck.
@@ -46,10 +33,6 @@ public class TribeDeck {
     public TribeCard drawCard() throws IllegalStateException {
         if(this.tribeDeck.isEmpty()){ throw new IllegalStateException("TribeDeck is empty"); }
         return this.tribeDeck.removeFirst();
-    }
-
-    public void addTribesCards(List<TribeCard> cards) {
-        this.tribeDeck.addAll(cards);
     }
 
     /**
@@ -67,13 +50,20 @@ public class TribeDeck {
         this.tribeDeck.addAll(tribeDeck);
     }
 
-
-    public void addCardToTop(TribeCard card) {
-        this.tribeDeck.addFirst(card);
-    }
-
+    /**
+     * This method checks if the tribe deck is empty.
+     * @return true if the tribe deck is empty, false otherwise.
+     */
     public boolean isEmpty(){
         return this.tribeDeck.isEmpty();
+    }
+
+    /**
+     * Gets the tribe deck.
+     * @return  the tribe deck.
+     */
+    public LinkedList<TribeCard> getTribeDeck() {
+        return tribeDeck;
     }
 }
 

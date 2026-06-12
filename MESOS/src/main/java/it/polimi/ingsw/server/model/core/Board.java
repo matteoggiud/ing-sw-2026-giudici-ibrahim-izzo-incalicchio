@@ -103,6 +103,10 @@ public class Board {
         upperRow.addBuildingRowFrom(buildingDeck);
     }
 
+    /**
+     * Transfers all tribe cards from the upper row to the lower row.
+
+     */
     public void transferUpperTribeToLower() {
         lowerRow.transferTribeRowFrom(upperRow);
     }

@@ -182,16 +182,32 @@ public class EventCard extends TribeCard {
         throw new UnsupportedOperationException("Event cards cannot be added to a player's deck");
     }
 
+    /**
+     * Adds this event card to the provided event list.
+     * This is used when initializing the event row on the board.
+     * @param eventList the list to which this event card will be added
+     */
     @Override
     public void addToEventList(List<EventCard> eventList) {
         eventList.add(this);
     }
 
+    /**
+     * Event cards cannot be selected from the offer rows,
+     * so this method always throws an IllegalArgumentException.
+     * @param row the card row from which the player is attempting to select this card
+     */
     @Override
     public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");
     }
 
+    /**
+     * Event cards cannot be selected from the offer rows,
+     * so this method always throws an IllegalArgumentException.
+     * @param player the player who has selected this card
+     * @param row the card row from which the player has selected this card
+     */
     @Override
     public void resolveFromOfferRow(Player player, CardRow row) {
         throw new IllegalArgumentException("Event cards cannot be selected from the offer rows.");

@@ -2,16 +2,18 @@ package it.polimi.ingsw.client.network.rmi;
 
 import it.polimi.ingsw.client.GenericVirtualServer;
 
-import it.polimi.ingsw.client.network.rmi.RemoteServer;
+import it.polimi.ingsw.common.network.rmi.client.RemoteServer;
 
 import java.rmi.RemoteException;
 
 public class RmiVirtualServer implements GenericVirtualServer {
 
     RemoteServer remoteServer;
+    private final RmiClient rmiClient;
 
-    public RmiVirtualServer(RemoteServer remoteServer) {
+    public RmiVirtualServer(RemoteServer remoteServer, RmiClient rmiClient) {
         this.remoteServer = remoteServer;
+        this.rmiClient = rmiClient;
     }
 
 
@@ -110,6 +112,15 @@ public class RmiVirtualServer implements GenericVirtualServer {
         try {
             remoteServer.onGetRankings(numPlayers);
         } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void onLeftLobbyMessage() {
+        try {
+            remoteServer.onLeftLobbyMessage();
+        }catch (RemoteException e) {
             throw new RuntimeException(e);
         }
     }

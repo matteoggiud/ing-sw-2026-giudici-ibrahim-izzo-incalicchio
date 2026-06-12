@@ -1,22 +1,31 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.card.EventCard;
 import it.polimi.ingsw.server.model.card.TribeCard;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.gamelogic.EffectResolver;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameSnapshotDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents the end round phase of the game.
  */
 public class EndRoundState implements IGameState {
 
+    /**
+     * Transitions the game to the next state after the end round phase.
+     * @param game the current game context
+     */
     @Override
     public void nextState(Game game) {
         if (game == null) {
@@ -44,6 +53,12 @@ public class EndRoundState implements IGameState {
             throw new IllegalArgumentException("Game cannot be null");
         }
 
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
+
         if (game.isLastRound()) {
             game.setLastRoundTriggered(true);
         }
@@ -65,6 +80,18 @@ public class EndRoundState implements IGameState {
 
         notifyBoardUpdate(game);
         nextState(game);
+        notifyPlayerInfos(game);
+    }
+
+    /**
+     * Notifies observers about the updated player information, such as resources and points.
+     * @param game the current game context
+     */
+    private void notifyPlayerInfos(Game game) {
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(
+                game.getGameId(),
+                PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers()
+                )));
     }
 
     /**
@@ -102,7 +129,8 @@ public class EndRoundState implements IGameState {
         int targetUpperRowSize = game.getRuleSet().getUpperRowSize(game.getNumberOfPlayers());
         Era currentEra = game.getCurrentEra();
 
-        while (board.getUpperRow().getTribeRow().count() < targetUpperRowSize) {
+        while (board.getUpperRow().getTribeRow().count() < targetUpperRowSize
+                && !game.getTribeDeck().isEmpty()) {
             TribeCard drawnCard = game.getTribeDeck().drawCard();
             board.getUpperRow().addCard(drawnCard);
 
@@ -155,9 +183,21 @@ public class EndRoundState implements IGameState {
         );
     }
 
+    /**
+     * Indicates whether the game has ended. In this state, the game is not considered ended until the next state is reached.
+     * @return false, as the game is not yet ended in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
     }
 
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     * @return the name of the persistence class for this game state
+     */
+    @Override
+    public String getPersistenceName() {
+        return "EndRoundState";
+    }
 }

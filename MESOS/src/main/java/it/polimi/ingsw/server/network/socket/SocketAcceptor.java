@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.List;
 
 /**
@@ -18,7 +18,7 @@ public class SocketAcceptor {
     private final ServerSocket listenSocket;
     private final GameController controller;
 
-    List<ClientHandler> clients = new ArrayList<>();
+    List<ClientHandler> clients = new CopyOnWriteArrayList<>();
 
     public SocketAcceptor(ServerSocket listenSocket, GameController controller) {
         this.listenSocket = listenSocket;
@@ -37,7 +37,7 @@ public class SocketAcceptor {
             ObjectInputStream inputStream = new ObjectInputStream(clientSocket.getInputStream());
 
 
-            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this, new EventHandler(new SocketGenericVirtualView(outputStream)));
+            ClientHandler client = new ClientHandler(clientSocket, controller, inputStream, outputStream, this, new EventHandler(new SocketGenericVirtualView(clientSocket, outputStream)));
             clients.add(client);
             new Thread(client).start();
         }

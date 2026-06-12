@@ -19,6 +19,10 @@ class BuildingDeckTest {
         era1 = new Era1();
     }
 
+    /**
+     * Tests the retrieval and integrity of the building cards list, ensuring it is initially empty,
+     * updates correctly upon addition of cards, and maintains structural properties.
+     */
     @org.junit.jupiter.api.Test
     void getBuildingCards() {
         org.junit.jupiter.api.Assertions.assertTrue(buildingDeck.getBuildingCards().isEmpty());
@@ -32,8 +36,16 @@ class BuildingDeckTest {
         org.junit.jupiter.api.Assertions.assertEquals(2, buildingDeck.getBuildingCards().size());
         org.junit.jupiter.api.Assertions.assertTrue(buildingDeck.getBuildingCards().contains(card1));
         org.junit.jupiter.api.Assertions.assertTrue(buildingDeck.getBuildingCards().contains(card2));
+
+        var cards = buildingDeck.getBuildingCards();
+        cards.clear();
+        org.junit.jupiter.api.Assertions.assertEquals(2, buildingDeck.getBuildingCards().size());
     }
 
+    /**
+     * Tests adding a single building card to the deck, verifying the deck's size and contents
+     * correctly reflect the addition.
+     */
     @org.junit.jupiter.api.Test
     void addBuildingCard() {
         BuildingCard card = newBuilding(4);
@@ -44,6 +56,10 @@ class BuildingDeckTest {
         org.junit.jupiter.api.Assertions.assertTrue(buildingDeck.getBuildingCards().contains(card));
     }
 
+    /**
+     * Tests adding a list of building cards to the deck, verifying all cards are accurately
+     * incorporated into the internal deck structure.
+     */
     @org.junit.jupiter.api.Test
     void addBuildingCards() {
         BuildingCard card1 = newBuilding(2);

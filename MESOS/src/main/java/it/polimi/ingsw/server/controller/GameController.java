@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server.controller;
 
 import it.polimi.ingsw.server.model.gamemodel.GamePortal;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
 import it.polimi.ingsw.server.network.ClientSession;
 import it.polimi.ingsw.server.network.SessionRegistry;
 
@@ -33,6 +33,7 @@ public class GameController {
         if (clientSession.isLoggedIn()) {
             throw new RuntimeException("You are already logged in, please logout first.");
         }
+        disconnectStaleSessionIfPresent(username);
 
         try {
             model.login(username, password);
@@ -41,7 +42,19 @@ public class GameController {
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
 
+            System.out.println("[INFO] Player " + username + " logged in successfully.");
+            try {
+                Integer gameId = model.getActiveGameIdForPlayer(username);
+                if (gameId != null) {
+                    clientSession.setActiveGameId(gameId);
+                    model.reconnectToGame(gameId, username, clientSession.getEventHandler());
+                }
+            } catch (Exception e) {
+                System.err.println("[ERROR] Exception caught in GameController (reconnecting to game): " + e.getMessage());
+            }
+
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in GameController (login): " + e.getMessage());
             throw new RuntimeException("Login failed: " + e.getMessage(), e);
         }
     }
@@ -59,6 +72,8 @@ public class GameController {
             throw new RuntimeException("You are already logged in, please logout first.");
         }
 
+        disconnectStaleSessionIfPresent(username);
+
         try {
             model.register(username, password);
 
@@ -66,7 +81,10 @@ public class GameController {
             clientSession.setNickname(username);
             // Register the client session in the session registry to allow for proper session management and cleanup on disconnect
             SessionRegistry.getInstance().registerSession(clientSession);
+            System.out.println("[INFO] Player " + username + " register and logged in successfully.");
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in GameController (register): " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Register failed: " + e.getMessage(), e);
         }
     }
@@ -91,6 +109,8 @@ public class GameController {
 
         // update the client session to reflect the game they have joined
         clientSession.setActiveGameId(gameId);
+
+        System.out.println("[INFO] Player " + clientSession.getNickname() + " joined game " + gameId + " successfully.");
 
         model.startGameIfReady(gameId);
 
@@ -121,7 +141,7 @@ public class GameController {
         for (String player : remainingPlayerNicknames) {
             ClientSession playerSession = SessionRegistry.getInstance().getSession(player);
             if (playerSession == null)
-                throw new IllegalStateException("Player " + player + " is not found.");
+                continue;
 
             remainingPlayerSessions.add(playerSession);
             // The game is ended so we need to clear the active game id for all the remaining players in the game as well
@@ -129,24 +149,6 @@ public class GameController {
         }
 
         return remainingPlayerSessions;
-    }
-
-    /**
-     * Allows a player to log out of the game, ending their session and disconnecting them from the server
-     *
-     * @param clientSession the client session of the player
-     */
-    public void logout(ClientSession clientSession) {
-        if (!clientSession.isLoggedIn()) {
-            throw new IllegalStateException("Player must be logged in to logout.");
-        }
-        if (clientSession.isInGame()) {
-            throw new IllegalStateException("Player is currently in a game and cannot logout.");
-        }
-
-        // Unregister the client session from the session registry to ensure proper cleanup and prevent memory leaks
-        SessionRegistry.getInstance().unregisterSession(clientSession);
-        model.logout(clientSession.getNickname());
     }
 
     /**
@@ -230,6 +232,7 @@ public class GameController {
         try {
             nickname = clientSession.getNickname();
         } catch (Exception e) {
+            System.err.println("(Game portal) Player disconnected");
             clientSession.disconnectSession();
             return playersInterested;
         }
@@ -245,39 +248,32 @@ public class GameController {
             model.logout(nickname);
         } finally {
             // Ensure that the client session is properly disconnected and unregistered from the session registry
-            clientSession.disconnectSession();
             SessionRegistry.getInstance().unregisterSession(clientSession);
+            clientSession.disconnectSession();
         }
 
         return playersInterested;
     }
 
+
     /**
-     * Refreshes the active game ID for a client session by comparing the current active game ID in the session with the actual active game ID from the model.
+     * Checks for an existing client session associated with the given nickname and disconnects it if it is found to be stale
      *
-     * @param clientSession the client session for which to refresh the active game ID
+     * @param nickname the nickname of the player for which to check for an existing session
      */
-    private void refreshActiveGameIdFromModel(ClientSession clientSession) {
-        if (!clientSession.isLoggedIn()) {
+    private void disconnectStaleSessionIfPresent(String nickname) {
+        ClientSession existingSession = SessionRegistry.getInstance().getSession(nickname);
+        if (existingSession == null) {
             return;
         }
-
-        Integer actualActiveGameId = model.getActiveGameIdForPlayer(clientSession.getNickname());
-        Integer sessionActiveGameId = clientSession.getActiveGameId();
-
-        if (actualActiveGameId == null) {
-            if (sessionActiveGameId != null) {
-                clientSession.clearActiveGameId();
+        try {
+            if (existingSession.getEventHandler().getView().isReachable()) {
+                return;
             }
-            return;
+        } catch (Exception e) {
+            System.out.println("[INFO] Detected stale session for " + nickname + ", forcing disconnect");
         }
-
-        if (!actualActiveGameId.equals(sessionActiveGameId)) {
-            if (sessionActiveGameId != null) {
-                clientSession.clearActiveGameId();
-            }
-            clientSession.setActiveGameId(actualActiveGameId);
-        }
+        handleDisconnect(existingSession);
     }
 
     /**
@@ -293,5 +289,103 @@ public class GameController {
         }
         return model.getRanking(numPlayers);
     }
+
+    public List<ClientSession> leaveLobby(ClientSession clientSession) {
+        if (!clientSession.isLoggedIn()) {
+            throw new IllegalStateException("Player must be logged in to leave a lobby");
+        }
+
+        List<ClientSession> playersInterested = new ArrayList<>();
+        if (!clientSession.isInGame()) {
+            return playersInterested;
+        }
+
+        int gameId = clientSession.getActiveGameId();
+        boolean hostIsLeaving = model.getGame(gameId).getHostPlayer().getNickname().equals(clientSession.getNickname());
+
+        if (!hostIsLeaving) {
+            model.removeObserver(model.getGame(gameId), clientSession.getEventHandler());
+        }
+
+        List<String> remainingPlayerNicknames = model.leaveLobby(clientSession.getNickname(), gameId);
+
+        for (String remainingPlayerNickname : remainingPlayerNicknames) {
+            ClientSession playerSession = SessionRegistry.getInstance().getSession(remainingPlayerNickname);
+            if (playerSession == null) {
+                continue;
+            }
+
+            playerSession.clearActiveGameId();
+            playersInterested.add(playerSession);
+        }
+
+        clientSession.clearActiveGameId();
+        return playersInterested;
+    }
+
+    /**
+     * Handles the unexpected disconnection of a client session, ensuring that the player's state is properly
+     * updated in the game model and that any necessary cleanup is performed.
+     * @param clientSession the client session that has been unexpectedly disconnected
+     */
+    public void handleUnexpectedDisconnect(ClientSession clientSession) {
+        if (clientSession == null || clientSession.isRequestedDisconnection()) {
+            return;
+        }
+
+        String nickname = null;
+        if (clientSession.isLoggedIn()) {
+            try {
+                nickname = clientSession.getNickname();
+            } catch (Exception ignored) {
+            }
+        }
+
+        List<ClientSession> playersToNotify = handleDisconnect(clientSession);
+
+        if (nickname != null) {
+            notifyGameClosed(playersToNotify,nickname + " has disconnected, the game is ended");
+        }
+    }
+
+    /**
+     * Notifies a list of player sessions that a game has been closed, providing a reason for the closure and updating their available games list.
+     * @param playersToNotify the list of client sessions to notify about the game closure
+     * @param reason the reason for the game closure to be communicated to the players
+     */
+    public void notifyGameClosed(List<ClientSession> playersToNotify, String reason) {
+        for (ClientSession playerSession : playersToNotify) {
+            if (playerSession == null || !playerSession.isLoggedIn()) {
+                continue;
+            }
+
+            try {
+                playerSession.getEventHandler().getView().onGameCrashed(reason);
+                playerSession.getEventHandler().getView().onAvailableGames(getAvailableGames(playerSession));
+            } catch (Exception e) {
+                System.err.println("[WARN] Could not notify player about closed game: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Iterates through all active client sessions and disconnects any sessions that are found to be unreachable
+     */
+    public void disconnectUnreachableSessions() {
+        for (ClientSession session : SessionRegistry.getInstance().getSessionsSnapshot()) {
+            if (session == null || !session.isLoggedIn() || session.isRequestedDisconnection()) {
+                continue;
+            }
+
+            try {
+                if (!session.getEventHandler().getView().isReachable()) {
+                    handleUnexpectedDisconnect(session);
+                }
+            } catch (Exception e) {
+                handleUnexpectedDisconnect(session);
+            }
+        }
+    }
+
 
 }

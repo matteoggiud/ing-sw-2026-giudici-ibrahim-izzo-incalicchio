@@ -1,24 +1,46 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.board.OfferBox;
 import it.polimi.ingsw.server.model.board.TurnOrderSlot;
 import it.polimi.ingsw.server.model.core.Board;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.PlaceTotemTurnChangedEvent;
 
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * The PlacingTotemState class represents the state of the game where players take turns placing their totems on the offer boxes.
+ */
 public class PlacingTotemState implements IGameState {
 
+    /**
+     * Transitions the game to the ResolveActionsState after all players have placed their totems.
+     * @param game the current game context
+     */
     @Override
     public void nextState(Game game) {
         game.setGameState(new ResolveActionsState());
         game.getGameState().executePhase(game);
     }
 
+    /**
+     * Executes the placing totem phase by saving the game snapshot for persistence and notifying the first player to place their totem.
+     * @param game the current game context
+     */
     @Override
     public void executePhase(Game game) {
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        CompletableFuture.runAsync(() -> {
+            GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
+
         // Notify the first player who must place their totem.
         notifyCurrentPlacingPlayer(game);
     }
@@ -48,6 +70,8 @@ public class PlacingTotemState implements IGameState {
             offerBox.placePlayer(player);
             game.getBoard().getTurnOrderBox().removePlayer(player);
         } catch (IllegalStateException e) {
+            System.err.println("[ERROR] Exception caught in PlacingTotemState: " + e.getMessage());
+            e.printStackTrace();
             throw new IllegalStateException("You cannot place a totem on this offer box.");
         }
 
@@ -102,8 +126,21 @@ public class PlacingTotemState implements IGameState {
         );
     }
 
+    /**
+     * Indicates whether the game has ended. In this state, the game is not considered ended until the next state is reached.
+     * @return false, as the game is not yet ended in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
+    }
+
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     * @return the name of the persistence class for this game state
+     */
+    @Override
+    public String getPersistenceName() {
+        return "PlacingTotemState";
     }
 }

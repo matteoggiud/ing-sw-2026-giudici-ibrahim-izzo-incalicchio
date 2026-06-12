@@ -24,7 +24,8 @@ import it.polimi.ingsw.server.model.era.Era;
 import it.polimi.ingsw.server.model.era.Era1;
 import it.polimi.ingsw.server.model.era.Era2;
 import it.polimi.ingsw.server.model.era.Era3;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -32,10 +33,47 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DataDepository {
 
     private final ObjectMapper mapper = new ObjectMapper();
+    private static final ConcurrentHashMap<Integer, BuildingCard> buildingCardCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, EventCard> eventCardCache = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, CharacterCard> characterCardCache = new ConcurrentHashMap<>();
+    private static boolean isIsCacheLoaded = false;
+
+    public synchronized void loadCache() {
+        if (!isIsCacheLoaded) {
+            try {
+                getEventCards().forEach(card -> eventCardCache.put(card.getCardId(), card));
+                getCharacterCards().forEach(card -> characterCardCache.put(card.getCardId(), card));
+                getBuildingCards().forEach(card -> buildingCardCache.put(card.getCardId(), card));
+                isIsCacheLoaded = true;
+                System.out.println("[INFO] DataDepository: Card cache loaded successfully, Total cards: " + (eventCardCache.size() + characterCardCache.size() + buildingCardCache.size()));
+            } catch (SQLException e) {
+                System.err.println("[ERROR] Exception caught while loading character cards into cache: " + e.getMessage());
+            }
+        }
+    }
+
+    public Card getCardById(int cardId) {
+        if (!isIsCacheLoaded) {
+            loadCache();
+        }
+
+        Card card = characterCardCache.get(cardId);
+        if (card != null) return card;
+
+        card = buildingCardCache.get(cardId);
+        if (card != null) return card;
+
+        card = eventCardCache.get(cardId);
+        if (card == null) {
+            System.err.println("[WARN] Card with id " + cardId + " not found in cache.");
+        }
+        return card;
+    }
 
     /**
      * Test the connection, return true if the connection is valid
@@ -44,11 +82,8 @@ public class DataDepository {
      * @throws SQLException
      */
     public boolean testConnection() throws SQLException {
-        Connection c = DatabaseManager.getConnection();
-        if (c != null && !c.isClosed() && c.isValid(3)) {
-            return true;
-        } else {
-            return false;
+        try (Connection c = DatabaseManager.getConnection()) {
+            return c != null && !c.isClosed() && c.isValid(3);
         }
     }
 
@@ -82,7 +117,7 @@ public class DataDepository {
                 JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
                 String imageKey = rs.getString("image_key");
 
-                allArtistCard.add(new ArtistCharacterCard(cardId, name, era, minNumPlayers,imageKey));
+                allArtistCard.add(new ArtistCharacterCard(cardId, name, era, minNumPlayers, imageKey));
             }
         }
         return allArtistCard;
@@ -376,7 +411,6 @@ public class DataDepository {
      * @return
      */
     private IBuildingEffect createBuildingEffect(String effectId, JsonNode params) {
-        //TODO: refactor effect id
         return switch (effectId) {
             case "DOUBLEBUILDERBUILDINGEFFECT" -> new DoubleBuilderBuildingEffect();
             case "ENDPPCARDSSETBUILDINGEFFECT" -> new EndPpCardsSetBuildingEffect();
@@ -405,6 +439,8 @@ public class DataDepository {
             }
             return mapper.readTree(raw);
         } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
+            e.printStackTrace();
             throw new IllegalArgumentException("effectParams JSON non valido: " + raw, e);
         }
     }
@@ -416,147 +452,27 @@ public class DataDepository {
      * @return the card with the specified id, or null if no such card exists
      */
     public CharacterCard getCharacterCardById(int cardId) {
-        String query = "SELECT * FROM character_card JOIN card ON charcter_card_id=card_id WHERE id = ?";
-        CharacterCard card = null;
-
-        try (Connection c = DatabaseManager.getConnection();
-             PreparedStatement ps = c.prepareStatement(query)) {
-
-            ps.setInt(1, cardId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String name = rs.getString("name");
-                    Era era = createEra(rs.getString("era"));
-                    int minNumPlayers = rs.getInt("min_num_players");
-                    CharacterType characterType = CharacterType.valueOf(rs.getString("character_type"));
-                    JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
-                    String imageKey = rs.getString("image_key");
-
-                    return switch (characterType) {
-                        case ARTIST -> card = new ArtistCharacterCard(cardId, name, era, minNumPlayers,imageKey);
-                        case BUILDER -> card =
-                                new BuilderCharacterCard(cardId, name, era, minNumPlayers, params.path("endGamePP").asInt(0), params.path("foodDiscount").asInt(0), imageKey);
-                        case GATHERER -> card = new GathererCharacterCard(cardId, name, era, minNumPlayers, imageKey);
-                        case HUNTER -> card =
-                                new HunterCharacterCard(cardId, name, era, minNumPlayers, params.path("isFoodIcon").asBoolean(false), imageKey);
-                        case INVENTOR -> card =
-                                new InventorCharacterCard(cardId, name, era, minNumPlayers, InventorType.valueOf(params.path("inventorType").asText("ARROW")), imageKey);
-                        case SHAMAN -> card =
-                                new ShamanCharacterCard(cardId, name, era, minNumPlayers, params.path("shamanStars").asInt(1), imageKey);
-                    };
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (!isIsCacheLoaded) {
+            loadCache();
         }
-        return card;
+        return characterCardCache.get(cardId);
     }
 
     public BuildingCard getBuildingCardById(int cardId) {
-        String query = "SELECT * FROM building_card JOIN card ON building_card_id=card_id WHERE card_id = ?";
-        BuildingCard card = null;
-
-        try (Connection c = DatabaseManager.getConnection();
-             PreparedStatement ps = c.prepareStatement(query)) {
-
-            ps.setInt(1, cardId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String name = rs.getString("name");
-                    Era era = createEra(rs.getString("era"));
-                    int minNumPlayers = rs.getInt("min_num_players");
-                    int foodCost = rs.getInt("food_cost");
-                    int endGamePp = rs.getInt("end_game_pp");
-                    String effectId = rs.getString("effect_id");
-                    JsonNode params = parseJsonOrEmpty(rs.getString("effect_params"));
-                    IBuildingEffect effect = createBuildingEffect(effectId, params);
-                    String imageKey = rs.getString("image_key");
-
-                    card = new BuildingCard(cardId, name, era, minNumPlayers, foodCost, endGamePp, effect, imageKey);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (!isIsCacheLoaded) {
+            loadCache();
         }
-
-        return card;
+        return buildingCardCache.get(cardId);
     }
 
     public EventCard getEventCardById(int cardId) {
-        String query = "SELECT * FROM event_card JOIN card ON event_card_id=card_id WHERE card_id = ?";
-        EventCard card = null;
-
-        try (Connection c = DatabaseManager.getConnection();
-             PreparedStatement ps = c.prepareStatement(query)) {
-
-            ps.setInt(1, cardId);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String name = rs.getString("name");
-                    Era era = createEra(rs.getString("era"));
-                    int minNumPlayers = rs.getInt("min_num_players");
-                    boolean isFinalEvent = rs.getBoolean("is_final_event");
-                    String eventTypeStr = rs.getString("event_type");
-                    int gainedFood = rs.getInt("gained_food");
-                    int malusFood = rs.getInt("malus_food");
-                    int gainedPp = rs.getInt("gained_pp");
-                    int malusPp = rs.getInt("malus_pp");
-                    int threshold = rs.getInt("threshold");
-                    String imageKey = rs.getString("image_key");
-
-                    card = new EventCard(cardId, name, era, minNumPlayers, isFinalEvent, switch (eventTypeStr) {
-                        case "HUNT" -> new HuntEventEffect();
-                        case "ROCK_PAINTINGS" -> new RockPaintingEventEffect();
-                        case "SHAMANIC_RITUAL" -> new ShamanicRitualEventEffect();
-                        case "SUSTENANCE" -> new SustenanceEventEffect();
-                        default -> throw new IllegalArgumentException("eventType invalid: " + eventTypeStr);
-                    }, gainedFood, malusFood, gainedPp, malusPp, threshold, imageKey);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (!isIsCacheLoaded) {
+            loadCache();
         }
-        return card;
+        return eventCardCache.get(cardId);
     }
 
-    public Card getCardbyId(int id){
-        Card card = null;
-        try{
-            card=getCharacterCardById(id);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        try{
-            card=getBuildingCardById(id);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        try{
-            card=getEventCardById(id);
-        }catch (Exception e){
-            System.out.println(e);
-        }
-        return card;
-    }
-
-    public OfferBox getOfferBoxbyId(String OfferBoxId) {
-        String query = "SELECT * FROM offer_box WHERE box_id = ?";
-        OfferBox offerBox = null;
-        try (Connection c = DatabaseManager.getConnection();
-             PreparedStatement ps = c.prepareStatement(query)) {
-
-            ps.setString(1, OfferBoxId);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return offerBox;
-    }
-    
-    private Era createEra(String era){
+    private Era createEra(String era) {
         switch (era) {
             case "ERA_1" -> {
                 return new Era1();
@@ -573,18 +489,18 @@ public class DataDepository {
 
     public List<LeadBoardDTO> getLeadBoard(int numPlayers) {
         String rankings = """
-        SELECT
-            p.nickname,
-            SUM(gp.final_score) AS total_score,
-            MAX(g.finished_at) AS finished_at
-        FROM player p
-        INNER JOIN game_player gp ON p.player_id = gp.player_id
-        INNER JOIN game g ON gp.game_id = g.game_id
-        WHERE g.finished_at IS NOT NULL
-          AND g.expected_players = ?
-        GROUP BY p.nickname
-        ORDER BY total_score DESC, p.nickname ASC;
-        """;
+                SELECT
+                    p.nickname,
+                    SUM(gp.final_score) AS total_score,
+                    MAX(g.finished_at) AS finished_at
+                FROM player p
+                INNER JOIN game_player gp ON p.player_id = gp.player_id
+                INNER JOIN game g ON gp.game_id = g.game_id
+                WHERE g.finished_at IS NOT NULL
+                  AND g.expected_players = ?
+                GROUP BY p.nickname
+                ORDER BY total_score DESC, p.nickname ASC;
+                """;
 
         List<LeadBoardDTO> leadBoardDTO = new ArrayList<>();
 
@@ -605,10 +521,66 @@ public class DataDepository {
                 }
             }
         } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository: " + e.getMessage());
             e.printStackTrace();
         }
 
         return leadBoardDTO;
+    }
+
+    /**
+     * Loads the saved game snapshot from the database for a specific game.
+     *
+     * @param gameId the unique identifier of the game
+     * @return the GameSnapshotDTO if found, otherwise null
+     */
+    public GameSnapshotDTO loadGameSnapshot(int gameId) {
+        String query = "SELECT game_snapshot FROM game WHERE game_id = ?";
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query)) {
+
+            ps.setInt(1, gameId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String jsonSnapshot = rs.getString("game_snapshot");
+                    if (jsonSnapshot != null && !jsonSnapshot.isBlank()) {
+                        return mapper.readValue(jsonSnapshot, GameSnapshotDTO.class);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[ERROR] Exception caught in DataDepository (loadGameSnapshot): " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null; // Return null if no snapshot exists or an error occurred
+    }
+
+    /**
+     * Retrieves a list of game IDs for all games that are currently marked as in progress.
+     *
+     * @return a list of game IDs
+     */
+    public List<Integer> getInProgressGames() {
+        String query = "SELECT game_id FROM game WHERE in_progress = true";
+        List<Integer> gameIds = new ArrayList<>();
+
+        try (Connection c = DatabaseManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                gameIds.add(rs.getInt("game_id"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("[ERROR] Exception caught in DataDepository (getInProgressGames): " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return gameIds;
     }
 
 }

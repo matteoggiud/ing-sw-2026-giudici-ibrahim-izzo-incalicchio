@@ -4,12 +4,12 @@ package it.polimi.ingsw.server.model.effect.building.triggers;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 
-
+/**
+ * This interface represents a trigger for building effects that are activated by specific events in the game.
+ * Implementing classes can define the conditions under which the trigger is activated
+ * and the amount of food gained by the building effect when the trigger is activated.
+ */
 public interface IEventTrigger {
-
-    default boolean isCardTrigger() {
-        return false;
-    }
 
     /**
      * This method is called when the building with this effect is bought, to apply any immediate effect that it may have.
@@ -18,7 +18,7 @@ public interface IEventTrigger {
      * @throws UnsupportedOperationException if the building effect does not have an immediate effect
      */
     default void applyImmediateEffect(Player player) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("This building effect does not have an immediate effect");
+        // By default, there is no immediate effect
     }
 
     /**
@@ -29,6 +29,6 @@ public interface IEventTrigger {
      * @return the amount of food gained by this building effect
      *
      */
-    int getTrigger(Player player, Game game); //TODO: Instead of returning an int we return an EffectEventResult so it is more scalable in the future and more consistent with the rest of the code
+    int getTrigger(Player player, Game game);
 
 }

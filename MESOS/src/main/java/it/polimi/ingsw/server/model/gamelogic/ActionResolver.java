@@ -11,8 +11,13 @@ import it.polimi.ingsw.server.model.core.Player;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class ActionResolver {
 
+    /**
+     * A map that tracks the progress of action resolution for each player,
+     * allowing the resolver to manage multiple players resolving actions simultaneously.
+     */
     private final Map<Player, ActionResolutionProgress> resolutionProgressByPlayer = new HashMap<>();
 
     /**
@@ -45,8 +50,14 @@ public class ActionResolver {
         new EffectResolver(game).resolveTrigger(player);
     }
 
-
-    public void resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
+    /**
+     * Resolves a regular action for a player, allowing them to pick cards from the offer rows according to the rules of the offer box they are in.
+     * @param game the current game context
+     * @param player the player resolving the action
+     * @param selectedCard the card selected by the player to resolve, which must be from the appropriate row based on the fromUpperRow parameter
+     * @param fromUpperRow true if the selected card is from the upper row, false if it's from the lower row
+     */
+    public boolean resolveRegularAction(Game game, Player player, Card selectedCard, boolean fromUpperRow) {
         validateArguments(game, player); // checks for null and if it's the player's turn to resolve an action
 
         Board board = game.getBoard();
@@ -55,7 +66,7 @@ public class ActionResolver {
 
         if (isFoodOnlyBox(box)) {
             resolveFoodOnlyAction(game, player, box, selectedCard);
-            return;
+            return true;
         }
 
         ActionResolutionProgress progress = getProgress(player);
@@ -73,10 +84,15 @@ public class ActionResolver {
 
         markCardPickResolved(progress, fromUpperRow);
 
-        completeActionIfNeeded(game, player, box, progress);
+        return completeActionIfNeeded(game, player, box, progress);
 
     }
 
+    /**
+     * Retrieves the action resolution progress for the given player, creating a new progress object if one does not already exist.
+     * @param player the player for whom to retrieve the action resolution progress
+     * @return the action resolution progress for the given player
+     */
     private ActionResolutionProgress getProgress(Player player) {
         ActionResolutionProgress progress = resolutionProgressByPlayer.get(player);
 
@@ -88,6 +104,11 @@ public class ActionResolver {
         return progress;
     }
 
+    /**
+     * Validates the arguments for resolving a regular action.
+     * @param game the current game context, which must not be null
+     * @param player the player resolving the action, which must not be null and must be the current player in the offer track
+     */
     private void validateArguments(Game game, Player player) {
         if (game == null || player == null) {
             throw new IllegalArgumentException("Game and player cannot be null.");
@@ -100,10 +121,22 @@ public class ActionResolver {
         }
     }
 
+    /**
+     * Checks if the given offer box is a food-only box.
+     * @param box the offer box to check
+     * @return true if the box is a food-only box, false otherwise
+     */
     private boolean isFoodOnlyBox(OfferBox box) {
         return box.isFoodOnlyAction();
     }
 
+    /**
+     * Resolves an action for a food-only offer box.
+     * @param game the current game context
+     * @param player the player resolving the action, who will receive the food reward
+     * @param box the food-only offer box being resolved
+     * @param selectedCard the selected card.
+     */
     private void resolveFoodOnlyAction(Game game, Player player, OfferBox box, Card selectedCard) {
         if (selectedCard != null) {
             throw new IllegalArgumentException("This offer box gives only food and does not allow card picks.");
@@ -113,6 +146,13 @@ public class ActionResolver {
         completeAction(game, player, box);
     }
 
+    /**
+     * Validates that the player can pick a card from the specified row
+     * based on the offer box's pick limits and the player's current progress in resolving the action.
+     * @param box the offer box being resolved.
+     * @param progress the player's current progress in resolving the action.
+     * @param fromUpperRow true if the player is trying to pick from the upper row, false if they are trying to pick from the lower row.
+     */
     private void validatePickLimit(OfferBox box, ActionResolutionProgress progress, boolean fromUpperRow) {
         if (fromUpperRow && progress.upperCardsResolved >= box.getUpperRowPicks()) {
             throw new IllegalStateException("You cannot pick more cards from the upper row.");
@@ -123,16 +163,29 @@ public class ActionResolver {
         }
     }
 
-    private void completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
+    /**
+     * Checks if the player has resolved all required card picks for the offer box and completes the action if so.
+     * @param game the current game context
+     * @param player the player resolving the action
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     */
+    private boolean completeActionIfNeeded(Game game, Player player, OfferBox box, ActionResolutionProgress progress) {
         if (!hasResolvedAllRequiredCards(box, progress)) {
-            return;
+            return false;
         }
-
         resolutionProgressByPlayer.remove(player);
         completeAction(game, player, box);
+        return true;
     }
 
 
+    /**
+     * Completes the action for the player by removing them from the offer box, placing them in the first free turn order slot.
+     * @param game the current game context
+     * @param player the player whose action is being completed
+     * @param box the offer box from which the player is being removed
+     */
     private void completeAction(Game game, Player player, OfferBox box) {
         Board board = game.getBoard();
 
@@ -146,6 +199,11 @@ public class ActionResolver {
         new EffectResolver(game).resolveTrigger(player);
     }
 
+    /**
+     * Applies the effect of the turn order slot to the player.
+     * @param player the player to whom the turn order slot effect will be applied
+     * @param turnOrderSlot the turn order slot whose effect will be applied to the player
+     */
     private void applyTurnOrderSlotEffect(Player player, TurnOrderSlot turnOrderSlot) {
         int foodBonus = turnOrderSlot.getFoodBonus();
 
@@ -174,6 +232,11 @@ public class ActionResolver {
     }
 
 
+    /**
+     * Marks a card pick as resolved for the player, incrementing the appropriate counter in the action resolution progress based on whether the pick was from the upper or lower row.
+     * @param progress the player's current progress in resolving the action.
+     * @param fromUpperRow true if the resolved card pick was from the upper row, false if it was from the lower row.
+     */
     private void markCardPickResolved(ActionResolutionProgress progress, boolean fromUpperRow) {
         if (fromUpperRow) {
             progress.upperCardsResolved++;
@@ -182,19 +245,45 @@ public class ActionResolver {
         }
     }
 
+    /**
+     * Checks if the player has pending card picks for the offer box.
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     * @return true if the player has pending card picks for the offer box, false otherwise
+     */
     private boolean hasPendingUpperPick(OfferBox box, ActionResolutionProgress progress) {
         return progress.upperCardsResolved < box.getUpperRowPicks();
     }
 
+    /**
+     * Checks if the player has pending card picks for the offer box.
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     * @return true if the player has pending card picks for the offer box, false otherwise
+     */
     private boolean hasPendingLowerPick(OfferBox box, ActionResolutionProgress progress) {
         return progress.lowerCardsResolved < box.getLowerRowPicks();
     }
 
+    /**
+     * Checks if the player has resolved all required card picks for the offer box based on their current progress and the box's pick limits.
+     * @param box the offer box being resolved
+     * @param progress the player's current progress in resolving the action
+     * @return true if the player has resolved all required card picks for the offer box, false otherwise
+     */
     private boolean hasResolvedAllRequiredCards(OfferBox box, ActionResolutionProgress progress) {
         return progress.upperCardsResolved == box.getUpperRowPicks()
                 && progress.lowerCardsResolved == box.getLowerRowPicks();
     }
 
+    /**
+     * Checks if the player has any selectable cards in the offer rows for pending picks based on their current progress and the box's pick limits.
+     * @param board the current game board.
+     * @param player the player for whom to check for selectable cards.
+     * @param box the offer box being resolved.
+     * @param progress the player's current progress in resolving the action.
+     * @return true if the player has at least one selectable card in the appropriate row for any pending picks, false otherwise
+     */
     private boolean hasSelectableCardForPendingPick(Board board, Player player, OfferBox box, ActionResolutionProgress progress) {
         return hasPendingUpperPick(box, progress) && board.getUpperRow().hasSelectableCardFor(player)
                 || hasPendingLowerPick(box, progress) && board.getLowerRow().hasSelectableCardFor(player);
@@ -219,6 +308,10 @@ public class ActionResolver {
     }
 
 
+    /**
+     * Resolves any automatic skips for the current player in the offer track, allowing the game to progress smoothly without requiring player input for actions that have no valid choices.
+     * @param game the current game context.
+     */
     public void resolveAutomaticSkips(Game game) {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null.");

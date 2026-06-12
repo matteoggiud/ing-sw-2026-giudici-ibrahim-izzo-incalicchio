@@ -1,8 +1,8 @@
 package it.polimi.ingsw.client.controller;
 
-import it.polimi.ingsw.client.network.socket.ClientState;
+import it.polimi.ingsw.client.ClientState;
 import it.polimi.ingsw.client.view.ClientView;
-import it.polimi.ingsw.server.model.observer.dto.*;
+import it.polimi.ingsw.common.network.dto.*;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -25,10 +25,15 @@ public class ViewController {
      * @throws RemoteException if a remote communication error occurs
      */
     public void onGameStarted(int gameId, List<String> playerNicknames) {
+        clientState.clearGameState();
+
+        clientState.setFinalRanking(Map.of());
+        clientState.setHistoricalRankings(List.of());
         clientState.setActiveGameId(gameId);
         clientState.clearPlayersInfo();
         clientState.setCurrentPhase("STARTED");
         clientState.setStatusMessage("Game started.");
+
         view.showGameStarted(gameId, playerNicknames);
     }
 
@@ -62,8 +67,9 @@ public class ViewController {
      * @param nickname
      */
     public void onLoginFailed(String reason, String nickname) {
-        view.showError(reason);
+        clientState.setErrorMessage(reason);
         clientState.setNickname(null);
+        view.showError(reason);
     }
 
     /**
@@ -74,6 +80,8 @@ public class ViewController {
     public void onAvailableGames(List<GameInfoDTO> games) {
         clientState.setAvailableGames(games);
         clientState.setCurrentPhase("MENU");
+        clientState.setFinalRanking(Map.of());
+        clientState.setHistoricalRankings(List.of());
         view.showAvailableGames(games);
     }
 
@@ -94,8 +102,9 @@ public class ViewController {
      * @param message  the message indicating the successful registration
      */
     public void onRegisterSuccess(String nickname, String message) {
-        view.showMessage(message);
         clientState.setNickname(nickname);
+        clientState.setStatusMessage(message);
+        view.showMessage(message);
     }
 
     /**
@@ -105,8 +114,9 @@ public class ViewController {
      * @param nickname
      */
     public void onRegisterFailed(String reason, String nickname) {
-        view.showError(reason);
+        clientState.setErrorMessage(reason);
         clientState.setNickname(null);
+        view.showError(reason);
     }
 
     /**
@@ -116,6 +126,7 @@ public class ViewController {
      */
     public void onDisconnectionSuccess(String message) {
         clientState.disconnect();
+        clientState.setStatusMessage(message);
         view.showMessage(message);
     }
 
@@ -146,7 +157,9 @@ public class ViewController {
      * @param playerNicknames the list of nicknames of the players currently in the game
      */
     public void onPlayerChanged(List<String> playerNicknames) {
-        view.showMessage("Players: " + String.join(", ", playerNicknames));
+        String msg = "Players: " + String.join(", ", playerNicknames);
+        clientState.setStatusMessage(msg);
+        view.showMessage(msg);
     }
 
     /**
@@ -169,6 +182,8 @@ public class ViewController {
         clientState.setActiveGameId(gameInfo.gameId());
         clientState.setCurrentGameInfo(gameInfo);
         clientState.setCurrentPhase("LOBBY");
+        clientState.setFinalRanking(Map.of());
+        clientState.setHistoricalRankings(List.of());
         view.showGameInfo(gameInfo);
     }
 
@@ -179,8 +194,9 @@ public class ViewController {
      * @param era    the new era of the game
      */
     public void onEraChanged(int gameId, String era) {
-        clientState.setStatusMessage("Era changed: " + era);
-        view.showMessage("Era changed: " + era);
+        String msg = "Era changed: " + era;
+        clientState.setStatusMessage(msg);
+        view.showMessage(msg);
     }
 
     /**
@@ -190,6 +206,8 @@ public class ViewController {
      * @param currentPlayerNickname the nickname of the player whose turn it currently is during the "Place Totem" phase.
      */
     public void onPlaceTotemTurnChanged(int gameId, String currentPlayerNickname) {
+        clientState.setCurrentPhase("PLACE_TOTEM");
+        clientState.setCurrentPlayerNickname(currentPlayerNickname);
         boolean isMyTurn = currentPlayerNickname.equals(clientState.getNickname());
         view.showPlaceTotemTurn(currentPlayerNickname, isMyTurn);
     }
@@ -201,6 +219,8 @@ public class ViewController {
      * @param currentPlayerNickname the nickname of the player whose turn it currently is during the "Resolve Action" phase.
      */
     public void onResolveActionTurnChanged(int gameId, String currentPlayerNickname) {
+        clientState.setCurrentPhase("RESOLVE_ACTION");
+        clientState.setCurrentPlayerNickname(currentPlayerNickname);
         boolean isMyTurn = currentPlayerNickname.equals(clientState.getNickname());
         view.showResolveActionTurn(currentPlayerNickname, isMyTurn);
     }
@@ -212,6 +232,8 @@ public class ViewController {
      * @param currentPlayerNickname the nickname of the player whose turn it currently is during the "Extra Action" phase.
      */
     public void onExtraActionTurnChanged(int gameId, String currentPlayerNickname) {
+        clientState.setCurrentPhase("EXTRA_ACTION");
+        clientState.setCurrentPlayerNickname(currentPlayerNickname);
         boolean isMyTurn = currentPlayerNickname.equals(clientState.getNickname());
         view.showExtraActionTurn(currentPlayerNickname, isMyTurn);
     }
@@ -239,7 +261,6 @@ public class ViewController {
         clientState.setFinalRanking(finalRanking);
         clientState.setHistoricalRankings(historicalLeaderboard);
         clientState.setStatusMessage("Game ended. Historical leaderboard for " + numPlayers + " players updated.");
-
         view.showGameEnded();
     }
 
@@ -262,7 +283,9 @@ public class ViewController {
      */
     public void onResolvingEvent(int gameId, EventCardDTO eventCard) {
         clientState.setResolvingEventName(eventCard.name());
-        view.showMessage("Resolving event: " + eventCard.name());
+        clientState.pushEventCard(eventCard);
+        clientState.setStatusMessage("Resolving event: " + eventCard.name());
+        view.showResolvingEvent(gameId, eventCard);
     }
 
     /**
@@ -271,6 +294,9 @@ public class ViewController {
      * @param rankings the list of LeadBoardDTO objects representing the rankings of players in the game, which can be used to inform the client about the current standings of players in the game and allow them to update their view accordingly (e.g., displaying the rankings on a leaderboard, etc.).
      */
     public void onRankingsReceived(List<LeadBoardDTO> rankings) {
+        clientState.setFinalRanking(Map.of());
+        clientState.setHistoricalRankings(rankings);
+        clientState.setCurrentPhase("LEADERBOARD");
         view.showRankings(rankings);
     }
 
@@ -280,8 +306,12 @@ public class ViewController {
      * @param reason the reason for the game crash
      */
     public void onGameCrashed(String reason) {
+        String message = "Game ended: " + reason;
+
         clientState.clearGameState();
-        clientState.setStatusMessage("Game crashed: " + reason);
-        view.showError("Game crashed: " + reason);
+        clientState.setErrorMessage(message);
+        clientState.setStatusMessage(message);
+
+        view.showDisconnected(message);
     }
 }

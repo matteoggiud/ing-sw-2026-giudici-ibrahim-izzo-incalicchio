@@ -2,7 +2,6 @@ package it.polimi.ingsw.server.model.gamemodel;
 
 import it.polimi.ingsw.server.database.DataDepository;
 import it.polimi.ingsw.server.database.DataWriting;
-import it.polimi.ingsw.server.database.DatabaseManager;
 import it.polimi.ingsw.server.model.board.CardRow;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
@@ -10,11 +9,17 @@ import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.menu.GameManager;
 import it.polimi.ingsw.server.model.menu.PlayerManager;
 import it.polimi.ingsw.server.model.observer.IGameObserver;
-import it.polimi.ingsw.server.model.observer.dto.GameInfoDTO;
-import it.polimi.ingsw.server.model.observer.dto.LeadBoardDTO;
-import it.polimi.ingsw.server.model.observer.dto.mapper.GameInfoDTOMapper;
+import it.polimi.ingsw.common.network.dto.GameInfoDTO;
+import it.polimi.ingsw.common.network.dto.LeadBoardDTO;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameInfoDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
+import it.polimi.ingsw.server.model.observer.event.GameStartedEvent;
 import it.polimi.ingsw.server.model.observer.event.JoinedGameEvent;
+import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
 import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
+import it.polimi.ingsw.server.network.EventHandler;
 
 import java.util.*;
 
@@ -27,16 +32,34 @@ import java.sql.SQLException;
  */
 public class GamePortal implements IGameModel {
 
+    /**
+     * The PlayerManager instance used for managing player-related operations such as login, logout, and player retrieval.
+     */
     private final PlayerManager playerManager;
 
+    /**
+     * The GameManager instance used for managing game-related operations such as creating games, joining games, and retrieving game information.
+     */
     private final GameManager gameManager;
 
+
+    /**
+     * Constructor for the GamePortal class, which initializes the player manager and game manager instances.
+     */
     public GamePortal() {
-        this.playerManager = new PlayerManager();
-        this.gameManager = new GameManager();
+        this.playerManager = PlayerManager.getInstance();
+        this.gameManager = GameManager.getInstance();
     }
 
 
+    /**
+     * Allows a player to draw a card from either the upper or lower row of the game board.
+     *
+     * @param gameId         the current game context
+     * @param nickname       the player attempting to draw the card
+     * @param selectedCardId the card the player has selected to draw
+     * @param fromUpperRow   a boolean indicating whether the card is being drawn from the upper row (true) or lower row (false)
+     */
     @Override
     public void drawCard(int gameId, String nickname, int selectedCardId, boolean fromUpperRow) {
         if (gameId < 0) {
@@ -45,20 +68,23 @@ public class GamePortal implements IGameModel {
         if (nickname == null || nickname.isBlank()) {
             throw new IllegalArgumentException("Nickname cannot be null or blank.");
         }
-
         Game currentGame = gameManager.getGame(gameId);
-        Player currentPlayer = playerManager.getPlayer(nickname);
+        currentGame.locked(() -> {
 
-        if (currentPlayer == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
+            Player currentPlayer = playerManager.getPlayer(nickname);
 
-        CardRow row = fromUpperRow
-                ? currentGame.getBoard().getUpperRow()
-                : currentGame.getBoard().getLowerRow();
+            if (currentPlayer == null) {
+                throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+            }
 
-        Card card = row.getSelectableCardById(selectedCardId);
-        currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
+            CardRow row = fromUpperRow
+                    ? currentGame.getBoard().getUpperRow()
+                    : currentGame.getBoard().getLowerRow();
+
+            Card card = row.getSelectableCardById(selectedCardId);
+            currentGame.getGameState().resolveAction(currentGame, currentPlayer, card, fromUpperRow);
+
+        });
     }
 
     /**
@@ -78,17 +104,19 @@ public class GamePortal implements IGameModel {
         }
 
         Game currentGame = gameManager.getGame(gameId);
-        Player player = playerManager.getPlayer(nickname);
+        currentGame.locked(() -> {
+            Player player = playerManager.getPlayer(nickname);
 
-        if (player == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
+            if (player == null) {
+                throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+            }
 
-        currentGame.getGameState().placeTotem(
-                currentGame,
-                player,
-                currentGame.getBoard().getOfferTrack().getBoxByPosition(offerBoxPosition)
-        );
+            currentGame.getGameState().placeTotem(
+                    currentGame,
+                    player,
+                    currentGame.getBoard().getOfferTrack().getBoxByPosition(offerBoxPosition)
+            );
+        });
     }
 
 
@@ -133,11 +161,18 @@ public class GamePortal implements IGameModel {
 
         // Notify the host player's observer about the game creation so they can update their lobby view
         Game game = gameManager.getGame(gameId);
-        game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+        return game.locked(() -> {
+            game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
 
-        return gameId;
+            return gameId;
+        });
     }
 
+    /**
+     * Checks if the game with the specified id is ready to start.
+     *
+     * @param gameId the unique identifier of the game to check and potentially start
+     */
     @Override
     public void startGameIfReady(int gameId) {
         if (gameId < 0) {
@@ -145,10 +180,11 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-
-        if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
-            game.getGameState().startGame(game);
-        }
+        game.locked(() -> {
+            if (game.getNumberOfPlayers() == game.getExpectedPlayerCount()) {
+                game.getGameState().startGame(game);
+            }
+        });
     }
 
 
@@ -162,39 +198,6 @@ public class GamePortal implements IGameModel {
     @Override
     public Game getGame(int gameId) {
         return gameManager.getGame(gameId);
-    }
-
-    /**
-     * Starts an existing game.
-     * Only the host player can start the game, and the game must have enough players.
-     * Starting the game first moves it from LobbyState to SetupState, then executes
-     * the setup phase so the board, decks, turn order, and totems are initialized.
-     *
-     * @param gameId       the unique identifier of the game to start
-     * @param hostNickname the nickname of the player requesting the start
-     * @throws IllegalArgumentException if any argument is null
-     * @throws IllegalStateException    if the requester is not the host or there are not enough players
-     */
-    @Override
-    public void startGame(int gameId, String hostNickname) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be null.");
-        }
-        if (hostNickname == null) {
-            throw new IllegalArgumentException("Host nickname cannot be null.");
-        }
-
-        Game game = gameManager.getGame(gameId);
-
-        if (!game.getHostPlayer().getNickname().equals(hostNickname)) {
-            throw new IllegalStateException("Only the host can start the game.");
-        }
-
-        if (game.getNumberOfPlayers() < StandardRuleSet.MIN_PLAYERS) {
-            throw new IllegalStateException("Not enough players to start the game.");
-        }
-
-        game.getGameState().startGame(game);
     }
 
 
@@ -217,20 +220,21 @@ public class GamePortal implements IGameModel {
     @Override
     public void joinGame(int gameId, String player, IGameObserver observer) {
         Player playerToJoin = playerManager.getPlayer(player);
-        DataWriting dw = new DataWriting();
+
         if (playerToJoin == null) {
             throw new IllegalStateException("Player with nickname " + player + " does not exist.");
         }
-        dw.joinExistingGame(gameId, player);
-        gameManager.joinGame(gameId, playerToJoin);
 
-        // Add the observer for the player to the newly joined game
-        addObserver(gameManager.getGame(gameId), observer);
-
-        // Notify the player's observer about the join so they can update their lobby view
         Game game = gameManager.getGame(gameId);
-        game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+        game.locked(() -> {
+            gameManager.joinGame(gameId, playerToJoin);
 
+            // Add the observer for the player to the newly joined game
+            addObserver(game, observer);
+
+            // Notify the player's observer about the join so they can update their lobby view
+            game.getObserverManager().notifyObservers(new JoinedGameEvent(GameInfoDTOMapper.toGameInfoDTO(game)));
+        });
     }
 
     /**
@@ -247,20 +251,21 @@ public class GamePortal implements IGameModel {
 
         // We first retrieve the game
         Game game = gameManager.getGame(gameId);
+        return game.locked(() -> {
 
-        // We save the players remaining in the game after the player leaves
-        List<String> playerNames = game.getPlayers().getPlayerNicknames();
-        playerNames = game.getPlayers().getPlayerNicknames().stream().filter(p -> !p.equals(player)).toList();
-
-
-
-        // We then execute the remove game logic, which deletes the game
-        gameManager.removeGame(gameId);
-
-        //TODO: update db
+            // We save the players remaining in the game after the player leaves
+            List<String> playerNames = game.getPlayers().getPlayerNicknames();
+            playerNames = game.getPlayers().getPlayerNicknames().stream().filter(p -> !p.equals(player)).toList();
 
 
-        return playerNames;
+            // We then execute the remove game logic, which deletes the game
+            gameManager.removeGame(gameId);
+
+            // Update db
+            new DataWriting().updateGameInProgress(gameId, false);
+
+            return playerNames;
+        });
     }
 
     /**
@@ -314,45 +319,12 @@ public class GamePortal implements IGameModel {
         if (nickname == null) {
             throw new IllegalArgumentException("Nickname cannot be null");
         }
-        playerManager.removePlayer(nickname);
-    }
-
-    /**
-     * Retrieves a currently logged-in player by nickname.
-     *
-     * @param nickname the nickname of the player to retrieve
-     * @return the player associated with the given nickname
-     * @throws IllegalArgumentException if the nickname is null
-     * @throws IllegalStateException    if no logged-in player exists with that nickname
-     */
-    @Override
-    public Player getLoggedPlayer(String nickname) {
-        if (nickname == null) {
-            throw new IllegalArgumentException("Nickname cannot be null.");
-        }
 
         Player player = playerManager.getPlayer(nickname);
-        if (player == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
+        if (player != null) {
+            player.disconnect();
         }
-
-        return player;
-    }
-
-    /**
-     * Checks whether a player is currently logged in.
-     *
-     * @param nickname the nickname of the player to check
-     * @return true if the player is logged in, false otherwise
-     * @throws IllegalArgumentException if the nickname is null
-     */
-    @Override
-    public boolean isLoggedIn(String nickname) {
-        if (nickname == null) {
-            throw new IllegalArgumentException("Nickname cannot be null.");
-        }
-
-        return playerManager.isLoggedIn(nickname);
+        playerManager.removePlayer(nickname);
     }
 
 
@@ -394,61 +366,11 @@ public class GamePortal implements IGameModel {
         }
 
         Game game = gameManager.getGame(gameId);
-        return game.getFinalRanking();
+        return game.locked(() -> {
+            return game.getFinalRanking();
+        });
     }
 
-    /**
-     * Checks whether the specified player has a pending extra action in the given game.
-     *
-     * @param gameId   the unique identifier of the game
-     * @param nickname the nickname of the player to check
-     * @return true if the player has a pending extra action, false otherwise
-     * @throws IllegalArgumentException if any argument is null or invalid
-     * @throws IllegalStateException    if the player is not logged in
-     */
-    @Override
-    public boolean hasPendingExtraAction(int gameId, String nickname) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be null.");
-        }
-        if (nickname == null) {
-            throw new IllegalArgumentException("Nickname cannot be null.");
-        }
-
-        Game game = gameManager.getGame(gameId);
-
-        Player player = playerManager.getPlayer(nickname);
-        if (player == null) {
-            throw new IllegalStateException("Player with nickname " + nickname + " is not logged in.");
-        }
-
-        return game.getGameState().getExtraAction(player);
-    }
-
-    /**
-     * Retrieves the final ranking of a game using player nicknames as keys.
-     * This representation is more suitable for TUI and controller code.
-     *
-     * @param gameId the unique identifier of the game
-     * @return a map of player nicknames and their final scores sorted by ranking
-     * @throws IllegalArgumentException if the game id is null
-     * @throws IllegalStateException    if the game is not in a phase that exposes the final ranking yet
-     */
-    @Override
-    public Map<String, Integer> getFinalRankingByNickname(int gameId) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be null.");
-        }
-
-        Map<Player, Integer> ranking = getFinalRanking(gameId);
-        Map<String, Integer> rankingByNickname = new LinkedHashMap<>();
-
-        for (Map.Entry<Player, Integer> entry : ranking.entrySet()) {
-            rankingByNickname.put(entry.getKey().getNickname(), entry.getValue());
-        }
-
-        return rankingByNickname;
-    }
 
     /**
      * Adds a virtual view as an observer to the game with the specified id, allowing the virtual view to receive updates about the game's state and events.
@@ -464,8 +386,9 @@ public class GamePortal implements IGameModel {
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
-
-        game.getObserverManager().addObserver(virtualView);
+        game.locked(() -> {
+            game.getObserverManager().addObserver(virtualView);
+        });
     }
 
     /**
@@ -482,33 +405,9 @@ public class GamePortal implements IGameModel {
         if (virtualView == null) {
             throw new IllegalArgumentException("Virtual view cannot be null.");
         }
-
-        game.getObserverManager().removeObserver(virtualView);
-    }
-
-    /**
-     * Marks a player as disconnected in the specified game
-     *
-     * @param gameId   the unique identifier of the game in which the player is participating
-     * @param nickname the nickname of the player to be marked as disconnected
-     */
-    @Override
-    public void markPlayerDisconnected(int gameId, String nickname) {
-        if (gameId < 0) {
-            throw new IllegalArgumentException("Game id cannot be negative.");
-        }
-        if (nickname == null || nickname.isBlank()) {
-            throw new IllegalArgumentException("Nickname cannot be null or blank.");
-        }
-
-        Game game = gameManager.getGame(gameId);
-
-        Player player = game.getPlayers().getPlayers().stream()
-                .filter(p -> p.getNickname().equals(nickname))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Player " + nickname + " is not in game " + gameId + "."));
-
-        player.disconnect();
+        game.locked(() -> {
+            game.getObserverManager().removeObserver(virtualView);
+        });
     }
 
     /**
@@ -527,6 +426,12 @@ public class GamePortal implements IGameModel {
         return gameId.orElse(null);
     }
 
+    /**
+     * Retrieves the leaderboard ranking for a specified number of players.
+     *
+     * @param numPlayer the number of players for which to retrieve the leaderboard ranking.
+     * @return a list of LeadBoardDTO objects representing the leaderboard ranking for the specified number of players.
+     */
     @Override
     public List<LeadBoardDTO> getRanking(int numPlayer) {
         if (numPlayer < 2 || numPlayer > 5) {
@@ -534,5 +439,106 @@ public class GamePortal implements IGameModel {
         }
         DataDepository db = new DataDepository();
         return db.getLeadBoard(numPlayer);
+    }
+
+    /**
+     * Allows a player to leave the lobby of a game they have joined using the game's unique identifier.
+     *
+     * @param player the nickname of the player attempting to leave the lobby
+     * @param gameId the unique identifier of the game whose lobby the player wants to leave
+     * @return a list of the remaining players' nicknames in the lobby after the player leaves
+     */
+    @Override
+    public List<String> leaveLobby(String player, int gameId) {
+        if (gameId < 0) {
+            throw new IllegalArgumentException("Game id cannot be negative.");
+        }
+
+        Player leavingPlayer = playerManager.getPlayer(player);
+
+        if (leavingPlayer == null) {
+            throw new IllegalArgumentException("Player with nickname " + player + " is not logged in.");
+        }
+
+        Game game = gameManager.getGame(gameId);
+
+        return game.locked(() -> {
+            if (!game.getGameState().isJoinable(game)) {
+                throw new IllegalStateException("leaveLobby is allowed only while game is in lobby.");
+            }
+
+            // We first retrieve the game and the players in the game, then we save the players remaining in the game after the player leaves
+            List<String> playerNames = new ArrayList<>();
+
+            // If the leaving player is the host, we need to save the names of the other players before deleting the game
+            if (player.equals(game.getHostPlayer().getNickname())) {
+                playerNames = game.getPlayers().getPlayerNicknames().stream()
+                        .filter(p -> !p.equals(player))
+                        .toList();
+            }
+
+            // Leave the game and if he's the host delete the game from the game manager
+            gameManager.leaveGame(gameId, leavingPlayer);
+
+            return playerNames;
+        });
+    }
+
+    /**
+     * Restores a game from a previously saved state, allowing players to resume a game that was interrupted or paused.
+     *
+     * @param restoredGame the game object representing the restored game state.
+     */
+    @Override
+    public void restoreGame(Game restoredGame) {
+        restoredGame.locked(() -> {
+            gameManager.restoreGame(restoredGame);
+
+            for (Player player : restoredGame.getPlayers().getPlayers()) {
+                if (!playerManager.isLoggedIn(player.getNickname())) {
+                    playerManager.addPlayer(player);
+                }
+            }
+
+            restoredGame.getGameState().executePhase(restoredGame);
+        });
+    }
+
+    /**
+     * Allows a player to reconnect to an ongoing game by providing the game's unique identifier.
+     *
+     * @param gameId       the unique identifier of the game to which the player wants to reconnect.
+     * @param username     the nickname of the player attempting to reconnect to the game.
+     * @param eventHandler the event handler associated with the player's connection.
+     */
+    @Override
+    public void reconnectToGame(Integer gameId, String username, EventHandler eventHandler) {
+        Game game = gameManager.getGame(gameId);
+        game.locked(() -> {
+            Player player = playerManager.getPlayer(username);
+
+            addObserver(game, eventHandler);
+
+
+            // 1. We tell the client that the game has started, so it switches to the Board screen
+            eventHandler.update(new GameStartedEvent(game));
+
+            // 2. We send player info FIRST (so the client knows who the Totems belong to and what color they are!)
+            eventHandler.update(new PlayerInfosChangedEvent(
+                    gameId,
+                    PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
+            ));
+
+            // 3. THEN we send him the current state of the Board, so when he renders the Turn Order Track the Totems will have the right color
+            eventHandler.update(new BoardUpdatedEvent(
+                    gameId,
+                    BoardDTOMapper.toBoardDTO(game)
+            ));
+
+            game.getGameState().addPlayer(game, player);
+
+            // N.B: The exact shift will be automatically notified to ALL clients
+            // as soon as WaitingForReconnectState fires on nextState()!
+        });
     }
 }

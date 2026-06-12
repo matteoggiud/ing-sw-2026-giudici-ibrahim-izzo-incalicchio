@@ -2,27 +2,42 @@ package it.polimi.ingsw.server.model.menu;
 
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
-import it.polimi.ingsw.server.model.ruleset.StandardRuleSet;
-
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Singleton class that manages the active games in the system.
+ */
 public class GameManager {
+
+    /**
+     * The singleton instance of the GameManager class.
+     */
+    private static GameManager instance;
+
+    /**
+     * A map that holds the active games, where the key is the unique identifier of the game and the value is the Game object.
+     */
     private final Map<Integer, Game> activeGames;
 
-    public GameManager() {
-        activeGames = new HashMap<>();
+    /**
+     * Private constructor to prevent instantiation from outside the class. Initializes the activeGames map.
+     */
+    private GameManager() {
+        activeGames = new ConcurrentHashMap<>();
     }
 
     /**
-     * Creates a new game with the specified host player and game id
-     *
-     * @param host   the player who will host the game
-     * @param gameId the unique identifier for the game
-     * @return the unique identifier of the created game
+     * Returns the singleton instance of the GameManager class. If the instance does not exist, it creates a new one.
+     * @return the singleton instance of the GameManager class
      */
-    public int createGame(Player host, int gameId) {
-        return createGame(host, gameId, StandardRuleSet.MIN_PLAYERS);
+    public static synchronized GameManager getInstance() {
+        if (instance == null) {
+            instance = new GameManager();
+        }
+        return instance;
     }
+
 
     /**
      * Creates a new game with the specified host player, game id, and expected player count.
@@ -40,6 +55,18 @@ public class GameManager {
         Game newGame = new Game(host, gameId, expectedPlayerCount);
         activeGames.put(newGame.getGameId(), newGame);
         return newGame.getGameId();
+    }
+
+    /**
+     * Inserts an existing game (retrieved from the DB) into the active game map.
+     *
+     * @param game the reconstructed game
+     */
+    public void restoreGame(Game game) {
+        if (game == null) {
+            throw new IllegalArgumentException("Game cannot be null.");
+        }
+        activeGames.put(game.getGameId(), game);
     }
 
 
@@ -64,10 +91,14 @@ public class GameManager {
     }
 
 
+    /**
+     * Returns a list of all available games that are not ended and are joinable.
+     * @return a list of available games
+     */
     public List<Game> getAvailableGames() {
         return activeGames.values().stream()
-                .filter(game -> !game.isEnded())
-                .filter(g -> g.getGameState().isJoinable(g))
+                .filter(game -> game.locked(() -> !game.isEnded()))
+                .filter(g -> g.locked(() -> g.getGameState().isJoinable(g)))
                 .toList();
     }
 
@@ -113,14 +144,18 @@ public class GameManager {
         }
 
         return activeGames.values().stream()
-                .filter(game -> !game.isEnded())
-                .filter(game -> game.getPlayers().getPlayers().stream()
-                        .anyMatch(player -> player.getNickname().equals(nickname)))
+                .filter(game -> game.locked(() -> !game.isEnded()))
+                .filter(game -> game.locked(() -> game.getPlayers().getPlayers().stream()
+                        .anyMatch(player -> player.getNickname().equals(nickname))))
                 .map(Game::getGameId)
                 .findFirst();
     }
 
 
+    /**
+     * Removes a game from the active games map by its unique identifier. Before removing the game, it clears all observers associated with the game to prevent memory leaks and ensure proper cleanup of resources.
+     * @param gameId the unique identifier of the game to be removed
+     */
     public void removeGame(int gameId) {
         getGame(gameId).getObserverManager().clearObservers();
         activeGames.remove(gameId);

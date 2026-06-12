@@ -1,6 +1,8 @@
 package it.polimi.ingsw.server.network;
 
 import java.net.Socket;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Represents a client session in the server, encapsulating the client's socket connection, virtual view, nickname, and active game ID.
@@ -28,7 +30,10 @@ public class ClientSession {
      */
     private boolean isRequestedDisconnection;
 
-
+    /**
+     * Lock to ensure thread-safe access to the client's session data (nickname, active game ID, and disconnection status).
+     */
+    private final Lock sessionLock = new ReentrantLock();
     /**
      * Creates a new client session with the specified socket connection and virtual view.
      *
@@ -59,11 +64,22 @@ public class ClientSession {
         if (nickname == null) {
             throw new IllegalStateException("Nickname is not set for this client session.");
         }
-        return nickname;
+        sessionLock.lock();
+        try {
+            return nickname;
+        }finally {
+            sessionLock.unlock();
+        }
     }
 
     public boolean isRequestedDisconnection() {
-        return isRequestedDisconnection;
+        sessionLock.lock();
+        try{
+            return isRequestedDisconnection;
+        }
+        finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
@@ -76,14 +92,25 @@ public class ClientSession {
         if (this.nickname != null) {
             throw new IllegalStateException("Nickname is already set for this client session.");
         }
-        this.nickname = nickname;
+        sessionLock.lock();
+        try{
+            this.nickname = nickname;
+        }
+        finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
      * Clears the nickname for this client session, indicating that the client is no longer logged in.
      */
     public void clearNickname() {
-        this.nickname = null;
+        sessionLock.lock();
+        try{
+            this.nickname = null;
+        }finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
@@ -92,7 +119,12 @@ public class ClientSession {
      * @return true if the client is logged in (nickname is set), false otherwise
      */
     public boolean isLoggedIn() {
-        return nickname != null;
+        sessionLock.lock();
+        try{
+            return nickname != null;
+        }finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
@@ -101,7 +133,12 @@ public class ClientSession {
      * @return the ID of the game that the client is currently participating in, or null if the client has not joined a game
      */
     public Integer getActiveGameId() {
-        return activeGameId;
+        sessionLock.lock();
+        try{
+            return activeGameId;
+        }finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
@@ -114,14 +151,25 @@ public class ClientSession {
         if (this.activeGameId != null) {
             throw new IllegalStateException("Active game ID is already set for this client session.");
         }
-        this.activeGameId = activeGameId;
+        sessionLock.lock();
+        try{
+            this.activeGameId = activeGameId;
+        }finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
      * Clears the active game ID for this client session, indicating that the client is no longer participating in any game.
      */
     public void clearActiveGameId() {
-        this.activeGameId = null;
+        sessionLock.lock();
+        try{
+            this.activeGameId = null;
+        }
+        finally {
+            sessionLock.unlock();
+        }
     }
 
     /**
@@ -130,7 +178,13 @@ public class ClientSession {
      * @return true if the client is currently participating in a game (active game ID is set), false otherwise
      */
     public boolean isInGame() {
-        return activeGameId != null;
+        sessionLock.lock();
+        try{
+            return activeGameId != null;
+        }
+        finally {
+            sessionLock.unlock();
+        }
     }
 
 
@@ -138,8 +192,13 @@ public class ClientSession {
      * Disconnects the client session by closing the socket connection and clearing the nickname and active game ID.
      */
     public void disconnectSession() {
-        this.isRequestedDisconnection = true;
-        this.clearNickname();
-        this.clearActiveGameId();
+        sessionLock.lock();
+        try{
+            this.isRequestedDisconnection = true;
+            this.clearNickname();
+            this.clearActiveGameId();
+        }finally {
+            sessionLock.unlock();
+        }
     }
 }

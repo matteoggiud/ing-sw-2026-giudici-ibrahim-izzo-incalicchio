@@ -13,4 +13,5 @@ public interface GenericVirtualServer {
     void onDrawCardMessage(int cardId, boolean fromUpperRow);
     void onDrawExtraCardMessage(int cardId);
     void onGetRankings(int numPlayers);
+    void onLeftLobbyMessage();
 }

@@ -6,6 +6,10 @@ import it.polimi.ingsw.server.model.effect.event.RockPaintingEventEffect;
 import it.polimi.ingsw.server.model.effect.event.ShamanicRitualEventEffect;
 import it.polimi.ingsw.server.model.effect.event.SustenanceEventEffect;
 
+/**
+ * This interface represents a modifier for event effects.
+ * It allows implementing classes to modify the effects of specific events
+ */
 public interface IEventModifier {
 
     /**

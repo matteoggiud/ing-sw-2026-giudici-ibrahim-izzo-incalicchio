@@ -1,20 +1,22 @@
 package it.polimi.ingsw.server.model.states;
 
+import it.polimi.ingsw.server.database.DataWriting;
 import it.polimi.ingsw.server.model.card.Card;
 import it.polimi.ingsw.server.model.core.Game;
 import it.polimi.ingsw.server.model.core.Player;
 import it.polimi.ingsw.server.model.effect.building.extraction.IExtraActionEffect;
 import it.polimi.ingsw.server.model.gamelogic.ActionResolver;
-import it.polimi.ingsw.server.model.observer.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.GameSnapshotDTO;
+import it.polimi.ingsw.common.network.dto.mapper.BoardDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.GameSnapshotDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.BoardUpdatedEvent;
 import it.polimi.ingsw.server.model.observer.event.ExtraActionTurnChangedEvent;
-import it.polimi.ingsw.server.model.observer.dto.mapper.PlayerInfosDTOMapper;
+import it.polimi.ingsw.common.network.dto.mapper.PlayerInfosDTOMapper;
 import it.polimi.ingsw.server.model.observer.event.PlayerInfosChangedEvent;
-
-import it.polimi.ingsw.server.model.observer.event.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents the phase where players with a specific building effect
@@ -49,6 +51,12 @@ public class ExtraActionState implements IGameState {
         if (game == null) {
             throw new IllegalArgumentException("Game cannot be null.");
         }
+
+        // Save the game snapshot for server persistance in a separate thread to avoid blocking the main game flow.
+        GameSnapshotDTO snapshotDTO = GameSnapshotDTOMapper.toGameSnapshotDTO(game);
+        CompletableFuture.runAsync(() -> {
+            new DataWriting().updateGameSnapshot(game.getGameId(), snapshotDTO);
+        });
 
         if (!initialized) {
             initializePendingPlayers(game);
@@ -145,8 +153,7 @@ public class ExtraActionState implements IGameState {
      * @return true if the player owns an extra action effect, false otherwise
      */
     private boolean hasExtraActionEffect(Player player) {
-        return player.getPlayerDeck().getActiveExtractionEffects().stream()
-                .anyMatch(IExtraActionEffect::hasExtraAction);
+        return player.getPlayerDeck().getActiveExtractionEffects().stream().anyMatch(IExtraActionEffect::hasExtraAction);
     }
 
     /**
@@ -155,9 +162,7 @@ public class ExtraActionState implements IGameState {
      * @param game the current game context
      */
     private void notifyBoardUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game))
-        );
+        game.getObserverManager().notifyObservers(new BoardUpdatedEvent(game.getGameId(), BoardDTOMapper.toBoardDTO(game)));
     }
 
     /**
@@ -167,24 +172,31 @@ public class ExtraActionState implements IGameState {
      */
     private void notifyCurrentExtraActionPlayer(Game game) {
         Player currentPlayer = pendingPlayers.get(0);
-        game.getObserverManager().notifyObservers(
-                new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname())
-        );
+        game.getObserverManager().notifyObservers(new ExtraActionTurnChangedEvent(game.getGameId(), currentPlayer.getNickname()));
     }
-
 
 
     private void notifyPlayerInfosUpdate(Game game) {
-        game.getObserverManager().notifyObservers(
-                new PlayerInfosChangedEvent(
-                        game.getGameId(),
-                        PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())
-                )
-        );
+        game.getObserverManager().notifyObservers(new PlayerInfosChangedEvent(game.getGameId(), PlayerInfosDTOMapper.toPlayerInfoDTOList(game.getPlayers().getPlayers())));
     }
 
+    /**
+     * Indicates whether the game has ended. In this state, the game is not considered ended until the next state is reached.
+     *
+     * @return false, as the game is not yet ended in this state
+     */
     @Override
     public boolean isEnded() {
         return false;
+    }
+
+    /**
+     * Returns the name of the persistence class associated with this game state for database storage purposes.
+     *
+     * @return the name of the persistence class for this game state
+     */
+    @Override
+    public String getPersistenceName() {
+        return "ExtraActionState";
     }
 }

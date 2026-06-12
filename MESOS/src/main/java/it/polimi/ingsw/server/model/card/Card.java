@@ -131,15 +131,29 @@ public abstract class Card {
      */
     public abstract void addTo(PlayerDeck playerDeck);
 
+    /**
+     * Determines if this card can be selected from the given card row by the specified player.
+     * @param row the card row from which the player is attempting to select this card
+     * @param player the player attempting to select this card
+     * @return true if the player can select this card from the row, false otherwise
+     */
     public boolean canBeSelectedFrom(CardRow row, Player player) {
         return false;
     }
 
-
+    /**
+     * Validates if this card can be selected from the given card row by the specified player.
+     * @param row the card row from which the player is attempting to select this card
+     */
     public void validateSelectableFrom(CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }
 
+    /**
+     * Moves the card from the row to the player's deck
+     * @param player the player who has selected this card
+     * @param row the card row from which the player has selected this card
+     */
     public void resolveFromOfferRow(Player player, CardRow row) {
         throw new IllegalArgumentException("Unsupported card type selected.");
     }

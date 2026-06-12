@@ -6,6 +6,9 @@ import it.polimi.ingsw.server.model.observer.IGameObserver;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Event emitted when a new game starts, containing the list of player nicknames participating in the game and the unique identifier of the game.
+ */
 public class GameStartedEvent implements IGameEvent {
 
     private final List<String> playerNicknames;
