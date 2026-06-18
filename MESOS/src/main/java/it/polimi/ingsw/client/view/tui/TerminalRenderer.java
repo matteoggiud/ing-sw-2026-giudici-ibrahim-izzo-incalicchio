@@ -489,12 +489,10 @@ public class TerminalRenderer {
         System.out.println("-".repeat(length));
     }
     public void renderError(String message) {
-        clearTerminal();
-
         if (message != null && !message.isBlank()) {
-            System.out.println("[ERROR] " + message);
+            state.setErrorMessage(message);
         }
 
-        printPromptHelp();
+        render();
     }
 }
