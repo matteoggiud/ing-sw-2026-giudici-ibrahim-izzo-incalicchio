@@ -1,5 +1,7 @@
 # Software Engineering Project - MESOS
 
+# The board game Mesos and all related graphic material are the exclusive property of Cranio Creations.
+
 ## Team Members
 
 * Matteo Giudici
